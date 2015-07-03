@@ -1,0 +1,1 @@
+!function(t){"use strict";function e(){var t=document.createElement("iframe");t.src="data:text/html;charset=utf-8,"+encodeURI(a)}var a="<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Aplazame Checkout</title></head><body ui-view=\"\"></body></html>";t.aplazame={checkout:e}}(this);

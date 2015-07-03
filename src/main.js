@@ -54,7 +54,7 @@
     return ( matches[3] === 'json' ) ? JSON.parse(data) : ( matches[3] === 'xml' ? xml : text );
   }
 
-  function html (url, options) {
+  function http (url, options) {
     options = options || {};
     options.headers = options.headers || {};
 
@@ -65,13 +65,13 @@
         request = new XMLHttpRequest();
     } catch (e) { // Internet Explorer
         try { request = new ActiveXObject("Msxml2.XMLHTTP"); }
-        catch (e) { request = new ActiveXObject("Microsoft.XMLHTTP"); }
+        catch (er) { request = new ActiveXObject("Microsoft.XMLHTTP"); }
     }
     if( request === null ) { throw "Browser does not support HTTP Request"; }
 
     request.open( options.method.toUpperCase(), url );
 
-    for( key in options.headers ) {
+    for( var key in options.headers ) {
         request.setRequestHeader( toTitleSlug(key), options.headers[key] );
     }
 
@@ -117,13 +117,15 @@
     return {
       success: function (onFulfill, onReject) {
         on.fulfill.push(onFulfill);
-        onReject instanceof Function && on.reject.push(onreject);
+        if( onReject instanceof Function ) {
+          on.reject.push(onreject);
+        }
       },
       error: function (onReject) {
         on.reject.push(onReject);
       }
     };
-  };
+  }
 
   // aplazame methods
 

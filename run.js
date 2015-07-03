@@ -36,33 +36,48 @@ var colors = require('colors'),
       watch: function () {
         var watch = require('node-watch');
 
+        if( cmd.test(true) ) {
+          cmd.build();
+        }
+
         watch('src', function(filename) {
           console.log(filename.yellow, 'changed');
-          cmd.build();
+          if( cmd.test(true) ) {
+            cmd.build();
+          }
+          console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
         });
 
-        console.log('watching...'.blue, 'press Ctrl-C to stop'.yellow);
-      },
-      test: function () {
-        var JSHINT = require('jshint').JSHINT,
-            jshintrc = JSON.parse(file.read('.jshintrc'));
+        console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
 
-        // console.log(JSHINT);
+      },
+      test: function (noExit) {
+        var JSHINT = require('jshint').JSHINT,
+            jshintrc = JSON.parse(file.read('.jshintrc')),
+            errorsLog = '';
 
         glob.sync('src/{,**/}*.js').forEach(function (fileName) {
           JSHINT( file.read(fileName).split(/\n/) );
           var res = JSHINT.data()
 
-          // console.log(fileName, JSHINT.data());
           if( res.errors ) {
-            console.log( fileName.cyan );
+            errorsLog += fileName.cyan + '\n';
             res.errors.forEach(function (err) {
-              console.log('line ' + (err.line + '').yellow + ', col ' + err.character + ', ' + err.reason.yellow );
+              errorsLog += '  line ' + (err.line + '').yellow + ', col ' + (err.character + '').cyan + ', ' + err.reason.yellow + '\n';
             });
           }
         });
 
-        // console.log('files', glob.sync('src/{,**/}*.js') );
+        if( errorsLog ) {
+          console.log( '\nJSHINT ERRORS'.red + '\n', errorsLog );
+          if( !noExit ) {
+            process.exit(1);
+          }
+        } else {
+          console.log('\nJSHINT PASSED\n'.green);
+        }
+
+        return !errorsLog;
       }
     };
 

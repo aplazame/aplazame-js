@@ -4,7 +4,8 @@
   "description": "javascript sdk for aplazame.com api",
   "main": "aplazame.js",
   "scripts": {
-    "test": "jshint"
+    "test": "node run test",
+    "start": "node run watch"
   },
   "repository": {
     "type": "git",

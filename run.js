@@ -6,14 +6,20 @@ function htmlToJs (html) {
 }
 
 var colors = require('colors'),
+    fs = require('fs'),
+    path = require('path'),
+    cwd = function () {
+      var paths = [process.cwd()];
+      [].push.apply(paths, arguments);
+      return path.join.apply(null, paths );
+    },
     cmd = {
       build: function () {
-        var fs = require('fs'),
-            UglifyJS = require("uglify-js"),
+        var UglifyJS = require("uglify-js"),
             aplazameMin = UglifyJS.minify("src/main.js").code,
-            iframeSrc = htmlToJs( fs.readFileSync('src/iframe.html', { encoding: 'utf8' }) );
+            iframeSrc = fs.readFileSync('src/iframe.html', { encoding: 'utf8' });
 
-        aplazameMin = aplazameMin.replace('::iframeHtml::', iframeSrc );
+        aplazameMin = aplazameMin.replace('::iframeHtml::', htmlToJs(iframeSrc) );
         fs.writeFileSync('aplazame.js', aplazameMin );
 
         console.log('aplazame.js', 'updated'.green);
@@ -21,7 +27,7 @@ var colors = require('colors'),
       watch: function () {
         var watch = require('node-watch');
 
-        watch(['src'], function(filename) {
+        watch('src', function(filename) {
           console.log(filename.yellow, 'changed');
           cmd.build();
         });

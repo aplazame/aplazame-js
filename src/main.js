@@ -141,23 +141,6 @@
 
   // aplazame methods
 
-  function apiGet (options) {
-    options = options || {};
-    options.version = options.version || 1;
-    options.sandbox = options.sandbox ? '.sandbox' : '';
-    var paramsStr = '';
-    if( options.params ) {
-      for( var key in options.params ) {
-        paramsStr += ( paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
-      }
-    }
-    return http(api.host + paramsStr, {
-      headers: {
-        accept: replaceKeys(api.accept, options)
-      }
-    });
-  }
-
   function apiOptions (options) {
     options = options || {};
     options.version = options.version || 1;
@@ -165,15 +148,25 @@
     options.paramsStr = '';
     if( options.params ) {
       for( var key in options.params ) {
-        options.paramsStr += ( paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
+        options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
       }
     }
     return options;
   }
 
+  function apiGet (options) {
+    options = apiOptions(options);
+    return http(api.host + options.paramsStr, {
+      headers: {
+        accept: replaceKeys(api.accept, options)
+      }
+    });
+  }
+
   function apiPost (options) {
     options = apiOptions(options);
     return http(api.host + options.paramsStr, {
+      method: 'post',
       headers: {
         accept: replaceKeys(api.accept, options)
       }
@@ -195,7 +188,8 @@
   root.aplazame = {
     checkout: checkout,
     button: button,
-    apiGet: apiGet
+    apiGet: apiGet,
+    apiPost: apiPost
   };
 
 })(this);

@@ -173,7 +173,15 @@
     });
   }
 
-  function button () {}
+  function button (options) {
+    // options:
+    // ------------------
+    // id: "CONTAINER_ID",
+    // token: "<ACCESS_TOKEN>",
+    // amount: 12050,
+    // currency: "EUR",
+    // sandbox: true
+  }
 
   function checkout () {
     var iframe = document.createElement('iframe');

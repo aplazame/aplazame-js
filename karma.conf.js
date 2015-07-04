@@ -10,7 +10,7 @@ module.exports = function(config) {
     ],
     files: [
       'aplazame.js',
-      'tests/*.js'
+      'tests/{,**/}*.js'
     ],
     browsers: [ 'Chrome', 'Firefox' ],
     customLaunchers: {

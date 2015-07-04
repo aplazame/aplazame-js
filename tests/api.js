@@ -1,6 +1,8 @@
 
 describe('apiGet', function () {
 
+  console.log('data-aplazame', document.querySelector('[data-aplazame]') );
+
   // var request;
   XMLHttpRequest.prototype.send = function () {
     var _this = this;

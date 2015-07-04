@@ -7,13 +7,13 @@ Aplazame.js
 
 You can also install aplazame through:
 
-> npm
+> [npm](https://www.npmjs.com/package/aplazame)
 
 ``` sh
 npm install aplazame --save
 ```
 
-> bower
+> [bower](http://bower.io/search/?q=aplazame)
 
 ``` sh
 bower install aplazame --save

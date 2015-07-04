@@ -15,6 +15,13 @@
         accept: 'application/vnd.aplazame{sandbox}-v{version}+json'
       };
 
+  function Env () {}
+    Env.prototype = {
+      version: 1,
+      sandbox: false
+    };
+  var env = new Env();
+
   // utility functions
 
   function replaceKeys (tmpl, keys) {
@@ -139,12 +146,10 @@
     };
   }
 
-  // aplazame methods
-
   function apiOptions (options) {
     options = options || {};
-    options.version = options.version || 1;
-    options.sandbox = options.sandbox ? '.sandbox' : '';
+    options.version = options.version || env.version;
+    options.sandbox = ( options.sandbox === undefined ? env.sandbox : options.sandbox ) ? '.sandbox' : '';
     options.paramsStr = '';
     if( options.params ) {
       for( var key in options.params ) {
@@ -152,6 +157,22 @@
       }
     }
     return options;
+  }
+
+  // aplazame methods
+
+  function init (options) {
+    if( !options ) {
+      throw new Error('aplazame.init({options}) requires options');
+    }
+    if( !options.publicKey ) {
+      throw new Error('aplazame.init({options}) requires at least the publicKey');
+    }
+    extend(env, options);
+  }
+
+  function getEnv () {
+    return env;
   }
 
   function apiGet (options) {
@@ -193,7 +214,23 @@
 
   // globalizing aplazame object
 
+  if( document.querySelector('script[data-aplazame]') ) {
+    var initText = document.querySelector('script[data-aplazame]').getAttribute('data-aplazame');
+    if( /\s/.test(initText) ) {
+      var envOptions = {};
+      initText.split(',').forEach(function (part) {
+        var keys = part.match(/^([^\:]+)\:(.*)/);
+        envOptions[keys[1].trim()] = keys[2].trim();
+      });
+      init(envOptions);
+    } else {
+      init({ publicKey: initText });
+    }
+  }
+
   root.aplazame = {
+    init: init,
+    getEnv: getEnv,
     checkout: checkout,
     button: button,
     apiGet: apiGet,

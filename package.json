@@ -1,5 +1,5 @@
 {
-  "name": "aplazame-js",
+  "name": "aplazame",
   "version": "0.0.1",
   "description": "javascript sdk for aplazame.com api",
   "main": "aplazame.js",

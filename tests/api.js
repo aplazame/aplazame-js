@@ -1,31 +1,35 @@
 
 describe('apiGet', function () {
 
-  var request;
+  // var request;
   XMLHttpRequest.prototype.send = function () {
-    request = this;
+    var _this = this;
     setTimeout(function () {
-      console.log('request.send', request.options );
-      request.resolve({
-        data: { foo: 'bar' },
-        status: 200,
-        headers: request.getHeaders,
-        xhr: request
-      });
+      _this.resolve(_this);
     });
   };
 
-  beforeEach(function () {
+  it('should use host: https://api.aplazame.com/', function (done) {
+    aplazame.apiGet().then(function (request) {
+      expect(request.options.url).toBe('https://api.aplazame.com/');
+      done();
+    });
   });
 
-  it('should send expected host and headers', function (done) {
+  it('should send default accept header: application/vnd.aplazame-v1+json', function (done) {
+    aplazame.apiGet().then(function (request) {
+      expect(request.options.headers.accept).toBe('application/vnd.aplazame-v1+json');
+      done();
+    });
+  });
+
+  it('should accept params', function (done) {
     aplazame.apiGet({
       params: {
         foo: 'bar'
       }
-    }).success(function (response) {
+    }).then(function (request) {
       expect(request.options.url).toBe('https://api.aplazame.com/?foo=bar');
-      expect(request.options.headers.accept).toBe('application/vnd.aplazame-v1+json');
       done();
     });
   });

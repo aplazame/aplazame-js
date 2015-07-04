@@ -67,7 +67,7 @@
     options.url = url;
 
     var request = null,
-        on = { fulfill: [], reject: [] };
+        on = { resolve: [], reject: [] };
 
     try { // Firefox, Opera 8.0+, Safari
         request = new XMLHttpRequest();
@@ -84,13 +84,13 @@
     }
 
     request.resolve = function ( response ) {
-      on.fulfill.forEach(function (handler) {
-        handler(response.data, response.status, response.headers, response.xhr);
+      on.resolve.forEach(function (handler) {
+        handler(response);
       });
     };
     request.reject = function ( response ) {
       on.reject.forEach(function (handler) {
-        handler(response.data, response.status, response.headers, response.xhr);
+        handler(response);
       });
     };
 
@@ -127,8 +127,8 @@
     request.send( options.data );
 
     return {
-      success: function (onFulfill, onReject) {
-        on.fulfill.push(onFulfill);
+      then: function (onResolve, onReject) {
+        on.resolve.push(onResolve);
         if( onReject instanceof Function ) {
           on.reject.push(onreject);
         }

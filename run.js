@@ -56,13 +56,17 @@ var colors = require('colors'),
             jshintrc = JSON.parse(file.read('.jshintrc')),
             errorsLog = '';
 
-        glob.sync('src/{,**/}*.js').forEach(function (fileName) {
+        glob.sync('src/{,**/}*.js').concat(glob.sync('tests/{,**/}*.js')).forEach(function (fileName) {
           JSHINT( file.read(fileName).split(/\n/) );
           var res = JSHINT.data()
 
           if( res.errors ) {
             errorsLog += fileName.cyan + '\n';
             res.errors.forEach(function (err) {
+              if( err === null ) {
+                console.log('err', err);
+                return;
+              }
               errorsLog += '  line ' + (err.line + '').yellow + ', col ' + (err.character + '').cyan + ', ' + err.reason.yellow + '\n';
             });
           }

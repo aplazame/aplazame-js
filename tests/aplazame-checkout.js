@@ -2,17 +2,27 @@
 
 describe('aplazame checkout', function () {
 
-  var body = document.body;
+  var body = document.body,
+      iframe = document.querySelector('iframe');
 
 	beforeEach(function () {
 		body.innerHTML = '';
+    aplazame.checkout();
+    iframe = document.querySelector('iframe');
 	});
 
-  it('iframe should be injected in document body', function () {
+  describe('iframe', function () {
+    it('iframe should be injected in document body', function () {
+      expect( iframe ).toBeDefined();
+    });
 
-    aplazame.checkout();
+    it('iframe content should include body', function () {
+      expect( iframe.contentWindow.document.querySelector('body') ).toBeDefined();
+    });
 
-    expect( document.querySelector('iframe') ).toBeDefined();
-
+    it('iframe content should include ui-view', function () {
+      expect( iframe.contentWindow.document.querySelector('[ui-view]') ).toBeDefined();
+    });
   });
+
 });

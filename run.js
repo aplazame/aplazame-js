@@ -52,6 +52,9 @@ var colors = require('colors'),
         console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
 
       },
+      test: function () {
+        cmd.jshint();
+      },
       jshint: function (noExit) {
         var JSHINT = require('jshint').JSHINT,
             jshintrc = JSON.parse(file.read('.jshintrc')),

@@ -5,13 +5,13 @@
   "main": "aplazame.js",
   "scripts": {
     "pretest": "node run build",
-    "test": "node run test && ./node_modules/.bin/karma start",
+    "test": "node run jshint && ./node_modules/.bin/karma start",
     "prestart": "npm install",
     "start": "node run watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/jgermade/aplazame-js.git"
+    "url": "git+ssh://git@github.com/aplazame/aplazame-js.git"
   },
   "keywords": [
     "aplazame",
@@ -20,8 +20,8 @@
     "javascript"
   ],
   "author": "Jesús Germade <jesus@aplazame.com>",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/jgermade/aplazame-js#readme",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
   "devDependencies": {
     "colors": "^1.1.2",
     "glob": "^5.0.13",

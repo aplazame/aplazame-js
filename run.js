@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 'use strict';
 
@@ -51,7 +52,7 @@ var colors = require('colors'),
         console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
 
       },
-      test: function (noExit) {
+      jshint: function (noExit) {
         var JSHINT = require('jshint').JSHINT,
             jshintrc = JSON.parse(file.read('.jshintrc')),
             errorsLog = '';

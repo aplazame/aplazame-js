@@ -21,18 +21,12 @@
   "expr": true,
   "validthis": true,
   "globals": {
-    "angular": true,
-    "$": true,
-    "_": true,
-    "R": true,
-    "Q": true,
     "inject": true,
     "describe": true,
     "expect": true,
     "it": true,
     "beforeEach": true,
     "afterEach": true,
-    "testUtils": true,
-    "sinon": true
+    "testUtils": true
   }
 }

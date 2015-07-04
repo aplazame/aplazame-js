@@ -4,7 +4,7 @@
   "description": "javascript sdk for aplazame.com api",
   "main": "aplazame.js",
   "scripts": {
-    "test": "node run test",
+    "test": "node run test && ./node_modules/.bin/karma start",
     "start": "node run watch"
   },
   "repository": {
@@ -24,6 +24,11 @@
     "colors": "^1.1.2",
     "glob": "^5.0.13",
     "jshint": "^2.8.0",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-jasmine": "^0.3.6",
+    "karma-story-reporter": "^0.3.1",
     "node-watch": "^0.3.4",
     "uglify-js": "^2.4.23"
   }

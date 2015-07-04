@@ -6,6 +6,7 @@
   "scripts": {
     "pretest": "node run build",
     "test": "node run test && ./node_modules/.bin/karma start",
+    "prestart": "npm install",
     "start": "node run watch"
   },
   "repository": {

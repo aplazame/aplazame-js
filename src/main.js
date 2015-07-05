@@ -215,17 +215,23 @@
   // globalizing aplazame object
 
   if( document.querySelector('script[data-aplazame]') ) {
-    var initText = document.querySelector('script[data-aplazame]').getAttribute('data-aplazame');
+    var script = document.querySelector('script[data-aplazame]'),
+        initText = script.getAttribute('data-aplazame'),
+        envOptions = {};
     if( /\s/.test(initText) ) {
-      var envOptions = {};
       initText.split(',').forEach(function (part) {
         var keys = part.match(/^([^\:]+)\:(.*)/);
         envOptions[keys[1].trim()] = keys[2].trim();
       });
-      init(envOptions);
     } else {
-      init({ publicKey: initText });
+      if( script.getAttribute('data-version') ) {
+        envOptions.version = Number(script.getAttribute('data-version'));
+      }
+      if( script.getAttribute('data-sandbox') ) {
+        envOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
+      }
     }
+    init(envOptions);
   }
 
   root.aplazame = {

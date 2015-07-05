@@ -1,4 +1,4 @@
-Aplazame.js
+Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8dd982354e686ed/s/master "wercker status")](https://app.wercker.com/project/bykey/e3cdbafb5813b255e8dd982354e686ed)
 ===========
 
 ``` html

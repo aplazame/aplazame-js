@@ -165,7 +165,7 @@
       then: function (onResolve, onReject) {
         on.resolve.push(onResolve);
         if( onReject instanceof Function ) {
-          on.reject.push(onreject);
+          on.reject.push(onReject);
         }
       },
       error: function (onReject) {
@@ -285,6 +285,8 @@
           }, '*');
         }
       }) );
+    }, function () {
+      console.error('checkout server', options.host, 'should be running');
     });
 
   }

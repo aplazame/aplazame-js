@@ -24,6 +24,33 @@
 
   // utility functions
 
+  var listen = window.addEventListener ? function (element, eventName, listener) {
+    element.addEventListener(eventName, listener, false);
+  } : ( window.attachEvent && function (element, eventName, listener) {
+    element.attachEvent('on' + eventName, listener);
+  } );
+  if( !listen ) {
+    throw new Error('Your Browser does not support events');
+  }
+
+  function once (fn) {
+    var done;
+    return function () {
+      if( !done ) {
+        done = true;
+        return fn.apply(this, arguments);
+      }
+    }
+  }
+
+  function docReady (callback) {
+    if( document.readyState === 'complete' ) {
+      callback();
+    } else {
+      listen(window, 'load', callback);
+    }
+  }
+
   function replaceKeys (tmpl, keys) {
     return keys ? tmpl.replace(/\{([^\}]+)\}/g, function (match, key) {
       return keys[key];
@@ -64,8 +91,8 @@
 
   var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
   function parseContentType(contentType, text, xml) {
-    var matches = contentType.match(RE_contentType);
-    return ( matches[3] === 'json' ) ? JSON.parse(data) : ( matches[3] === 'xml' ? xml : text );
+    var matches = contentType && contentType.match(RE_contentType);
+    return matches && ( matches[3] === 'json' ? JSON.parse(data) : ( matches[3] === 'xml' ? xml : text ) );
   }
 
   function http (url, options) {
@@ -114,7 +141,7 @@
     request.onreadystatechange = function(){
       if( request.readyState === 'complete' || request.readyState === 4 ) {
         var response = {
-          data: parseContentType(contentType, text, xml),
+          data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
           headers: request.getHeaders,
           xhr: request
@@ -145,6 +172,8 @@
       }
     };
   }
+
+  window.http = http;
 
   function apiOptions (options) {
     options = options || {};
@@ -204,12 +233,50 @@
     // sandbox: true
   }
 
-  function checkout () {
-    var iframe = document.createElement('iframe');
-    iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
-    extend(iframe.style, iframeStyle);
-    iframe.frameBorder = '0';
-    document.body.appendChild(iframe);
+  function CheckoutOptions () {}
+  CheckoutOptions.prototype = {
+    host: 'http://checkout.aplazame.com/'
+  };
+
+  function checkout (options) {
+    options = extend(new CheckoutOptions(), options || {});
+
+    docReady(function () {
+      document.body.style.overflow = 'hidden';
+      var iframe = document.createElement('iframe');
+      iframe.src = options.host;
+      extend(iframe.style, iframeStyle);
+      iframe.frameBorder = '0';
+      document.body.appendChild(iframe);
+
+      listen(window, 'message', once(function (e) {
+        if( e.data === 'checkout:waiting' ) {
+          e.source.postMessage({
+            checkout: options
+          }, '*');
+        }
+      }) );
+    });
+
+    // http(options.host).then(function (response) {
+    //   console.log('iframeHtml', response);
+    //   var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, 'src=\"' + options.host);
+    //
+    //   var iframe = document.createElement('iframe');
+    //   iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
+    //   extend(iframe.style, iframeStyle);
+    //   iframe.frameBorder = '0';
+    //   document.body.appendChild(iframe);
+    //
+    //   listen(window, 'message', once(function (e) {
+    //     if( e.data === 'checkout:waiting' ) {
+    //       e.source.postMessage({
+    //         checkout: options
+    //       }, '*');
+    //     }
+    //   }) );
+    // });
+
   }
 
   // globalizing aplazame object

@@ -53,7 +53,7 @@ var colors = require('colors'),
 
       },
       test: function () {
-        cmd.jshint();
+        return cmd.jshint();
       },
       jshint: function (noExit) {
         var JSHINT = require('jshint').JSHINT,
@@ -86,6 +86,16 @@ var colors = require('colors'),
         }
 
         return !errorsLog;
+      },
+      demo: function () {
+        cmd.build();
+        require('nitro-server').start({
+          root: 'demo',
+          openInBrowser: true,
+          dirAlias: {
+            'repo': '.'
+          }
+        });
       }
     };
 

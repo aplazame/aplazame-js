@@ -8,7 +8,8 @@
         top: 0,
         left: 0,
         width: '100%',
-        height: '100%'
+        height: '100%',
+        background: 'transparent'
       },
       api = {
         host: 'https://api.aplazame.com/',
@@ -40,7 +41,7 @@
         done = true;
         return fn.apply(this, arguments);
       }
-    }
+    };
   }
 
   function docReady (callback) {
@@ -238,32 +239,20 @@
     host: 'http://checkout.aplazame.com/'
   };
 
+  function writeIframe (iframe, content) {
+    var iframeDoc = iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(content);
+    iframeDoc.close();
+  }
+
   function checkout (options) {
     options = extend(new CheckoutOptions(), options || {});
 
-    docReady(function () {
-      document.body.style.overflow = 'hidden';
-      var iframe = document.createElement('iframe');
-      iframe.src = options.host;
-      extend(iframe.style, iframeStyle);
-      iframe.frameBorder = '0';
-      document.body.appendChild(iframe);
-
-      listen(window, 'message', once(function (e) {
-        if( e.data === 'checkout:waiting' ) {
-          e.source.postMessage({
-            checkout: options
-          }, '*');
-        }
-      }) );
-    });
-
-    // http(options.host).then(function (response) {
-    //   console.log('iframeHtml', response);
-    //   var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, 'src=\"' + options.host);
-    //
+    // docReady(function () {
+    //   document.body.style.overflow = 'hidden';
     //   var iframe = document.createElement('iframe');
-    //   iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
+    //   iframe.src = options.host;
     //   extend(iframe.style, iframeStyle);
     //   iframe.frameBorder = '0';
     //   document.body.appendChild(iframe);
@@ -276,6 +265,27 @@
     //     }
     //   }) );
     // });
+
+    http(options.host).then(function (response) {
+      console.log('iframeHtml', response);
+      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, 'src=\"' + options.host);
+
+      var iframe = document.createElement('iframe');
+      // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
+      extend(iframe.style, iframeStyle);
+      iframe.frameBorder = '0';
+      document.body.appendChild(iframe);
+
+      writeIframe(iframe, iframeHtml);
+
+      listen(window, 'message', once(function (e) {
+        if( e.data === 'checkout:waiting' ) {
+          e.source.postMessage({
+            checkout: options
+          }, '*');
+        }
+      }) );
+    });
 
   }
 

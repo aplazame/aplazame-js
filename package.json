@@ -7,7 +7,7 @@
     "pretest": "node run build",
     "test": "node run jshint && ./node_modules/.bin/karma start",
     "prestart": "npm install",
-    "start": "node run watch"
+    "start": "node run demo"
   },
   "repository": {
     "type": "git",

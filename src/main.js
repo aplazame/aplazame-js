@@ -249,34 +249,17 @@
   function checkout (options) {
     options = extend(new CheckoutOptions(), options || {});
 
-    // docReady(function () {
-    //   document.body.style.overflow = 'hidden';
-    //   var iframe = document.createElement('iframe');
-    //   iframe.src = options.host;
-    //   extend(iframe.style, iframeStyle);
-    //   iframe.frameBorder = '0';
-    //   document.body.appendChild(iframe);
-    //
-    //   listen(window, 'message', once(function (e) {
-    //     if( e.data === 'checkout:waiting' ) {
-    //       e.source.postMessage({
-    //         checkout: options
-    //       }, '*');
-    //     }
-    //   }) );
-    // });
-
     http(options.host).then(function (response) {
-      console.log('iframeHtml', response);
+      document.body.style.overflow = 'hidden';
       var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + options.host);
 
       var iframe = document.createElement('iframe');
-      // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
       extend(iframe.style, iframeStyle);
+      // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
+      writeIframe(iframe, iframeHtml);
       iframe.frameBorder = '0';
       document.body.appendChild(iframe);
 
-      writeIframe(iframe, iframeHtml);
 
       listen(window, 'message', once(function (e) {
         if( e.data === 'checkout:waiting' ) {

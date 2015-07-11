@@ -268,7 +268,7 @@
 
     http(options.host).then(function (response) {
       console.log('iframeHtml', response);
-      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, 'src=\"' + options.host);
+      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + options.host);
 
       var iframe = document.createElement('iframe');
       // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);

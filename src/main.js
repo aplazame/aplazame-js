@@ -256,10 +256,9 @@
       var iframe = document.createElement('iframe');
       extend(iframe.style, iframeStyle);
       // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
-      writeIframe(iframe, iframeHtml);
       iframe.frameBorder = '0';
       document.body.appendChild(iframe);
-
+      writeIframe(iframe, iframeHtml);
 
       listen(window, 'message', once(function (e) {
         if( e.data === 'checkout:waiting' ) {

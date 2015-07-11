@@ -34,6 +34,13 @@ var colors = require('colors'),
 
         console.log('aplazame.js', 'updated'.green);
       },
+      live: function () {
+        cmd.watch();
+
+        var livereload = require('livereload'),
+            server = livereload.createServer({ port: 54321 });
+        server.watch(__dirname);
+      },
       watch: function () {
         var watch = require('node-watch');
 
@@ -89,13 +96,18 @@ var colors = require('colors'),
       },
       demo: function () {
         cmd.build();
-        require('nitro-server').start({
+        var server = require('nitro-server').start({
           root: 'demo',
           openInBrowser: true,
           dirAlias: {
             'repo': '.'
-          }
+          },
+          keepalive: false
         });
+
+        cmd.live();
+
+        server.close();
       }
     };
 

@@ -252,15 +252,18 @@
     http(options.host).then(function (response) {
       document.body.style.overflow = 'hidden';
       var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + options.host);
+      console.log('iframeHtml', iframeHtml);
 
       var iframe = document.createElement('iframe');
       extend(iframe.style, iframeStyle);
       // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
+      // iframe.src = options.host;
       iframe.frameBorder = '0';
       document.body.appendChild(iframe);
       writeIframe(iframe, iframeHtml);
 
       listen(window, 'message', once(function (e) {
+        console.log('message', e.data);
         if( e.data === 'checkout:waiting' ) {
           e.source.postMessage({
             checkout: options

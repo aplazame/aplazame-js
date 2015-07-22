@@ -25,6 +25,7 @@
   "devDependencies": {
     "colors": "^1.1.2",
     "glob": "^5.0.13",
+    "jasmine-core": "^2.3.4",
     "jshint": "^2.8.0",
     "karma": "^0.12.37",
     "karma-chrome-launcher": "^0.2.0",

@@ -248,7 +248,7 @@
       host += '/';
     }
 
-    http(host).then(function (response) {
+    http(host + 'iframe.html').then(function (response) {
       document.body.style.overflow = 'hidden';
       var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + host);
 
@@ -259,14 +259,20 @@
       document.body.appendChild(iframe);
       writeIframe(iframe, iframeHtml);
 
-      listen(window, 'message', once(function (e) {
-        console.log('message', e.data);
-        if( e.data === 'checkout:waiting' ) {
+      listen(window, 'message', function (e) {
+        if( !iframe ) {
+          return;
+        }
+
+        if( e.data === 'aplazame-checkout:waiting' ) {
           e.source.postMessage({
             checkout: options
           }, '*');
+        } else if( e.data === 'aplazame-checkout:close' ) {
+          document.body.removeChild(iframe);
+          iframe = null;
         }
-      }) );
+      });
     }, function () {
       console.error('checkout server', host, 'should be running');
     });

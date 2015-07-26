@@ -7,10 +7,22 @@ function htmlToJs (html) {
 }
 
 var colors = require('colors'),
+    // yaml = require('js-yaml'),
     fs = require('fs'),
     path = require('path'),
-    glob = require('glob'),
-    cwd = function () {
+    glob = require('glob');
+
+
+// if( !fs.existsSync('settings.yml') ) {
+//     if( !fs.existsSync('settings.default.yml') ) {
+//       console.error('missing settings files');
+//       process.exit(1);
+//     } else {
+//       fs.createReadStream('settings.default.yml').pipe(fs.createWriteStream('settings.yml'));
+//     }
+// }
+
+var cwd = function () {
       var paths = [process.cwd()];
       [].push.apply(paths, arguments);
       return path.join.apply(null, paths );
@@ -23,15 +35,12 @@ var colors = require('colors'),
         return fs.writeFileSync( typeof paths === 'string' ? paths : path.join(paths), text, { encoding: 'utf8' });
       }
     },
+    // settings = yaml.safeLoad( file.read('settings.yml') ),
     cmd = {
       build: function () {
-        var UglifyJS = require("uglify-js"),
-            aplazameMin = UglifyJS.minify("src/main.js").code,
-            iframeSrc = file.read('src/iframe.html');
-
-        aplazameMin = aplazameMin.replace('::iframeHtml::', htmlToJs(iframeSrc) );
-        file.write('aplazame.js', aplazameMin );
-
+        cmd.jshint();
+        
+        file.write('aplazame.js', require("uglify-js").minify('src/main.js').code );
         console.log('aplazame.js', 'updated'.green);
       },
       live: function () {

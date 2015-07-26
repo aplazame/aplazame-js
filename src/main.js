@@ -2,8 +2,7 @@
 (function (root) {
   'use strict';
 
-  var iframeHtml = '::iframeHtml::',
-      iframeStyle = {
+  var iframeStyle = {
         position: 'fixed',
         top: 0,
         left: 0,
@@ -234,11 +233,6 @@
     // sandbox: true
   }
 
-  function CheckoutOptions () {}
-  CheckoutOptions.prototype = {
-    host: 'http://checkout.aplazame.com/'
-  };
-
   function writeIframe (iframe, content) {
     var iframeDoc = iframe.contentWindow.document;
     iframeDoc.open();
@@ -247,17 +241,20 @@
   }
 
   function checkout (options) {
-    options = extend(new CheckoutOptions(), options || {});
+    options = options || {};
+    var host = options.host === 'location' ? location.origin : options.host;
 
-    http(options.host).then(function (response) {
+    if( !/\/$/.test(host) ) {
+      host += '/';
+    }
+
+    http(host).then(function (response) {
       document.body.style.overflow = 'hidden';
-      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + options.host);
-      console.log('iframeHtml', iframeHtml);
+      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + host);
 
       var iframe = document.createElement('iframe');
       extend(iframe.style, iframeStyle);
-      // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
-      // iframe.src = options.host;
+
       iframe.frameBorder = '0';
       document.body.appendChild(iframe);
       writeIframe(iframe, iframeHtml);
@@ -271,7 +268,7 @@
         }
       }) );
     }, function () {
-      console.error('checkout server', options.host, 'should be running');
+      console.error('checkout server', host, 'should be running');
     });
 
   }
@@ -282,7 +279,7 @@
     var script = document.querySelector('script[data-aplazame]'),
         initText = script.getAttribute('data-aplazame'),
         envOptions = {};
-    if( /\s/.test(initText) ) {
+    if( /\:/.test(initText) ) {
       initText.split(',').forEach(function (part) {
         var keys = part.match(/^([^\:]+)\:(.*)/);
         envOptions[keys[1].trim()] = keys[2].trim();

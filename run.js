@@ -7,20 +7,9 @@ function htmlToJs (html) {
 }
 
 var colors = require('colors'),
-    // yaml = require('js-yaml'),
     fs = require('fs'),
     path = require('path'),
     glob = require('glob');
-
-
-// if( !fs.existsSync('settings.yml') ) {
-//     if( !fs.existsSync('settings.default.yml') ) {
-//       console.error('missing settings files');
-//       process.exit(1);
-//     } else {
-//       fs.createReadStream('settings.default.yml').pipe(fs.createWriteStream('settings.yml'));
-//     }
-// }
 
 var cwd = function () {
       var paths = [process.cwd()];
@@ -39,9 +28,9 @@ var cwd = function () {
     cmd = {
       build: function () {
         cmd.jshint();
-        
-        file.write('aplazame.js', require("uglify-js").minify('src/main.js').code );
-        console.log('aplazame.js', 'updated'.green);
+
+        file.write('aplazame.min.js', require("uglify-js").minify('aplazame.js').code );
+        console.log('aplazame.min.js', 'updated'.green);
       },
       live: function () {
         cmd.watch();

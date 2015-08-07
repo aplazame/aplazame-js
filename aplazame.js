@@ -1,1 +1,336 @@
-!function(e){"use strict";function t(){}function r(e,t){return t?e.replace(/\{([^\}]+)\}/g,function(e,r){return t[r]}):function(t){return r(e,t)}}function n(){for(var e,t=x.call(arguments),r=x.call(arguments);r;){for(e in r)t[e]=r[e];r=x.call(arguments)}return t}function a(e){var t=e[0].toUpperCase()+e.substr(1);return t.replace(/([a-z])([A-Z])/,function(e,t,r){return t+"-"+r})}function o(e){var t=e[0].toLowerCase()+e.substr(1);return t.replace(/([a-z])-([A-Z])/,function(e,t,r){return t+r})}function s(e,t,r){var n=e&&e.match(y);return n&&("json"===n[3]?JSON.parse(data):"xml"===n[3]?r:t)}function c(e,t){t=t||{},t.headers=t.headers||{},t.url=e;var r=null,n={resolve:[],reject:[]};try{r=new XMLHttpRequest}catch(c){try{r=new ActiveXObject("Msxml2.XMLHTTP")}catch(i){r=new ActiveXObject("Microsoft.XMLHTTP")}}if(null===r)throw"Browser does not support HTTP Request";r.open((t.method||"get").toUpperCase(),e);for(var u in t.headers)r.setRequestHeader(a(u),t.headers[u]);r.resolve=function(e){n.resolve.forEach(function(t){t(e)})},r.reject=function(e){n.reject.forEach(function(t){t(e)})};var d;return r.getHeaders=function(){return d||(d=r.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g,function(e,t,n){r.headers[o(t)]=n.trim()})),d},r.onreadystatechange=function(){if("complete"===r.readyState||4===r.readyState){var e={data:s(r.getResponseHeader("content-type"),r.responseText,r.responseXML),status:r.status,headers:r.getHeaders,xhr:r};if(r.status>=200&&r.status<300)r.resolve(e);else{if(!(r.status>=400))throw new Error("Unexpected status code "+r.status);r.reject(e)}}},r.options=t,r.send(t.data),{then:function(e,t){n.resolve.push(e),t instanceof Function&&n.reject.push(t)},error:function(e){n.reject.push(e)}}}function i(e){if(e=e||{},e.version=e.version||b.version,e.sandbox=(void 0===e.sandbox?b.sandbox:e.sandbox)?".sandbox":"",e.paramsStr="",e.params)for(var t in e.params)e.paramsStr+=(e.paramsStr?"&":"?")+t+"="+encodeURIComponent(e.params[t]);return e}function u(e){if(!e)throw new Error("aplazame.init({options}) requires options");if(!e.publicKey)throw new Error("aplazame.init({options}) requires at least the publicKey");n(b,e)}function d(){return b}function p(e){return e=i(e),c(w.host+e.paramsStr,{headers:{accept:r(w.accept,e)}})}function f(e){return e=i(e),c(w.host+e.paramsStr,{method:"post",headers:{accept:r(w.accept,e)}})}function l(e){}function h(e,t){var r=e.contentWindow.document;r.open(),r.write(t),r.close()}function m(e){e=e||{};var t="location"===e.host?location.origin:e.host;/\/$/.test(t)||(t+="/"),c(t+"iframe.html").then(function(r){document.body.style.overflow="hidden";var a=r.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g,'$1="'+t),o=document.createElement("iframe");n(o.style,v),o.frameBorder="0",document.body.appendChild(o),h(o,a),g(window,"message",function(t){o&&("aplazame-checkout:waiting"===t.data?t.source.postMessage({checkout:e},"*"):"aplazame-checkout:close"===t.data&&(document.body.removeChild(o),o=null))})},function(){console.error("checkout server",t,"should be running")})}var v={position:"fixed",top:0,left:0,width:"100%",height:"100%",background:"transparent"},w={host:"https://api.aplazame.com/",accept:"application/vnd.aplazame{sandbox}-v{version}+json"};t.prototype={version:1,sandbox:!1};var b=new t,g=window.addEventListener?function(e,t,r){e.addEventListener(t,r,!1)}:window.attachEvent&&function(e,t,r){e.attachEvent("on"+t,r)};if(!g)throw new Error("Your Browser does not support events");var x=[].shift,y=/([^\/]+)\/([^+]+\+)?(.*)/;if(window.http=c,document.querySelector("script[data-aplazame]")){var E=document.querySelector("script[data-aplazame]"),z=E.getAttribute("data-aplazame"),j={};/\:/.test(z)?z.split(",").forEach(function(e){var t=e.match(/^([^\:]+)\:(.*)/);j[t[1].trim()]=t[2].trim()}):(E.getAttribute("data-version")&&(j.version=Number(E.getAttribute("data-version"))),E.getAttribute("data-sandbox")&&(j.sandbox="true"===E.getAttribute("data-sandbox"))),u(j)}e.aplazame={init:u,getEnv:d,checkout:m,button:l,apiGet:p,apiPost:f}}(this);
+
+(function (root) {
+  'use strict';
+
+  var iframeStyle = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'transparent'
+      },
+      api = {
+        host: 'https://api.aplazame.com/',
+        accept: 'application/vnd.aplazame{{sandbox}}-v{{version}}+json'
+      };
+
+  function Env () {}
+    Env.prototype = {
+      version: 1,
+      sandbox: false
+    };
+  var env = new Env();
+
+  // utility functions
+
+  var listen = window.addEventListener ? function (element, eventName, listener) {
+    element.addEventListener(eventName, listener, false);
+  } : ( window.attachEvent && function (element, eventName, listener) {
+    element.attachEvent('on' + eventName, listener);
+  } );
+  if( !listen ) {
+    throw new Error('Your Browser does not support events');
+  }
+
+  function once (fn) {
+    var done;
+    return function () {
+      if( !done ) {
+        done = true;
+        return fn.apply(this, arguments);
+      }
+    };
+  }
+
+  function docReady (callback) {
+    if( document.readyState === 'complete' ) {
+      callback();
+    } else {
+      listen(window, 'load', callback);
+    }
+  }
+
+  function replaceKeys (tmpl, keys) {
+    return keys ? tmpl.replace(/\{\{([^\}]+)\}\}/g, function (match, key) {
+      return keys[key];
+    }) : function (ks) {
+      return replaceKeys(tmpl, ks);
+    };
+  }
+
+  var arrayShift = [].shift;
+  function extend () {
+      var dest = arrayShift.call(arguments),
+        src = arrayShift.call(arguments),
+        key;
+
+    while( src ) {
+      for( key in src) {
+        dest[key] = src[key];
+      }
+      src = arrayShift.call(arguments);
+    }
+
+    return dest;
+  }
+
+  function joinPath () {
+    console.debug('joinPath', arguments);
+
+    return [].reduce.call(arguments, function (prev, path, index, list) {
+
+      path = index ? path.replace(/^\//, '') : path;
+      path = ( index === (list.length - 1) ) ? path : path.replace(/\/$/, '');
+
+      return prev + ( index ? '/' : '' ) + path;
+
+    }, '');
+  }
+
+  function headerToTitleSlug(text) {
+    var key = text[0].toUpperCase() + text.substr(1);
+    return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+        return lower + '-' + upper;
+    });
+  }
+
+  function headerToCamelCase(text) {
+    var key = text[0].toLowerCase() + text.substr(1);
+    return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+      return lower + upper;
+    });
+  }
+
+  var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
+  function parseContentType(contentType, text, xml) {
+    var matches = contentType && contentType.match(RE_contentType);
+    return matches && ( matches[3] === 'json' ? JSON.parse(data) : ( matches[3] === 'xml' ? xml : text ) );
+  }
+
+  function http (url, options) {
+    options = options || {};
+    options.headers = options.headers || {};
+    options.url = url;
+
+    var request = null,
+        on = { resolve: [], reject: [] };
+
+    try { // Firefox, Opera 8.0+, Safari
+        request = new XMLHttpRequest();
+    } catch (e) { // Internet Explorer
+        try { request = new ActiveXObject("Msxml2.XMLHTTP"); }
+        catch (er) { request = new ActiveXObject("Microsoft.XMLHTTP"); }
+    }
+    if( request === null ) { throw "Browser does not support HTTP Request"; }
+
+    request.open( ( options.method || 'get').toUpperCase(), url );
+
+    for( var key in options.headers ) {
+        request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
+    }
+
+    request.resolve = function ( response ) {
+      on.resolve.forEach(function (handler) {
+        handler(response);
+      });
+    };
+    request.reject = function ( response ) {
+      on.reject.forEach(function (handler) {
+        handler(response);
+      });
+    };
+
+    var headersCache;
+    request.getHeaders = function () {
+      if( !headersCache ) {
+        headersCache = request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
+            request.headers[headerToCamelCase(key)] = value.trim();
+        });
+      }
+      return headersCache;
+    };
+
+    request.onreadystatechange = function(){
+      if( request.readyState === 'complete' || request.readyState === 4 ) {
+        var response = {
+          data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
+          status: request.status,
+          headers: request.getHeaders,
+          xhr: request
+        };
+        if( request.status >= 200 && request.status < 300 ) {
+          request.resolve( response );
+        } else if( request.status >= 400 ) {
+          request.reject( response );
+        } else {
+          throw new Error('Unexpected status code ' + request.status);
+        }
+      }
+    };
+
+    request.options = options;
+
+    request.send( options.data );
+
+    return {
+      then: function (onResolve, onReject) {
+        on.resolve.push(onResolve);
+        if( onReject instanceof Function ) {
+          on.reject.push(onReject);
+        }
+      },
+      error: function (onReject) {
+        on.reject.push(onReject);
+      }
+    };
+  }
+
+  window.http = http;
+
+  function apiOptions (options) {
+    options = options || {};
+    options.version = options.version || env.version;
+    options.sandbox = ( options.sandbox === undefined ? env.sandbox : options.sandbox ) ? '.sandbox' : '';
+    options.paramsStr = '';
+    if( options.params ) {
+      for( var key in options.params ) {
+        options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
+      }
+    }
+    return options;
+  }
+
+  // aplazame methods
+
+  function init (options) {
+    if( !options ) {
+      throw new Error('aplazame.init({options}) requires options');
+    }
+    if( !options.publicKey ) {
+      throw new Error('aplazame.init({options}) requires at least the publicKey');
+    }
+    extend(env, options);
+  }
+
+  function getEnv () {
+    return env;
+  }
+
+  function apiGet (path, options) {
+    options = apiOptions(options);
+    var url = path ? joinPath(api.host, path) : api.host;
+
+    return http( url + options.paramsStr, {
+      headers: {
+        accept: replaceKeys(api.accept, options)
+      }
+    });
+  }
+
+  function apiPost (path, options) {
+    options = apiOptions(options);
+    var url = path ? joinPath(api.host, path) : api.host;
+
+    return http( url + options.paramsStr, {
+      method: 'post',
+      headers: {
+        accept: replaceKeys(api.accept, options)
+      }
+    });
+  }
+
+  function button (options) {
+    // options:
+    // ------------------
+    // id: "CONTAINER_ID",
+    // token: "<ACCESS_TOKEN>",
+    // amount: 12050,
+    // currency: "EUR",
+    // sandbox: true
+
+  }
+
+  function writeIframe (iframe, content) {
+    var iframeDoc = iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(content);
+    iframeDoc.close();
+  }
+
+  function checkout (options) {
+    options = options || {};
+    var host = options.host === 'location' ? location.origin : options.host;
+
+    if( !/\/$/.test(host) ) {
+      host += '/';
+    }
+
+    http(host + 'iframe.html').then(function (response) {
+      document.body.style.overflow = 'hidden';
+      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + host);
+
+      var iframe = document.createElement('iframe');
+      extend(iframe.style, iframeStyle);
+
+      iframe.frameBorder = '0';
+      document.body.appendChild(iframe);
+      writeIframe(iframe, iframeHtml);
+
+      listen(window, 'message', function (e) {
+        if( !iframe ) {
+          return;
+        }
+
+        if( e.data === 'aplazame-checkout:waiting' ) {
+          e.source.postMessage({
+            checkout: options
+          }, '*');
+        } else if( e.data === 'aplazame-checkout:close' ) {
+          document.body.removeChild(iframe);
+          iframe = null;
+        }
+      });
+    }, function () {
+      console.error('checkout server', host, 'should be running');
+    });
+
+  }
+
+  // globalizing aplazame object
+
+  if( document.querySelector('script[data-aplazame]') ) {
+    var script = document.querySelector('script[data-aplazame]'),
+        initText = script.getAttribute('data-aplazame'),
+        envOptions = {};
+
+    if( /\:/.test(initText) ) {
+      initText.split(',').forEach(function (part) {
+        var keys = part.match(/^([^\:]+)\:(.*)/);
+        envOptions[keys[1].trim()] = keys[2].trim();
+      });
+    } else {
+      if( initText ) {
+        envOptions.publicKey = initText;
+      }
+
+      if( script.getAttribute('data-version') ) {
+        envOptions.version = Number(script.getAttribute('data-version'));
+      }
+      if( script.getAttribute('data-sandbox') ) {
+        envOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
+      }
+    }
+    init(envOptions);
+  }
+
+  root.aplazame = {
+    init: init,
+    getEnv: getEnv,
+    checkout: checkout,
+    button: button,
+    apiGet: apiGet,
+    apiPost: apiPost
+  };
+
+})(this);

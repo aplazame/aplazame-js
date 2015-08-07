@@ -26,12 +26,12 @@ describe('apiGet', function () {
   });
 
   it('should accept params', function (done) {
-    aplazame.apiGet({
+    aplazame.apiGet('resource', {
       params: {
         foo: 'bar'
       }
     }).then(function (request) {
-      expect(request.options.url).toBe('https://api.aplazame.com/?foo=bar');
+      expect(request.options.url).toBe('https://api.aplazame.com/resource?foo=bar');
       done();
     });
   });

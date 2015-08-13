@@ -277,18 +277,42 @@
       document.body.appendChild(iframe);
       writeIframe(iframe, iframeHtml);
 
+      if( !options.merchant ) {
+        throw new Error('missing merchant parameters');
+      }
+
+      if( !options.merchant.public_api_key ) {
+        if( env.publicKey ) {
+          options.merchant.public_api_key = env.publicKey;
+        } else {
+          throw new Error('missing public key');
+        }
+      }
+
       listen(window, 'message', function (e) {
         if( !iframe ) {
           return;
         }
 
-        if( e.data === 'aplazame-checkout:waiting' ) {
+        var message = e.data;
+
+        if( message.aplazame === 'checkout' && message.require === 'merchant' ) {
           e.source.postMessage({
             checkout: options
           }, '*');
-        } else if( e.data === 'aplazame-checkout:close' ) {
+        } else if( message.aplazame === 'checkout' && message.result ) {
           document.body.removeChild(iframe);
           iframe = null;
+          console.debug('message.aplazame', message.result);
+
+          switch( message.result ) {
+            case 'success':
+              location.replace(options.merchant.success_url);
+              break;
+            case 'cancel':
+              location.replace(options.merchant.cancel_url);
+              break;
+          }
         }
       });
     }, function () {

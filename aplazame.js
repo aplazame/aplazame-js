@@ -12,8 +12,31 @@
       },
       api = {
         host: 'https://api.aplazame.com/',
-        accept: 'application/vnd.aplazame{{sandbox}}-v{{version}}+json'
+        accept: 'application/vnd.aplazame{{sandbox}}.v{{version}}+json'
       };
+
+  function _isType (type) {
+      return function (o) {
+          return (typeof o === type);
+      };
+  }
+
+  function _instanceOf (_constructor) {
+      return function (o) {
+          return ( o instanceof _constructor );
+      };
+  }
+
+	var _isObject = _isType('object'),
+			_isFunction = _isType('function'),
+			_isString = _isType('string'),
+			_isNumber = _isType('number'),
+			_isArray = Array.isArray || _instanceOf(Array),
+			_isDate = _instanceOf(Date),
+			_isRegExp = _instanceOf(RegExp),
+			_isElement = function(o) {
+		    return o && o.nodeType === 1;
+		  };
 
   function Env () {}
     Env.prototype = {
@@ -75,6 +98,39 @@
     return dest;
   }
 
+  function merge () {
+      var dest = arrayShift.call(arguments),
+          src = arrayShift.call(arguments),
+          key;
+
+      while( src ) {
+
+          if( typeof dest !== typeof src ) {
+              dest = _isArray(src) ? [] : ( _isObject(src) ? {} : src );
+          }
+
+          if( _isObject(src) ) {
+
+              for( key in src ) {
+                  if( src[key] !== undefined ) {
+                      if( typeof dest[key] !== typeof src[key] ) {
+                          dest[key] = merge(undefined, src[key]);
+                      } else if( _isArray(dest[key]) ) {
+                          [].push.apply(dest[key], src[key]);
+                      } else if( _isObject(dest[key]) ) {
+                          dest[key] = merge(dest[key], src[key]);
+                      } else {
+                          dest[key] = src[key];
+                      }
+                  }
+              }
+          }
+          src = arrayShift.call(arguments);
+      }
+
+      return dest;
+  }
+
   function joinPath () {
     console.debug('joinPath', arguments);
 
@@ -109,6 +165,8 @@
   }
 
   function http (url, options) {
+    console.debug('http', url, options);
+
     options = options || {};
     options.headers = options.headers || {};
     options.url = url;
@@ -125,6 +183,10 @@
     if( request === null ) { throw "Browser does not support HTTP Request"; }
 
     request.open( ( options.method || 'get').toUpperCase(), url );
+
+    if( options.withCredentials ) {
+      request.withCredentials = true;
+    }
 
     for( var key in options.headers ) {
         request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
@@ -189,7 +251,12 @@
   window.http = http;
 
   function apiOptions (options) {
-    options = options || {};
+    options = merge({}, {
+      headers: {
+        authorization: 'Bearer ' + env.publicKey
+      }
+    }, options || {});
+
     options.version = options.version || env.version;
     options.sandbox = ( options.sandbox === undefined ? env.sandbox : options.sandbox ) ? '.sandbox' : '';
     options.paramsStr = '';
@@ -198,6 +265,8 @@
         options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
       }
     }
+    console.log('apiOptions', options);
+
     return options;
   }
 
@@ -211,6 +280,8 @@
       throw new Error('aplazame.init({options}) requires at least the publicKey');
     }
     extend(env, options);
+
+    console.debug('init', options);
   }
 
   function getEnv () {
@@ -221,26 +292,50 @@
     options = apiOptions(options);
     var url = path ? joinPath(api.host, path) : api.host;
 
-    return http( url + options.paramsStr, {
+    return http( url + options.paramsStr, merge(options, {
       headers: {
         accept: replaceKeys(api.accept, options)
       }
-    });
+    }) );
   }
 
-  function apiPost (path, options) {
+  function apiPost (path, data, options) {
     options = apiOptions(options);
     var url = path ? joinPath(api.host, path) : api.host;
 
-    return http( url + options.paramsStr, {
+    return http( url + options.paramsStr, merge(options, { data: data }, {
       method: 'post',
       headers: {
         accept: replaceKeys(api.accept, options)
       }
-    });
+    }) );
   }
 
   function button (options) {
+
+    if( !options ) {
+      throw new Error('aplazame.button requires parameters');
+    }
+
+    var elements = [document.querySelector(options.button)];
+
+    if( options.description ) {
+      elements.concat( [].slice.call( document.querySelectorAll(options.description) ) );
+    }
+
+    elements.forEach(function (el) {
+      el.__display = el.style.display;
+      el.style.display = 'none';
+    });
+
+    var data = {
+      amount: options.amount,
+      currency: options.currency || 'EUR'
+    };
+
+    http.apiPost('checkout/button', data);
+
+
     // options:
     // ------------------
     // id: "CONTAINER_ID",
@@ -248,7 +343,6 @@
     // amount: 12050,
     // currency: "EUR",
     // sandbox: true
-
   }
 
   function writeIframe (iframe, content) {
@@ -358,3 +452,20 @@
   };
 
 })(this);
+
+(function () {
+
+  var btn = document.querySelector('[data-aplazame-payment]');
+
+  if( btn ) {
+    var btnParams = {
+      button: '[data-aplazame-payment]',
+      description: '[data-aplazame-payment-info]',
+      publicKey: btn.getAttribute('data-aplazame-payment'),
+      amount: btn.getAttribute('data-amount'),
+      currency: btn.getAttribute('data-currency'),
+      sandbox: ( btn.getAttribute('data-sandbox') || 'false' ) === 'true'
+    };
+  }
+
+})();

@@ -11,6 +11,8 @@ describe('apiGet', function () {
     });
   };
 
+  aplazame.init({ publicKey: 's7p3rs3cr3tp7bl1ck3y' });
+
   it('should use host: https://api.aplazame.com/', function (done) {
     aplazame.apiGet().then(function (request) {
       expect(request.options.url).toBe('https://api.aplazame.com/');
@@ -18,9 +20,9 @@ describe('apiGet', function () {
     });
   });
 
-  it('should send default accept header: application/vnd.aplazame-v1+json', function (done) {
+  it('should send default accept header: application/vnd.aplazame.v1+json', function (done) {
     aplazame.apiGet().then(function (request) {
-      expect(request.options.headers.accept).toBe('application/vnd.aplazame-v1+json');
+      expect(request.options.headers.accept).toBe('application/vnd.aplazame.v1+json');
       done();
     });
   });

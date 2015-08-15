@@ -11,7 +11,7 @@
         background: 'transparent'
       },
       api = {
-        host: 'https://api.dev.aplazame.com/',
+        host: 'https://api.aplazame.com/',
         accept: 'application/vnd.aplazame{{sandbox}}.v{{version}}+json'
       };
 

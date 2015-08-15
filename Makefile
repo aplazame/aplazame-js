@@ -8,6 +8,9 @@ whoami = $(shell whoami)
 install.npm:
 	@npm install
 
+demo.less:
+	@$(npmdir)/lessc demo/demo.less demo/demo.css
+
 dev: test
 	@npm start
 

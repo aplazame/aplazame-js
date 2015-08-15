@@ -11,7 +11,7 @@
         background: 'transparent'
       },
       api = {
-        host: 'https://api.aplazame.com/',
+        host: 'https://api.dev.aplazame.com/',
         accept: 'application/vnd.aplazame{{sandbox}}.v{{version}}+json'
       };
 
@@ -161,7 +161,7 @@
   var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
   function parseContentType(contentType, text, xml) {
     var matches = contentType && contentType.match(RE_contentType);
-    return matches && ( matches[3] === 'json' ? JSON.parse(data) : ( matches[3] === 'xml' ? xml : text ) );
+    return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
   }
 
   function http (url, options) {
@@ -206,8 +206,9 @@
     var headersCache;
     request.getHeaders = function () {
       if( !headersCache ) {
-        headersCache = request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
-            request.headers[headerToCamelCase(key)] = value.trim();
+        headersCache = {};
+        request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
+            headersCache[headerToCamelCase(key)] = value.trim();
         });
       }
       return headersCache;
@@ -251,11 +252,18 @@
   window.http = http;
 
   function apiOptions (options) {
+    options = options || {};
+    var publicKey = options.publicKey || env.publicKey;
+
+    if( !publicKey ) {
+      throw new Error('public key needs to be specified');
+    }
+
     options = merge({}, {
       headers: {
-        authorization: 'Bearer ' + env.publicKey
+        authorization: 'Bearer ' + publicKey
       }
-    }, options || {});
+    }, options);
 
     options.version = options.version || env.version;
     options.sandbox = ( options.sandbox === undefined ? env.sandbox : options.sandbox ) ? '.sandbox' : '';
@@ -267,7 +275,12 @@
     }
     console.log('apiOptions', options);
 
-    return options;
+    return merge(options, {
+      headers: {
+        accept: replaceKeys(api.accept, options)
+        // host: 'api.dev.aplazame.com'
+      }
+    });
   }
 
   // aplazame methods
@@ -292,23 +305,14 @@
     options = apiOptions(options);
     var url = path ? joinPath(api.host, path) : api.host;
 
-    return http( url + options.paramsStr, merge(options, {
-      headers: {
-        accept: replaceKeys(api.accept, options)
-      }
-    }) );
+    return http( url + options.paramsStr, options );
   }
 
   function apiPost (path, data, options) {
     options = apiOptions(options);
     var url = path ? joinPath(api.host, path) : api.host;
 
-    return http( url + options.paramsStr, merge(options, { data: data }, {
-      method: 'post',
-      headers: {
-        accept: replaceKeys(api.accept, options)
-      }
-    }) );
+    return http( url + options.paramsStr, merge(options, { method: 'post', data: data }) );
   }
 
   function button (options) {
@@ -320,7 +324,7 @@
     var elements = [document.querySelector(options.button)];
 
     if( options.description ) {
-      elements.concat( [].slice.call( document.querySelectorAll(options.description) ) );
+      [].push.apply( elements, document.querySelectorAll(options.description) );
     }
 
     elements.forEach(function (el) {
@@ -328,21 +332,17 @@
       el.style.display = 'none';
     });
 
-    var data = {
+    var params = {
       amount: options.amount,
       currency: options.currency || 'EUR'
     };
 
-    http.apiPost('checkout/button', data);
-
-
-    // options:
-    // ------------------
-    // id: "CONTAINER_ID",
-    // token: "<ACCESS_TOKEN>",
-    // amount: 12050,
-    // currency: "EUR",
-    // sandbox: true
+    apiGet('checkout/button', { params: params })
+      .then(function () {
+        elements.forEach(function (el) {
+          el.style.display = el.__display;
+        });
+      });
   }
 
   function writeIframe (iframe, content) {
@@ -455,17 +455,21 @@
 
 (function () {
 
-  var btn = document.querySelector('[data-aplazame-payment]');
+  var btn = document.querySelector('[data-aplazame-button]');
 
   if( btn ) {
     var btnParams = {
-      button: '[data-aplazame-payment]',
-      description: '[data-aplazame-payment-info]',
-      publicKey: btn.getAttribute('data-aplazame-payment'),
+      button: '[data-aplazame-button]',
+      description: '[data-aplazame-button-info]',
+      publicKey: btn.getAttribute('data-aplazame-button'),
       amount: btn.getAttribute('data-amount'),
-      currency: btn.getAttribute('data-currency'),
-      sandbox: ( btn.getAttribute('data-sandbox') || 'false' ) === 'true'
+      currency: btn.getAttribute('data-currency') || undefined,
+      sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined
     };
+
+    aplazame.button(btnParams);
+
+    console.debug('button found', btnParams);
   }
 
 })();

@@ -94,18 +94,24 @@ var cwd = function () {
       },
       demo: function () {
         cmd.build();
-        var server = require('nitro-server').start({
-          root: 'demo',
-          openInBrowser: true,
-          dirAlias: {
-            'repo': '.'
-          },
-          keepalive: false
-        });
 
-        cmd.live();
+        require('less').render( file.read('demo/demo.less'), function (e, output) {
+             file.write('demo/demo.css', output.css );
+             console.log('demo/demo.css', 'updated'.green);
 
-        server.close();
+             var server = require('nitro-server').start({
+               root: 'demo',
+               openInBrowser: true,
+               dirAlias: {
+                 'repo': '.'
+               },
+               keepalive: false
+             });
+
+             cmd.live();
+
+             server.close();
+          });
       }
     };
 

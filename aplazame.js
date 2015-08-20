@@ -421,7 +421,7 @@
 
   if( aplazameScript ) {
     var href = aplazameScript.src.split('?'),
-        sandboxMatch = href[1].match(/sandbox\=([^&]*)/);
+        sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
 
     if( sandboxMatch ) {
       init({ sandbox: sandboxMatch[1] === 'true' });

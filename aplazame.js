@@ -289,9 +289,9 @@
     if( !options ) {
       throw new Error('aplazame.init({options}) requires options');
     }
-    if( !options.publicKey ) {
-      throw new Error('aplazame.init({options}) requires at least the publicKey');
-    }
+    // if( !options.publicKey ) {
+    //   throw new Error('aplazame.init({options}) requires at least the publicKey');
+    // }
     extend(env, options);
 
     console.debug('init', options);
@@ -416,6 +416,17 @@
   }
 
   // globalizing aplazame object
+
+  var aplazameScript = document.querySelector('script[src*="aplazame.js"]');
+
+  if( aplazameScript ) {
+    var href = aplazameScript.src.split('?'),
+        sandboxMatch = href[1].match(/sandbox\=([^&]*)/);
+
+    if( sandboxMatch ) {
+      init({ sandbox: sandboxMatch[1] === 'true' });
+    }
+  }
 
   if( document.querySelector('script[data-aplazame]') ) {
     var script = document.querySelector('script[data-aplazame]'),

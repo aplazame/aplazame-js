@@ -5,6 +5,9 @@ whoami = $(shell whoami)
 
 # TASKS
 
+demo:
+	@node run demo
+
 install.npm:
 	@npm install
 

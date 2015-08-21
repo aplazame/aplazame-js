@@ -415,7 +415,44 @@
 
   }
 
-  // globalizing aplazame object
+  function simulator (amount, _options, callback) {
+    if( _isFunction(_options) ) {
+      callback = _options;
+      _options = {};
+    } else {
+      _options = _options || {};
+    }
+    var options = {
+      params: {
+        amount: amount
+      }
+    };
+    if( _options.payday ) {
+      options.params.payday = _options.payday;
+    }
+    if( _options.publicKey ) {
+      options.publicKey = _options.publicKey;
+    }
+    aplazame.apiGet('instalment-plan-simulator', options ).then(function (response) {
+      if( _isFunction(callback) ) {
+        callback(response.data.choices[0].instalments);
+      }
+    });
+  }
+
+  root.aplazame = {
+    init: init,
+    getEnv: getEnv,
+    checkout: checkout,
+    button: button,
+    apiGet: apiGet,
+    apiPost: apiPost,
+    simulator: simulator
+  };
+
+})(this);
+
+(function () {
 
   var aplazameScript = document.querySelector('script[src*="aplazame.js"]');
 
@@ -424,7 +461,7 @@
         sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
 
     if( sandboxMatch ) {
-      init({ sandbox: sandboxMatch[1] === 'true' });
+      aplazame.init({ sandbox: sandboxMatch[1] === 'true' });
     }
   }
 
@@ -450,19 +487,10 @@
         envOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
       }
     }
-    init(envOptions);
+    aplazame.init(envOptions);
   }
 
-  root.aplazame = {
-    init: init,
-    getEnv: getEnv,
-    checkout: checkout,
-    button: button,
-    apiGet: apiGet,
-    apiPost: apiPost
-  };
-
-})(this);
+})();
 
 (function () {
 

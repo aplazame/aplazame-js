@@ -1,5 +1,5 @@
 
-(function (root) {
+(function (root, http, _) {
   'use strict';
 
   var iframeStyle = {
@@ -12,137 +12,211 @@
       },
       api = {
         host: 'https://api.aplazame.com/',
-        accept: 'application/vnd.aplazame{{sandbox}}.v{{version}}+json'
-      };
+        version: 1,
+        sandbox: false
+      },
+      acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
+      env = {};
 
-  function _isType (type) {
-      return function (o) {
-          return (typeof o === type);
-      };
-  }
+  function apiOptions (options) {
+    options = options || {};
+    var publicKey = options.publicKey || env.publicKey;
 
-  function _instanceOf (_constructor) {
-      return function (o) {
-          return ( o instanceof _constructor );
-      };
-  }
+    if( !publicKey ) {
+      throw new Error('public key needs to be specified');
+    }
 
-	var _isObject = _isType('object'),
-			_isFunction = _isType('function'),
-			_isString = _isType('string'),
-			_isNumber = _isType('number'),
-			_isArray = Array.isArray || _instanceOf(Array),
-			_isDate = _instanceOf(Date),
-			_isRegExp = _instanceOf(RegExp),
-			_isElement = function(o) {
-		    return o && o.nodeType === 1;
-		  };
-
-  function Env () {}
-    Env.prototype = {
-      version: 1,
-      sandbox: false
-    };
-  var env = new Env();
-
-  // utility functions
-
-  var listen = window.addEventListener ? function (element, eventName, listener) {
-    element.addEventListener(eventName, listener, false);
-  } : ( window.attachEvent && function (element, eventName, listener) {
-    element.attachEvent('on' + eventName, listener);
-  } );
-  if( !listen ) {
-    throw new Error('Your Browser does not support events');
-  }
-
-  function once (fn) {
-    var done;
-    return function () {
-      if( !done ) {
-        done = true;
-        return fn.apply(this, arguments);
+    options = _.merge({}, {
+      headers: {
+        authorization: 'Bearer ' + publicKey
       }
-    };
+    }, options);
+
+    options.version = options.version || api.version;
+    options.sandbox = ( options.sandbox === undefined ? api.sandbox : options.sandbox ) ? '.sandbox' : '';
+    options.paramsStr = '';
+    if( options.params ) {
+      for( var key in options.params ) {
+        options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
+      }
+    }
+    console.log('apiOptions', options);
+
+    return _.merge(options, {
+      headers: {
+        accept: _.replaceKeys(acceptTmpl, options)
+      }
+    });
   }
 
-  function docReady (callback) {
-    if( document.readyState === 'complete' ) {
-      callback();
+  // aplazame methods
+
+  function init (initEnv, initApi) {
+    // if( !options ) {
+    //   throw new Error('aplazame.init({options}) requires options');
+    // }
+    // if( !options.publicKey ) {
+    //   throw new Error('aplazame.init({options}) requires at least the publicKey');
+    // }
+    _.extend(api, initApi);
+    _.extend(env, initEnv);
+
+    console.debug('init', initEnv, initApi);
+  }
+
+  function apiGet (path, options) {
+    options = apiOptions(options);
+    var url = path ? _.joinPath(api.host, path) : api.host;
+
+    return http( url + options.paramsStr, options );
+  }
+
+  function apiPost (path, data, options) {
+    options = apiOptions(options);
+    var url = path ? _.joinPath(api.host, path) : api.host;
+
+    return http( url + options.paramsStr, _.merge(options, { method: 'post', data: data }) );
+  }
+
+  function button (options) {
+
+    if( !options ) {
+      throw new Error('aplazame.button requires parameters');
+    }
+
+    var elements = [document.querySelector(options.button)];
+
+    if( options.description ) {
+      [].push.apply( elements, document.querySelectorAll(options.description) );
+    }
+
+    elements.forEach(function (el) {
+      el.__display = el.style.display;
+      el.style.display = 'none';
+    });
+
+    var params = {
+      amount: options.amount,
+      currency: options.currency || 'EUR'
+    };
+
+    apiGet('checkout/button', { params: params })
+      .then(function () {
+        elements.forEach(function (el) {
+          el.style.display = el.__display;
+        });
+      });
+  }
+
+  function writeIframe (iframe, content) {
+    var iframeDoc = iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(content);
+    iframeDoc.close();
+  }
+
+  function checkout (options) {
+    options = _.merge(undefined, options || {});
+    var host = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
+
+    options.api = api;
+
+    if( !/\/$/.test(host) ) {
+      host += '/';
+    }
+
+    http(host + 'iframe.html').then(function (response) {
+      document.body.style.overflow = 'hidden';
+      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + host);
+
+      var iframe = document.createElement('iframe');
+      _.extend(iframe.style, iframeStyle);
+
+      iframe.frameBorder = '0';
+      document.body.appendChild(iframe);
+      writeIframe(iframe, iframeHtml);
+
+      if( !options.merchant ) {
+        throw new Error('missing merchant parameters');
+      }
+
+      if( !options.merchant.public_api_key ) {
+        if( env.publicKey ) {
+          options.merchant.public_api_key = env.publicKey;
+        } else {
+          throw new Error('missing public key');
+        }
+      }
+
+      _.listen(window, 'message', function (e) {
+        if( !iframe ) {
+          return;
+        }
+
+        var message = e.data;
+
+        if( message.aplazame === 'checkout' && message.require === 'merchant' ) {
+          e.source.postMessage({
+            checkout: options
+          }, '*');
+        } else if( message.aplazame === 'checkout' && message.result ) {
+          document.body.removeChild(iframe);
+          iframe = null;
+          console.debug('message.aplazame', message.result);
+
+          switch( message.result ) {
+            case 'success':
+              location.replace(options.merchant.success_url);
+              break;
+            case 'cancel':
+              location.replace(options.merchant.cancel_url);
+              break;
+          }
+        }
+      });
+    }, function () {
+      console.error('checkout server', host, 'should be running');
+    });
+
+  }
+
+  function simulator (amount, _options, callback) {
+    if( _.isFunction(_options) ) {
+      callback = _options;
+      _options = {};
     } else {
-      listen(window, 'load', callback);
+      _options = _options || {};
     }
-  }
-
-  function replaceKeys (tmpl, keys) {
-    return keys ? tmpl.replace(/\{\{([^\}]+)\}\}/g, function (match, key) {
-      return keys[key];
-    }) : function (ks) {
-      return replaceKeys(tmpl, ks);
+    var options = {
+      params: {
+        amount: amount
+      }
     };
-  }
-
-  var arrayShift = [].shift;
-  function extend () {
-      var dest = arrayShift.call(arguments),
-        src = arrayShift.call(arguments),
-        key;
-
-    while( src ) {
-      for( key in src) {
-        dest[key] = src[key];
-      }
-      src = arrayShift.call(arguments);
+    if( _options.payday ) {
+      options.params.payday = _options.payday;
     }
-
-    return dest;
-  }
-
-  function merge () {
-      var dest = arrayShift.call(arguments),
-          src = arrayShift.call(arguments),
-          key;
-
-      while( src ) {
-
-          if( typeof dest !== typeof src ) {
-              dest = _isArray(src) ? [] : ( _isObject(src) ? {} : src );
-          }
-
-          if( _isObject(src) ) {
-
-              for( key in src ) {
-                  if( src[key] !== undefined ) {
-                      if( typeof dest[key] !== typeof src[key] ) {
-                          dest[key] = merge(undefined, src[key]);
-                      } else if( _isArray(dest[key]) ) {
-                          [].push.apply(dest[key], src[key]);
-                      } else if( _isObject(dest[key]) ) {
-                          dest[key] = merge(dest[key], src[key]);
-                      } else {
-                          dest[key] = src[key];
-                      }
-                  }
-              }
-          }
-          src = arrayShift.call(arguments);
+    if( _options.publicKey ) {
+      options.publicKey = _options.publicKey;
+    }
+    aplazame.apiGet('instalment-plan-simulator', options ).then(function (response) {
+      if( _isFunction(callback) ) {
+        callback(response.data.choices[0].instalments);
       }
-
-      return dest;
+    });
   }
 
-  function joinPath () {
-    console.debug('joinPath', arguments);
+  root.aplazame = {
+    init: init,
+    checkout: checkout,
+    button: button,
+    apiGet: apiGet,
+    apiPost: apiPost,
+    simulator: simulator
+  };
 
-    return [].reduce.call(arguments, function (prev, path, index, list) {
+})(this, (function () {
 
-      path = index ? path.replace(/^\//, '') : path;
-      path = ( index === (list.length - 1) ) ? path : path.replace(/\/$/, '');
-
-      return prev + ( index ? '/' : '' ) + path;
-
-    }, '');
-  }
+  // factory http
 
   function headerToTitleSlug(text) {
     var key = text[0].toUpperCase() + text.substr(1);
@@ -251,206 +325,149 @@
 
   window.http = http;
 
-  function apiOptions (options) {
-    options = options || {};
-    var publicKey = options.publicKey || env.publicKey;
+  return http;
 
-    if( !publicKey ) {
-      throw new Error('public key needs to be specified');
-    }
+})(), (function() {
 
-    options = merge({}, {
-      headers: {
-        authorization: 'Bearer ' + publicKey
+  function _isType (type) {
+      return function (o) {
+          return (typeof o === type);
+      };
+  }
+
+  function _instanceOf (_constructor) {
+      return function (o) {
+          return ( o instanceof _constructor );
+      };
+  }
+
+	var _isObject = _isType('object'),
+			_isFunction = _isType('function'),
+			_isString = _isType('string'),
+			_isNumber = _isType('number'),
+			_isArray = Array.isArray || _instanceOf(Array),
+			_isDate = _instanceOf(Date),
+			_isRegExp = _instanceOf(RegExp),
+			_isElement = function(o) {
+		    return o && o.nodeType === 1;
+		  };
+
+  var listen = window.addEventListener ? function (element, eventName, listener) {
+    element.addEventListener(eventName, listener, false);
+  } : ( window.attachEvent && function (element, eventName, listener) {
+    element.attachEvent('on' + eventName, listener);
+  } );
+  if( !listen ) {
+    throw new Error('Your Browser does not support events');
+  }
+
+  function once (fn) {
+    var done;
+    return function () {
+      if( !done ) {
+        done = true;
+        return fn.apply(this, arguments);
       }
-    }, options);
-
-    options.version = options.version || env.version;
-    options.sandbox = ( options.sandbox === undefined ? env.sandbox : options.sandbox ) ? '.sandbox' : '';
-    options.paramsStr = '';
-    if( options.params ) {
-      for( var key in options.params ) {
-        options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
-      }
-    }
-    console.log('apiOptions', options);
-
-    return merge(options, {
-      headers: {
-        accept: replaceKeys(api.accept, options)
-        // host: 'api.dev.aplazame.com'
-      }
-    });
-  }
-
-  // aplazame methods
-
-  function init (options) {
-    if( !options ) {
-      throw new Error('aplazame.init({options}) requires options');
-    }
-    // if( !options.publicKey ) {
-    //   throw new Error('aplazame.init({options}) requires at least the publicKey');
-    // }
-    extend(env, options);
-
-    console.debug('init', options);
-  }
-
-  function getEnv () {
-    return env;
-  }
-
-  function apiGet (path, options) {
-    options = apiOptions(options);
-    var url = path ? joinPath(api.host, path) : api.host;
-
-    return http( url + options.paramsStr, options );
-  }
-
-  function apiPost (path, data, options) {
-    options = apiOptions(options);
-    var url = path ? joinPath(api.host, path) : api.host;
-
-    return http( url + options.paramsStr, merge(options, { method: 'post', data: data }) );
-  }
-
-  function button (options) {
-
-    if( !options ) {
-      throw new Error('aplazame.button requires parameters');
-    }
-
-    var elements = [document.querySelector(options.button)];
-
-    if( options.description ) {
-      [].push.apply( elements, document.querySelectorAll(options.description) );
-    }
-
-    elements.forEach(function (el) {
-      el.__display = el.style.display;
-      el.style.display = 'none';
-    });
-
-    var params = {
-      amount: options.amount,
-      currency: options.currency || 'EUR'
     };
-
-    apiGet('checkout/button', { params: params })
-      .then(function () {
-        elements.forEach(function (el) {
-          el.style.display = el.__display;
-        });
-      });
   }
 
-  function writeIframe (iframe, content) {
-    var iframeDoc = iframe.contentWindow.document;
-    iframeDoc.open();
-    iframeDoc.write(content);
-    iframeDoc.close();
-  }
-
-  function checkout (options) {
-    options = options || {};
-    var host = options.host === 'location' ? location.origin : options.host;
-
-    if( !/\/$/.test(host) ) {
-      host += '/';
-    }
-
-    http(host + 'iframe.html').then(function (response) {
-      document.body.style.overflow = 'hidden';
-      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + host);
-
-      var iframe = document.createElement('iframe');
-      extend(iframe.style, iframeStyle);
-
-      iframe.frameBorder = '0';
-      document.body.appendChild(iframe);
-      writeIframe(iframe, iframeHtml);
-
-      if( !options.merchant ) {
-        throw new Error('missing merchant parameters');
-      }
-
-      if( !options.merchant.public_api_key ) {
-        if( env.publicKey ) {
-          options.merchant.public_api_key = env.publicKey;
-        } else {
-          throw new Error('missing public key');
-        }
-      }
-
-      listen(window, 'message', function (e) {
-        if( !iframe ) {
-          return;
-        }
-
-        var message = e.data;
-
-        if( message.aplazame === 'checkout' && message.require === 'merchant' ) {
-          e.source.postMessage({
-            checkout: options
-          }, '*');
-        } else if( message.aplazame === 'checkout' && message.result ) {
-          document.body.removeChild(iframe);
-          iframe = null;
-          console.debug('message.aplazame', message.result);
-
-          switch( message.result ) {
-            case 'success':
-              location.replace(options.merchant.success_url);
-              break;
-            case 'cancel':
-              location.replace(options.merchant.cancel_url);
-              break;
-          }
-        }
-      });
-    }, function () {
-      console.error('checkout server', host, 'should be running');
-    });
-
-  }
-
-  function simulator (amount, _options, callback) {
-    if( _isFunction(_options) ) {
-      callback = _options;
-      _options = {};
+  function docReady (callback) {
+    if( document.readyState === 'complete' ) {
+      callback();
     } else {
-      _options = _options || {};
+      listen(window, 'load', callback);
     }
-    var options = {
-      params: {
-        amount: amount
-      }
-    };
-    if( _options.payday ) {
-      options.params.payday = _options.payday;
-    }
-    if( _options.publicKey ) {
-      options.publicKey = _options.publicKey;
-    }
-    aplazame.apiGet('instalment-plan-simulator', options ).then(function (response) {
-      if( _isFunction(callback) ) {
-        callback(response.data.choices[0].instalments);
-      }
-    });
   }
 
-  root.aplazame = {
-    init: init,
-    getEnv: getEnv,
-    checkout: checkout,
-    button: button,
-    apiGet: apiGet,
-    apiPost: apiPost,
-    simulator: simulator
+  function replaceKeys (tmpl, keys) {
+    return keys ? tmpl.replace(/\{\{([^\}]+)\}\}/g, function (match, key) {
+      return keys[key];
+    }) : function (ks) {
+      return replaceKeys(tmpl, ks);
+    };
+  }
+
+  var arrayShift = [].shift;
+  function extend () {
+      var dest = arrayShift.call(arguments),
+        src = arrayShift.call(arguments),
+        key;
+
+    while( src ) {
+      for( key in src) {
+        dest[key] = src[key];
+      }
+      src = arrayShift.call(arguments);
+    }
+
+    return dest;
+  }
+
+  function merge () {
+      var dest = arrayShift.call(arguments),
+          src = arrayShift.call(arguments),
+          key;
+
+      while( src ) {
+
+          if( typeof dest !== typeof src ) {
+              dest = _isArray(src) ? [] : ( _isObject(src) ? {} : src );
+          }
+
+          if( _isObject(src) ) {
+
+              for( key in src ) {
+                  if( src[key] !== undefined ) {
+                      if( typeof dest[key] !== typeof src[key] ) {
+                          dest[key] = merge(undefined, src[key]);
+                      } else if( _isArray(dest[key]) ) {
+                          [].push.apply(dest[key], src[key]);
+                      } else if( _isObject(dest[key]) ) {
+                          dest[key] = merge(dest[key], src[key]);
+                      } else {
+                          dest[key] = src[key];
+                      }
+                  }
+              }
+          }
+          src = arrayShift.call(arguments);
+      }
+
+      return dest;
+  }
+
+  function joinPath () {
+    console.debug('joinPath', arguments);
+
+    return [].reduce.call(arguments, function (prev, path, index, list) {
+
+      path = index ? path.replace(/^\//, '') : path;
+      path = ( index === (list.length - 1) ) ? path : path.replace(/\/$/, '');
+
+      return prev + ( index ? '/' : '' ) + path;
+
+    }, '');
+  }
+
+  return {
+    isObject: _isObject,
+    isFunction: _isFunction,
+    isString: _isString,
+    isNumber: _isNumber,
+    isArray: _isArray,
+    isDate: _isDate,
+    isRegExp: _isRegExp,
+    isElement: _isElement,
+    listen: listen,
+    once: once,
+    ready: docReady,
+    replaceKeys: replaceKeys,
+    merge: merge,
+    extend: extend,
+    joinPath: joinPath
   };
 
-})(this);
+})() );
 
 (function () {
 
@@ -468,7 +485,8 @@
   if( document.querySelector('script[data-aplazame]') ) {
     var script = document.querySelector('script[data-aplazame]'),
         initText = script.getAttribute('data-aplazame'),
-        envOptions = {};
+        envOptions = {},
+        apiOptions = {};
 
     if( /\:/.test(initText) ) {
       initText.split(',').forEach(function (part) {
@@ -481,13 +499,13 @@
       }
 
       if( script.getAttribute('data-version') ) {
-        envOptions.version = Number(script.getAttribute('data-version'));
+        apiOptions.version = Number(script.getAttribute('data-version'));
       }
       if( script.getAttribute('data-sandbox') ) {
-        envOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
+        apiOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
       }
     }
-    aplazame.init(envOptions);
+    aplazame.init(envOptions, apiOptions);
   }
 
 })();

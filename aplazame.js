@@ -58,8 +58,8 @@
     // if( !options.publicKey ) {
     //   throw new Error('aplazame.init({options}) requires at least the publicKey');
     // }
-    _.extend(api, initApi);
-    _.extend(env, initEnv);
+    _.extend(api, initApi || {});
+    _.extend(env, initEnv || {});
 
     console.debug('init', initEnv, initApi);
   }
@@ -478,7 +478,7 @@
         sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
 
     if( sandboxMatch ) {
-      aplazame.init({ sandbox: sandboxMatch[1] === 'true' });
+      aplazame.init({ sandbox: sandboxMatch[1] === '1' || sandboxMatch[1] === 'true' });
     }
   }
 

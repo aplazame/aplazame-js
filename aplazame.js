@@ -116,18 +116,21 @@
   }
 
   function checkout (options) {
-    options = _.merge(undefined, options || {});
-    var host = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
+    options = options || {};
+    var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
 
     options.api = api;
 
-    if( !/\/$/.test(host) ) {
-      host += '/';
+    if( !/\/$/.test(baseUrl) ) {
+      baseUrl += '/';
     }
 
-    http(host + 'iframe.html').then(function (response) {
+    http(baseUrl + 'iframe.html').then(function (response) {
       document.body.style.overflow = 'hidden';
-      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + host);
+      // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
+      var iframeHtml = response.data.replace(/\<\/head\>/, '<base href="' + baseUrl + '" /></head>');
+
+      console.debug('iframeHtml', iframeHtml);
 
       var iframe = document.createElement('iframe');
       _.extend(iframe.style, iframeStyle);
@@ -175,7 +178,7 @@
         }
       });
     }, function () {
-      console.error('checkout server', host, 'should be running');
+      console.error('checkout server', baseUrl, 'should be running');
     });
 
   }

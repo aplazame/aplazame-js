@@ -61,7 +61,7 @@
     _.extend(api, initApi || {});
     _.extend(env, initEnv || {});
 
-    console.debug('init', initEnv, initApi);
+    console.debug('init', env, api);
   }
 
   function apiGet (path, options) {
@@ -127,8 +127,8 @@
 
     http(baseUrl + 'iframe.html').then(function (response) {
       document.body.style.overflow = 'hidden';
-      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
-      iframeHtml = iframeHtml.replace(/\<\/head\>/, '<base href="' + baseUrl + '" /></head>');
+      // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
+      var iframeHtml = response.data.replace(/\<head\>/, '<head><base href="' + baseUrl + '" />');
 
       var iframe = document.createElement('iframe');
       _.extend(iframe.style, iframeStyle);
@@ -479,7 +479,7 @@
         sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
 
     if( sandboxMatch ) {
-      aplazame.init({ sandbox: sandboxMatch[1] === '1' || sandboxMatch[1] === 'true' });
+      aplazame.init({}, { sandbox: sandboxMatch[1] === '1' || sandboxMatch[1] === 'true' });
     }
   }
 

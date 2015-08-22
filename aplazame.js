@@ -127,10 +127,8 @@
 
     http(baseUrl + 'iframe.html').then(function (response) {
       document.body.style.overflow = 'hidden';
-      // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
-      var iframeHtml = response.data.replace(/\<\/head\>/, '<base href="' + baseUrl + '" /></head>');
-
-      console.debug('iframeHtml', iframeHtml);
+      var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
+      iframeHtml = iframeHtml.replace(/\<\/head\>/, '<base href="' + baseUrl + '" /></head>');
 
       var iframe = document.createElement('iframe');
       _.extend(iframe.style, iframeStyle);

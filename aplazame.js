@@ -110,9 +110,12 @@
 
   function writeIframe (iframe, content) {
     var iframeDoc = iframe.contentWindow.document;
+    iframeDoc.charset = 'UTF-8';
     iframeDoc.open();
     iframeDoc.write(content);
     iframeDoc.close();
+
+    // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(content);
   }
 
   function checkout (options) {

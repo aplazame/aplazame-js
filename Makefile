@@ -9,7 +9,7 @@ demo:
 	@node run demo
 
 install.npm:
-	@npm install
+	npm install
 
 demo.less:
 	@$(npmdir)/lessc demo/demo.less demo/demo.css

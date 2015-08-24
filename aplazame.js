@@ -8,7 +8,8 @@
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'transparent'
+        background: 'transparent',
+        'z-index': 2147483647
       },
       api = {
         host: 'https://api.aplazame.com/',
@@ -100,6 +101,10 @@
       currency: options.currency || 'EUR'
     };
 
+    if( options.country ) {
+      params.country = options.country;
+    }
+
     apiGet('checkout/button', { params: params })
       .then(function () {
         elements.forEach(function (el) {
@@ -114,8 +119,6 @@
     iframeDoc.open();
     iframeDoc.write(content);
     iframeDoc.close();
-
-    // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(content);
   }
 
   function checkout (options) {
@@ -203,7 +206,7 @@
       options.publicKey = _options.publicKey;
     }
     aplazame.apiGet('instalment-plan-simulator', options ).then(function (response) {
-      if( _isFunction(callback) ) {
+      if( _.isFunction(callback) ) {
         callback(response.data.choices[0].instalments);
       }
     });
@@ -487,6 +490,7 @@
   }
 
   if( document.querySelector('script[data-aplazame]') ) {
+    
     var script = document.querySelector('script[data-aplazame]'),
         initText = script.getAttribute('data-aplazame'),
         envOptions = {},
@@ -501,14 +505,18 @@
       if( initText ) {
         envOptions.publicKey = initText;
       }
-
-      if( script.getAttribute('data-version') ) {
-        apiOptions.version = Number(script.getAttribute('data-version'));
-      }
-      if( script.getAttribute('data-sandbox') ) {
-        apiOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
-      }
     }
+
+    if( script.getAttribute('data-version') ) {
+      apiOptions.version = Number(script.getAttribute('data-version'));
+    }
+    if( script.getAttribute('data-sandbox') ) {
+      apiOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
+    }
+    if( script.getAttribute('data-analytics') ) {
+      envOptions.analytics = script.getAttribute('data-analytics') === 'true';
+    }
+
     aplazame.init(envOptions, apiOptions);
   }
 
@@ -525,7 +533,8 @@
       publicKey: btn.getAttribute('data-aplazame-button'),
       amount: btn.getAttribute('data-amount'),
       currency: btn.getAttribute('data-currency') || undefined,
-      sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined
+      sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
+      country: btn.getAttribute('data-country') || undefined
     };
 
     aplazame.button(btnParams);

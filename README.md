@@ -1,6 +1,6 @@
 [![Image](https://aplazame.com/static/img/banners/banner-728-white.png "Aplazame") ](https://aplazame.com "Aplazame")
 
-Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8dd982354e686ed/s/master "wercker status")](https://app.wercker.com/project/bykey/e3cdbafb5813b255e8dd982354e686ed)
+Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8dd982354e686ed/s/master "wercker status")](https://app.wercker.com/project/bykey/e3cdbafb5813b255e8dd982354e686ed) [![drone.io Status](http://drone.aplazame.com/api/badge/github.com/aplazame/aplazame-js/status.svg?branch=master)](http://drone.aplazame.com/github.com/aplazame/aplazame-js)
 ===========
 
 ``` html

@@ -5,10 +5,10 @@ set -e
 # [Docker] make echo
 make echo
 
-# Requirements
+# [Docker] Requirements
 # make install dependences
 
-# Local tests
+# [Docker] Local tests
 # make test
 
 case $DRONE_BRANCH in

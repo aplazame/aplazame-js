@@ -1,24 +1,24 @@
 {
-  "name": "aplazame",
-  "version": "0.0.11",
-  "homepage": "https://github.com/aplazame/aplazame-js",
-  "authors": [
-    "Jesús Germade <jesus@aplazame.com>"
-  ],
-  "description": "javascript sdk for aplazame.com api",
-  "main": "aplazame.js",
-  "keywords": [
-    "aplazame",
-    "sdk",
-    "js",
-    "javascript"
-  ],
-  "license": "GPL-3.0",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+	"name": "aplazame",
+	"version": "0.0.12",
+	"homepage": "https://github.com/aplazame/aplazame-js",
+	"authors": [
+		"Jesús Germade <jesus@aplazame.com>"
+	],
+	"description": "javascript sdk for aplazame.com api",
+	"main": "aplazame.js",
+	"keywords": [
+		"aplazame",
+		"sdk",
+		"js",
+		"javascript"
+	],
+	"license": "GPL-3.0",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests"
+	]
 }

@@ -27,6 +27,7 @@ git.updateMaster:
 build.create: git.updateMaster build
 	@node run increaseVersion
 	@git commit -a -m "increased version and updated aplazame.min.js"
+	@git push origin master
 
 git.updateRelease:
 	@git checkout release

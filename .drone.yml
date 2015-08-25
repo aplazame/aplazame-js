@@ -13,6 +13,9 @@ deploy:
     script:
       - ./.drone/deploy.sh
 
+    when:
+      branch: release
+
 notify:
   slack:
     webhook_url: $$SLACK_WEBHOOK_URL

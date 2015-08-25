@@ -2,7 +2,7 @@ from fabric.api import env, run, settings
 from fabric.context_managers import cd
 
 
-settings.project_path = '/opt/checkout-js'
+settings.project_path = '/opt/aplazame-js'
 settings.project_name = 'aplazame-js'
 
 env.shell = '/bin/zsh -l -i -c'
@@ -21,4 +21,4 @@ def echo():
 
 def deploy():
     with cd(settings.project_path):
-        run('git pull origin master')
+        run('git pull origin release')

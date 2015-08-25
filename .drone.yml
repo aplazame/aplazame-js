@@ -1,0 +1,28 @@
+image: npm
+
+branches:
+  - master
+  - release
+
+script:
+  - chmod +x ./.drone/*.sh
+  - ./.drone/build.sh
+
+deploy:
+  release:
+    bash:
+      script:
+        - ./.drone/deploy.sh
+
+notify:
+  slack:
+    webhook_url: $$SLACK_WEBHOOK_URL
+    username: 'drone'
+    on_success: change
+    on_failure: true
+
+  email:
+    recipients:
+      - dev@aplazame.com
+    on_success: change
+    on_failure: true

@@ -20,6 +20,24 @@ dev: test
 build: install.npm
 	@node run build
 
+git.updateRelease:
+	git checkout release
+	git pull origin release
+
+build.create: git.updateRelease build
+	@node run increaseVersion
+	git commit -a -m "increased version and updated aplazame.min.js"
+
+git.updateRelease:
+	git checkout release
+	git pull origin release
+
+git.mergeMaster:
+	git merge master
+
+publish: git.updateMaster pkg.increaseVersion git.updateRelease git.mergeMaster
+	@echo "\n\trelease version $(shell node run pkgVersion)\n"
+
 test: install.npm
 	@node run jshint
 	@$(npmdir)/karma start karma/src.conf.js

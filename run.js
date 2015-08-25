@@ -20,8 +20,14 @@ var cwd = function () {
       read: function () {
         return fs.readFileSync( path.join.apply(null, arguments), { encoding: 'utf8' });
       },
+      readJSON: function () {
+        return JSON.parse( file.read.apply(this, arguments) );
+      },
       write: function (paths, text) {
         return fs.writeFileSync( typeof paths === 'string' ? paths : path.join(paths), text, { encoding: 'utf8' });
+      },
+      writeJSON: function (paths, data) {
+        return file.write( paths, JSON.stringify(data, null, '\t') );
       }
     },
     // settings = yaml.safeLoad( file.read('settings.yml') ),
@@ -31,6 +37,23 @@ var cwd = function () {
 
         file.write('aplazame.min.js', require("uglify-js").minify('aplazame.js').code );
         console.log('aplazame.min.js', 'updated'.green);
+      },
+      pkgVersion: function () {
+        return process.stdout.write( file.readJSON('package.json').version );
+      },
+      increaseVersion: function () {
+        var pkg = file.readJSON('package.json'),
+            version = pkg.version.split('.').map(function (n) { return Number(n) }),
+            bower = file.readJSON('bower.json');
+
+        version[2] += 1;
+        version = version.join('.');
+
+        pkg.version = version;
+        bower.version = version;
+
+        file.writeJSON('package.json', pkg );
+        file.writeJSON('bower.json', bower );
       },
       live: function () {
         cmd.watch();

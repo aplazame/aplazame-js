@@ -4,7 +4,7 @@ Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8
 ===========
 
 ``` html
-<script type="text/javascript" src="https://api.aplazame.com/static/v1/js/aplazame.js"></script>
+<script type="text/javascript" src="https://aplazame.com/static/aplazame.js"></script>
 ```
 
 You can also install aplazame through:

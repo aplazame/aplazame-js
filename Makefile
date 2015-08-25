@@ -34,8 +34,9 @@ git.updateRelease:
 
 git.mergeMaster:
 	@git merge master
+	@git push origin release
 
-publish: git.updateMaster pkg.increaseVersion git.updateRelease git.mergeMaster
+publish: git.updateMaster build.create git.updateRelease git.mergeMaster
 	@echo "\n\trelease version $(shell node run pkgVersion)\n"
 
 test: install.npm

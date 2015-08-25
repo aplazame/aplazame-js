@@ -14,6 +14,7 @@
       api = {
         host: 'https://api.aplazame.com/',
         version: 1,
+        checkoutVersion: 1,
         sandbox: false
       },
       acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
@@ -85,7 +86,15 @@
       throw new Error('aplazame.button requires parameters');
     }
 
-    var elements = [document.querySelector(options.button)];
+    var elements;
+
+    if( options.button ) {
+      elements = [document.querySelector(options.button)];
+    } else if( options.id ) {
+      elements = [document.querySelector( ( /^#/.test(options.id) ? '' : '#' ) + options.id )];
+    } else {
+      throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - )');
+    }
 
     if( options.description ) {
       [].push.apply( elements, document.querySelectorAll(options.description) );
@@ -169,7 +178,6 @@
         } else if( message.aplazame === 'checkout' && message.result ) {
           document.body.removeChild(iframe);
           iframe = null;
-          console.debug('message.aplazame', message.result);
 
           switch( message.result ) {
             case 'success':
@@ -182,7 +190,7 @@
         }
       });
     }, function () {
-      console.error('checkout server', baseUrl, 'should be running');
+      throw new Error('can not connect to ' + baseUrl);
     });
 
   }
@@ -490,7 +498,7 @@
   }
 
   if( document.querySelector('script[data-aplazame]') ) {
-    
+
     var script = document.querySelector('script[data-aplazame]'),
         initText = script.getAttribute('data-aplazame'),
         envOptions = {},
@@ -508,8 +516,19 @@
     }
 
     if( script.getAttribute('data-version') ) {
-      apiOptions.version = Number(script.getAttribute('data-version'));
+      var matchVersion = script.getAttribute('data-version').match(/^v?(\d)(\.(\d))?$/);
+
+      if( !matchVersion ) {
+        throw new Error('malformed version, should be like \'v1.2\'');
+      }
+
+      apiOptions.version = Number(matchVersion[1]);
+
+      if( matchVersion[3] !== undefined ) {
+        apiOptions.checkoutVersion = Number(matchVersion[3]);
+      }
     }
+
     if( script.getAttribute('data-sandbox') ) {
       apiOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
     }

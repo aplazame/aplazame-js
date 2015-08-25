@@ -9,10 +9,9 @@ script:
   - ./.drone/build.sh
 
 deploy:
-  release:
-    bash:
-      script:
-        - ./.drone/deploy.sh
+  bash:
+    script:
+      - ./.drone/deploy.sh
 
 notify:
   slack:

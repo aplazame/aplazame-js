@@ -1,11 +1,22 @@
 #!/bin/bash
 
-# [DOCKER] Install deployment requirements
-sudo pip install fabric
+case $DRONE_BRANCH in
+    release)
+        echo release deployment
 
-# [PRODUCTION] make echo
-fab prod echo
+        # [DOCKER] Install deployment requirements
+        sudo pip install fabric
 
-# [PRODUCTION] deploy
-# make deploy host=prod
-fab prod deploy
+        # [PRODUCTION] make echo
+        fab prod echo
+
+        # [PRODUCTION] deploy
+        # make deploy host=prod
+        fab prod deploy
+
+        ;;
+
+    *)
+        echo *$DRONE_BRANCH* ci
+        ;;
+esac

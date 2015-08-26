@@ -5,7 +5,7 @@ whoami = $(shell whoami)
 
 # TASKS
 
-demo:
+run.demo:
 	@node run demo
 
 install.npm:
@@ -19,6 +19,26 @@ dev: test
 
 build: install.npm
 	@node run build
+
+git.updateMaster:
+	@git checkout master
+	@git pull origin master
+
+build.create: git.updateMaster build
+	@node run increaseVersion
+	@git commit -a -m "increased version and updated aplazame.min.js"
+	@git push origin master
+
+git.updateRelease:
+	@git checkout release
+	@git pull origin release
+
+git.mergeMaster:
+	@git merge master
+	@git push origin release
+
+publish: git.updateMaster build.create git.updateRelease git.mergeMaster
+	@echo "\n\trelease version $(shell node run pkgVersion)\n"
 
 test: install.npm
 	@node run jshint

@@ -12,14 +12,13 @@ deploy:
   bash:
     script:
       - ./.drone/deploy.sh
-
     when:
       branch: release
 
 notify:
   slack:
     webhook_url: $$SLACK_WEBHOOK_URL
-    username: 'drone'
+    username: 'aplazame-js'
     on_success: change
     on_failure: true
 

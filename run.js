@@ -43,7 +43,7 @@ var cwd = function () {
       },
       increaseVersion: function () {
         var pkg = file.readJSON('package.json'),
-            version = pkg.version.split('.').map(function (n) { return Number(n) }),
+            version = pkg.version.split('.').map(function (n) { return Number(n); }),
             bower = file.readJSON('bower.json');
 
         version[2] += 1;

@@ -54,12 +54,6 @@
   // aplazame methods
 
   function init (initEnv, initApi) {
-    // if( !options ) {
-    //   throw new Error('aplazame.init({options}) requires options');
-    // }
-    // if( !options.publicKey ) {
-    //   throw new Error('aplazame.init({options}) requires at least the publicKey');
-    // }
     _.extend(api, initApi || {});
     _.extend(env, initEnv || {});
 
@@ -86,14 +80,31 @@
       throw new Error('aplazame.button requires parameters');
     }
 
-    var elements;
+    var elements, elButton;
 
     if( options.button ) {
-      elements = [document.querySelector(options.button)];
+      elButton = document.querySelector(options.button);
     } else if( options.id ) {
-      elements = [document.querySelector( ( /^#/.test(options.id) ? '' : '#' ) + options.id )];
-    } else {
+      elButton = document.querySelector( ( /^#/.test(options.id) ? '' : '#' ) + options.id );
+    }
+
+    if( !elButton ){
       throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - )');
+    }
+
+    elements = [elButton];
+
+
+    if( options.parent ) {
+      var parent = elButton.parentElement;
+
+      while( parent && parent !== document.body ) {
+        if( parent.matchesSelector(options.parent) ) {
+          elements.push(parent);
+          break;
+        }
+        parent = parent.parentElement;
+      }
     }
 
     if( options.description ) {
@@ -254,8 +265,6 @@
   }
 
   function http (url, options) {
-    console.debug('http', url, options);
-
     options = options || {};
     options.headers = options.headers || {};
     options.url = url;
@@ -343,6 +352,15 @@
   return http;
 
 })(), (function() {
+
+  if( !Element.prototype.matchesSelector ) {
+    Element.prototype.matchesSelector = (
+      Element.prototype.webkitMatchesSelector ||
+      Element.prototype.mozMatchesSelector ||
+      Element.prototype.msMatchesSelector ||
+      Element.prototype.oMatchesSelector
+    );
+  }
 
   function _isType (type) {
       return function (o) {
@@ -452,8 +470,6 @@
   }
 
   function joinPath () {
-    console.debug('joinPath', arguments);
-
     return [].reduce.call(arguments, function (prev, path, index, list) {
 
       path = index ? path.replace(/^\//, '') : path;
@@ -549,6 +565,7 @@
     var btnParams = {
       button: '[data-aplazame-button]',
       description: '[data-aplazame-button-info]',
+      parent: btn.getAttribute('data-parent'),
       publicKey: btn.getAttribute('data-aplazame-button'),
       amount: btn.getAttribute('data-amount'),
       currency: btn.getAttribute('data-currency') || undefined,
@@ -557,8 +574,6 @@
     };
 
     aplazame.button(btnParams);
-
-    console.debug('button found', btnParams);
   }
 
 })();

@@ -50,7 +50,7 @@ test: build
 	@$(npmdir)/karma start karma/min.conf.js
 
 echo:
-	@echo "make options: dev build test"
+	@echo "make options: run.demo dev build test"
 
 # DEFAULT TASKS
 

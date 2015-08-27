@@ -8,5 +8,9 @@ module.exports = function(config) {
     configuration.browsers = [ 'Chrome_travis_ci', 'Firefox' ];
   }
 
+  if(process.env.DRONE){
+    configuration.browsers = [ 'Chrome' ];
+  }
+
   config.set(configuration);
 };

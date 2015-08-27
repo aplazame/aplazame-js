@@ -38,7 +38,7 @@ git.updateRelease:
 	@git pull origin release
 	@git merge master
 
-build.release: git.updateRelease build
+publish: git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
 	@git commit -m "updating built versions"

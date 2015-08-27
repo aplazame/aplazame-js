@@ -1,4 +1,4 @@
-var aplazameScript = document.querySelector('script[src*="aplazame.js"]');
+var aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]');
 
 if( aplazameScript ) {
   var href = aplazameScript.src.split('?'),

@@ -7,7 +7,8 @@
     "prebuild": "make test",
     "build": "node run build",
     "prestart": "npm install",
-    "start": "node run demo"
+    "start": "node run demo",
+    "test": "make test"
   },
   "repository": {
     "type": "git",

@@ -229,7 +229,7 @@ function simulator (amount, _options, callback) {
   });
 }
 
-window.aplazame = {
+global.aplazame = {
   init: init,
   checkout: checkout,
   button: button,

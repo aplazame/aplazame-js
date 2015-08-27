@@ -23,7 +23,7 @@ dev: test
 browserify:
 	@$(npmdir)/browserify src/main.js -o aplazame.js
 
-build: install.npm jshint browserify
+build: browserify
 	@node run build
 
 git.increaseVersion:
@@ -38,17 +38,11 @@ git.updateRelease:
 	@git pull origin release
 	@git merge master
 
-publish: git.increaseVersion git.updateRelease build
+publish: install.npm jshint git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
 	@git commit -m "updating built versions"
 	@git push origin release
-
-git.mergeMaster:
-	@git merge master
-	@git push origin release
-
-publish: git.updateMaster build.create git.updateRelease git.mergeMaster
 	@echo "\n\trelease version $(shell node run pkgVersion)\n"
 
 test: build

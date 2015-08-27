@@ -27,6 +27,14 @@
     "it": true,
     "beforeEach": true,
     "afterEach": true,
-    "testUtils": true
+    "testUtils": true,
+    "XMLHttpRequest": true,
+    "ActiveXObject": true,
+    "module": true,
+    "require": true,
+    "console": true,
+    "document": true,
+    "location": true,
+    "window": true
   }
 }

@@ -85,7 +85,7 @@ var cwd = function () {
       },
       jshint: function (noExit) {
         var JSHINT = require('jshint').JSHINT,
-            jshintrc = JSON.parse(file.read('.jshintrc')),
+            jshintrc = file.readJSON('.jshintrc'),
             errorsLog = '';
 
         glob.sync('src/{,**/}*.js').concat(glob.sync('tests/{,**/}*.js')).forEach(function (fileName) {

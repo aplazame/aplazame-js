@@ -1,42 +1,44 @@
 {
-	"name": "aplazame",
-	"version": "0.0.14",
-	"description": "javascript sdk for aplazame.com api",
-	"main": "aplazame.min.js",
-	"scripts": {
-		"prebuild": "make test",
-		"build": "node run build",
-		"prestart": "npm install",
-		"start": "node run demo"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@github.com/aplazame/aplazame-js.git"
-	},
-	"keywords": [
-		"aplazame",
-		"sdk",
-		"js",
-		"javascript"
-	],
-	"author": "Jesús Germade <jesus@aplazame.com>",
-	"license": "GPL-3.0",
-	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
-	"devDependencies": {
-		"colors": "^1.1.2",
-		"glob": "^5.0.13",
-		"jasmine-core": "^2.3.4",
-		"js-yaml": "^3.3.1",
-		"jshint": "^2.8.0",
-		"karma": "^0.12.37",
-		"karma-chrome-launcher": "^0.2.0",
-		"karma-firefox-launcher": "^0.1.6",
-		"karma-jasmine": "^0.3.6",
-		"karma-story-reporter": "^0.3.1",
-		"less": "^2.5.1",
-		"livereload": "^0.3.7",
-		"nitro-server": "^1.0.0",
-		"node-watch": "^0.3.4",
-		"uglify-js": "^2.4.23"
-	}
+  "name": "aplazame",
+  "version": "0.0.14",
+  "description": "javascript sdk for aplazame.com api",
+  "main": "aplazame.min.js",
+  "scripts": {
+    "prebuild": "make test",
+    "build": "node run build",
+    "prestart": "npm install",
+    "start": "node run demo",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/aplazame/aplazame-js.git"
+  },
+  "keywords": [
+    "aplazame",
+    "sdk",
+    "js",
+    "javascript"
+  ],
+  "author": "Jesús Germade <jesus@aplazame.com>",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "colors": "^1.1.2",
+    "glob": "^5.0.13",
+    "jasmine-core": "^2.3.4",
+    "js-yaml": "^3.3.1",
+    "jshint": "^2.8.0",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-jasmine": "^0.3.6",
+    "karma-story-reporter": "^0.3.1",
+    "less": "^2.5.1",
+    "livereload": "^0.3.7",
+    "nitro-server": "^1.0.0",
+    "node-watch": "^0.3.4",
+    "uglify-js": "^2.4.23"
+  }
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e 
+set -e
 
 # [Docker] make echo
 make echo
@@ -9,7 +9,7 @@ make echo
 # make install dependences
 
 # [Docker] Local tests
-# make test
+make test
 
 case $DRONE_BRANCH in
     master|release)

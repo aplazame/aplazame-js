@@ -2,8 +2,6 @@
 
 set -e
 
-sudo start xvfb
-
 # [Docker] make echo
 make echo
 

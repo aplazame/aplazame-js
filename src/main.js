@@ -180,23 +180,30 @@ function checkout (options) {
 
       var message = e.data;
 
-      if( message.aplazame === 'checkout' && message.require === 'merchant' ) {
-        e.source.postMessage({
-          checkout: options
-        }, '*');
-      } else if( message.aplazame === 'checkout' && message.result ) {
-        document.body.removeChild(iframe);
-        iframe = null;
+      if( message.aplazame === 'checkout' ) {
 
-        switch( message.result ) {
-          case 'success':
-            location.replace(options.merchant.success_url);
-            break;
-          case 'cancel':
-            location.replace(options.merchant.cancel_url);
-            break;
+        if( message.require === 'merchant' ) {
+          e.source.postMessage({
+            checkout: options
+          }, '*');
+        } else if( message.close ) {
+          document.body.removeChild(iframe);
+          iframe = null;
+
+          switch( message.close ) {
+            case 'dismiss':
+              location.replace(options.merchant.checkout_url || '/');
+              break;
+            case 'success':
+              location.replace(options.merchant.success_url);
+              break;
+            case 'cancel':
+              location.replace(options.merchant.cancel_url);
+              break;
+          }
         }
       }
+
     });
   }, function () {
     throw new Error('can not connect to ' + baseUrl);

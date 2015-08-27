@@ -8,6 +8,9 @@ whoami = $(shell whoami)
 run.demo:
 	@node run demo
 
+jshint:
+	@node run jshint
+
 install.npm:
 	npm install
 
@@ -17,7 +20,10 @@ demo.less:
 dev: test
 	@npm start
 
-build: install.npm
+browserify:
+	@$(npmdir)/browserify src/main.js -o aplazame.js
+
+build: install.npm jshint browserify
 	@node run build
 
 git.updateMaster:
@@ -40,8 +46,7 @@ git.mergeMaster:
 publish: git.updateMaster build.create git.updateRelease git.mergeMaster
 	@echo "\n\trelease version $(shell node run pkgVersion)\n"
 
-test: install.npm
-	@node run jshint
+test: build
 	@$(npmdir)/karma start karma/src.conf.js
 	@$(npmdir)/karma start karma/min.conf.js
 

@@ -231,7 +231,7 @@ function simulator (amount, _options, callback) {
   }
   apiGet('instalment-plan-simulator', options ).then(function (response) {
     if( _.isFunction(callback) ) {
-      callback(response.data.choices[0].instalments);
+      callback(response.data.choices[0].instalments, response.data.options, response.data);
     }
   });
 }

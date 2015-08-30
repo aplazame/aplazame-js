@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var choices = [];
+      // choices = []; // this is replaced with real data
+      var choice = choices.reduce(function (prev, choice) {
+        if( choice === null ) {
+          return choice;
+        } else {
+          return choice.num_instalments > prev.num_instalments ? choice : prev;
+        }
+      }, null) || { num_instalments: 12, amount: 1080 };
+    </script>
+    <div id="main"></div>
+
+    <script type="application/x-template" data-template="info">
+        <div>Financia con Aplazame en <a><%= instalments %></a> cuotas de <%= instalment_amount %>.</div>
+    </script>
+    <script type="application/x-template" data-template="choices">
+        <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
+          <button type="button"><%= choices[i].num_instalments %></button>
+        <% } %>
+    </script>
+    <script type="text/javascript">
+      function template (name, data){
+        return template.cache[name](data);
+      };
+      template.cache = {};
+      template.put = function (name, tmpl) {
+        // John Resig micro-template
+        template.cache[name] = new Function("obj",
+          "var p=[],print=function(){p.push.apply(p,arguments);};" +
+
+          // Introduce the data as local variables using with(){}
+          "with(obj){p.push('" +
+
+          // Convert the template into pure JavaScript
+          tmpl
+            .replace(/[\r\t\n]/g, " ")
+            .split("<%").join("\t")
+            .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+            .replace(/\t=(.*?)%>/g, "',$1,'")
+            .split("\t").join("');")
+            .split("%>").join("p.push('")
+            .split("\r").join("\\'")
+        + "');}return p.join('');");
+      };
+      [].forEach.call(document.querySelectorAll('script[type="application/x-template"][data-template]'), function (tmpl) {
+        template.put(tmpl.getAttribute('data-template'), tmpl.text);
+      });
+
+      var main = document.getElementById('main');
+
+      console.log(template.cache);
+
+      main.innerHTML = template('info', choice);
+    </script>
+  </body>
+</html>

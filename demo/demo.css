@@ -30,9 +30,10 @@ nav.page-nav {
   float: left;
 }
 section.main-section {
-  background: #eee;
   margin-left: 14rem;
-  /*height: 22rem;*/
+}
+section.main-wrapper {
+  background: #eee;
 }
 footer.footer {
   height: 5rem;

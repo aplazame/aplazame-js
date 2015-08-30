@@ -6,6 +6,17 @@ function htmlToJs (html) {
   return html.replace(/\n/g, '').replace(/\"/g, '\\\"').replace(/\>\s+\</g, '><');
 }
 
+function noop () {}
+
+function ShellCmd(cmd, args, cb, end) {
+    var spawn = require('child_process').spawn,
+        child = spawn(cmd, args || []),
+        me = this;
+
+    child.stdout.on('data', function (buffer) { (cb || noop)(me, buffer) });
+    child.stdout.on('end', end || noop);
+}
+
 var colors = require('colors'),
     fs = require('fs'),
     path = require('path'),
@@ -71,9 +82,13 @@ var cwd = function () {
 
         watch('src', function(filename) {
           console.log(filename.yellow, 'changed');
-          if( cmd.test(true) ) {
-            cmd.build();
-          }
+          require('child_process').exec('make build', [], function (err, stdout, stderr) {
+      				if( err ) {
+      					console.warn(err);
+      				}
+          }).on('data', function (data) {
+            process.stdout.write(data);
+          });
           console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
         });
 

@@ -46,7 +46,9 @@ var cwd = function () {
       build: function () {
         cmd.jshint();
 
-        file.write('aplazame.min.js', require("uglify-js").minify('aplazame.js').code );
+        require('shelljs').exec('make browserify');
+
+        file.write('dist/aplazame.min.js', require("uglify-js").minify('dist/aplazame.js').code );
         console.log('aplazame.min.js', 'updated'.green);
       },
       pkgVersion: function () {
@@ -82,13 +84,14 @@ var cwd = function () {
 
         watch('src', function(filename) {
           console.log(filename.yellow, 'changed');
-          require('child_process').exec('make build', [], function (err, stdout, stderr) {
-      				if( err ) {
-      					console.warn(err);
-      				}
-          }).on('data', function (data) {
-            process.stdout.write(data);
-          });
+          // require('child_process').exec('make build', [], function (err, stdout, stderr) {
+      		// 		if( err ) {
+      		// 			console.warn(err);
+      		// 		}
+          // }).on('data', function (data) {
+          //   process.stdout.write(data);
+          // });
+          cmd.build();
           console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
         });
 
@@ -141,7 +144,7 @@ var cwd = function () {
                root: 'demo',
                openInBrowser: true,
                dirAlias: {
-                 'repo': '.'
+                 'dist': 'dist'
                },
                keepalive: false
              });

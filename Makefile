@@ -20,8 +20,11 @@ demo.less:
 dev: test
 	@npm start
 
-browserify:
-	@$(npmdir)/browserify src/main.js -o aplazame.js
+dir.dist:
+	@mkdir -p dist
+
+browserify: dir.dist
+	@$(npmdir)/browserify src/main.js -o dist/aplazame.js
 
 build: browserify
 	@node run build

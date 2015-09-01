@@ -19,11 +19,11 @@
     <div id="main"></div>
 
     <script type="application/x-template" data-template="info">
-        <div>Financia con Aplazame en <a><%= instalments %></a> cuotas de <%= instalment_amount %>.</div>
+        <div>Financia con Aplazame en <a href="#" data-action="showChoices"><%= num_instalments %></a> cuotas de <%= amount %>.</div>
     </script>
     <script type="application/x-template" data-template="choices">
         <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
-          <button type="button"><%= choices[i].num_instalments %></button>
+          <button type="button" data-action="showChoices" data-choice="<%= i %>"><%= choices[i].num_instalments %></button>
         <% } %>
     </script>
     <script type="text/javascript">
@@ -40,7 +40,7 @@
           "with(obj){p.push('" +
 
           // Convert the template into pure JavaScript
-          tmpl
+          tmpl.trim()
             .replace(/[\r\t\n]/g, " ")
             .split("<%").join("\t")
             .replace(/((^|%>)[^\t]*)'/g, "$1\r")
@@ -54,11 +54,46 @@
         template.put(tmpl.getAttribute('data-template'), tmpl.text);
       });
 
-      var main = document.getElementById('main');
+      var listen = window.addEventListener ? function (element, eventName, listener) {
+        element.addEventListener(eventName, listener, false);
+      } : ( window.attachEvent && function (element, eventName, listener) {
+        element.attachEvent('on' + eventName, listener);
+      } );
+      if( !listen ) {
+        throw new Error('Your Browser does not support events');
+      }
 
-      console.log(template.cache);
+      (function () {
+        var main = document.getElementById('main');
 
-      main.innerHTML = template('info', choice);
+        function showText () {
+          main.innerHTML = template('info', choice);
+        }
+
+        function showChoices () {
+          main.innerHTML = template('choices', { choices: choices });
+        }
+
+        listen(main, 'click', function (e) {
+          var action = e.target.getAttribute('data-action');
+          if( action !== undefined ) {
+            e.preventDefault();
+          }
+
+          switch( action ) {
+            case 'showChoices':
+              showChoices();
+              break;
+            case 'selectChoice':
+              choice = choices[ Number(e.target.getAttribute('data-choice')) ];
+              showText();
+              break;
+          }
+        });
+
+        showText();
+
+      })();
     </script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 /node_modules
 /npm-debug.log
 /settings.yml
+/demo/demo.css
 /aplazame.js
 /aplazame.min.js
 /dist/*

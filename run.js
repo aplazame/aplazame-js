@@ -17,6 +17,25 @@ function ShellCmd(cmd, args, cb, end) {
     child.stdout.on('end', end || noop);
 }
 
+function timestamp () {
+  return new Date().getTime();
+}
+
+function timingSync ( dest, fn ) {
+  if( dest instanceof Function ) {
+    fn = dest;
+    dest = null;
+  }
+
+  var start = timestamp();
+  fn();
+  var elapsedTime = timestamp() - start;
+  if( dest ) {
+    console.log('\n' + dest, 'updated'.green, ( elapsedTime + 'ms' ).yellow );
+  }
+  return timestamp() - start;
+}
+
 var colors = require('colors'),
     fs = require('fs'),
     path = require('path'),
@@ -41,15 +60,31 @@ var cwd = function () {
         return file.write( paths, JSON.stringify(data, null, '\t') );
       }
     },
+    sass = function (src, dest) {
+      timingSync(dest, function () {
+        var result = require('node-sass').renderSync({ file: src });
+        fs.writeFileSync(dest, result.css);
+      });
+    },
     // settings = yaml.safeLoad( file.read('settings.yml') ),
     cmd = {
       build: function () {
         cmd.jshint();
 
-        require('shelljs').exec('make browserify');
+        timingSync('aplazame.js', function () {
+          require('shelljs').exec('make browserify');
+        });
 
-        file.write('dist/aplazame.min.js', require("uglify-js").minify('dist/aplazame.js').code );
-        console.log('aplazame.min.js', 'updated'.green);
+        timingSync('aplazame.min.js', function () {
+          file.write('dist/aplazame.min.js', require("uglify-js").minify('dist/aplazame.js').code );
+        });
+      },
+      sass: function (target) {
+        switch( target ) {
+          case 'demo':
+            sass('demo/demo.scss', 'demo/demo.css');
+            break;
+        }
       },
       pkgVersion: function () {
         return process.stdout.write( file.readJSON('package.json').version );
@@ -73,29 +108,31 @@ var cwd = function () {
 
         var livereload = require('livereload'),
             server = livereload.createServer({ port: 54321 });
-        server.watch(__dirname);
+
+        server.watch( [cwd('dist'), cwd('demo')] );
       },
       watch: function () {
         var watch = require('node-watch');
 
-        if( cmd.test(true) ) {
-          cmd.build();
-        }
+        cmd.test();
 
-        watch('src', function(filename) {
-          console.log(filename.yellow, 'changed');
-          // require('child_process').exec('make build', [], function (err, stdout, stderr) {
-      		// 		if( err ) {
-      		// 			console.warn(err);
-      		// 		}
-          // }).on('data', function (data) {
-          //   process.stdout.write(data);
-          // });
-          cmd.build();
-          console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
+        watch('demo', function(filename) {
+          console.log('[demo]'.cyan, filename.yellow, 'changed');
+          if( /.(sass|scss)$/.test(filename) ) {
+            cmd.sass('demo');
+          } else {
+            return;
+          }
+          console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...\n'.blue);
         });
 
-        console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...'.blue);
+        watch('src', function(filename) {
+          console.log('[src]'.cyan, filename.yellow, 'changed');
+          cmd.build();
+          console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...\n'.blue);
+        });
+
+        console.log('\npress Ctrl-C to stop'.yellow, '\n', 'watching...\n'.blue);
 
       },
       test: function () {
@@ -136,23 +173,20 @@ var cwd = function () {
       demo: function () {
         cmd.build();
 
-        require('less').render( file.read('demo/demo.less'), function (e, output) {
-             file.write('demo/demo.css', output.css );
-             console.log('demo/demo.css', 'updated'.green);
+        cmd.sass('demo');
 
-             var server = require('nitro-server').start({
-               root: 'demo',
-               openInBrowser: true,
-               dirAlias: {
-                 'dist': 'dist'
-               },
-               keepalive: false
-             });
+        var server = require('nitro-server').start({
+         root: 'demo',
+         openInBrowser: true,
+         dirAlias: {
+           'dist': 'dist'
+         },
+         keepalive: false
+        });
 
-             cmd.live();
+        cmd.live();
 
-             server.close();
-          });
+        server.close();
       }
     };
 

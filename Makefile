@@ -5,7 +5,7 @@ whoami = $(shell whoami)
 
 # TASKS
 
-run.demo: build
+run.demo:
 	@node run demo
 
 jshint:

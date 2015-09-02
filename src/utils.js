@@ -125,6 +125,22 @@ function joinPath () {
   }, '');
 }
 
+function writeIframe (iframe, content) {
+  var iframeDoc = iframe.contentWindow.document;
+  iframeDoc.charset = 'UTF-8';
+  iframeDoc.open();
+  iframeDoc.write(content);
+  iframeDoc.close();
+}
+
+function getIFrame (iframeStyles) {
+  var iframe = document.createElement('iframe');
+  extend(iframe.style, iframeStyles || {});
+
+  iframe.frameBorder = '0';
+  return iframe;
+}
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -140,5 +156,7 @@ module.exports = {
   replaceKeys: replaceKeys,
   merge: merge,
   extend: extend,
-  joinPath: joinPath
+  joinPath: joinPath,
+  writeIframe: writeIframe,
+  getIFrame: getIFrame
 };

@@ -26,7 +26,7 @@ dir.dist:
 browserify: dir.dist
 	@$(npmdir)/browserify src/main.js -o dist/aplazame.js
 
-build: browserify
+build:
 	@node run build
 
 git.increaseVersion:

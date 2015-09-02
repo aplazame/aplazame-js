@@ -1,19 +1,35 @@
-var btns = document.querySelectorAll('[data-aplazame-simulator]');
+var aplazame = require('./aplazame'),
+    simulators = document.querySelectorAll('[data-aplazame-simulator]');
 
-if( btns.length ) {
+if( simulators.length ) {
 
-  [].forEach.call(btns, function (btn) {
-    var btnParams = {
+  var http = require('./http'),
+      _ = require('./utils');
+
+  [].forEach.call(simulators, function (simulator) {
+    'use strict';
+
+    var simulatorParams = {
       simulator: '[data-aplazame-simulator]',
-      amount: btn.getAttribute('data-amount'),
-      publicKey: btn.getAttribute('data-public-key')
+      amount: simulator.getAttribute('data-amount'),
+      publicKey: simulator.getAttribute('data-public-key')
     };
 
-    btn.innerHTML = 'cargando...';
+    simulator.innerHTML = 'cargando...';
 
-    aplazame.simulator(btnParams.amount, function (response) {
-      console.log('simulator', btnParams, response);
-      btn.innerHTML = 'loaded';
+    aplazame.simulator(simulatorParams.amount, function (choices) {
+      var child = simulator.firstChild;
+      while( child ) {
+        simulator.removeChild(child);
+        child = simulator.firstChild;
+      }
+      console.log('simulator', simulatorParams, choices);
+
+      http('dist/widgets/simulator/simulator.html').then(function (response) {
+        var iframe = _.getIFrame();
+        simulator.appendChild(iframe);
+        _.writeIframe(iframe, response.data.replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices, null, '\t') + ';') );
+      });
     });
 
   });

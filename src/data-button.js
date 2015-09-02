@@ -1,4 +1,5 @@
-var btn = document.querySelector('[data-aplazame-button]');
+var aplazame = require('./aplazame'),
+    btn = document.querySelector('[data-aplazame-button]');
 
 if( btn ) {
   var btnParams = {

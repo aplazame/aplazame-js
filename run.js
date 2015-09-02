@@ -3,7 +3,7 @@
 'use strict';
 
 function htmlToJs (html) {
-  return html.replace(/\n/g, '').replace(/\"/g, '\\\"').replace(/\>\s+\</g, '><');
+  return html.replace(/\n/g, '').replace(/\"/g, '\\\"').replace(/\>\s+</g, '><');
 }
 
 function noop () {}
@@ -13,7 +13,9 @@ function ShellCmd(cmd, args, cb, end) {
         child = spawn(cmd, args || []),
         me = this;
 
-    child.stdout.on('data', function (buffer) { (cb || noop)(me, buffer) });
+    child.stdout.on('data', function (buffer) {
+      (cb || noop)(me, buffer);
+    });
     child.stdout.on('end', end || noop);
 }
 
@@ -58,6 +60,14 @@ var cwd = function () {
       },
       writeJSON: function (paths, data) {
         return file.write( paths, JSON.stringify(data, null, '\t') );
+      },
+      copy: function (src, dest) {
+        return fs.createReadStream(src).pipe( fs.createWriteStream(dest) );
+      },
+      mkdir: function (dir) {
+        if( !fs.existsSync(dir) ) {
+            fs.mkdirSync(dir);
+        }
       }
     },
     sass = function (src, dest) {
@@ -65,6 +75,26 @@ var cwd = function () {
         var result = require('node-sass').renderSync({ file: src });
         fs.writeFileSync(dest, result.css);
       });
+    },
+    getJSLinter = function (onError, jshintrc) {
+      var JSHINT = require('jshint').JSHINT, errorsLog = '';
+
+      return function (fileName) {
+        JSHINT( file.read(fileName).split(/\n/), jshintrc );
+        var res = JSHINT.data();
+
+        if( res.errors ) {
+          var fileLog = fileName.cyan + '\n';
+          res.errors.forEach(function (err) {
+            if( err === null ) {
+              return;
+            }
+            fileLog += '  line ' + (err.line + '').yellow + ', col ' + (err.character + '').cyan + ', ' + err.reason.yellow + '\n';
+          });
+
+          onError(res.errors, fileLog, res);
+        }
+      };
     },
     // settings = yaml.safeLoad( file.read('settings.yml') ),
     cmd = {
@@ -76,8 +106,18 @@ var cwd = function () {
         });
 
         timingSync('aplazame.min.js', function () {
-          file.write('dist/aplazame.min.js', require("uglify-js").minify('dist/aplazame.js').code );
+          file.write('dist/aplazame.min.js', require('uglify-js').minify('dist/aplazame.js').code );
         });
+
+        file.mkdir('dist/widgets');
+        file.mkdir('dist/widgets/simulator');
+
+        timingSync('widgets html', function () {
+          glob.sync('src/widgets/{,**/}*.html').forEach(function (fileName) {
+            file.copy(fileName, fileName.replace(/^src/, 'dist') );
+          });
+        });
+
       },
       sass: function (target) {
         switch( target ) {
@@ -139,34 +179,24 @@ var cwd = function () {
         return cmd.jshint();
       },
       jshint: function (noExit) {
-        var JSHINT = require('jshint').JSHINT,
-            jshintrc = file.readJSON('.jshintrc'),
-            errorsLog = '';
+        var errorsLog = '';
 
-        glob.sync('src/{,**/}*.js').concat(glob.sync('tests/{,**/}*.js')).forEach(function (fileName) {
-          JSHINT( file.read(fileName).split(/\n/) );
-          var res = JSHINT.data()
+        glob.sync('src/{,**/}*.js').forEach( getJSLinter(function (errors, fileLog) {
+          errorsLog += fileLog;
+        }, file.readJSON('.jshintrc') ) );
 
-          if( res.errors ) {
-            errorsLog += fileName.cyan + '\n';
-            res.errors.forEach(function (err) {
-              if( err === null ) {
-                console.log('err', err);
-                return;
-              }
-              errorsLog += '  line ' + (err.line + '').yellow + ', col ' + (err.character + '').cyan + ', ' + err.reason.yellow + '\n';
-            });
-          }
-        });
+        glob.sync('tests/{,**/}*.js').forEach( getJSLinter(function (errors, fileLog) {
+          errorsLog += fileLog;
+        } ) );
 
         if( errorsLog ) {
           console.log( '\nJSHINT ERRORS'.red + '\n', errorsLog );
           if( !noExit ) {
             process.exit(1);
           }
-        } else {
-          console.log('\nJSHINT PASSED\n'.green);
         }
+
+        console.log('\nJSHINT PASSED\n'.green);
 
         return !errorsLog;
       },

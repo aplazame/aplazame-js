@@ -35,7 +35,6 @@
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.6",
     "karma-story-reporter": "^0.3.1",
-    "less": "^2.5.1",
     "livereload": "^0.3.7",
     "nitro-server": "^1.0.0",
     "node-watch": "^0.3.4",

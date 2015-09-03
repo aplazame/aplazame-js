@@ -8,111 +8,36 @@ function htmlToJs (html) {
 
 function noop () {}
 
-function ShellCmd(cmd, args, cb, end) {
-    var spawn = require('child_process').spawn,
-        child = spawn(cmd, args || []),
-        me = this;
-
-    child.stdout.on('data', function (buffer) {
-      (cb || noop)(me, buffer);
-    });
-    child.stdout.on('end', end || noop);
-}
-
-function timestamp () {
-  return new Date().getTime();
-}
-
-function timingSync ( dest, fn ) {
-  if( dest instanceof Function ) {
-    fn = dest;
-    dest = null;
-  }
-
-  var start = timestamp();
-  fn();
-  var elapsedTime = timestamp() - start;
-  if( dest ) {
-    console.log('\n' + dest, 'updated'.green, ( elapsedTime + 'ms' ).yellow );
-  }
-  return timestamp() - start;
-}
-
 var colors = require('colors'),
+    nitro = require('nitro-tools'),
     fs = require('fs'),
     path = require('path'),
     glob = require('glob');
 
-var cwd = function () {
-      var paths = [process.cwd()];
-      [].push.apply(paths, arguments);
-      return path.join.apply(null, paths );
-    },
-    file = {
-      read: function () {
-        return fs.readFileSync( path.join.apply(null, arguments), { encoding: 'utf8' });
-      },
-      readJSON: function () {
-        return JSON.parse( file.read.apply(this, arguments) );
-      },
-      write: function (paths, text) {
-        return fs.writeFileSync( typeof paths === 'string' ? paths : path.join(paths), text, { encoding: 'utf8' });
-      },
-      writeJSON: function (paths, data) {
-        return file.write( paths, JSON.stringify(data, null, '\t') );
-      },
-      copy: function (src, dest) {
-        return fs.createReadStream(src).pipe( fs.createWriteStream(dest) );
-      },
-      mkdir: function (dir) {
-        if( !fs.existsSync(dir) ) {
-            fs.mkdirSync(dir);
-        }
-      }
-    },
-    sass = function (src, dest) {
-      timingSync(dest, function () {
-        var result = require('node-sass').renderSync({ file: src });
-        fs.writeFileSync(dest, result.css);
-      });
-    },
-    getJSLinter = function (onError, jshintrc) {
-      var JSHINT = require('jshint').JSHINT, errorsLog = '';
+nitro.fileProcessor('sass', function (src) {
+  return require('node-sass').renderSync({ data: src }).css;
+});
 
-      return function (fileName) {
-        JSHINT( file.read(fileName).split(/\n/), jshintrc );
-        var res = JSHINT.data();
-
-        if( res.errors ) {
-          var fileLog = fileName.cyan + '\n';
-          res.errors.forEach(function (err) {
-            if( err === null ) {
-              return;
-            }
-            fileLog += '  line ' + (err.line + '').yellow + ', col ' + (err.character + '').cyan + ', ' + err.reason.yellow + '\n';
-          });
-
-          onError(res.errors, fileLog, res);
-        }
-      };
-    },
+var cwd = nitro.cwd,
+    file = nitro.file,
+    dir = nitro.dir,
     // settings = yaml.safeLoad( file.read('settings.yml') ),
     cmd = {
       build: function () {
         cmd.jshint();
 
-        timingSync('aplazame.js', function () {
-          require('shelljs').exec('make browserify');
+        nitro.timingSync('aplazame.js', function () {
+          nitro.exec('make browserify');
         });
 
-        timingSync('aplazame.min.js', function () {
+        nitro.timingSync('aplazame.min.js', function () {
           file.write('dist/aplazame.min.js', require('uglify-js').minify('dist/aplazame.js').code );
         });
 
-        file.mkdir('dist/widgets');
-        file.mkdir('dist/widgets/simulator');
+        dir.create('dist/widgets');
+        dir.create('dist/widgets/simulator');
 
-        timingSync('widgets html', function () {
+        nitro.timingSync('widgets html', function () {
           glob.sync('src/widgets/{,**/}*.html').forEach(function (fileName) {
             file.copy(fileName, fileName.replace(/^src/, 'dist') );
           });
@@ -122,7 +47,13 @@ var cwd = function () {
       sass: function (target) {
         switch( target ) {
           case 'demo':
-            sass('demo/demo.scss', 'demo/demo.css');
+            var destFile = 'demo/demo.css';
+            nitro.timingSync(destFile, function () {
+              nitro.load('demo/demo.scss').sass().log().writeFile(destFile);
+            });
+            break;
+          default:
+            cmd.sass('demo');
             break;
         }
       },
@@ -179,26 +110,18 @@ var cwd = function () {
         return cmd.jshint();
       },
       jshint: function (noExit) {
-        var errorsLog = '';
+        var errorsLog = '',
+            lintSrc = nitro.jshint( 'src/{,**/}*.js', file.readJSON('.jshintrc') ),
+            lintTests = nitro.jshint( 'tests/{,**/}*.js' );
 
-        glob.sync('src/{,**/}*.js').forEach( getJSLinter(function (errors, fileLog) {
-          errorsLog += fileLog;
-        }, file.readJSON('.jshintrc') ) );
-
-        glob.sync('tests/{,**/}*.js').forEach( getJSLinter(function (errors, fileLog) {
-          errorsLog += fileLog;
-        } ) );
-
-        if( errorsLog ) {
-          console.log( '\nJSHINT ERRORS'.red + '\n', errorsLog );
+        if( !lintSrc.valid || !lintTests.valid ) {
+          console.log( '\nJSHINT ERRORS'.red + '\n', lintSrc.log, lintTests.log );
           if( !noExit ) {
             process.exit(1);
           }
+        } else {
+          console.log('\nJSHINT PASSED\n'.green);
         }
-
-        console.log('\nJSHINT PASSED\n'.green);
-
-        return !errorsLog;
       },
       demo: function () {
         cmd.build();

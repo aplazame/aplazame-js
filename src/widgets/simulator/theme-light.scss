@@ -13,6 +13,7 @@ $brand-gray: #D0D7DB;
 
 $btn-size: 1.6rem;
 $btn-font: 1rem;
+$btn-border-size: 2px;
 
 
 a {
@@ -31,10 +32,10 @@ a {
   font-size: $btn-font;
   width: $btn-size;
   height: $btn-size;
-  line-height: $btn-size;
+  line-height: calc(#{$btn-size} - #{2*$btn-border-size});
   text-align: center;
   background: transparent;
-  border: 2px solid $brand-gray;
+  border: $btn-border-size solid $brand-gray;
   color: black;
   cursor: pointer;
   margin: 0.1rem;

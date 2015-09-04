@@ -1,0 +1,158 @@
+[
+  {
+    "annual_equivalent": 2500,
+    "amount": 8701,
+    "num_instalments": 1,
+    "downpayment_amount": 1507,
+    "total_interest": 158,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 4,
+      "financial": 47
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 3411,
+    "num_instalments": 2,
+    "downpayment_amount": 3411,
+    "total_interest": 186,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 5,
+      "financial": 56
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 2583,
+    "num_instalments": 3,
+    "downpayment_amount": 2583,
+    "total_interest": 280,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 7,
+      "financial": 84
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 2085,
+    "num_instalments": 4,
+    "downpayment_amount": 2085,
+    "total_interest": 375,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 9,
+      "financial": 112
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 1753,
+    "num_instalments": 5,
+    "downpayment_amount": 1753,
+    "total_interest": 471,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 12,
+      "financial": 141
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 1517,
+    "num_instalments": 6,
+    "downpayment_amount": 1517,
+    "total_interest": 567,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 14,
+      "financial": 170
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 1339,
+    "num_instalments": 7,
+    "downpayment_amount": 1339,
+    "total_interest": 664,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 17,
+      "financial": 199
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 1201,
+    "num_instalments": 8,
+    "downpayment_amount": 1201,
+    "total_interest": 761,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 19,
+      "financial": 227
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 1091,
+    "num_instalments": 9,
+    "downpayment_amount": 1091,
+    "total_interest": 859,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 21,
+      "financial": 258
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 1001,
+    "num_instalments": 10,
+    "downpayment_amount": 1001,
+    "total_interest": 958,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 24,
+      "financial": 287
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 926,
+    "num_instalments": 11,
+    "downpayment_amount": 926,
+    "total_interest": 1057,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 26,
+      "financial": 317
+    }
+  },
+  {
+    "annual_equivalent": 2500,
+    "amount": 861,
+    "num_instalments": 12,
+    "downpayment_amount": 861,
+    "total_interest": 1156,
+    "total_fees": 0,
+    "discounts": {
+      "applied": 0,
+      "social": 28,
+      "financial": 347
+    }
+  }
+]

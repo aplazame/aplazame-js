@@ -28,7 +28,12 @@ if( simulators.length ) {
       http('dist/widgets/simulator/simulator.html').then(function (response) {
         var iframe = _.getIFrame();
         simulator.appendChild(iframe);
-        _.writeIframe(iframe, response.data.replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices, null, '\t') + ';') );
+        _.writeIframe(iframe,
+          response.data
+            .replace(/<head\>/, '<head><base href="' + aplazame.baseUrl() + '" />')
+            .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
+            // .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices, null, '\t') + ';')
+        );
       });
     });
 

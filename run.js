@@ -9,38 +9,46 @@ function htmlToJs (html) {
 function noop () {}
 
 var colors = require('colors'),
-    nitro = require('nitro-tools'),
-    fs = require('fs'),
-    path = require('path'),
-    glob = require('glob');
+    nitro = require('nitro-tools');
 
-nitro.fileProcessor('sass', function (src) {
-  return require('node-sass').renderSync({ data: src }).css;
-});
+nitro.autoLoad('sass', 'uglify', 'log');
 
 var cwd = nitro.cwd,
     file = nitro.file,
     dir = nitro.dir,
     // settings = yaml.safeLoad( file.read('settings.yml') ),
     cmd = {
+      debug: function () {
+        console.log('debug', dir.exists('node_modules/node-sass') );
+      },
       build: function () {
         cmd.jshint();
 
         nitro.timingSync('aplazame.js', function () {
-          nitro.exec('make browserify');
+          nitro.exec('make aplazame.js');
         });
 
         nitro.timingSync('aplazame.min.js', function () {
-          file.write('dist/aplazame.min.js', require('uglify-js').minify('dist/aplazame.js').code );
+          nitro.load('dist/aplazame.js').process('uglify').writeFile('dist/aplazame.min.js');
         });
+
+        nitro.copy('dist', 'aplazame{,.min}.js', '.');
 
         dir.create('dist/widgets');
         dir.create('dist/widgets/simulator');
 
-        nitro.timingSync('widgets html', function () {
-          glob.sync('src/widgets/{,**/}*.html').forEach(function (fileName) {
-            file.copy(fileName, fileName.replace(/^src/, 'dist') );
-          });
+        nitro.timingSync('simulator:html', function () {
+          nitro.copy('src/widgets/simulator', '{,**/}*.html', 'dist/widgets/simulator');
+        });
+        nitro.timingSync('simulator:js', function () {
+          nitro.exec('make simulator.js');
+        });
+        nitro.timingSync('simulator:css', function () {
+          nitro.cwd('src/widgets/simulator')
+            .load('*.scss')
+            .process('sass')
+            .concat('simulator.css')
+            .write('dist/widgets/simulator');
         });
 
       },
@@ -49,7 +57,7 @@ var cwd = nitro.cwd,
           case 'demo':
             var destFile = 'demo/demo.css';
             nitro.timingSync(destFile, function () {
-              nitro.load('demo/demo.scss').sass().log().writeFile(destFile);
+              nitro.load('demo/demo.scss').process('sass').writeFile(destFile);
             });
             break;
           default:
@@ -80,7 +88,7 @@ var cwd = nitro.cwd,
         var livereload = require('livereload'),
             server = livereload.createServer({ port: 54321 });
 
-        server.watch( [cwd('dist'), cwd('demo')] );
+        server.watch( [cwd.path('dist'), cwd.path('dist')] );
       },
       watch: function () {
         var watch = require('node-watch');

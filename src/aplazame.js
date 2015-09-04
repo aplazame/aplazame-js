@@ -232,5 +232,8 @@ module.exports = {
   button: button,
   apiGet: apiGet,
   apiPost: apiPost,
-  simulator: simulator
+  simulator: simulator,
+  baseUrl: function () {
+    return env.baseUrl;
+  }
 };

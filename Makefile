@@ -23,8 +23,11 @@ dev: test
 dir.dist:
 	@mkdir -p dist
 
-browserify: dir.dist
+aplazame.js: dir.dist
 	@$(npmdir)/browserify src/main.js -o dist/aplazame.js
+
+simulator.js: dir.dist
+	@$(npmdir)/browserify src/widgets/simulator/simulator.js -o dist/widgets/simulator/simulator.js
 
 build:
 	@node run build

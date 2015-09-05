@@ -1,0 +1,47 @@
+
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+html {
+  font-family: Montserrat;
+}
+
+$brand-primary: #3e8bc2;
+
+$brand-primary-hover: darken($brand-primary, 10);
+
+$brand-gray: #D0D7DB;
+
+$btn-size: 1.6rem;
+$btn-font: 1rem;
+$btn-border-size: 2px;
+
+
+a {
+  color: $brand-primary;
+
+  &:hover {
+    color: $brand-primary-hover;
+  }
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+[data-action="selectChoice"] {
+  font-size: $btn-font;
+  width: $btn-size;
+  height: $btn-size;
+  line-height: calc(#{$btn-size} - #{2*$btn-border-size});
+  text-align: center;
+  background: transparent;
+  border: $btn-border-size solid $brand-gray;
+  color: black;
+  cursor: pointer;
+  margin: 0.1rem;
+  padding: 0;
+
+  &:hover {
+    border-color: $brand-primary;
+  }
+}

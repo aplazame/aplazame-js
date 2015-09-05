@@ -125,6 +125,52 @@ function joinPath () {
   }, '');
 }
 
+function writeIframe (iframe, content) {
+  var iframeDoc = iframe.contentWindow.document;
+  iframeDoc.charset = 'UTF-8';
+  iframeDoc.open();
+  iframeDoc.write(content);
+  iframeDoc.close();
+}
+
+function getIFrame (iframeStyles) {
+  var iframe = document.createElement('iframe');
+  extend(iframe.style, iframeStyles || {});
+
+  iframe.frameBorder = '0';
+  return iframe;
+}
+
+function template (name, data){
+  return template.cache[name](data);
+}
+
+template.cache = {};
+template.put = function (name, tmpl) {
+  // John Resig micro-template
+  template.cache[name] = new Function('obj', // jshint ignore:line
+    'var p=[],print=function(){p.push.apply(p,arguments);};' +
+
+    // Introduce the data as local variables using with(){}
+    'with(obj){p.push(\'' +
+
+    // Convert the template into pure JavaScript
+    tmpl.trim()
+      .replace(/[\r\t\n]/g, ' ')
+      .split('<%').join('\t')
+      .replace(/((^|%>)[^\t]*)'/g, '$1\r')
+      .replace(/\t=(.*?)%>/g, '\',$1,\'')
+      .split('\t').join('\');')
+      .split('%>').join('p.push(\'')
+      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+};
+
+template.lookup = function () {
+  [].forEach.call(document.querySelectorAll('script[type="application/x-template"][data-template]'), function (tmpl) {
+    template.put(tmpl.getAttribute('data-template'), tmpl.text);
+  });
+};
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -140,5 +186,8 @@ module.exports = {
   replaceKeys: replaceKeys,
   merge: merge,
   extend: extend,
-  joinPath: joinPath
+  joinPath: joinPath,
+  writeIframe: writeIframe,
+  getIFrame: getIFrame,
+  template: template
 };

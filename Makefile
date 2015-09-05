@@ -20,10 +20,16 @@ demo.less:
 dev: test
 	@npm start
 
-browserify:
-	@$(npmdir)/browserify src/main.js -o aplazame.js
+dir.dist:
+	@mkdir -p dist
 
-build: browserify
+aplazame.js: dir.dist
+	@$(npmdir)/browserify src/main.js -o dist/aplazame.js
+
+simulator.js: dir.dist
+	@$(npmdir)/browserify src/widgets/simulator/simulator.js -o dist/widgets/simulator/simulator.js
+
+build:
 	@node run build
 
 git.increaseVersion:

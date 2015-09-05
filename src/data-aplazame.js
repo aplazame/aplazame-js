@@ -1,4 +1,6 @@
-var aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]');
+var aplazame = require('./aplazame'),
+    aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
+    scriptBase = aplazameScript.src.split('aplazame\.')[0];
 
 if( aplazameScript ) {
   var href = aplazameScript.src.split('?'),
@@ -47,6 +49,8 @@ if( document.querySelector('script[data-aplazame]') ) {
   if( script.getAttribute('data-analytics') ) {
     envOptions.analytics = script.getAttribute('data-analytics') === 'true';
   }
+
+  envOptions.baseUrl = scriptBase;
 
   aplazame.init(envOptions, apiOptions);
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="widgets/simulator/simulator.css" />
+  </head>
+  <body>
+    <script type="text/javascript">
+      var choices = [];
+
+      // choices = []; // this is replaced with real data
+    </script>
+    <div id="main"></div>
+
+    <script type="application/x-template" data-template="info">
+        <div>Financia con Aplazame<br/>en <a href="#" class="no-wrap" data-action="showChoices"><%= num_instalments %> cuotas</a> de <%= getAmount(amount) %> €.</div>
+    </script>
+    <script type="application/x-template" data-template="choices">
+        <p>Elige el número de cuotas</p>
+        <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
+          <button type="button" data-action="selectChoice" data-choice="<%= i %>"><%= choices[i].num_instalments %></button>
+        <% } %>
+    </script>
+    <script type="text/javascript" src="widgets/simulator/simulator.js"></script>
+  </body>
+</html>

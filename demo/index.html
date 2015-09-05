@@ -38,6 +38,15 @@
           <div>
             <div data-aplazame-simulator="" data-amount="10050"></div>
           </div>
+
+          <br/>
+
+          <div class="text-center">
+            <button data-aplazame-button="" data-amount="25000" onclick="loadCheckout();">CHECKOUT</button>
+          </div>
+
+          <br/>
+
         </section>
       </div>
     </div>
@@ -51,7 +60,10 @@
             data-sandbox="true">
     </script>
     <script>
-      function loadCheckout(orderId) {
+      function loadCheckout() {
+
+        var orderId = 'test-' + parseInt( new Date().getTime() / 60000 );
+
         aplazame.checkout({
           "toc": true,
           "merchant": {

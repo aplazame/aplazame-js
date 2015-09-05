@@ -1,10 +1,19 @@
 
 @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 html {
   font-family: Montserrat;
-  // font-family: Arial;
-  // font-size: 16px;
+  font-size: 15px;
+}
+
+body {
+  overflow: hidden;
+  padding: 0.4rem;
 }
 
 $brand-primary: #3e8bc2;
@@ -17,18 +26,20 @@ $btn-size: 1.6rem;
 $btn-font: 1rem;
 $btn-border-size: 2px;
 
+$logo-size: 2rem;
+
 .logo {
   float: left;
   margin-right: 0.5rem;
 
   > img {
-    width: 2rem;
-    height: 2rem;
+    width: $logo-size;
+    height: $logo-size;
   }
 }
 
 #main {
-  margin-left: 2.5rem;
+  margin-left: $logo-size + 0.5rem;
 }
 
 a {
@@ -56,7 +67,7 @@ a {
   margin: 0.1rem;
   padding: 0;
 
-  &:hover, .active {
+  &:hover, &.active {
     border-color: $brand-primary;
   }
 }

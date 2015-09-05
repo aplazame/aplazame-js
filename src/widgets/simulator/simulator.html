@@ -17,12 +17,12 @@
     <div id="main"></div>
 
     <script type="application/x-template" data-template="info">
-        <div>Financia con Aplazame<br/>en <a href="#" class="no-wrap" data-action="showChoices"><%= num_instalments %> cuotas</a> de <%= getAmount(amount) %> €.</div>
+        <div>Financia con Aplazame<br/>en <a href="#" class="no-wrap" data-action="showChoices"><%= choice.num_instalments %> cuotas</a> de <%= getAmount(choice.amount) %> €.</div>
     </script>
     <script type="application/x-template" data-template="choices">
         <div>Elige el número de cuotas</div>
         <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
-          <button type="button" data-action="selectChoice" data-choice="<%= i %>"><%= choices[i].num_instalments %></button>
+          <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
         <% } %>
     </script>
     <script type="text/javascript" src="widgets/simulator/simulator.js"></script>

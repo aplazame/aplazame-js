@@ -1,6 +1,10 @@
 var aplazame = require('./aplazame'),
     aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
-    scriptBase = aplazameScript.src.split('aplazame\.')[0];
+    scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
+
+if( !/\/$/.test(scriptBase) ) {
+  scriptBase += '/';
+}
 
 if( aplazameScript ) {
   var href = aplazameScript.src.split('?'),

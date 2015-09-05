@@ -24,6 +24,10 @@ var cwd = nitro.cwd,
       build: function () {
         cmd.jshint();
 
+        nitro.timingSync('copying assets', function () {
+          nitro.exec('cp -R src/assets/ dist');
+        })
+
         nitro.timingSync('aplazame.js', function () {
           nitro.exec('make aplazame.js');
         });

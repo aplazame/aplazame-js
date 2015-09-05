@@ -24,15 +24,33 @@ function getAmount (amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
+function emitSize () {
+  setTimeout(function () {
+    parent.window.postMessage({
+      aplazame: 'simulator',
+      event: 'resize',
+      data: {
+        width: document.body.clientWidth,
+        height: document.body.clientHeight
+      }
+    }, '*');
+  },1);
+}
+
+_.listen(window, 'load', emitSize);
+_.listen(window, 'resize', emitSize);
+
 function showText () {
   main.innerHTML = _.template('info', {
     getAmount: getAmount,
     choice: selectedChoice
   });
+  emitSize();
 }
 
 function showChoices () {
   main.innerHTML = _.template('choices', { selectedChoice: selectedChoice, choices: choices });
+  emitSize();
 }
 
 function setChoice (choice) {
@@ -68,19 +86,3 @@ _.listen(main, 'click', function (e) {
 });
 
 showText();
-
-function emitSize () {
-  setTimeout(function () {
-    parent.window.postMessage({
-      aplazame: 'simulator',
-      event: 'resize',
-      data: {
-        width: document.body.clientWidth,
-        height: document.body.clientHeight
-      }
-    }, '*');
-  },1);
-}
-
-_.listen(window, 'load', emitSize);
-_.listen(window, 'resize', emitSize);

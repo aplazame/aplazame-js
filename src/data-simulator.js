@@ -58,6 +58,4 @@ if( simulators.length ) {
 
   });
   // aplazame.button(btnParams);
-} else {
-  console.log('not simulator found!');
 }

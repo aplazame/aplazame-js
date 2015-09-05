@@ -40,13 +40,16 @@ $logo-size: 2rem;
 
 #main {
   margin-left: $logo-size + 0.5rem;
+  min-height: 5rem;
 }
 
 a {
   color: $brand-primary;
+  text-decoration: none;
 
   &:hover {
     color: $brand-primary-hover;
+    text-decoration: underline;
   }
 }
 

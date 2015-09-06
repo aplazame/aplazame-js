@@ -11,6 +11,10 @@ var http = require('./http'),
     acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
     env = {};
 
+function getEnv (key) {
+  return key ? env[key] : env;
+}
+
 function apiOptions (options) {
   options = options || {};
   var publicKey = options.publicKey || env.publicKey;
@@ -228,6 +232,7 @@ function simulator (amount, _options, callback) {
 
 module.exports = {
   init: init,
+  getEnv: getEnv,
   checkout: checkout,
   button: button,
   apiGet: apiGet,

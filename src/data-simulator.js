@@ -44,7 +44,7 @@ _.ready(function () {
         }
         console.log('simulator', simulatorParams, choices);
 
-        http('dist/widgets/simulator/simulator.html').then(function (response) {
+        http( aplazame.getEnv('baseUrl') + 'widgets/simulator/simulator.html').then(function (response) {
           var iframe = _.getIFrame({
             width: '100%'
           });

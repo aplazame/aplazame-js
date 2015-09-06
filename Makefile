@@ -47,6 +47,7 @@ git.updateRelease:
 publish: install.npm jshint git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
+	@git add dist -f --all
 	@git commit -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node run pkgVersion)\n"

@@ -34,7 +34,7 @@ _.ready(function () {
         publicKey: simulator.getAttribute('data-public-key')
       };
 
-      simulator.innerHTML = '<p>cargando cuotas...</p>';
+      simulator.innerHTML = 'cargando cuotas...';
 
       aplazame.simulator(simulatorParams.amount, function (choices) {
         var child = simulator.firstChild;

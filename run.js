@@ -25,7 +25,7 @@ var cwd = nitro.cwd,
         cmd.jshint();
 
         nitro.timingSync('copying assets', function () {
-          nitro.exec('cp -R src/assets/ dist');
+          nitro.exec('mkdir -p dist/widgets && cp -R src/widgets/assets/ dist/widgets');
         });
 
         nitro.timingSync('aplazame.js', function () {

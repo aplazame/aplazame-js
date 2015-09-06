@@ -31,9 +31,12 @@ nav.page-nav {
 }
 
 section.main-section {
-  background: #eee;
+  // background: #eee;
   margin-left: 14rem;
-  /*height: 22rem;*/
+}
+
+section.main-wrapper {
+  background: #eee;
 }
 
 footer.footer {
@@ -62,7 +65,7 @@ footer.footer {
     clear:both;
   }
 
-  zoom:1; /* For IE 6/7 (trigger hasLayout) */
+  zoom: 1; /* For IE 6/7 (trigger hasLayout) */
 }
 
 // .clearfix:before, .main-wrapper:before,

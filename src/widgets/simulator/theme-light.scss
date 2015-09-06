@@ -1,0 +1,76 @@
+
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: Montserrat;
+  font-size: 15px;
+}
+
+body {
+  overflow: hidden;
+  padding: 0.4rem;
+}
+
+$brand-primary: #3e8bc2;
+
+$brand-primary-hover: darken($brand-primary, 10);
+
+$brand-gray: #D0D7DB;
+
+$btn-size: 1.6rem;
+$btn-font: 1rem;
+$btn-border-size: 2px;
+
+$logo-size: 2rem;
+
+.logo {
+  float: left;
+  margin-right: 0.5rem;
+
+  > img {
+    width: $logo-size;
+    height: $logo-size;
+  }
+}
+
+#main {
+  margin-left: $logo-size + 0.5rem;
+  min-height: 5rem;
+}
+
+a {
+  color: $brand-primary;
+  text-decoration: none;
+
+  &:hover {
+    color: $brand-primary-hover;
+    text-decoration: underline;
+  }
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+[data-action="selectChoice"] {
+  font-size: $btn-font;
+  width: $btn-size;
+  height: $btn-size;
+  line-height: calc(#{$btn-size} - #{2*$btn-border-size});
+  text-align: center;
+  background: white;
+  border: $btn-border-size solid $brand-gray;
+  color: black;
+  cursor: pointer;
+  margin: 0.1rem;
+  padding: 0;
+
+  &:hover, &.active {
+    border-color: $brand-primary;
+  }
+}

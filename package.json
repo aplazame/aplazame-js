@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.15",
+	"version": "0.0.16",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {
@@ -29,16 +29,15 @@
 		"glob": "^5.0.13",
 		"jasmine-core": "^2.3.4",
 		"js-yaml": "^3.3.1",
-		"jshint": "^2.8.0",
 		"karma": "^0.12.37",
 		"karma-chrome-launcher": "^0.2.0",
 		"karma-firefox-launcher": "^0.1.6",
 		"karma-jasmine": "^0.3.6",
 		"karma-story-reporter": "^0.3.1",
-		"less": "^2.5.1",
 		"livereload": "^0.3.7",
 		"nitro-server": "^1.0.0",
+		"nitro-tools": "^1.0.11",
 		"node-watch": "^0.3.4",
-		"uglify-js": "^2.4.23"
+		"shelljs": "^0.5.3"
 	}
 }

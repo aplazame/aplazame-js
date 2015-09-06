@@ -1,196 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]');
+'use strict'; // jshint ignore:line
 
-if( aplazameScript ) {
-  var href = aplazameScript.src.split('?'),
-      sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
-
-  if( sandboxMatch ) {
-    aplazame.init({}, { sandbox: sandboxMatch[1] === '1' || sandboxMatch[1] === 'true' });
-  }
-}
-
-if( document.querySelector('script[data-aplazame]') ) {
-
-  var script = document.querySelector('script[data-aplazame]'),
-      initText = script.getAttribute('data-aplazame'),
-      envOptions = {},
-      apiOptions = {};
-
-  if( /\:/.test(initText) ) {
-    initText.split(',').forEach(function (part) {
-      var keys = part.match(/^([^\:]+)\:(.*)/);
-      envOptions[keys[1].trim()] = keys[2].trim();
-    });
-  } else {
-    if( initText ) {
-      envOptions.publicKey = initText;
-    }
-  }
-
-  if( script.getAttribute('data-version') ) {
-    var matchVersion = script.getAttribute('data-version').match(/^v?(\d)(\.(\d))?$/);
-
-    if( !matchVersion ) {
-      throw new Error('malformed version, should be like \'v1.2\'');
-    }
-
-    apiOptions.version = Number(matchVersion[1]);
-
-    if( matchVersion[3] !== undefined ) {
-      apiOptions.checkoutVersion = Number(matchVersion[3]);
-    }
-  }
-
-  if( script.getAttribute('data-sandbox') ) {
-    apiOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
-  }
-  if( script.getAttribute('data-analytics') ) {
-    envOptions.analytics = script.getAttribute('data-analytics') === 'true';
-  }
-
-  aplazame.init(envOptions, apiOptions);
-}
-
-},{}],2:[function(require,module,exports){
-var btn = document.querySelector('[data-aplazame-button]');
-
-if( btn ) {
-  var btnParams = {
-    button: '[data-aplazame-button]',
-    description: '[data-aplazame-button-info]',
-    parent: btn.getAttribute('data-parent'),
-    publicKey: btn.getAttribute('data-aplazame-button'),
-    amount: btn.getAttribute('data-amount'),
-    currency: btn.getAttribute('data-currency') || undefined,
-    sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
-    country: btn.getAttribute('data-country') || undefined
-  };
-
-  aplazame.button(btnParams);
-}
-
-},{}],3:[function(require,module,exports){
-// factory http
-
-function headerToTitleSlug(text) {
-  var key = text[0].toUpperCase() + text.substr(1);
-  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
-      return lower + '-' + upper;
-  });
-}
-
-function headerToCamelCase(text) {
-  var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
-    return lower + upper;
-  });
-}
-
-var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
-function parseContentType(contentType, text, xml) {
-  var matches = contentType && contentType.match(RE_contentType);
-  return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
-}
-
-function http (url, options) {
-  options = options || {};
-  options.headers = options.headers || {};
-  options.url = url;
-
-  var request = null,
-      on = { resolve: [], reject: [] };
-
-  try { // Firefox, Opera 8.0+, Safari
-      request = new XMLHttpRequest();
-  } catch (e) { // Internet Explorer
-      try { request = new ActiveXObject("Msxml2.XMLHTTP"); }
-      catch (er) { request = new ActiveXObject("Microsoft.XMLHTTP"); }
-  }
-  if( request === null ) { throw "Browser does not support HTTP Request"; }
-
-  request.open( ( options.method || 'get').toUpperCase(), url );
-
-  if( options.withCredentials ) {
-    request.withCredentials = true;
-  }
-
-  for( var key in options.headers ) {
-      request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
-  }
-
-  request.resolve = function ( response ) {
-    on.resolve.forEach(function (handler) {
-      handler(response);
-    });
-  };
-  request.reject = function ( response ) {
-    on.reject.forEach(function (handler) {
-      handler(response);
-    });
-  };
-
-  var headersCache;
-  request.getHeaders = function () {
-    if( !headersCache ) {
-      headersCache = {};
-      request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
-          headersCache[headerToCamelCase(key)] = value.trim();
-      });
-    }
-    return headersCache;
-  };
-
-  request.onreadystatechange = function(){
-    if( request.readyState === 'complete' || request.readyState === 4 ) {
-      var response = {
-        data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
-        status: request.status,
-        headers: request.getHeaders,
-        xhr: request
-      };
-      if( request.status >= 200 && request.status < 300 ) {
-        request.resolve( response );
-      } else if( request.status >= 400 ) {
-        request.reject( response );
-      } else {
-        throw new Error('Unexpected status code ' + request.status);
-      }
-    }
-  };
-
-  request.options = options;
-
-  request.send( options.data );
-
-  return {
-    then: function (onResolve, onReject) {
-      on.resolve.push(onResolve);
-      if( onReject instanceof Function ) {
-        on.reject.push(onReject);
-      }
-    },
-    error: function (onReject) {
-      on.reject.push(onReject);
-    }
-  };
-}
-
-module.exports = http;
-
-},{}],4:[function(require,module,exports){
-(function (global){
 var http = require('./http'),
     _ = require('./utils'),
-    iframeStyle = {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      background: 'transparent',
-      'z-index': 2147483647
-    },
     api = {
       host: 'https://api.aplazame.com/',
       version: 1,
@@ -199,6 +11,10 @@ var http = require('./http'),
     },
     acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
     env = {};
+
+function getEnv (key) {
+  return key ? env[key] : env;
+}
 
 function apiOptions (options) {
   options = options || {};
@@ -313,14 +129,6 @@ function button (options) {
     });
 }
 
-function writeIframe (iframe, content) {
-  var iframeDoc = iframe.contentWindow.document;
-  iframeDoc.charset = 'UTF-8';
-  iframeDoc.open();
-  iframeDoc.write(content);
-  iframeDoc.close();
-}
-
 function checkout (options) {
   options = options || {};
   var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
@@ -334,14 +142,19 @@ function checkout (options) {
   http(baseUrl + 'iframe.html').then(function (response) {
     document.body.style.overflow = 'hidden';
     // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
-    var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />');
+    var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
+        iframe = _.getIFrame({
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'transparent',
+          'z-index': 2147483647
+        });
 
-    var iframe = document.createElement('iframe');
-    _.extend(iframe.style, iframeStyle);
-
-    iframe.frameBorder = '0';
     document.body.appendChild(iframe);
-    writeIframe(iframe, iframeHtml);
+    _.writeIframe(iframe, iframeHtml);
 
     if( !options.merchant ) {
       throw new Error('missing merchant parameters');
@@ -413,25 +226,294 @@ function simulator (amount, _options, callback) {
   }
   apiGet('instalment-plan-simulator', options ).then(function (response) {
     if( _.isFunction(callback) ) {
-      callback(response.data.choices[0].instalments);
+      callback(response.data.choices[0].instalments, response.data.options, response.data);
     }
   });
 }
 
-global.aplazame = {
+module.exports = {
   init: init,
+  getEnv: getEnv,
   checkout: checkout,
   button: button,
   apiGet: apiGet,
   apiPost: apiPost,
-  simulator: simulator
+  simulator: simulator,
+  baseUrl: function () {
+    return env.baseUrl;
+  }
 };
+
+},{"./http":5,"./utils":7}],2:[function(require,module,exports){
+var aplazame = require('./aplazame'),
+    aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
+    scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
+
+if( !/\/$/.test(scriptBase) ) {
+  scriptBase += '/';
+}
+
+if( aplazameScript ) {
+  var href = aplazameScript.src.split('?'),
+      sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
+
+  if( sandboxMatch ) {
+    aplazame.init({}, { sandbox: sandboxMatch[1] === '1' || sandboxMatch[1] === 'true' });
+  }
+}
+
+if( document.querySelector('script[data-aplazame]') ) {
+
+  var script = document.querySelector('script[data-aplazame]'),
+      initText = script.getAttribute('data-aplazame'),
+      envOptions = {},
+      apiOptions = {};
+
+  if( /\:/.test(initText) ) {
+    initText.split(',').forEach(function (part) {
+      var keys = part.match(/^([^\:]+)\:(.*)/);
+      envOptions[keys[1].trim()] = keys[2].trim();
+    });
+  } else {
+    if( initText ) {
+      envOptions.publicKey = initText;
+    }
+  }
+
+  if( script.getAttribute('data-version') ) {
+    var matchVersion = script.getAttribute('data-version').match(/^v?(\d)(\.(\d))?$/);
+
+    if( !matchVersion ) {
+      throw new Error('malformed version, should be like \'v1.2\'');
+    }
+
+    apiOptions.version = Number(matchVersion[1]);
+
+    if( matchVersion[3] !== undefined ) {
+      apiOptions.checkoutVersion = Number(matchVersion[3]);
+    }
+  }
+
+  if( script.getAttribute('data-sandbox') ) {
+    apiOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
+  }
+  if( script.getAttribute('data-analytics') ) {
+    envOptions.analytics = script.getAttribute('data-analytics') === 'true';
+  }
+
+  envOptions.baseUrl = scriptBase;
+
+  aplazame.init(envOptions, apiOptions);
+}
+
+},{"./aplazame":1}],3:[function(require,module,exports){
+var aplazame = require('./aplazame'),
+    _ = require('./utils');
+
+_.ready(function () {
+  var btn = document.querySelector('[data-aplazame-button]');
+
+  if( btn ) {
+    var btnParams = {
+      button: '[data-aplazame-button]',
+      description: '[data-aplazame-button-info]',
+      parent: btn.getAttribute('data-parent'),
+      publicKey: btn.getAttribute('data-public-key'),
+      amount: btn.getAttribute('data-amount'),
+      currency: btn.getAttribute('data-currency') || undefined,
+      sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
+      country: btn.getAttribute('data-country') || undefined
+    };
+
+    aplazame.button(btnParams);
+  }
+});
+
+},{"./aplazame":1,"./utils":7}],4:[function(require,module,exports){
+var aplazame = require('./aplazame'),
+    _ = require('./utils');
+
+_.ready(function () {
+  var simulators = document.querySelectorAll('[data-aplazame-simulator]');
+
+  if( simulators.length ) {
+
+    var http = require('./http'),
+        iframes = [];
+
+    _.listen(window, 'message', function (e) {
+      var message = e.data;
+
+
+      if( message.aplazame === 'simulator' ) {
+        console.log('aplazame-simulator:message', message, e.source);
+
+        iframes.forEach(function (iframe) {
+          console.log('aplazame-simulator:iframe', iframe, e.source, iframe.contentWindow === e.source );
+          if( iframe.contentWindow === e.source ) {
+            iframe.style.height = message.data.height + 'px';
+          }
+        });
+      }
+    });
+
+    [].forEach.call(simulators, function (simulator) {
+      'use strict';
+
+      var simulatorParams = {
+        simulator: '[data-aplazame-simulator]',
+        amount: simulator.getAttribute('data-amount'),
+        publicKey: simulator.getAttribute('data-public-key')
+      };
+
+      simulator.innerHTML = 'cargando cuotas...';
+
+      aplazame.simulator(simulatorParams.amount, function (choices) {
+        var child = simulator.firstChild;
+        while( child ) {
+          simulator.removeChild(child);
+          child = simulator.firstChild;
+        }
+        console.log('simulator', simulatorParams, choices);
+
+        http( aplazame.getEnv('baseUrl') + 'widgets/simulator/simulator.html').then(function (response) {
+          var iframe = _.getIFrame({
+            width: '100%'
+          });
+          iframes.push(iframe);
+          simulator.appendChild(iframe);
+          _.writeIframe(iframe,
+            response.data
+              .replace(/<head\>/, '<head><base href="' + aplazame.baseUrl() + '" />')
+              .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
+          );
+        });
+      });
+
+    });
+    // aplazame.button(btnParams);
+  }
+});
+
+},{"./aplazame":1,"./http":5,"./utils":7}],5:[function(require,module,exports){
+// factory http
+
+function headerToTitleSlug(text) {
+  var key = text[0].toUpperCase() + text.substr(1);
+  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+      return lower + '-' + upper;
+  });
+}
+
+function headerToCamelCase(text) {
+  var key = text[0].toLowerCase() + text.substr(1);
+  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+    return lower + upper;
+  });
+}
+
+var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
+function parseContentType(contentType, text, xml) {
+  var matches = contentType && contentType.match(RE_contentType);
+  return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
+}
+
+function http (url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  options.url = url;
+
+  var request = null,
+      on = { resolve: [], reject: [] };
+
+  try { // Firefox, Opera 8.0+, Safari
+      request = new XMLHttpRequest();
+  } catch (e) { // Internet Explorer
+      try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
+      catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
+  }
+  if( request === null ) { throw 'Browser does not support HTTP Request'; }
+
+  request.open( ( options.method || 'get').toUpperCase(), url );
+
+  if( options.withCredentials ) {
+    request.withCredentials = true;
+  }
+
+  for( var key in options.headers ) {
+      request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
+  }
+
+  request.resolve = function ( response ) {
+    on.resolve.forEach(function (handler) {
+      handler(response);
+    });
+  };
+  request.reject = function ( response ) {
+    on.reject.forEach(function (handler) {
+      handler(response);
+    });
+  };
+
+  var headersCache;
+  request.getHeaders = function () {
+    if( !headersCache ) {
+      headersCache = {};
+      request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
+          headersCache[headerToCamelCase(key)] = value.trim();
+      });
+    }
+    return headersCache;
+  };
+
+  request.onreadystatechange = function(){
+    if( request.readyState === 'complete' || request.readyState === 4 ) {
+      var response = {
+        data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
+        status: request.status,
+        headers: request.getHeaders,
+        xhr: request
+      };
+      if( request.status >= 200 && request.status < 300 ) {
+        request.resolve( response );
+      } else if( request.status >= 400 ) {
+        request.reject( response );
+      } else {
+        throw new Error('Unexpected status code ' + request.status);
+      }
+    }
+  };
+
+  request.options = options;
+
+  request.send( options.data );
+
+  return {
+    then: function (onResolve, onReject) {
+      on.resolve.push(onResolve);
+      if( onReject instanceof Function ) {
+        on.reject.push(onReject);
+      }
+    },
+    error: function (onReject) {
+      on.reject.push(onReject);
+    }
+  };
+}
+
+module.exports = http;
+
+},{}],6:[function(require,module,exports){
+(function (global){
+
+global.aplazame = require('./aplazame');
 
 require('./data-aplazame');
 require('./data-button');
+require('./data-simulator');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./data-aplazame":1,"./data-button":2,"./http":3,"./utils":5}],5:[function(require,module,exports){
+},{"./aplazame":1,"./data-aplazame":2,"./data-button":3,"./data-simulator":4}],7:[function(require,module,exports){
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
     Element.prototype.webkitMatchesSelector ||
@@ -559,6 +641,52 @@ function joinPath () {
   }, '');
 }
 
+function writeIframe (iframe, content) {
+  var iframeDoc = iframe.contentWindow.document;
+  iframeDoc.charset = 'UTF-8';
+  iframeDoc.open();
+  iframeDoc.write(content);
+  iframeDoc.close();
+}
+
+function getIFrame (iframeStyles) {
+  var iframe = document.createElement('iframe');
+  extend(iframe.style, iframeStyles || {});
+
+  iframe.frameBorder = '0';
+  return iframe;
+}
+
+function template (name, data){
+  return template.cache[name](data);
+}
+
+template.cache = {};
+template.put = function (name, tmpl) {
+  // John Resig micro-template
+  template.cache[name] = new Function('obj', // jshint ignore:line
+    'var p=[],print=function(){p.push.apply(p,arguments);};' +
+
+    // Introduce the data as local variables using with(){}
+    'with(obj){p.push(\'' +
+
+    // Convert the template into pure JavaScript
+    tmpl.trim()
+      .replace(/[\r\t\n]/g, ' ')
+      .split('<%').join('\t')
+      .replace(/((^|%>)[^\t]*)'/g, '$1\r')
+      .replace(/\t=(.*?)%>/g, '\',$1,\'')
+      .split('\t').join('\');')
+      .split('%>').join('p.push(\'')
+      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+};
+
+template.lookup = function () {
+  [].forEach.call(document.querySelectorAll('script[type="application/x-template"][data-template]'), function (tmpl) {
+    template.put(tmpl.getAttribute('data-template'), tmpl.text);
+  });
+};
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -574,7 +702,10 @@ module.exports = {
   replaceKeys: replaceKeys,
   merge: merge,
   extend: extend,
-  joinPath: joinPath
+  joinPath: joinPath,
+  writeIframe: writeIframe,
+  getIFrame: getIFrame,
+  template: template
 };
 
-},{}]},{},[4]);
+},{}]},{},[6]);

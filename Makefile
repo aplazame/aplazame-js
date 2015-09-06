@@ -52,6 +52,8 @@ publish: install.npm jshint git.increaseVersion git.updateRelease build
 	@git push origin release
 	@echo "\n\trelease version $(shell node run pkgVersion)\n"
 
+release: publish
+
 test: build
 	@$(npmdir)/karma start karma/src.conf.js
 	@$(npmdir)/karma start karma/min.conf.js

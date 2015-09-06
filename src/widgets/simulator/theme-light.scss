@@ -63,7 +63,7 @@ a {
   height: $btn-size;
   line-height: calc(#{$btn-size} - #{2*$btn-border-size});
   text-align: center;
-  background: transparent;
+  background: white;
   border: $btn-border-size solid $brand-gray;
   color: black;
   cursor: pointer;

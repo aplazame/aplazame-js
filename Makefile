@@ -20,10 +20,16 @@ demo.less:
 dev: test
 	@npm start
 
-browserify:
-	@$(npmdir)/browserify src/main.js -o aplazame.js
+dir.dist:
+	@mkdir -p dist
 
-build: browserify
+aplazame.js: dir.dist
+	@$(npmdir)/browserify src/main.js -o dist/aplazame.js
+
+simulator.js: dir.dist
+	@$(npmdir)/browserify src/widgets/simulator/simulator.js -o dist/widgets/simulator/simulator.js
+
+build:
 	@node run build
 
 git.increaseVersion:
@@ -41,9 +47,12 @@ git.updateRelease:
 publish: install.npm jshint git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
+	@git add dist -f --all
 	@git commit -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node run pkgVersion)\n"
+
+release: publish
 
 test: build
 	@$(npmdir)/karma start karma/src.conf.js

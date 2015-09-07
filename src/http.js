@@ -31,10 +31,10 @@ function http (url, options) {
   try { // Firefox, Opera 8.0+, Safari
       request = new XMLHttpRequest();
   } catch (e) { // Internet Explorer
-      try { request = new ActiveXObject("Msxml2.XMLHTTP"); }
-      catch (er) { request = new ActiveXObject("Microsoft.XMLHTTP"); }
+      try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
+      catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
   }
-  if( request === null ) { throw "Browser does not support HTTP Request"; }
+  if( request === null ) { throw 'Browser does not support HTTP Request'; }
 
   request.open( ( options.method || 'get').toUpperCase(), url );
 

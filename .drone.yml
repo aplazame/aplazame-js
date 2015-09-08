@@ -12,8 +12,6 @@ deploy:
   bash:
     script:
       - ./.drone/deploy.sh
-    when:
-      branch: release
 
 notify:
   slack:

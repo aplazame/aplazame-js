@@ -8,12 +8,22 @@ html, body {
 
 html {
   font-family: Montserrat;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 body {
   overflow: hidden;
   padding: 0.4rem;
+}
+
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
 }
 
 $brand-primary: #3e8bc2;

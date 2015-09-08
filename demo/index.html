@@ -55,6 +55,13 @@
             </button>
           </div>
 
+          <div class="has-test">
+            <div class="flag-test">:has pseudo-class working</div>
+          </div>
+          <div class="has-test">
+            <div>skipped from :has pseudo-class</div>
+          </div>
+
           <br/>
 
         </section>
@@ -70,6 +77,11 @@
             data-sandbox="true">
     </script>
     <script>
+      aplazame.button({
+        selector: 'div.has-test:has(.flag-test)',
+        amount: 15000
+      });
+
       function loadCheckout() {
 
         var orderId = 'test-' + parseInt( new Date().getTime() / 60000 );

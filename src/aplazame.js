@@ -79,6 +79,10 @@ function button (options) {
     throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - or - selector: \'#button-id\' (recomended) - )');
   }
 
+  if( !options.amount ){
+    throw new Error('button amount missing');
+  }
+
   var elements, elButton;
 
   if( options.button ) {
@@ -90,11 +94,11 @@ function button (options) {
   elements = elButton ? [elButton] : [];
 
   if( options.selector ) {
-    [].push.apply( elements, document.querySelectorAll(options.selector) );
+    [].push.apply( elements, _.cssQuery(options.selector) );
   }
 
   if( options.description ) {
-    [].push.apply( elements, document.querySelectorAll(options.description) );
+    [].push.apply( elements, _.cssQuery(options.description) );
   }
 
   elButton = elButton || elements[0];
@@ -210,8 +214,9 @@ function checkout (options) {
 
 }
 
-function simulator (amount, _options, callback) {
+function simulator (amount, _options, callback, onError) {
   if( _.isFunction(_options) ) {
+    onError = callback;
     callback = _options;
     _options = {};
   } else {
@@ -232,7 +237,7 @@ function simulator (amount, _options, callback) {
     if( _.isFunction(callback) ) {
       callback(response.data.choices[0].instalments, response.data.options, response.data);
     }
-  });
+  }, onError);
 }
 
 module.exports = {
@@ -245,5 +250,6 @@ module.exports = {
   simulator: simulator,
   baseUrl: function () {
     return env.baseUrl;
-  }
+  },
+  _: _
 };

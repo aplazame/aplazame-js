@@ -55,7 +55,11 @@ _.ready(function () {
               .replace(/<head\>/, '<head><base href="' + aplazame.baseUrl() + '" />')
               .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
           );
+        }, function () {
+          simulator.innerHTML = '';
         });
+      }, function () {
+        simulator.innerHTML = '';
       });
 
     });

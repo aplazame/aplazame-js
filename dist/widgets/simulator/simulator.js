@@ -172,6 +172,78 @@ template.lookup = function () {
   });
 };
 
+
+function findBubbleClose (str) {
+  var level = 0;
+
+  for( var i = 0, len = str.length; i < len ; i++ ) {
+    if( str[i] === '(' ) {
+      level++;
+    } else if( str[i] === ')' ) {
+      if( level === 0 ) {
+        return i;
+      } else {
+        level--;
+      }
+    }
+  }
+
+  return -1;
+}
+
+function hasSelector (selector, rootElement) {
+  var splitHas = selector.split(':has(');
+
+  return splitHas.reduce(function (matches, partial) {
+
+    var closePosition = findBubbleClose(partial),
+        hasFilter = partial.substr(0, closePosition),
+        partialQuery = partial.substr(closePosition + 1).trim();
+
+    if( closePosition === -1 ) {
+      throw new Error('malformed selector');
+    }
+
+    matches = matches.filter(function (element) {
+      return element.querySelector(hasFilter);
+    });
+
+    if( partialQuery ) {
+      var submatches = [];
+
+      matches.forEach(function (element) {
+        [].push.apply(submatches, element.querySelectorAll(partialQuery) );
+      });
+
+      return submatches;
+    }
+
+    return matches;
+
+  }, [].slice.call( (rootElement || document).querySelectorAll( splitHas.shift() ) ) );
+}
+
+function querySelector (selector, rootElement) {
+  // 'tr:has(> .row) div:has(span) img'.split(':has(');
+  if( !selector ) {
+    return [];
+  }
+
+  if( !/\:has\(/.test(selector) ) {
+    return [].slice.call( (rootElement || document).querySelectorAll( selector ) );
+  }
+
+  return hasSelector(selector);
+}
+
+function cssQuery (_selector, rootElement) {
+  var selectors = _selector.split(/\s*,\s*/);
+
+  return selectors.reduce(function (list, selector) {
+    return list.concat( querySelector(selector, rootElement) );
+  }, []);
+}
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -190,7 +262,8 @@ module.exports = {
   joinPath: joinPath,
   writeIframe: writeIframe,
   getIFrame: getIFrame,
-  template: template
+  template: template,
+  cssQuery: cssQuery
 };
 
 },{}],2:[function(require,module,exports){

@@ -80,6 +80,10 @@ function button (options) {
     throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - or - selector: \'#button-id\' (recomended) - )');
   }
 
+  if( !options.amount ){
+    throw new Error('button amount missing');
+  }
+
   var elements, elButton;
 
   if( options.button ) {
@@ -91,11 +95,11 @@ function button (options) {
   elements = elButton ? [elButton] : [];
 
   if( options.selector ) {
-    [].push.apply( elements, document.querySelectorAll(options.selector) );
+    [].push.apply( elements, _.cssQuery(options.selector) );
   }
 
   if( options.description ) {
-    [].push.apply( elements, document.querySelectorAll(options.description) );
+    [].push.apply( elements, _.cssQuery(options.description) );
   }
 
   elButton = elButton || elements[0];
@@ -211,8 +215,9 @@ function checkout (options) {
 
 }
 
-function simulator (amount, _options, callback) {
+function simulator (amount, _options, callback, onError) {
   if( _.isFunction(_options) ) {
+    onError = callback;
     callback = _options;
     _options = {};
   } else {
@@ -233,7 +238,7 @@ function simulator (amount, _options, callback) {
     if( _.isFunction(callback) ) {
       callback(response.data.choices[0].instalments, response.data.options, response.data);
     }
-  });
+  }, onError);
 }
 
 module.exports = {
@@ -246,7 +251,8 @@ module.exports = {
   simulator: simulator,
   baseUrl: function () {
     return env.baseUrl;
-  }
+  },
+  _: _
 };
 
 },{"./http":5,"./utils":7}],2:[function(require,module,exports){
@@ -398,7 +404,11 @@ _.ready(function () {
               .replace(/<head\>/, '<head><base href="' + aplazame.baseUrl() + '" />')
               .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
           );
+        }, function () {
+          simulator.innerHTML = '';
         });
+      }, function () {
+        simulator.innerHTML = '';
       });
 
     });
@@ -698,6 +708,78 @@ template.lookup = function () {
   });
 };
 
+
+function findBubbleClose (str) {
+  var level = 0;
+
+  for( var i = 0, len = str.length; i < len ; i++ ) {
+    if( str[i] === '(' ) {
+      level++;
+    } else if( str[i] === ')' ) {
+      if( level === 0 ) {
+        return i;
+      } else {
+        level--;
+      }
+    }
+  }
+
+  return -1;
+}
+
+function hasSelector (selector, rootElement) {
+  var splitHas = selector.split(':has(');
+
+  return splitHas.reduce(function (matches, partial) {
+
+    var closePosition = findBubbleClose(partial),
+        hasFilter = partial.substr(0, closePosition),
+        partialQuery = partial.substr(closePosition + 1).trim();
+
+    if( closePosition === -1 ) {
+      throw new Error('malformed selector');
+    }
+
+    matches = matches.filter(function (element) {
+      return element.querySelector(hasFilter);
+    });
+
+    if( partialQuery ) {
+      var submatches = [];
+
+      matches.forEach(function (element) {
+        [].push.apply(submatches, element.querySelectorAll(partialQuery) );
+      });
+
+      return submatches;
+    }
+
+    return matches;
+
+  }, [].slice.call( (rootElement || document).querySelectorAll( splitHas.shift() ) ) );
+}
+
+function querySelector (selector, rootElement) {
+  // 'tr:has(> .row) div:has(span) img'.split(':has(');
+  if( !selector ) {
+    return [];
+  }
+
+  if( !/\:has\(/.test(selector) ) {
+    return [].slice.call( (rootElement || document).querySelectorAll( selector ) );
+  }
+
+  return hasSelector(selector);
+}
+
+function cssQuery (_selector, rootElement) {
+  var selectors = _selector.split(/\s*,\s*/);
+
+  return selectors.reduce(function (list, selector) {
+    return list.concat( querySelector(selector, rootElement) );
+  }, []);
+}
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -716,7 +798,8 @@ module.exports = {
   joinPath: joinPath,
   writeIframe: writeIframe,
   getIFrame: getIFrame,
-  template: template
+  template: template,
+  cssQuery: cssQuery
 };
 
 },{}]},{},[6]);

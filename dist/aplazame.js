@@ -76,6 +76,10 @@ function button (options) {
     throw new Error('aplazame.button requires parameters');
   }
 
+  if( !options.id && !options.button && !options.selector ){
+    throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - or - selector: \'#button-id\' (recomended) - )');
+  }
+
   var elements, elButton;
 
   if( options.button ) {
@@ -84,14 +88,19 @@ function button (options) {
     elButton = document.querySelector( ( /^#/.test(options.id) ? '' : '#' ) + options.id );
   }
 
-  if( !elButton ){
-    throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - )');
+  elements = elButton ? [elButton] : [];
+
+  if( options.selector ) {
+    [].push.apply( elements, document.querySelectorAll(options.selector) );
   }
 
-  elements = [elButton];
+  if( options.description ) {
+    [].push.apply( elements, document.querySelectorAll(options.description) );
+  }
 
+  elButton = elButton || elements[0];
 
-  if( options.parent ) {
+  if( elButton && options.parent ) {
     var parent = elButton.parentElement;
 
     while( parent && parent !== document.body ) {
@@ -101,10 +110,6 @@ function button (options) {
       }
       parent = parent.parentElement;
     }
-  }
-
-  if( options.description ) {
-    [].push.apply( elements, document.querySelectorAll(options.description) );
   }
 
   elements.forEach(function (el) {
@@ -311,21 +316,27 @@ var aplazame = require('./aplazame'),
     _ = require('./utils');
 
 _.ready(function () {
-  var btn = document.querySelector('[data-aplazame-button]');
+  var btns = document.querySelectorAll('[data-aplazame-button]');
 
-  if( btn ) {
-    var btnParams = {
-      button: '[data-aplazame-button]',
-      description: '[data-aplazame-button-info]',
-      parent: btn.getAttribute('data-parent'),
-      publicKey: btn.getAttribute('data-public-key'),
-      amount: btn.getAttribute('data-amount'),
-      currency: btn.getAttribute('data-currency') || undefined,
-      sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
-      country: btn.getAttribute('data-country') || undefined
-    };
+  if( btns.length ) {
 
-    aplazame.button(btnParams);
+    console.log('forEach:btns', btns);
+
+    [].forEach.call(btns, function (btn) {
+      var btnId = btn.getAttribute('data-aplazame-button'),
+          btnParams = {
+            selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
+            parent: btn.getAttribute('data-parent'),
+            publicKey: btn.getAttribute('data-public-key'),
+            amount: btn.getAttribute('data-amount'),
+            currency: btn.getAttribute('data-currency') || undefined,
+            sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
+            country: btn.getAttribute('data-country') || undefined
+          };
+
+      aplazame.button(btnParams);
+    });
+
   }
 });
 

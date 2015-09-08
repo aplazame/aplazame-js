@@ -75,6 +75,10 @@ function button (options) {
     throw new Error('aplazame.button requires parameters');
   }
 
+  if( !options.id && !options.button && !options.selector ){
+    throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - or - selector: \'#button-id\' (recomended) - )');
+  }
+
   var elements, elButton;
 
   if( options.button ) {
@@ -83,14 +87,19 @@ function button (options) {
     elButton = document.querySelector( ( /^#/.test(options.id) ? '' : '#' ) + options.id );
   }
 
-  if( !elButton ){
-    throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - )');
+  elements = elButton ? [elButton] : [];
+
+  if( options.selector ) {
+    [].push.apply( elements, document.querySelectorAll(options.selector) );
   }
 
-  elements = [elButton];
+  if( options.description ) {
+    [].push.apply( elements, document.querySelectorAll(options.description) );
+  }
 
+  elButton = elButton || elements[0];
 
-  if( options.parent ) {
+  if( elButton && options.parent ) {
     var parent = elButton.parentElement;
 
     while( parent && parent !== document.body ) {
@@ -100,10 +109,6 @@ function button (options) {
       }
       parent = parent.parentElement;
     }
-  }
-
-  if( options.description ) {
-    [].push.apply( elements, document.querySelectorAll(options.description) );
   }
 
   elements.forEach(function (el) {

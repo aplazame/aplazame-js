@@ -1,8 +1,8 @@
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-_.ready(function () {
-  var btns = document.querySelectorAll('[data-aplazame-button]');
+function buttonsLookup (element) {
+  var btns = element.querySelectorAll('[data-aplazame-button]');
 
   if( btns.length ) {
 
@@ -24,4 +24,33 @@ _.ready(function () {
     });
 
   }
+}
+
+if( global.jQuery ) {
+  (function ($) {
+
+    var jqHtml = $.fn.html;
+
+    $.fn.html = function () {
+       var response = jqHtml.apply(this, arguments);
+       if( !arguments.length ) {
+         return response;
+       }
+
+       var elements = [].slice.call(this);
+
+       setTimeout(function () {
+         elements.each(function () {
+           buttonsLookup(this);
+         });
+       }, 0);
+
+       return response;
+    };
+
+  })(global.jQuery);
+}
+
+_.ready(function () {
+  buttonsLookup(document);
 });

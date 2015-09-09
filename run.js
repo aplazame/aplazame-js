@@ -11,7 +11,11 @@ function noop () {}
 var colors = require('colors'),
     nitro = require('nitro-tools');
 
-nitro.autoLoad('sass', 'uglify', 'log');
+nitro.loadProcessors('sass', 'uglify', 'log', 'jshint');
+
+nitro.fileProcessor('es6', function (src) {
+  return require('babel-core').transform(src, {}).code;
+}, false, ['babel-core']);
 
 var cwd = nitro.cwd,
     file = nitro.file,
@@ -22,17 +26,17 @@ var cwd = nitro.cwd,
         console.log('debug', dir.exists('node_modules/node-sass') );
       },
       build: function () {
-        cmd.jshint();
+        // cmd.jshint();
 
-        nitro.timingSync('copying assets', function () {
+        nitro.timingLog('copying assets', function () {
           nitro.exec('mkdir -p dist/widgets && cp -R src/widgets/assets/ dist/widgets');
         });
 
-        nitro.timingSync('aplazame.js', function () {
+        nitro.timingLog('aplazame.js', function () {
           nitro.exec('make aplazame.js');
         });
 
-        nitro.timingSync('aplazame.min.js', function () {
+        nitro.timingLog('aplazame.min.js', function () {
           nitro.load('dist/aplazame.js').process('uglify').writeFile('dist/aplazame.min.js');
         });
 
@@ -41,13 +45,13 @@ var cwd = nitro.cwd,
         dir.create('dist/widgets');
         dir.create('dist/widgets/simulator');
 
-        nitro.timingSync('simulator:html', function () {
+        nitro.timingLog('simulator:html', function () {
           nitro.copy('src/widgets/simulator', '{,**/}*.html', 'dist/widgets/simulator');
         });
-        nitro.timingSync('simulator:js', function () {
+        nitro.timingLog('simulator:js', function () {
           nitro.exec('make simulator.js');
         });
-        nitro.timingSync('simulator:css', function () {
+        nitro.timingLog('simulator:css', function () {
           nitro.cwd('src/widgets/simulator')
             .load('*.scss')
             .process('sass')
@@ -60,7 +64,7 @@ var cwd = nitro.cwd,
         switch( target ) {
           case 'demo':
             var destFile = 'demo/demo.css';
-            nitro.timingSync(destFile, function () {
+            nitro.timingLog(destFile, function () {
               nitro.load('demo/demo.scss').process('sass').writeFile(destFile);
             });
             break;
@@ -122,18 +126,19 @@ var cwd = nitro.cwd,
         return cmd.jshint();
       },
       jshint: function (noExit) {
-        var errorsLog = '',
-            lintSrc = nitro.jshint( 'src/{,**/}*.js', file.readJSON('.jshintrc') ),
-            lintTests = nitro.jshint( 'tests/{,**/}*.js' );
-
-        if( !lintSrc.valid || !lintTests.valid ) {
-          console.log( '\nJSHINT ERRORS'.red + '\n', lintSrc.log, lintTests.log );
-          if( !noExit ) {
+        nitro.load('src/{,**/}*.js').process('jshint', {
+          jshintrc: file.readJSON('.jshintrc'),
+          onError: function () {
+            console.log('bye!!!!');
             process.exit(1);
           }
-        } else {
-          console.log('\nJSHINT PASSED\n'.green);
-        }
+        });
+
+        nitro.load('tests/{,**/}*.js').process('jshint', {
+          onError: function () {
+            process.exit(1);
+          }
+        });
       },
       demo: function () {
         cmd.build();

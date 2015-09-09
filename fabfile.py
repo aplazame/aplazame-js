@@ -20,4 +20,5 @@ def echo(path):
 
 def deploy(path, branch):
     with cd(path):
+        run('git stash -u')
         run('git pull origin ' + branch)

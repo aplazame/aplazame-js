@@ -87,8 +87,8 @@ function button (options) {
   if( document.querySelector('#total_price') ) {
     options.amount = getCartPrice();
 
-    if( !options.watching ) {
-      options.watching = true;
+    if( !button.watching ) {
+      button.watching = true;
       options.lastPrice = options.amount;
 
       console.debug('total price watching');
@@ -129,7 +129,7 @@ function button (options) {
 
   elButton = elButton || elements[0];
 
-  if( !options.$$running && !options.watching && options.selector ) {
+  if( !options.$$running && !button.watching && options.selector ) {
     options.$$running = true;
 
     require('./live-dom').subscribe(function (el) {

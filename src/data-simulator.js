@@ -1,8 +1,8 @@
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-function widgetsLookup (element) {
-  var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+function widgetsLookup () {
+  var simulators = document.querySelectorAll('[data-aplazame-simulator]');
 
   if( simulators.length ) {
 
@@ -24,6 +24,12 @@ function widgetsLookup (element) {
 
     [].forEach.call(simulators, function (simulator) {
       'use strict';
+
+      if( _.elementData(simulator, 'checked') ) {
+        return;
+      }
+
+      _.elementData(simulator, 'checked', true);
 
       var simulatorParams = {
         simulator: '[data-aplazame-simulator]',
@@ -66,5 +72,5 @@ function widgetsLookup (element) {
 require('./live-dom').subscribe(widgetsLookup);
 
 _.ready(function () {
-  widgetsLookup(document);
+  widgetsLookup();
 });

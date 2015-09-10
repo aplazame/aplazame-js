@@ -269,5 +269,6 @@ module.exports = {
   baseUrl: function () {
     return env.baseUrl;
   },
-  _: _
+  _: _,
+  version: require('../.tmp/aplazame-version')
 };

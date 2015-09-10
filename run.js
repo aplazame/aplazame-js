@@ -28,6 +28,10 @@ var cwd = nitro.cwd,
       build: function () {
         // cmd.jshint();
 
+        nitro.exec('mkdir -p .tmp');
+
+        nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
+
         nitro.timingLog('copying assets', function () {
           nitro.exec('mkdir -p dist/widgets && cp -R src/widgets/assets/ dist/widgets');
         });

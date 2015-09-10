@@ -87,11 +87,15 @@ function button (options) {
   if( document.querySelector('#total_price') ) {
     options.amount = getCartPrice();
 
-    setTimeout(function () {
-      if( options.amount !== getCartPrice() ) {
-        button(options);
-      }
-    }, 2000);
+    if( !options.watching ) {
+      options.watching = true;
+
+      setInterval(function () {
+        if( options.amount !== getCartPrice() ) {
+          button(options);
+        }
+      }, 400);
+    }
   }
 
   if( !options.amount ){

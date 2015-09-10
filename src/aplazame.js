@@ -89,11 +89,13 @@ function button (options) {
 
     if( !options.watching ) {
       options.watching = true;
+      var lastPrice;
 
       setInterval(function () {
         console.log('checking price', options.amount, getCartPrice() );
-        if( options.amount !== getCartPrice() ) {
+        if( getCartPrice() !== lastPrice ) {
           options.amount = getCartPrice();
+          lastPrice = options.amount;
           options.forceUpdate = true;
           button(options);
         }

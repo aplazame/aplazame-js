@@ -1,4 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = '0.0.24';
+},{}],2:[function(require,module,exports){
 'use strict'; // jshint ignore:line
 
 var http = require('./http'),
@@ -270,10 +272,11 @@ module.exports = {
   baseUrl: function () {
     return env.baseUrl;
   },
-  _: _
+  _: _,
+  version: require('../.tmp/aplazame-version')
 };
 
-},{"./http":5,"./live-dom":6,"./utils":8}],2:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./http":6,"./live-dom":7,"./utils":9}],3:[function(require,module,exports){
 var aplazame = require('./aplazame'),
     aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
     scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
@@ -335,7 +338,7 @@ if( document.querySelector('script[data-aplazame]') ) {
   aplazame.init(envOptions, apiOptions);
 }
 
-},{"./aplazame":1}],3:[function(require,module,exports){
+},{"./aplazame":2}],4:[function(require,module,exports){
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
@@ -368,7 +371,7 @@ _.ready(function () {
   buttonsLookup(document);
 });
 
-},{"./aplazame":1,"./live-dom":6,"./utils":8}],4:[function(require,module,exports){
+},{"./aplazame":2,"./live-dom":7,"./utils":9}],5:[function(require,module,exports){
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
@@ -446,7 +449,7 @@ _.ready(function () {
   widgetsLookup(document);
 });
 
-},{"./aplazame":1,"./http":5,"./live-dom":6,"./utils":8}],5:[function(require,module,exports){
+},{"./aplazame":2,"./http":6,"./live-dom":7,"./utils":9}],6:[function(require,module,exports){
 // factory http
 
 function headerToTitleSlug(text) {
@@ -554,7 +557,7 @@ function http (url, options) {
 
 module.exports = http;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (global){
 
 var suscriptors = [],
@@ -607,7 +610,7 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./utils":8}],7:[function(require,module,exports){
+},{"./utils":9}],8:[function(require,module,exports){
 (function (global){
 
 global.aplazame = require('./aplazame');
@@ -617,7 +620,7 @@ require('./data-button');
 require('./data-simulator');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./aplazame":1,"./data-aplazame":2,"./data-button":3,"./data-simulator":4}],8:[function(require,module,exports){
+},{"./aplazame":2,"./data-aplazame":3,"./data-button":4,"./data-simulator":5}],9:[function(require,module,exports){
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
     Element.prototype.webkitMatchesSelector ||
@@ -896,4 +899,4 @@ module.exports = {
   }
 };
 
-},{}]},{},[7]);
+},{}]},{},[8]);

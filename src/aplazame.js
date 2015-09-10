@@ -156,7 +156,9 @@ function button (options) {
   }
 
   elements.forEach(function (el) {
-    el.__display = el.style.display;
+    if( el.style.display !== 'none' ) {
+      el.__display = el.style.display;
+    }
     el.style.display = 'none';
   });
 

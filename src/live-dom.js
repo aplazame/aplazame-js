@@ -1,8 +1,9 @@
 
 var suscriptors = [],
-    running = false;
+    running = false,
+    _ = require('./utils');
 
-function initLiveDOM () {
+function initLiveDOM (retryOnReady) {
   if( global.jQuery ) {
     (function ($) {
 
@@ -28,13 +29,17 @@ function initLiveDOM () {
       };
 
     })(global.jQuery);
+  } else if( retryOnReady ) {
+    _.ready(function () {
+      initLiveDOM();
+    });
   }
 }
 
 module.exports = {
   subscribe: function (handler) {
     if( !running ) {
-      initLiveDOM();
+      initLiveDOM(true);
       running = true;
     }
     if( handler instanceof Function ) {

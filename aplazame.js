@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.25';
+module.exports = '0.0.26';
 },{}],2:[function(require,module,exports){
 'use strict'; // jshint ignore:line
 
@@ -71,6 +71,12 @@ function apiPost (path, data, options) {
   return http( url + options.paramsStr, _.merge(options, { method: 'post', data: data }) );
 }
 
+function getCartPrice () {
+   var priceParts = document.querySelector('#total_price').textContent.match(/(\d+)([,.](\d+))?/);
+   var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
+   return amount;
+}
+
 function button (options) {
 
   if( !options ) {
@@ -79,6 +85,10 @@ function button (options) {
 
   if( !options.id && !options.button && !options.selector ){
     throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - or - selector: \'#button-id\' (recomended) - )');
+  }
+
+  if( document.querySelector('#total_price') ) {
+    options.amount = getCartPrice();
   }
 
   if( !options.amount ){

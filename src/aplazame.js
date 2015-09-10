@@ -91,17 +91,17 @@ function button (options) {
       button.watching = true;
       options.lastPrice = options.amount;
 
-      console.debug('total price watching');
+      // console.debug('total price watching');
 
       setInterval(function () {
-        console.log('checking price', options.amount, getCartPrice() );
+        // console.log('checking price', options.amount, getCartPrice() );
         if( getCartPrice() !== options.lastPrice ) {
           options.amount = getCartPrice();
           options.lastPrice = options.amount;
           options.forceUpdate = true;
           button(options);
         }
-      }, 4000);
+      }, 400);
     }
   }
 

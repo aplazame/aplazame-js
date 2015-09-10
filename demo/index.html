@@ -64,15 +64,16 @@
 
           <br/>
 
-          <table>
+          <table style="width: 100%; table-layout: fixed;">
             <tr>
-              <td colspan="2" class="text-center">
+              <td colspan="3" class="text-center">
                 <h3>jQuery html</h3>
               </td>
             </tr>
             <tr>
               <td id="async-widget"></td>
-              <td id="async-button"></td>
+              <td class="text-center" id="async-button"></td>
+              <td class="text-center" id="async-button2"></td>
             </tr>
           </table>
 
@@ -95,7 +96,9 @@
 
           $('#async-widget').html('<div data-aplazame-simulator="" data-amount="25000"></div>');
 
-          $('#async-button').html('<button type="button" data-aplazame-button="async" data-amount="35000">button</button>');
+          $('#async-button').html('<button type="button" id="aplazame-button-async">button</button>');
+
+          $('#async-button2').html('<button type="button" data-aplazame-button="async" data-amount="45000">button</button>');
 
         }, 1000);
       });
@@ -104,6 +107,11 @@
       aplazame.button({
         selector: 'div.has-test:has(.flag-test)',
         amount: 15000
+      });
+
+      aplazame.button({
+        selector: '#aplazame-button-async',
+        amount: 22400
       });
 
       function loadCheckout() {

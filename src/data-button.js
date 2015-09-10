@@ -1,17 +1,12 @@
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-function buttonsLookup () {
-  var btns = document.querySelectorAll('[data-aplazame-button]');
+function buttonsLookup (element) {
+  var btns = element.querySelectorAll('[data-aplazame-button]');
 
   if( btns.length ) {
 
     [].forEach.call(btns, function (btn) {
-      if( _.elementData(btn, 'checked') ) {
-        return;
-      }
-      _.elementData(btn, 'checked', true);
-      
       var btnId = btn.getAttribute('data-aplazame-button'),
           btnParams = {
             selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
@@ -32,5 +27,5 @@ function buttonsLookup () {
 require('./live-dom').subscribe(buttonsLookup);
 
 _.ready(function () {
-  buttonsLookup();
+  buttonsLookup(document);
 });

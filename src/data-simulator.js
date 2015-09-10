@@ -1,8 +1,8 @@
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-function widgetsLookup () {
-  var simulators = document.querySelectorAll('[data-aplazame-simulator]');
+function widgetsLookup (element) {
+  var simulators = element.querySelectorAll('[data-aplazame-simulator]');
 
   if( simulators.length ) {
 
@@ -72,5 +72,5 @@ function widgetsLookup () {
 require('./live-dom').subscribe(widgetsLookup);
 
 _.ready(function () {
-  widgetsLookup();
+  widgetsLookup(document);
 });

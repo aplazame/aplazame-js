@@ -102,6 +102,10 @@ function button (options) {
 
   elButton = elButton || elements[0];
 
+  if( !elements.length || _.elementData(elButton, 'buttonInitialized') ) {
+    return;
+  }
+
   if( elButton && options.parent ) {
     var parent = elButton.parentElement;
 
@@ -130,10 +134,25 @@ function button (options) {
 
   apiGet('checkout/button', { params: params })
     .then(function () {
-      elements.forEach(function (el) {
-        el.style.display = el.__display;
-      });
+      var elms = elements.slice();
+      setTimeout(function () {
+        elms.forEach(function (el) {
+          el.style.display = el.__display;
+        });
+      }, 2000);
     });
+
+  elements.forEach(function (el) {
+    _.elementData(el, 'buttonInitialized', true);
+  });
+
+  if( !options.$$running && options.selector ) {
+    options.$$running = true;
+
+    require('./live-dom').subscribe(function (el) {
+      button(options);
+    });
+  }
 }
 
 function checkout (options) {

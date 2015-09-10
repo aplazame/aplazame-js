@@ -174,11 +174,9 @@ function button (options) {
   apiGet('checkout/button', { params: params })
     .then(function () {
       var elms = elements.slice();
-      setTimeout(function () {
-        elms.forEach(function (el) {
-          el.style.display = el.__display;
-        });
-      }, 2000);
+      elms.forEach(function (el) {
+        el.style.display = el.__display;
+      });
     });
 
   elements.forEach(function (el) {

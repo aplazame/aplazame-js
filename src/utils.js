@@ -262,5 +262,16 @@ module.exports = {
   writeIframe: writeIframe,
   getIFrame: getIFrame,
   template: template,
-  cssQuery: cssQuery
+  cssQuery: cssQuery,
+  elementData: document.createElement('div').dataset ? function (el, key, value) {
+    if( value !== undefined ) {
+      el.dataset[key] = value;
+    }
+    return el.dataset[key];
+  } : function (el, key, value) {
+    if( value !== undefined ) {
+      el.setAttribute('data-' + key, value);
+    }
+    return el.getAttribute('data-' + key);
+  }
 };

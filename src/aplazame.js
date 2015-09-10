@@ -91,11 +91,12 @@ function button (options) {
       options.watching = true;
 
       setInterval(function () {
-        console.log('checking price', options.amount, getCartPrice() );
+        // console.log('checking price', options.amount, getCartPrice() );
         if( options.amount !== getCartPrice() ) {
+          options.forceUpdate = true;
           button(options);
         }
-      }, 3000);
+      }, 400);
     }
   }
 
@@ -131,9 +132,11 @@ function button (options) {
     });
   }
 
-  if( !elements.length || _.elementData(elButton, 'buttonInitialized') ) {
+  if( !options.forceUpdate && ( !elements.length || _.elementData(elButton, 'buttonInitialized') ) ) {
     return;
   }
+
+  options.forceUpdate = false;
 
   if( elButton && options.parent ) {
     var parent = elButton.parentElement;

@@ -6,8 +6,6 @@ function buttonsLookup (element) {
 
   if( btns.length ) {
 
-    console.log('forEach:btns', btns);
-
     [].forEach.call(btns, function (btn) {
       var btnId = btn.getAttribute('data-aplazame-button'),
           btnParams = {
@@ -26,30 +24,7 @@ function buttonsLookup (element) {
   }
 }
 
-if( global.jQuery ) {
-  (function ($) {
-
-    var jqHtml = $.fn.html;
-
-    $.fn.html = function () {
-       var response = jqHtml.apply(this, arguments);
-       if( !arguments.length ) {
-         return response;
-       }
-
-       var elements = [].slice.call(this);
-
-       setTimeout(function () {
-         elements.each(function () {
-           buttonsLookup(this);
-         });
-       }, 0);
-
-       return response;
-    };
-
-  })(global.jQuery);
-}
+require('./live-dom').subscribe(buttonsLookup);
 
 _.ready(function () {
   buttonsLookup(document);

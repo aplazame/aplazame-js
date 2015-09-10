@@ -37,7 +37,6 @@ function apiOptions (options) {
       options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
     }
   }
-  console.log('apiOptions', options);
 
   return _.merge(options, {
     headers: {

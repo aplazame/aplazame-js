@@ -20,7 +20,7 @@
                 <button>Payment Method</button>
               </td>
               <td>
-                <button data-aplazame-button data-amount="25000" data-parent="*">
+                <button data-aplazame-button="default" data-amount="25000" data-parent="*">
                   <img src="dist/widgets/assets/img/logo-color.svg"/>
                 </button>
               </td>
@@ -50,7 +50,7 @@
           <br/>
 
           <div class="text-right">
-            <button data-aplazame-button-info="" onclick="loadCheckout();">
+            <button data-aplazame-button-info="default" onclick="loadCheckout();">
               <img src="dist/widgets/assets/img/aplazame-checkout.svg"/>
             </button>
           </div>
@@ -64,19 +64,43 @@
 
           <br/>
 
+          <table>
+            <tr>
+              <td colspan="2" class="text-center">
+                <h3>jQuery html</h3>
+              </td>
+            </tr>
+            <tr>
+              <td id="async-widget"></td>
+              <td id="async-button"></td>
+            </tr>
+          </table>
+
         </section>
       </div>
     </div>
     <div class="responsive-container">
       <footer class="footer"></footer>
     </div>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript">
+      $(function () {
+        setTimeout(function () {
+
+          $('#async-widget').html('<div data-aplazame-simulator="" data-amount="25000"></div>');
+
+          $('#async-button').html('<button type="button" data-aplazame-button="async" data-amount="35000">button</button>');
+
+        }, 1000);
+      });
+    </script>
     <script type="text/javascript"
             src="dist/aplazame.js?sandbox=true"
             data-aplazame="f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"
             data-version="v1.2"
             data-sandbox="true">
     </script>
-    <script>
+    <script type="text/javascript">
       aplazame.button({
         selector: 'div.has-test:has(.flag-test)',
         amount: 15000

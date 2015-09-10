@@ -68,6 +68,12 @@ function apiPost (path, data, options) {
   return http( url + options.paramsStr, _.merge(options, { method: 'post', data: data }) );
 }
 
+function getCartPrice () {
+   var priceParts = document.querySelector('#total_price').textContent.match(/(\d+)([,.](\d+))?/);
+   var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
+   return amount;
+}
+
 function button (options) {
 
   if( !options ) {
@@ -76,6 +82,10 @@ function button (options) {
 
   if( !options.id && !options.button && !options.selector ){
     throw new Error('button can not be identified ( please use - id: \'button-id\' - or - button: \'#button-id\' - or - selector: \'#button-id\' (recomended) - )');
+  }
+
+  if( document.querySelector('#total_price') ) {
+    options.amount = getCartPrice();
   }
 
   if( !options.amount ){

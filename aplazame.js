@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.29';
+module.exports = '0.0.30';
 },{}],2:[function(require,module,exports){
 'use strict'; // jshint ignore:line
 
@@ -94,11 +94,12 @@ function button (options) {
       options.watching = true;
 
       setInterval(function () {
-        console.log('checking price', options.amount, getCartPrice() );
+        // console.log('checking price', options.amount, getCartPrice() );
         if( options.amount !== getCartPrice() ) {
+          options.forceUpdate = true;
           button(options);
         }
-      }, 3000);
+      }, 400);
     }
   }
 
@@ -134,9 +135,11 @@ function button (options) {
     });
   }
 
-  if( !elements.length || _.elementData(elButton, 'buttonInitialized') ) {
+  if( !options.forceUpdate && ( !elements.length || _.elementData(elButton, 'buttonInitialized') ) ) {
     return;
   }
+
+  options.forceUpdate = false;
 
   if( elButton && options.parent ) {
     var parent = elButton.parentElement;

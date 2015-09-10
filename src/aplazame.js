@@ -129,7 +129,7 @@ function button (options) {
 
   elButton = elButton || elements[0];
 
-  if( !options.$$running && !button.watching && options.selector ) {
+  if( !options.$$running && options.selector ) {
     options.$$running = true;
 
     require('./live-dom').subscribe(function (el) {

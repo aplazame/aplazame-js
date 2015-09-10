@@ -320,12 +320,17 @@ if( document.querySelector('script[data-aplazame]') ) {
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-function buttonsLookup (element) {
-  var btns = element.querySelectorAll('[data-aplazame-button]');
+function buttonsLookup () {
+  var btns = document.querySelectorAll('[data-aplazame-button]');
 
   if( btns.length ) {
 
     [].forEach.call(btns, function (btn) {
+      if( _.elementData(btn, 'checked') ) {
+        return;
+      }
+      _.elementData(btn, 'checked', true);
+      
       var btnId = btn.getAttribute('data-aplazame-button'),
           btnParams = {
             selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
@@ -346,15 +351,15 @@ function buttonsLookup (element) {
 require('./live-dom').subscribe(buttonsLookup);
 
 _.ready(function () {
-  buttonsLookup(document);
+  buttonsLookup();
 });
 
 },{"./aplazame":1,"./live-dom":6,"./utils":8}],4:[function(require,module,exports){
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-function widgetsLookup (element) {
-  var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+function widgetsLookup () {
+  var simulators = document.querySelectorAll('[data-aplazame-simulator]');
 
   if( simulators.length ) {
 
@@ -376,6 +381,12 @@ function widgetsLookup (element) {
 
     [].forEach.call(simulators, function (simulator) {
       'use strict';
+
+      if( _.elementData(simulator, 'checked') ) {
+        return;
+      }
+
+      _.elementData(simulator, 'checked', true);
 
       var simulatorParams = {
         simulator: '[data-aplazame-simulator]',
@@ -418,7 +429,7 @@ function widgetsLookup (element) {
 require('./live-dom').subscribe(widgetsLookup);
 
 _.ready(function () {
-  widgetsLookup(document);
+  widgetsLookup();
 });
 
 },{"./aplazame":1,"./http":5,"./live-dom":6,"./utils":8}],5:[function(require,module,exports){
@@ -857,7 +868,18 @@ module.exports = {
   writeIframe: writeIframe,
   getIFrame: getIFrame,
   template: template,
-  cssQuery: cssQuery
+  cssQuery: cssQuery,
+  elementData: document.createElement('div').dataset ? function (el, key, value) {
+    if( value !== undefined ) {
+      el.dataset[key] = value;
+    }
+    return el.dataset[key];
+  } : function (el, key, value) {
+    if( value !== undefined ) {
+      el.setAttribute('data-' + key, value);
+    }
+    return el.getAttribute('data-' + key);
+  }
 };
 
 },{}]},{},[7]);

@@ -1,8 +1,8 @@
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-_.ready(function () {
-  var simulators = document.querySelectorAll('[data-aplazame-simulator]');
+function widgetsLookup (element) {
+  var simulators = element.querySelectorAll('[data-aplazame-simulator]');
 
   if( simulators.length ) {
 
@@ -14,10 +14,7 @@ _.ready(function () {
 
 
       if( message.aplazame === 'simulator' ) {
-        console.log('aplazame-simulator:message', message, e.source);
-
         iframes.forEach(function (iframe) {
-          console.log('aplazame-simulator:iframe', iframe, e.source, iframe.contentWindow === e.source );
           if( iframe.contentWindow === e.source ) {
             iframe.style.height = message.data.height + 'px';
           }
@@ -42,7 +39,6 @@ _.ready(function () {
           simulator.removeChild(child);
           child = simulator.firstChild;
         }
-        console.log('simulator', simulatorParams, choices);
 
         http( aplazame.getEnv('baseUrl') + 'widgets/simulator/simulator.html').then(function (response) {
           var iframe = _.getIFrame({
@@ -65,4 +61,10 @@ _.ready(function () {
     });
     // aplazame.button(btnParams);
   }
+}
+
+require('./live-dom').subscribe(widgetsLookup);
+
+_.ready(function () {
+  widgetsLookup(document);
 });

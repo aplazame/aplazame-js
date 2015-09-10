@@ -1,12 +1,10 @@
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-_.ready(function () {
-  var btns = document.querySelectorAll('[data-aplazame-button]');
+function buttonsLookup (element) {
+  var btns = element.querySelectorAll('[data-aplazame-button]');
 
   if( btns.length ) {
-
-    console.log('forEach:btns', btns);
 
     [].forEach.call(btns, function (btn) {
       var btnId = btn.getAttribute('data-aplazame-button'),
@@ -24,4 +22,10 @@ _.ready(function () {
     });
 
   }
+}
+
+require('./live-dom').subscribe(buttonsLookup);
+
+_.ready(function () {
+  buttonsLookup(document);
 });

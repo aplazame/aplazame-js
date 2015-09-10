@@ -91,13 +91,13 @@ function button (options) {
       options.watching = true;
 
       setInterval(function () {
-        // console.log('checking price', options.amount, getCartPrice() );
+        console.log('checking price', options.amount, getCartPrice() );
         if( options.amount !== getCartPrice() ) {
           options.amount = getCartPrice();
           options.forceUpdate = true;
           button(options);
         }
-      }, 400);
+      }, 4000);
     }
   }
 

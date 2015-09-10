@@ -103,6 +103,10 @@ function button (options) {
 
   elButton = elButton || elements[0];
 
+  if( !elements.length || _.elementData(elButton, 'buttonInitialized') ) {
+    return;
+  }
+
   if( elButton && options.parent ) {
     var parent = elButton.parentElement;
 
@@ -131,10 +135,25 @@ function button (options) {
 
   apiGet('checkout/button', { params: params })
     .then(function () {
-      elements.forEach(function (el) {
-        el.style.display = el.__display;
-      });
+      var elms = elements.slice();
+      setTimeout(function () {
+        elms.forEach(function (el) {
+          el.style.display = el.__display;
+        });
+      }, 2000);
     });
+
+  elements.forEach(function (el) {
+    _.elementData(el, 'buttonInitialized', true);
+  });
+
+  if( !options.$$running && options.selector ) {
+    options.$$running = true;
+
+    require('./live-dom').subscribe(function (el) {
+      button(options);
+    });
+  }
 }
 
 function checkout (options) {
@@ -254,7 +273,7 @@ module.exports = {
   _: _
 };
 
-},{"./http":5,"./utils":8}],2:[function(require,module,exports){
+},{"./http":5,"./live-dom":6,"./utils":8}],2:[function(require,module,exports){
 var aplazame = require('./aplazame'),
     aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
     scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
@@ -320,17 +339,12 @@ if( document.querySelector('script[data-aplazame]') ) {
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-function buttonsLookup () {
-  var btns = document.querySelectorAll('[data-aplazame-button]');
+function buttonsLookup (element) {
+  var btns = element.querySelectorAll('[data-aplazame-button]');
 
   if( btns.length ) {
 
     [].forEach.call(btns, function (btn) {
-      if( _.elementData(btn, 'checked') ) {
-        return;
-      }
-      _.elementData(btn, 'checked', true);
-      
       var btnId = btn.getAttribute('data-aplazame-button'),
           btnParams = {
             selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
@@ -351,15 +365,15 @@ function buttonsLookup () {
 require('./live-dom').subscribe(buttonsLookup);
 
 _.ready(function () {
-  buttonsLookup();
+  buttonsLookup(document);
 });
 
 },{"./aplazame":1,"./live-dom":6,"./utils":8}],4:[function(require,module,exports){
 var aplazame = require('./aplazame'),
     _ = require('./utils');
 
-function widgetsLookup () {
-  var simulators = document.querySelectorAll('[data-aplazame-simulator]');
+function widgetsLookup (element) {
+  var simulators = element.querySelectorAll('[data-aplazame-simulator]');
 
   if( simulators.length ) {
 
@@ -429,7 +443,7 @@ function widgetsLookup () {
 require('./live-dom').subscribe(widgetsLookup);
 
 _.ready(function () {
-  widgetsLookup();
+  widgetsLookup(document);
 });
 
 },{"./aplazame":1,"./http":5,"./live-dom":6,"./utils":8}],5:[function(require,module,exports){

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.42';
+module.exports = '0.0.43';
 },{}],2:[function(require,module,exports){
 'use strict'; // jshint ignore:line
 
@@ -587,43 +587,22 @@ function http (url, options) {
 module.exports = http;
 
 },{}],7:[function(require,module,exports){
-(function (global){
 
 var suscriptors = [],
     running = false,
     _ = require('./utils');
 
-function initLiveDOM (retryOnReady) {
-  if( global.jQuery ) {
-    (function ($) {
+function initLiveDOM () {
 
-      var jqHtml = $.fn.html;
-
-      $.fn.html = function () {
-         var response = jqHtml.apply(this, arguments);
-         if( !arguments.length ) {
-           return response;
-         }
-
-         var elements = [].slice.call(this);
-
-         setTimeout(function () {
-           elements.forEach(function (el) {
-             for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
-               suscriptors[i](el);
-             }
-           });
-         }, 0);
-
-         return response;
-      };
-
-    })(global.jQuery);
-  } else if( retryOnReady ) {
-    _.ready(function () {
-      initLiveDOM();
-    });
-  }
+  _.ready(function () {
+    document.body.addEventListener('DOMSubtreeModified', function(event){
+      // console.debug( 'DOM Changed at ', new Date(), event.target );
+      for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
+        suscriptors[i](event.target);
+      }
+    }, false);
+  });
+  
 }
 
 module.exports = {
@@ -638,7 +617,6 @@ module.exports = {
   }
 };
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./utils":9}],8:[function(require,module,exports){
 (function (global){
 

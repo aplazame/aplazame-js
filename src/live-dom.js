@@ -3,37 +3,17 @@ var suscriptors = [],
     running = false,
     _ = require('./utils');
 
-function initLiveDOM (retryOnReady) {
-  if( global.jQuery ) {
-    (function ($) {
+function initLiveDOM () {
 
-      var jqHtml = $.fn.html;
-
-      $.fn.html = function () {
-         var response = jqHtml.apply(this, arguments);
-         if( !arguments.length ) {
-           return response;
-         }
-
-         var elements = [].slice.call(this);
-
-         setTimeout(function () {
-           elements.forEach(function (el) {
-             for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
-               suscriptors[i](el);
-             }
-           });
-         }, 0);
-
-         return response;
-      };
-
-    })(global.jQuery);
-  } else if( retryOnReady ) {
-    _.ready(function () {
-      initLiveDOM();
-    });
-  }
+  _.ready(function () {
+    document.body.addEventListener('DOMSubtreeModified', function(event){
+      // console.debug( 'DOM Changed at ', new Date(), event.target );
+      for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
+        suscriptors[i](event.target);
+      }
+    }, false);
+  });
+  
 }
 
 module.exports = {

@@ -33,22 +33,22 @@ build:
 	@node run build
 
 git.increaseVersion:
-	@git checkout master
+	git checkout master
 	@git pull origin master
 	@node run increaseVersion
-	@git commit -a -m "increased version"
+	git commit -a -m "increased version"
 	@git push origin master
 
 git.updateRelease:
-	@git checkout release
+	git checkout release
 	@git pull origin release
-	@git merge master
+	@git merge --no-edit master
 
 publish: install.npm jshint git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
 	@git add dist -f --all
-	@git commit -m "updating built versions"
+	git commit -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node run pkgVersion)\n"
 

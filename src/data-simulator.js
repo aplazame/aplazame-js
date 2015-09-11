@@ -46,7 +46,7 @@ function widgetsLookup (element) {
           child = simulator.firstChild;
         }
 
-        http( aplazame.getEnv('baseUrl') + 'widgets/simulator/simulator.html').then(function (response) {
+        http( aplazame.getEnv('baseUrl') + 'widgets/simulator/simulator.html?' + new Date().getTime() ).then(function (response) {
           var iframe = _.getIFrame({
             width: '100%'
           });

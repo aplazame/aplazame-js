@@ -194,7 +194,7 @@ function checkout (options) {
     baseUrl += '/';
   }
 
-  http(baseUrl + 'iframe.html').then(function (response) {
+  http(baseUrl + 'iframe.html?' + new Date().getTime() ).then(function (response) {
     document.body.style.overflow = 'hidden';
     // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
     var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),

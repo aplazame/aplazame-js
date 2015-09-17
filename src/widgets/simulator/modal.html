@@ -1,0 +1,146 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Aplazame Checkout</title>
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      font-size: 100%;
+      vertical-align: baseline;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+              box-sizing: border-box;
+    }
+    html {
+      font-size: 62.5%;
+      height: 100%;
+      line-height: 1;
+    }
+    body {
+      background: rgba(53, 64, 71, 0.9);
+      color: #858E93;
+      font-size: 1.6rem;
+      font-family: 'GothamBookRegular', 'Helvetica Neue', 'Helvetica', sans-serif;
+      font-weight: normal;
+    }
+    p {
+      margin-bottom: 2.4rem;
+      line-height: 2.4rem;
+    }
+    .canvas {
+      z-index: 1;
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      -webkit-perspective: 1200px;
+         -moz-perspective: 1200px;
+              perspective: 1200px;
+    }
+    .container {
+      z-index: 2;
+      margin: 0 auto;
+      vertical-align: middle;
+      display: inline-block;
+      padding: 3.2rem 0;
+    }
+    .p-rel {
+      position: relative;
+    }
+    .t-base {
+      font-size: 1.6rem;
+    }
+    .box-form {
+        overflow: hidden;
+    }
+    .box {
+        width: 48.0rem;
+        border-radius: .6rem .6rem .6rem .6rem;
+        background: #fff;
+        box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.16);
+        text-align: left;
+    }
+    .h-valign:before {
+      content:"";
+      width:1px;
+      height:100%;
+      display:inline-block;
+      vertical-align:middle;
+    }
+    .v-pad-bot-s {
+        padding-bottom: 1.6rem;
+    }
+    .v-pad-m {
+      padding-top: 2.4rem;
+      padding-bottom:2.4rem
+    }
+    .h-pad-s {
+        padding-left: 1.6rem;
+        padding-right: 1.6rem;
+    }
+    .close-checkout {
+      z-index: 50;
+      position: fixed;
+      right: 1.6rem;
+      top: 1.6rem;
+    }
+    .close-checkout a {
+      border: 1px solid #fff;
+      color: #fff;
+      display: block;
+      font-family: 'GothamMedium';
+      font-size: 1rem;
+      padding: 0.8rem 1.2rem 1rem 1.2rem;
+      text-align: left;
+      text-transform: uppercase;
+      -webkit-border-radius: 3rem;
+         -moz-border-radius: 3rem;
+              border-radius: 3rem;
+    }
+    .close-checkout a span {
+      display: inline-block;
+    }
+
+  </style>
+
+</head>
+<body class="desktop">
+  <div class="canvas h-valign">
+    <div class="container p-rel">
+      <form name="form" class="box-form">
+        <div class="box t-base p-rel">
+          <div class="h-pad-s v-pad-m">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="close-checkout">
+    <a href="#">
+      <span>✖</span>
+    </a>
+  </div>
+</body>
+
+</html>

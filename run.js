@@ -11,7 +11,7 @@ function noop () {}
 var colors = require('colors'),
     nitro = require('nitro-tools');
 
-nitro.loadProcessors('sass', 'uglify', 'log', 'jshint');
+// nitro.loadProcessors('sass', 'uglify', 'log', 'jshint');
 
 nitro.fileProcessor('es6', function (src) {
   return require('babel-core').transform(src, {}).code;

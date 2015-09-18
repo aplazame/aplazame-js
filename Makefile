@@ -8,6 +8,9 @@ whoami = $(shell whoami)
 run.demo:
 	@node run demo
 
+live:
+	@node run demo
+
 jshint:
 	@node run jshint
 

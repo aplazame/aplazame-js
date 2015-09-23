@@ -4,6 +4,14 @@
 
 require('nitro')(function (nitro) {
 
+  var canClear = ['dist'];
+
+  nitro.task('clear', function (target) {
+    if( canClear.indexOf(target) !== -1 ) {
+      nitro.dir.remove(target);
+    }
+  });
+
   nitro.task('test.jshint', function () {
       nitro.load('src/{,**/}*.js').process('jshint', {
         jshintrc: nitro.file.readJSON('.jshintrc'),
@@ -29,6 +37,7 @@ require('nitro')(function (nitro) {
   nitro.task('aplazame.js', function () {
     nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
     nitro.load('src/aplazame.js').process('browserify').write('dist');
+    // nitro.load('src/aplazame.js').process('browserify', { plugins: [nitro.require('babelify')] }).write('dist');
   });
 
   nitro.task('js', ['aplazame.js', 'aplazame.min.js'], function () {
@@ -38,46 +47,46 @@ require('nitro')(function (nitro) {
   // demo
 
   nitro.task('demo-sass', function () {
-    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass').write('demo');
+    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass').process('autoprefixer', { browsers: ['last 20 versions'] }).write('demo');
   });
 
   // widgets
 
   nitro.task('widgets.assets', function () {
-    nitro.dir('src/widgets/assets').copy('dist/widgets/assets');
+    nitro.dir('widgets/assets').copy('dist/widgets/assets');
   });
 
-  nitro.task('simulator.js', function () {
-    nitro.load('src/widgets/simulator/simulator.js').process('browserify').write('dist/widgets/simulator');
-    // nitro.exec('$(npm bin)/browserify src/widgets/simulator/simulator.js -o dist/widgets/simulator/simulator.js');
+  nitro.task('widgets.js', function () {
+    nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist/widgets/simulator');
+    nitro.load('widgets/modal/modal.js').process('browserify').write('dist/widgets/modal');
   });
 
-  nitro.task('simulator.html', function () {
-    nitro.copy('src/widgets/simulator', '{,**/}*.html', 'dist/widgets/simulator');
+  nitro.task('widgets.html', function () {
+    nitro.copy('widgets', '{,**/}*.html', 'dist/widgets');
   });
 
-  nitro.task('simulator.css', function () {
-    nitro.dir('src/widgets/simulator').load('*.scss').process('sass').write('dist/widgets/simulator');
+  nitro.task('widgets.css', function () {
+    nitro.dir('widgets').load('{,**/}*.scss').process('sass').process('autoprefixer', { browsers: ['last 20 versions'] }).write('dist/widgets');
   });
 
-  nitro.task('simulator', [function () {
-    nitro.dir.create('dist/widgets/simulator');
-  }, 'simulator.js', 'simulator.html', 'simulator.css']);
+  nitro.task('widgets', [ 'widgets.assets', 'widgets.js', 'widgets.html', 'widgets.css' ]);
 
   // watch
 
   nitro.task('watch', function () {
 
-    nitro.watch('src')
-      .when('widgets/simulator/**', 'simulator')
-      .when('widgets/assets/**', 'widgets.assets')
-      .when(['{,**/}*.js', '!widgets/**'], 'js');
+    nitro.watch('src', ['js']);
+    nitro.watch('widgets')
+      .when('{,**/}*.js', 'widgets.js')
+      .when('{,**/}*.html', 'widgets.html')
+      .when('{,**/}*.{sass,scss}', 'widgets.css')
+      .when('widgets/assets/**', 'widgets.assets');
 
   });
 
   // main tasks
 
-  nitro.task('build', ['js', 'widgets.assets', 'simulator']);
+  nitro.task('build', ['clear:dist', 'js', 'widgets']);
 
   nitro.task('dev', ['build', 'watch']);
 

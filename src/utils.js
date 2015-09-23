@@ -146,9 +146,10 @@ function template (name, data){
 }
 
 template.cache = {};
-template.put = function (name, tmpl) {
+
+template.compile = function (tmpl) {
   // John Resig micro-template
-  template.cache[name] = new Function('obj', // jshint ignore:line
+  return new Function('obj', // jshint ignore:line
     'var p=[],print=function(){p.push.apply(p,arguments);};' +
 
     // Introduce the data as local variables using with(){}
@@ -163,6 +164,10 @@ template.put = function (name, tmpl) {
       .split('\t').join('\');')
       .split('%>').join('p.push(\'')
       .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+};
+
+template.put = function (name, tmpl) {
+  template.cache[name] = template.compile(tmpl);
 };
 
 template.lookup = function () {

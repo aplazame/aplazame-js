@@ -1,5 +1,5 @@
 
-var _ = require('../../utils');
+var _ = require('../../src/utils');
 
 _.template.lookup();
 

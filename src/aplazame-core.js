@@ -287,6 +287,31 @@ function simulator (amount, _options, callback, onError) {
   }, onError);
 }
 
+function modal (data, options) {
+
+  if( !modal.cached ) {
+    return require('./http').noCache( getEnv('baseUrl') + 'widgets/modal/modal.html' ).then(function (response) {
+      modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + getEnv('baseUrl') + '" />') );
+      modal(data, options);
+    });
+  }
+
+  document.body.style.overflow = 'hidden';
+  var iframe = _.getIFrame({
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'transparent',
+        'z-index': 2147483647
+      });
+
+  document.body.appendChild(iframe);
+  _.writeIframe(iframe, modal.cached(data || {}) );
+
+}
+
 module.exports = {
   init: init,
   getEnv: getEnv,
@@ -298,6 +323,7 @@ module.exports = {
   baseUrl: function () {
     return env.baseUrl;
   },
+  modal: modal,
   _: _,
   version: require('../.tmp/aplazame-version')
 };

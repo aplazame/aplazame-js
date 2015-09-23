@@ -1,0 +1,121 @@
+@keyframes bodyBackground {
+  0% {
+    background: rgba(53, 64, 71, 0);
+  }
+  100% {
+    background: rgba(53, 64, 71, 0.9);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+html {
+  font-size: 62.5%;
+  height: 100%;
+  line-height: 1;
+}
+body {
+  animation: bodyBackground 0.4s;
+  background: rgba(53, 64, 71, 0.9);
+  color: #858E93;
+  font-size: 1.6rem;
+  font-family: "GothamBookRegular", "Helvetica Neue", "Helvetica", sans-serif;
+  font-weight: normal;
+}
+p {
+  margin-bottom: 2.4rem;
+  line-height: 2.4rem;
+}
+.canvas {
+  opacity: 1;
+  z-index: 1;
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  perspective: 1200px;
+}
+.container {
+  z-index: 2;
+  margin: 0 auto;
+  vertical-align: middle;
+  display: inline-block;
+  padding: 3.2rem 0;
+}
+.p-rel {
+  position: relative;
+}
+.t-base {
+  font-size: 1.6rem;
+}
+.box-form {
+    overflow: hidden;
+}
+.box {
+    width: 48.0rem;
+    border-radius: .6rem .6rem .6rem .6rem;
+    background: #fff;
+    box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.16);
+    text-align: left;
+    padding: 3rem 2.4rem;
+}
+.h-valign:before {
+  content:"";
+  width:1px;
+  height:100%;
+  display:inline-block;
+  vertical-align:middle;
+}
+
+.img-wrapper {
+  text-align: center;
+}
+
+.box-title {
+  text-align: center;
+  color: #2b83c2;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 3rem 0 2rem 0;
+}
+
+.close-checkout {
+  z-index: 50;
+  position: fixed;
+  right: 1.6rem;
+  top: 1.6rem;
+
+  a {
+    border: 1px solid #fff;
+    color: #fff;
+    display: block;
+    font-family: 'GothamMedium';
+    font-size: 1rem;
+    padding: 0.8rem 1.2rem 1rem 1.2rem;
+    text-align: left;
+    text-transform: uppercase;
+    -webkit-border-radius: 3rem;
+       -moz-border-radius: 3rem;
+            border-radius: 3rem;
+    span {
+      display: inline-block;
+    }
+  }
+}

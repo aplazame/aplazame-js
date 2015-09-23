@@ -4,7 +4,7 @@
 
 require('nitro')(function (nitro) {
 
-  nitro.task('jshint', function () {
+  nitro.task('test.jshint', function () {
       nitro.load('src/{,**/}*.js').process('jshint', {
         jshintrc: nitro.file.readJSON('.jshintrc'),
         onError: function () {
@@ -20,13 +20,6 @@ require('nitro')(function (nitro) {
       });
   });
 
-  nitro.task('karma', function () {
-    nitro.exec('$(npm bin)/karma start karma/src.conf.js && echo \'src passed\'');
-    nitro.exec('$(npm bin)/karma start karma/min.conf.js && echo \'min passed\'');
-  });
-
-  nitro.task('tests', ['jshint']);
-
   // aplazame.js
 
   nitro.task('aplazame.min.js', function () {
@@ -35,7 +28,7 @@ require('nitro')(function (nitro) {
 
   nitro.task('aplazame.js', function () {
     nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
-    nitro.exec('$(npm bin)/browserify src/main.js -o dist/aplazame.js');
+    nitro.load('src/aplazame.js').process('browserify').write('dist');
   });
 
   nitro.task('js', ['aplazame.js', 'aplazame.min.js'], function () {
@@ -50,12 +43,13 @@ require('nitro')(function (nitro) {
 
   // widgets
 
-  nitro.task('assets', function () {
+  nitro.task('widgets.assets', function () {
     nitro.dir('src/widgets/assets').copy('dist/widgets/assets');
   });
 
   nitro.task('simulator.js', function () {
-    nitro.exec('$(npm bin)/browserify src/widgets/simulator/simulator.js -o dist/widgets/simulator/simulator.js');
+    nitro.load('src/widgets/simulator/simulator.js').process('browserify').write('dist/widgets/simulator');
+    // nitro.exec('$(npm bin)/browserify src/widgets/simulator/simulator.js -o dist/widgets/simulator/simulator.js');
   });
 
   nitro.task('simulator.html', function () {
@@ -76,14 +70,14 @@ require('nitro')(function (nitro) {
 
     nitro.watch('src')
       .when('widgets/simulator/**', 'simulator')
-      .when('widgets/assets/**', 'assets')
+      .when('widgets/assets/**', 'widgets.assets')
       .when(['{,**/}*.js', '!widgets/**'], 'js');
 
   });
 
   // main tasks
 
-  nitro.task('build', ['js', 'simulator']);
+  nitro.task('build', ['js', 'widgets.assets', 'simulator']);
 
   nitro.task('dev', ['build', 'watch']);
 

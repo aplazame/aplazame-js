@@ -12,10 +12,12 @@ auto.install:
 	@node auto-install
 
 test:
-	@node make test
+	@node make test.jshint
+	# @$(npmdir)/karma start karma/src.conf.js
+	# @$(npmdir)/karma start karma/min.conf.js
 
-build:
-	@node run build
+build: test
+	@node make build
 
 dev: auto.install
 	@npm make dev
@@ -43,10 +45,6 @@ release: install.npm jshint git.increaseVersion git.updateRelease build
 	git commit -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node make pkg:version)\n"
-
-karma:
-	@$(npmdir)/karma start karma/src.conf.js
-	@$(npmdir)/karma start karma/min.conf.js
 
 echo:
 	@echo "make options: test build dev live"

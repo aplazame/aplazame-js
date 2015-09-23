@@ -29,6 +29,7 @@ body {
 $brand-primary: #3e8bc2;
 
 $brand-primary-hover: darken($brand-primary, 10);
+$brand-primary-active: darken($brand-primary, 20);
 
 $brand-gray: #D0D7DB;
 
@@ -49,17 +50,23 @@ $logo-size: 2rem;
 }
 
 #main {
-  margin-left: $logo-size + 0.5rem;
   min-height: 5rem;
+  display: inline-block;
+  // margin-left: $logo-size + 0.5rem;
 }
 
 a {
   color: $brand-primary;
   text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     color: $brand-primary-hover;
     text-decoration: underline;
+  }
+
+  &:active {
+    color: $brand-primary-active;
   }
 }
 

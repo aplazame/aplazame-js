@@ -297,7 +297,7 @@ function modal (data, options) {
   }
 
   document.body.style.overflow = 'hidden';
-  var iframe = _.getIFrame({
+  modal.iframe = _.getIFrame({
         position: 'fixed',
         top: 0,
         left: 0,
@@ -307,10 +307,28 @@ function modal (data, options) {
         'z-index': 2147483647
       });
 
-  document.body.appendChild(iframe);
-  _.writeIframe(iframe, modal.cached(data || {}) );
-
+  document.body.appendChild(modal.iframe);
+  _.writeIframe(modal.iframe, modal.cached(data || {}) );
 }
+
+_.listen(window, 'message', function (e) {
+
+  var message = e.data;
+
+  if( message.aplazame && message.aplazame === 'modal' ) {
+    switch( message.event ) {
+      case 'open':
+        modal(message.data);
+        break;
+      case 'close':
+        if( modal.iframe ) {
+          document.body.removeChild(modal.iframe);
+          delete modal.iframe;
+        }
+        break;
+    }
+  }
+});
 
 module.exports = {
   init: init,

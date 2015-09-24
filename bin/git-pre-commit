@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+if [[ "$BRANCH" == "master" || "$BRANCH" == "release" ]]; then
+	printf "\n\033[0;33mYou are on branch $BRANCH. Are you sure you want to commit to this branch?\033[0m\n"
+	printf "\n\033[0;37mIf so, commit with -n to bypass this pre-commit hook.\033[0m\n\n"
+	exit 1
+fi
+
+exit 0

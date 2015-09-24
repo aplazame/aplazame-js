@@ -5,13 +5,16 @@ whoami = $(shell whoami)
 
 # TASKS
 
+git.hooks:
+	@./bin/git-hooks
+
 install.npm:
 	npm install
 
-auto.install:
+auto.install: git.hooks
 	@node auto-install
 
-test:
+test: auto.install
 	@node make test.jshint
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
@@ -30,7 +33,7 @@ git.increaseVersion:
 	git checkout master
 	@git pull origin master
 	@node make pkg:increaseVersion
-	git commit -a -m "increased version"
+	git commit -a -m "increased version [$(shell node make pkg:version)]"
 	@git push origin master
 
 git.updateRelease:
@@ -38,7 +41,7 @@ git.updateRelease:
 	@git pull origin release
 	@git merge --no-edit master
 
-release: install.npm jshint git.increaseVersion git.updateRelease build
+release: auto.install test git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
 	@git add dist -f --all

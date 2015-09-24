@@ -5,37 +5,31 @@ whoami = $(shell whoami)
 
 # TASKS
 
-run.demo:
-	@node run demo
-
-jshint:
-	@node run jshint
-
 install.npm:
 	npm install
 
-demo.less:
-	@$(npmdir)/lessc demo/demo.less demo/demo.css
+auto.install:
+	@node auto-install
 
-dev: test
-	@npm start
+test:
+	@node make test.jshint
+	# @$(npmdir)/karma start karma/src.conf.js
+	# @$(npmdir)/karma start karma/min.conf.js
 
-dir.dist:
-	@mkdir -p dist
+build: test
+	@node make build
 
-aplazame.js: dir.dist
-	@$(npmdir)/browserify src/main.js -o dist/aplazame.js
+dev: auto.install
+	@npm make dev
 
-simulator.js: dir.dist
-	@$(npmdir)/browserify src/widgets/simulator/simulator.js -o dist/widgets/simulator/simulator.js
+live: auto.install
+	@node make live
 
-build:
-	@node run build
 
 git.increaseVersion:
 	git checkout master
 	@git pull origin master
-	@node run increaseVersion
+	@node make pkg:increaseVersion
 	git commit -a -m "increased version"
 	@git push origin master
 
@@ -44,22 +38,16 @@ git.updateRelease:
 	@git pull origin release
 	@git merge --no-edit master
 
-publish: install.npm jshint git.increaseVersion git.updateRelease build
+release: install.npm jshint git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
 	@git add dist -f --all
 	git commit -m "updating built versions"
 	@git push origin release
-	@echo "\n\trelease version $(shell node run pkgVersion)\n"
-
-release: publish
-
-test: build
-	@$(npmdir)/karma start karma/src.conf.js
-	@$(npmdir)/karma start karma/min.conf.js
+	@echo "\n\trelease version $(shell node make pkg:version)\n"
 
 echo:
-	@echo "make options: run.demo dev build test"
+	@echo "make options: test build dev live"
 
 # DEFAULT TASKS
 

@@ -1,4 +1,4 @@
-var aplazame = require('./aplazame'),
+var aplazame = require('./aplazame-core'),
     aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
     scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
 

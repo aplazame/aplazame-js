@@ -23,7 +23,7 @@
         <div>Consíguelo a partir de <%= getAmount(choice.amount) %>€ al mes.</div>
         <div>Aplazado en <a href="#" class="no-wrap" data-action="showChoices"><%= choice.num_instalments %> <%= choice.num_instalments > 1 ? 'cuotas' : 'cuota' %></a><%= choice.num_instalments > 1 ? ' mensuales.' : 'mensual.' %></div>
         <div>TAE del <%= getAmount(choice.annual_equivalent) %>%.</div>
-        <!-- <div class="text-right"><a class="cursor-pointer" data-action="showInfo">Más información</a></div> -->
+        <div class="text-right"><a class="cursor-pointer" data-action="showInfo">Más información</a></div>
     </script>
     <script type="application/x-template" data-template="choices">
         <div>Elige el número de cuotas</div>

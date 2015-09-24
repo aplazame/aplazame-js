@@ -1,5 +1,5 @@
 
-var _ = require('../../utils');
+var _ = require('../../src/utils');
 
 _.template.lookup();
 
@@ -81,6 +81,15 @@ _.listen(main, 'click', function (e) {
     case 'selectChoice':
       setChoice( choices[ Number(e.target.getAttribute('data-choice')) ] );
       showText();
+      break;
+    case 'showInfo':
+      parent.window.postMessage({
+        aplazame: 'modal',
+        event: 'open',
+        data: {
+          box: require('../../.tmp/simulator/modal-box.js')
+        }
+      }, '*');
       break;
   }
 });

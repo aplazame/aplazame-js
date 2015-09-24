@@ -103,4 +103,9 @@ function http (url, options) {
   };
 }
 
+http.noCache = function (url, options) {
+  url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
+  return http(url, options);
+};
+
 module.exports = http;

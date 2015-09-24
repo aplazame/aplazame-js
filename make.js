@@ -57,12 +57,13 @@ require('nitro')(function (nitro) {
   });
 
   nitro.task('widgets.js', function () {
+    nitro.file.write('.tmp/simulator/modal-box.js', 'module.exports = \'' + nitro.file.read('widgets/simulator/modal-box.html').replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
     nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist/widgets/simulator');
     nitro.load('widgets/modal/modal.js').process('browserify').write('dist/widgets/modal');
   });
 
   nitro.task('widgets.html', function () {
-    nitro.copy('widgets', '{,**/}*.html', 'dist/widgets');
+    nitro.copy('widgets', ['{,**/}*.html', '!simulator/modal-box.html'], 'dist/widgets');
   });
 
   nitro.task('widgets.css', function () {
@@ -78,7 +79,8 @@ require('nitro')(function (nitro) {
     nitro.watch('src', ['js']);
     nitro.watch('widgets')
       .when('{,**/}*.js', 'widgets.js')
-      .when('{,**/}*.html', 'widgets.html')
+      .when('{,**/}modal-*.html', 'widgets.js')
+      .when(['{,**/}*.html', '!{,**/}modal-*.html'], 'widgets.html')
       .when('{,**/}*.{sass,scss}', 'widgets.css')
       .when('widgets/assets/**', 'widgets.assets');
 

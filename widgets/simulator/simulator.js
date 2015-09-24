@@ -87,14 +87,7 @@ _.listen(main, 'click', function (e) {
         aplazame: 'modal',
         event: 'open',
         data: {
-          title: 'Con Aplazame puedes comprar ahora y pagar después.',
-          message: 'Elige los meses y la cuota que mejor que convenga.' +
-'<br/>Aplazame es muy fácil de usar.</p>' +
-'<ul><li>Ofrecemos la financiación al consumo más barata de España.</li>' +
-'<li>Sin costes ocultos ni letra pequeña.</li>' +
-'<li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>' +
-'<li>Disponible para compras superiores a XX€.</li>' +
-'<li>¿Tienes alguna duda? Llámanos al 91 XXX o escríbenos un email a hola@aplazame.com.</li></ul>'
+          box: require('../../.tmp/simulator/modal-box.js')
         }
       }, '*');
       break;

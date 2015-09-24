@@ -21,8 +21,11 @@
           <div class="img-wrapper">
             <img src="widgets/assets/img/info-lg.svg"/>
           </div>
-          <div class="box-title"><%= title %></div>
-          <p><%= message %></p>
+
+          <% if( box ) { %><%= box %><% } else { %>
+            <div class="box-title"><%= title %></div>
+            <div class="box-message"><%= message %></div>
+          <% } %>
 
         </div>
 
@@ -30,7 +33,7 @@
     </div>
     <div class="close-checkout">
       <a href="javascript:;">
-        <span>✖</span>
+        <span>Volver</span><span>✖</span>
       </a>
     </div>
 

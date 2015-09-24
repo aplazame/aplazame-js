@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.43';
+module.exports = '0.0.45';
 },{}],2:[function(require,module,exports){
 'use strict'; // jshint ignore:line
 
@@ -290,6 +290,52 @@ function simulator (amount, _options, callback, onError) {
   }, onError);
 }
 
+function modal (data, options) {
+
+  if( !modal.cached ) {
+    return require('./http').noCache( getEnv('baseUrl') + 'widgets/modal/modal.html' ).then(function (response) {
+      modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + getEnv('baseUrl') + '" />') );
+      modal(data, options);
+    });
+  }
+
+  modal.iframe = _.getIFrame({
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'transparent',
+        'z-index': 2147483647
+      });
+
+  modal.iframe.overflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+
+  document.body.appendChild(modal.iframe);
+  _.writeIframe(modal.iframe, modal.cached(data || {}) );
+}
+
+_.listen(window, 'message', function (e) {
+
+  var message = e.data;
+
+  if( message.aplazame && message.aplazame === 'modal' ) {
+    switch( message.event ) {
+      case 'open':
+        modal(message.data);
+        break;
+      case 'close':
+        if( modal.iframe ) {
+          document.body.style.overflow = modal.iframe.overflow;
+          document.body.removeChild(modal.iframe);
+          delete modal.iframe;
+        }
+        break;
+    }
+  }
+});
+
 module.exports = {
   init: init,
   getEnv: getEnv,
@@ -301,12 +347,23 @@ module.exports = {
   baseUrl: function () {
     return env.baseUrl;
   },
+  modal: modal,
   _: _,
   version: require('../.tmp/aplazame-version')
 };
 
-},{"../.tmp/aplazame-version":1,"./http":6,"./live-dom":7,"./utils":9}],3:[function(require,module,exports){
-var aplazame = require('./aplazame'),
+},{"../.tmp/aplazame-version":1,"./http":7,"./live-dom":8,"./utils":9}],3:[function(require,module,exports){
+(function (global){
+
+global.aplazame = require('./aplazame-core');
+
+require('./data-aplazame');
+require('./data-button');
+require('./data-simulator');
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./aplazame-core":2,"./data-aplazame":4,"./data-button":5,"./data-simulator":6}],4:[function(require,module,exports){
+var aplazame = require('./aplazame-core'),
     aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
     scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
 
@@ -367,8 +424,8 @@ if( document.querySelector('script[data-aplazame]') ) {
   aplazame.init(envOptions, apiOptions);
 }
 
-},{"./aplazame":2}],4:[function(require,module,exports){
-var aplazame = require('./aplazame'),
+},{"./aplazame-core":2}],5:[function(require,module,exports){
+var aplazame = require('./aplazame-core'),
     _ = require('./utils');
 
 function buttonsLookup (element) {
@@ -400,8 +457,8 @@ _.ready(function () {
   buttonsLookup(document);
 });
 
-},{"./aplazame":2,"./live-dom":7,"./utils":9}],5:[function(require,module,exports){
-var aplazame = require('./aplazame'),
+},{"./aplazame-core":2,"./live-dom":8,"./utils":9}],6:[function(require,module,exports){
+var aplazame = require('./aplazame-core'),
     _ = require('./utils');
 
 function widgetsLookup (element) {
@@ -478,7 +535,7 @@ _.ready(function () {
   widgetsLookup(document);
 });
 
-},{"./aplazame":2,"./http":6,"./live-dom":7,"./utils":9}],6:[function(require,module,exports){
+},{"./aplazame-core":2,"./http":7,"./live-dom":8,"./utils":9}],7:[function(require,module,exports){
 // factory http
 
 function headerToTitleSlug(text) {
@@ -584,9 +641,14 @@ function http (url, options) {
   };
 }
 
+http.noCache = function (url, options) {
+  url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
+  return http(url, options);
+};
+
 module.exports = http;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 var suscriptors = [],
     running = false,
@@ -617,17 +679,7 @@ module.exports = {
   }
 };
 
-},{"./utils":9}],8:[function(require,module,exports){
-(function (global){
-
-global.aplazame = require('./aplazame');
-
-require('./data-aplazame');
-require('./data-button');
-require('./data-simulator');
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./aplazame":2,"./data-aplazame":3,"./data-button":4,"./data-simulator":5}],9:[function(require,module,exports){
+},{"./utils":9}],9:[function(require,module,exports){
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
     Element.prototype.webkitMatchesSelector ||
@@ -776,9 +828,10 @@ function template (name, data){
 }
 
 template.cache = {};
-template.put = function (name, tmpl) {
+
+template.compile = function (tmpl) {
   // John Resig micro-template
-  template.cache[name] = new Function('obj', // jshint ignore:line
+  return new Function('obj', // jshint ignore:line
     'var p=[],print=function(){p.push.apply(p,arguments);};' +
 
     // Introduce the data as local variables using with(){}
@@ -793,6 +846,10 @@ template.put = function (name, tmpl) {
       .split('\t').join('\');')
       .split('%>').join('p.push(\'')
       .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+};
+
+template.put = function (name, tmpl) {
+  template.cache[name] = template.compile(tmpl);
 };
 
 template.lookup = function () {
@@ -906,4 +963,4 @@ module.exports = {
   }
 };
 
-},{}]},{},[8]);
+},{}]},{},[3]);

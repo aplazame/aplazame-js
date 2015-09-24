@@ -1,0 +1,190 @@
+@-webkit-keyframes body-background {
+  0% {
+    background: rgba(53, 64, 71, 0); }
+  100% {
+    background: rgba(53, 64, 71, 0.9); } }
+
+@keyframes body-background {
+  0% {
+    background: rgba(53, 64, 71, 0); }
+  100% {
+    background: rgba(53, 64, 71, 0.9); } }
+
+@-webkit-keyframes body-background-out {
+  0% {
+    background: rgba(53, 64, 71, 0.9); }
+  100% {
+    background: rgba(53, 64, 71, 0); } }
+
+@keyframes body-background-out {
+  0% {
+    background: rgba(53, 64, 71, 0.9); }
+  100% {
+    background: rgba(53, 64, 71, 0); } }
+
+@-webkit-keyframes zoom-in {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+            transform: scale3d(0.3, 0.3, 0.3); }
+  100% {
+    opacity: 1; } }
+
+@keyframes zoom-in {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+            transform: scale3d(0.3, 0.3, 0.3); }
+  100% {
+    opacity: 1; } }
+
+@-webkit-keyframes zoom-out {
+  0% {
+    opacity: 1; }
+  100% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+            transform: scale3d(0.3, 0.3, 0.3); } }
+
+@keyframes zoom-out {
+  0% {
+    opacity: 1; }
+  100% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+            transform: scale3d(0.3, 0.3, 0.3); } }
+
+::-moz-selection {
+  background: #3e8bc2;
+  /* WebKit/Blink Browsers */
+  color: white; }
+
+::selection {
+  background: #3e8bc2;
+  /* WebKit/Blink Browsers */
+  color: white; }
+
+::-moz-selection {
+  background: #3e8bc2;
+  /* Gecko Browsers */
+  color: white; }
+
+* {
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box; }
+
+html {
+  font-size: 62.5%;
+  height: 100%;
+  line-height: 1; }
+
+body {
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-duration: 0.6s;
+          animation-duration: 0.6s;
+  -webkit-animation-timing-function: ease;
+          animation-timing-function: ease;
+  background: rgba(53, 64, 71, 0.9);
+  color: #858E93;
+  font-size: 1.6rem;
+  font-family: "GothamBookRegular", "Helvetica Neue", "Helvetica", sans-serif;
+  font-weight: normal; }
+  body.shown {
+    -webkit-animation-name: body-background;
+            animation-name: body-background; }
+  body.closing {
+    -webkit-animation-name: body-background-out;
+            animation-name: body-background-out; }
+
+p {
+  margin-bottom: 1rem;
+  line-height: 1.5; }
+
+ul {
+  padding-left: 2rem;
+  line-height: 1.5; }
+  ul li {
+    margin-bottom: 0.5em; }
+
+.canvas {
+  opacity: 1;
+  z-index: 1;
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  -webkit-perspective: 1200px;
+          perspective: 1200px; }
+  .canvas:before {
+    content: '';
+    width: 1px;
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle; }
+  .canvas .container {
+    position: relative;
+    vertical-align: middle;
+    display: inline-block;
+    z-index: 2; }
+    .canvas .container .box {
+      position: relative;
+      font-size: 1.6rem;
+      -webkit-animation-fill-mode: both;
+              animation-fill-mode: both;
+      -webkit-animation-duration: 0.6s;
+              animation-duration: 0.6s;
+      -webkit-animation-timing-function: cubic-bezier(0.66, -0.33, 0.3, 1.29);
+              animation-timing-function: cubic-bezier(0.66, -0.33, 0.3, 1.29);
+      width: 48.0rem;
+      border-radius: 0.6rem 0.6rem 0.6rem 0.6rem;
+      background: #fff;
+      box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.16);
+      text-align: left;
+      padding: 3rem 2.4rem; }
+      body.shown .canvas .container .box {
+        -webkit-animation-name: zoom-in;
+                animation-name: zoom-in; }
+      body.closing .canvas .container .box {
+        -webkit-animation-name: zoom-out;
+                animation-name: zoom-out; }
+
+.img-wrapper {
+  text-align: center; }
+
+.box-title {
+  text-align: center;
+  color: #2b83c2;
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 3rem 0 2rem 0; }
+
+.close-checkout {
+  z-index: 50;
+  position: fixed;
+  right: 1.6rem;
+  top: 1.6rem; }
+  .close-checkout a {
+    border: 1px solid #fff;
+    color: #fff;
+    display: block;
+    font-size: 1.2rem;
+    padding: 0.8rem 1.2rem 1rem 1.2rem;
+    text-align: left;
+    text-transform: uppercase;
+    border-radius: 3rem;
+    text-decoration: none; }
+    .close-checkout a span {
+      display: inline-block; }

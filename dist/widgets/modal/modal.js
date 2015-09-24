@@ -1,6 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '<div class="box-title">Con Aplazame puedes comprar ahora y pagar después.</div><div class="box-message">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul>    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a XX€.</li>    <li>¿Tienes alguna duda? Llámanos al 91 XXX o escríbenos un email a hola@aplazame.com.</li>  </ul></div>';
-},{}],2:[function(require,module,exports){
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
     Element.prototype.webkitMatchesSelector ||
@@ -284,103 +282,25 @@ module.exports = {
   }
 };
 
-},{}],3:[function(require,module,exports){
-
+},{}],2:[function(require,module,exports){
 var _ = require('../../src/utils');
 
-_.template.lookup();
+var box = document.querySelector('.box');
 
-var main = document.getElementById('main'),
-    selectedChoice, choices = window.choices;
+function closeModal (e) {
+  document.body.className = 'closing';
 
-function getAmount (amount) {
-  var prefix = '';
-
-  if( amount < 0 ) {
-    prefix = '-';
-    amount = 0 - amount;
-  }
-
-  if( !amount ) {
-    return '0,00';
-  } else if( amount < 10 ) {
-    return '0,0' + amount;
-  } else if( amount < 100 ) {
-    return '0,' + amount;
-  }
-  return prefix + ('' + amount).replace(/..$/, ',$&');
-}
-
-function emitSize () {
   setTimeout(function () {
     parent.window.postMessage({
-      aplazame: 'simulator',
-      event: 'resize',
-      data: {
-        width: document.body.clientWidth,
-        height: document.body.clientHeight
-      }
+      aplazame: 'modal',
+      event: 'close'
     }, '*');
-  },1);
+  }, 400);
 }
+_.listen(document.body, 'click', closeModal);
 
-_.listen(window, 'load', emitSize);
-_.listen(window, 'resize', emitSize);
-
-function showText () {
-  main.innerHTML = _.template('info', {
-    getAmount: getAmount,
-    choice: selectedChoice
-  });
-  emitSize();
-}
-
-function showChoices () {
-  main.innerHTML = _.template('choices', { selectedChoice: selectedChoice, choices: choices });
-  emitSize();
-}
-
-function setChoice (choice) {
-  selectedChoice = choice;
-  return choice;
-}
-
-function maxInstalments (prev, choice) {
-  if( prev === null ) {
-    return choice;
-  } else {
-    return choice.num_instalments > prev.num_instalments ? choice : prev;
-  }
-}
-
-setChoice( choices.reduce(maxInstalments, null) );
-
-_.listen(main, 'click', function (e) {
-  var action = e.target.getAttribute('data-action');
-  if( action !== undefined ) {
-    e.preventDefault();
-  }
-
-  switch( action ) {
-    case 'showChoices':
-      showChoices();
-      break;
-    case 'selectChoice':
-      setChoice( choices[ Number(e.target.getAttribute('data-choice')) ] );
-      showText();
-      break;
-    case 'showInfo':
-      parent.window.postMessage({
-        aplazame: 'modal',
-        event: 'open',
-        data: {
-          box: require('../../.tmp/simulator/modal-box.js')
-        }
-      }, '*');
-      break;
-  }
+_.listen(box, 'click', function (e) {
+  e.stopPropagation();
 });
 
-showText();
-
-},{"../../.tmp/simulator/modal-box.js":1,"../../src/utils":2}]},{},[3]);
+},{"../../src/utils":1}]},{},[2]);

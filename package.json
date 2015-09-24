@@ -1,13 +1,11 @@
 {
 	"name": "aplazame",
-	"version": "0.0.43",
+	"version": "0.0.45",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {
-		"prebuild": "make test",
-		"build": "node run build",
-		"prestart": "npm install",
-		"start": "node run demo",
+		"build": "make build",
+		"start": "make live",
 		"test": "make test"
 	},
 	"repository": {
@@ -24,20 +22,12 @@
 	"license": "GPL-3.0",
 	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
 	"devDependencies": {
-		"browserify": "^11.0.1",
-		"colors": "^1.1.2",
-		"glob": "^5.0.13",
+		"nitro": "1.4.36",
 		"jasmine-core": "^2.3.4",
-		"js-yaml": "^3.3.1",
 		"karma": "^0.12.37",
 		"karma-chrome-launcher": "^0.2.0",
 		"karma-firefox-launcher": "^0.1.6",
 		"karma-jasmine": "^0.3.6",
-		"karma-story-reporter": "^0.3.1",
-		"livereload": "^0.3.7",
-		"nitro-server": "1.0.1",
-		"nitro-tools": "1.1.5",
-		"node-watch": "^0.3.4",
-		"shelljs": "^0.5.3"
+		"karma-story-reporter": "^0.3.1"
 	}
 }

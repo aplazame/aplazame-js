@@ -1,4 +1,4 @@
-var aplazame = require('./aplazame'),
+var aplazame = require('./aplazame-core'),
     _ = require('./utils');
 
 function widgetsLookup (element) {

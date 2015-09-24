@@ -15,6 +15,7 @@ describe('aplazame init', function () {
     } catch(err) {
       expect(err.message).toBe('aplazame.init({options}) requires at least the publicKey');
     }
+    expect(false).toBe(true);
   });
 
   // it('should set aplazame env publicKey', function () {

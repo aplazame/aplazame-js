@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#[ -f .git/hooks/pre-commit ] && rm .git/hooks/pre-commit
+
+[ ! -e .git/hooks/pre-commit ] && ln -s ../../bin/git-pre-commit .git/hooks/pre-commit
+
+exit 0

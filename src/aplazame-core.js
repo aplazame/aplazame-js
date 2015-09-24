@@ -296,7 +296,6 @@ function modal (data, options) {
     });
   }
 
-  document.body.style.overflow = 'hidden';
   modal.iframe = _.getIFrame({
         position: 'fixed',
         top: 0,
@@ -306,6 +305,9 @@ function modal (data, options) {
         background: 'transparent',
         'z-index': 2147483647
       });
+
+  modal.iframe.overflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
 
   document.body.appendChild(modal.iframe);
   _.writeIframe(modal.iframe, modal.cached(data || {}) );
@@ -322,6 +324,7 @@ _.listen(window, 'message', function (e) {
         break;
       case 'close':
         if( modal.iframe ) {
+          document.body.style.overflow = modal.iframe.overflow;
           document.body.removeChild(modal.iframe);
           delete modal.iframe;
         }

@@ -47,7 +47,7 @@ require('nitro')(function (nitro) {
   // demo
 
   nitro.task('demo-sass', function () {
-    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass', { autoprefix: true }).write('demo');
+    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass', { autoprefix: true, sourceMap: true }).write('demo');
   });
 
   // widgets
@@ -66,8 +66,8 @@ require('nitro')(function (nitro) {
     nitro.copy('widgets', ['{,**/}*.html', '!simulator/modal-box.html'], 'dist/widgets');
   });
 
-  nitro.task('widgets.css', function () {
-    nitro.dir('widgets').load('{,**/}*.scss').process('sass', { autoprefix: true }).write('dist/widgets');
+  nitro.task('widgets.css', function (target) {
+    nitro.dir('widgets').load('{,**/}*.scss').process('sass', { autoprefix: true, minify: true, sourceMap: true }).write('dist/widgets');
   });
 
   nitro.task('widgets', [ 'widgets.assets', 'widgets.js', 'widgets.html', 'widgets.css' ]);

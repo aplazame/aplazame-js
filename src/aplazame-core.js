@@ -186,14 +186,15 @@ function button (options) {
 
 function checkout (options) {
   options = options || {};
-  var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/',
-      iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime();
-
-  options.api = api;
+  var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
 
   if( !/\/$/.test(baseUrl) ) {
     baseUrl += '/';
   }
+
+  var iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime();
+
+  options.api = api;
 
   http( iframeSrc ).then(function (response) {
     document.body.style.overflow = 'hidden';

@@ -186,7 +186,8 @@ function button (options) {
 
 function checkout (options) {
   options = options || {};
-  var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
+  var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/',
+      iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime();
 
   options.api = api;
 
@@ -194,7 +195,7 @@ function checkout (options) {
     baseUrl += '/';
   }
 
-  http(baseUrl + 'iframe.html?' + new Date().getTime() ).then(function (response) {
+  http( iframeSrc ).then(function (response) {
     document.body.style.overflow = 'hidden';
     // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
     var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
@@ -213,7 +214,7 @@ function checkout (options) {
     // iframe.setAttribute('sandbox', 'allow-scripts allow-pointer-lock allow-same-origin allow-popups allow-forms');
 
     document.body.appendChild(iframe);
-    iframe.src = baseUrl + 'iframe.html?' + new Date().getTime();
+    iframe.src = iframeSrc;
     // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
     // _.writeIframe(iframe, iframeHtml);
 
@@ -237,6 +238,20 @@ function checkout (options) {
       var message = e.data;
 
       if( message.aplazame === 'checkout' ) {
+
+        switch( message.event ) {
+          case 'success':
+            console.log('aplazame.checkout:success', message);
+
+            http( options.merchant.confirmation_url, {
+              method: 'post',
+              contentType: 'application/json',
+              data: message.data,
+              params: message.params
+            } );
+            // confirmation_url
+            break;
+        }
 
         if( message.require === 'merchant' ) {
           e.source.postMessage({

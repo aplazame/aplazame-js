@@ -86,7 +86,23 @@ function http (url, options) {
     }
   };
 
+  if( options.params ) {
+    var i = 0;
+    for( var param in options.params ) {
+      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(options.params[param]);
+    }
+  }
+
   request.options = options;
+
+  if( options.contentType ) {
+    request.setRequestHeader( 'Content-Type', options.contentType );
+
+    if( options.contentType === 'application/json' ) {
+      options.data = JSON.stringify(options.data);
+    }
+
+  }
 
   request.send( options.data );
 

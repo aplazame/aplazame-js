@@ -23,7 +23,7 @@ build: test
 	@node make build
 
 dev: auto.install
-	@npm make dev
+	@node make dev
 
 live: auto.install
 	@node make live

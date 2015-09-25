@@ -208,8 +208,14 @@ function checkout (options) {
           'z-index': 2147483647
         });
 
+    // iframe.setAttribute('allowtransparency', 'true');
+    // iframe.setAttribute('allowfullscreen', 'true');
+    // iframe.setAttribute('sandbox', 'allow-scripts allow-pointer-lock allow-same-origin allow-popups allow-forms');
+
     document.body.appendChild(iframe);
-    _.writeIframe(iframe, iframeHtml);
+    iframe.src = baseUrl + 'iframe.html?' + new Date().getTime();
+    // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
+    // _.writeIframe(iframe, iframeHtml);
 
     if( !options.merchant ) {
       throw new Error('missing merchant parameters');

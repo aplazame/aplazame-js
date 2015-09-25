@@ -30,14 +30,14 @@ require('nitro')(function (nitro) {
 
   // aplazame.js
 
-  nitro.task('aplazame.min.js', function () {
-    nitro.load('dist/aplazame.js').process('uglify').writeFile('dist/aplazame.min.js');
-  });
-
   nitro.task('aplazame.js', function () {
     nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
     nitro.load('src/aplazame.js').process('browserify').write('dist');
     // nitro.load('src/aplazame.js').process('browserify', { plugins: [nitro.require('babelify')] }).write('dist');
+  });
+
+  nitro.task('aplazame.min.js', function () {
+    nitro.load('dist/aplazame.js').process('uglify').writeFile('dist/aplazame.min.js');
   });
 
   nitro.task('js', ['aplazame.js', 'aplazame.min.js'], function () {
@@ -47,7 +47,7 @@ require('nitro')(function (nitro) {
   // demo
 
   nitro.task('demo-sass', function () {
-    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass', { autoprefix: true }).write('demo');
+    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass', { autoprefix: true, sourceMap: true }).write('demo');
   });
 
   // widgets
@@ -66,8 +66,8 @@ require('nitro')(function (nitro) {
     nitro.copy('widgets', ['{,**/}*.html', '!simulator/modal-box.html'], 'dist/widgets');
   });
 
-  nitro.task('widgets.css', function () {
-    nitro.dir('widgets').load('{,**/}*.scss').process('sass', { autoprefix: true }).write('dist/widgets');
+  nitro.task('widgets.css', function (target) {
+    nitro.dir('widgets').load('{,**/}*.scss').process('sass', { autoprefix: true, minify: true, sourceMap: true }).write('dist/widgets');
   });
 
   nitro.task('widgets', [ 'widgets.assets', 'widgets.js', 'widgets.html', 'widgets.css' ]);

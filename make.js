@@ -37,7 +37,8 @@ require('nitro')(function (nitro) {
   });
 
   nitro.task('aplazame.min.js', function () {
-    nitro.load('dist/aplazame.js').process('uglify').writeFile('dist/aplazame.min.js');
+    // nitro.load('dist/aplazame.js').process('uglify').writeFile('dist/aplazame.min.js');
+    nitro.load('dist/aplazame.js').writeFile('dist/aplazame.min.js');
   });
 
   nitro.task('js', ['aplazame.js', 'aplazame.min.js'], function () {

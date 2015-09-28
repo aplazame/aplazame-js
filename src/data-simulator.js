@@ -3,6 +3,10 @@ var aplazame = require('./aplazame-core'),
     api = require('./api');
 
 function widgetsLookup (element) {
+  if( !element.querySelectorAll ) {
+    return;
+  }
+
   var simulators = element.querySelectorAll('[data-aplazame-simulator]');
 
   if( simulators.length ) {

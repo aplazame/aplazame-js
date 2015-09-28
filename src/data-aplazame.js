@@ -19,42 +19,31 @@ if( document.querySelector('script[data-aplazame]') ) {
 
   var script = document.querySelector('script[data-aplazame]'),
       initText = script.getAttribute('data-aplazame'),
-      envOptions = {},
-      apiOptions = {};
+      options = {
+        baseUrl: scriptBase
+      };
 
   if( /\:/.test(initText) ) {
     initText.split(',').forEach(function (part) {
       var keys = part.match(/^([^\:]+)\:(.*)/);
-      envOptions[keys[1].trim()] = keys[2].trim();
+      options[keys[1].trim()] = keys[2].trim();
     });
   } else {
     if( initText ) {
-      envOptions.publicKey = initText;
+      options.publicKey = initText;
     }
   }
 
   if( script.getAttribute('data-version') ) {
-    var matchVersion = script.getAttribute('data-version').match(/^v?(\d)(\.(\d))?$/);
-
-    if( !matchVersion ) {
-      throw new Error('malformed version, should be like \'v1.2\'');
-    }
-
-    apiOptions.version = Number(matchVersion[1]);
-
-    if( matchVersion[3] !== undefined ) {
-      apiOptions.checkoutVersion = Number(matchVersion[3]);
-    }
+    options.version = script.getAttribute('data-version');
   }
 
   if( script.getAttribute('data-sandbox') ) {
-    apiOptions.sandbox = script.getAttribute('data-sandbox') === 'true';
+    options.sandbox = script.getAttribute('data-sandbox');
   }
   if( script.getAttribute('data-analytics') ) {
-    envOptions.analytics = script.getAttribute('data-analytics') === 'true';
+    options.analytics = script.getAttribute('data-analytics');
   }
 
-  envOptions.baseUrl = scriptBase;
-
-  aplazame.init(envOptions, apiOptions);
+  aplazame.init(options);
 }

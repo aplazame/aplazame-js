@@ -2,22 +2,42 @@
 
 var http = require('./http'),
     _ = require('./utils'),
-    api = {
-      host: 'https://api.aplazame.com/',
-      version: 1,
-      checkoutVersion: 1,
-      sandbox: false
-    },
-    acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
-    env = {};
+    api = require('./api'),
+    acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json';
 
-function getEnv (key) {
-  return key ? env[key] : env;
+function init (options) {
+  options = options || {};
+
+  if( typeof options.version === 'string' ) {
+    var matchVersion = options.version.match(/^v?(\d)(\.(\d))?$/);
+
+    if( !matchVersion ) {
+      throw new Error('malformed version, should be like \'v1.2\'');
+    }
+
+    options.version = Number(matchVersion[1]);
+
+    if( matchVersion[3] !== undefined ) {
+      options.checkoutVersion = Number(matchVersion[3]);
+    }
+  }
+
+  if( typeof options.sandbox === 'string' ) {
+    options.sandbox = options.sandbox === 'true';
+  }
+
+  if( typeof options.analytics === 'string' ) {
+    options.analytics = options.analytics === 'true';
+  }
+
+  _.extend(api, options);
 }
+
+// aplazame methods
 
 function apiOptions (options) {
   options = options || {};
-  var publicKey = options.publicKey || env.publicKey;
+  var publicKey = options.publicKey || api.publicKey;
 
   if( !publicKey ) {
     throw new Error('public key needs to be specified');
@@ -43,15 +63,6 @@ function apiOptions (options) {
       accept: _.replaceKeys(acceptTmpl, options)
     }
   });
-}
-
-// aplazame methods
-
-function init (initEnv, initApi) {
-  _.extend(api, initApi || {});
-  _.extend(env, initEnv || {});
-
-  console.debug('init', env, api);
 }
 
 function apiGet (path, options) {
@@ -224,8 +235,8 @@ function checkout (options) {
     }
 
     if( !options.merchant.public_api_key ) {
-      if( env.publicKey ) {
-        options.merchant.public_api_key = env.publicKey;
+      if( api.publicKey ) {
+        options.merchant.public_api_key = api.publicKey;
       } else {
         throw new Error('missing public key');
       }
@@ -312,8 +323,8 @@ function simulator (amount, _options, callback, onError) {
 function modal (data, options) {
 
   if( !modal.cached ) {
-    return require('./http').noCache( getEnv('baseUrl') + 'widgets/modal/modal.html' ).then(function (response) {
-      modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + getEnv('baseUrl') + '" />') );
+    return require('./http').noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
+      modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
       modal(data, options);
     });
   }
@@ -356,17 +367,13 @@ _.listen(window, 'message', function (e) {
 });
 
 module.exports = {
+  _: _,
   init: init,
-  getEnv: getEnv,
   checkout: checkout,
   button: button,
   apiGet: apiGet,
   apiPost: apiPost,
   simulator: simulator,
-  baseUrl: function () {
-    return env.baseUrl;
-  },
   modal: modal,
-  _: _,
   version: require('../.tmp/aplazame-version')
 };

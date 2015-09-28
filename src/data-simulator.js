@@ -1,5 +1,6 @@
 var aplazame = require('./aplazame-core'),
-    _ = require('./utils');
+    _ = require('./utils'),
+    api = require('./api');
 
 function widgetsLookup (element) {
   var simulators = element.querySelectorAll('[data-aplazame-simulator]');
@@ -46,7 +47,7 @@ function widgetsLookup (element) {
           child = simulator.firstChild;
         }
 
-        http( aplazame.getEnv('baseUrl') + 'widgets/simulator/simulator.html?' + new Date().getTime() ).then(function (response) {
+        http( api.baseUrl + 'widgets/simulator/simulator.html?' + new Date().getTime() ).then(function (response) {
           var iframe = _.getIFrame({
             width: '100%'
           });
@@ -54,7 +55,7 @@ function widgetsLookup (element) {
           simulator.appendChild(iframe);
           _.writeIframe(iframe,
             response.data
-              .replace(/<head\>/, '<head><base href="' + aplazame.baseUrl() + '" />')
+              .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
               .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
           );
         }, function () {

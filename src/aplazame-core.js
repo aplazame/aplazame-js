@@ -367,16 +367,13 @@ _.listen(window, 'message', function (e) {
 });
 
 module.exports = {
+  _: _,
   init: init,
   checkout: checkout,
   button: button,
   apiGet: apiGet,
   apiPost: apiPost,
   simulator: simulator,
-  baseUrl: function () {
-    return env.baseUrl;
-  },
   modal: modal,
-  _: _,
   version: require('../.tmp/aplazame-version')
 };

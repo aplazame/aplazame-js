@@ -2,6 +2,9 @@ var aplazame = require('./aplazame-core'),
     _ = require('./utils');
 
 function buttonsLookup (element) {
+  if( !element.querySelectorAll ) {
+    return;
+  }
   var btns = element.querySelectorAll('[data-aplazame-button]');
 
   if( btns.length ) {

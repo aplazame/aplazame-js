@@ -90,10 +90,11 @@ require('nitro')(function (nitro) {
 
   nitro.task('build', ['clear:dist', 'js', 'widgets']);
 
-  nitro.task('dev', ['build', 'demo-sass', 'watch']);
+  nitro.task('dev', ['build', 'demo-sass', 'watch'], function () {
+    nitro.require('livereload').createServer({ port: 54321 }).watch(['demo', 'dist']);
+  });
 
   nitro.task('live', ['dev'], function () {
-    nitro.require('livereload').createServer({ port: 54321 }).watch(['demo', 'dist']);
     nitro.serve({
        root: 'demo',
        openInBrowser: true,

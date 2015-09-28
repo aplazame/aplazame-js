@@ -64,6 +64,7 @@ html {
   line-height: 1;
 }
 body {
+  display: block;
   animation-fill-mode: both;
   animation-duration: $animation-duration;
   animation-timing-function: ease;

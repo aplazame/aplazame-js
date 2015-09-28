@@ -46,7 +46,7 @@ function missingDependencies (json, dirlib) {
 }
 
 function nitroVersionOK () {
-  var currentVersion = readJSONFile('package.json').devDependencies.nitro,
+  var currentVersion = readJSONFile('package.json').devDependencies.nitro.replace(/^[\^~]/, ''),
       installedVersion;
   try {
     installedVersion = readJSONFile('node_modules/nitro/package.json').version;

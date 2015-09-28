@@ -36,6 +36,13 @@ function http (url, options) {
   }
   if( request === null ) { throw 'Browser does not support HTTP Request'; }
 
+  if( options.params ) {
+    var i = 0;
+    for( var param in options.params ) {
+      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(options.params[param]);
+    }
+  }
+
   request.open( ( options.method || 'get').toUpperCase(), url );
 
   if( options.withCredentials ) {
@@ -85,13 +92,6 @@ function http (url, options) {
       }
     }
   };
-
-  if( options.params ) {
-    var i = 0;
-    for( var param in options.params ) {
-      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(options.params[param]);
-    }
-  }
 
   request.options = options;
 

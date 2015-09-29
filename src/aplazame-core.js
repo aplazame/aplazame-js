@@ -242,6 +242,8 @@ function checkout (options) {
       }
     }
 
+    options.origin = location;
+
     _.listen(window, 'message', function (e) {
       if( !iframe ) {
         return;

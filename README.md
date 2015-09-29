@@ -14,7 +14,7 @@ Main File
 Instalments Simulator Widget
 ----------------------------
 <div style="text-align:center; margin: 1rem 0;">
-[![image](https://cloud.githubusercontent.com/assets/2305833/10167877/aa757ad4-66ca-11e5-8423-079bb444e549.png)]()
+[![image](https://cloud.githubusercontent.com/assets/2305833/10167877/aa757ad4-66ca-11e5-8423-079bb444e549.png)](https://docs.aplazame.com "Aplazame Docs")
 </div>
 
 ``` html
@@ -25,7 +25,7 @@ Instalments Simulator Widget
 Aplazame button
 ---------------
 <div style="text-align:center; margin: 1rem 0;">
-[![image](https://cloud.githubusercontent.com/assets/2305833/10168408/e6d86bd8-66cc-11e5-9c02-bc5ed52df293.png)]()
+[![image](https://cloud.githubusercontent.com/assets/2305833/10168408/e6d86bd8-66cc-11e5-9c02-bc5ed52df293.png)](https://docs.aplazame.com "Aplazame Docs")
 </div>
 
 ``` html
@@ -43,7 +43,7 @@ Checkout
 [see demo](demo.aplazame.com)
 
 <div style="text-align:center; margin: 1rem 0;">
-[![image](https://cloud.githubusercontent.com/assets/2305833/10168159/d4baa520-66cb-11e5-8101-c4f83154a21e.png)]()
+[![image](https://cloud.githubusercontent.com/assets/2305833/10168159/d4baa520-66cb-11e5-8101-c4f83154a21e.png)](https://docs.aplazame.com "Aplazame Docs")
 </div>
 
 ``` js

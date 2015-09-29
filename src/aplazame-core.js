@@ -242,7 +242,12 @@ function checkout (options) {
       }
     }
 
-    options.origin = location;
+    options.origin = {
+      href: location.href,
+      host: location.host,
+      protocol: location.protocol,
+      origin: location.origin
+    };
 
     _.listen(window, 'message', function (e) {
       if( !iframe ) {

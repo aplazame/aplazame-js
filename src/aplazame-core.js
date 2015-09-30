@@ -270,15 +270,15 @@ function checkout (options) {
             } ).then(function (response) {
               e.source.postMessage({
                 aplazame: 'checkout',
-                event: 'success',
-                result: 'ack',
+                event: 'confirmation',
+                result: 'success',
                 response: response
               }, '*');
             }, function () {
               e.source.postMessage({
                 aplazame: 'checkout',
-                event: 'success',
-                result: 'ko',
+                event: 'confirmation',
+                result: 'error',
                 response: response
               }, '*');
             });

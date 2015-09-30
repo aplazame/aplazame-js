@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"><title></title>
+    <script src="//localhost:54321/livereload.js"></script>
+    <link rel="stylesheet" href="demo.css"/>
+  </head>
+  <body>
+    <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
+    <div class="responsive-container">
+      <header class="header"></header>
+    </div>
+    <div class="responsive-container">
+      <div class="main-wrapper">
+        <nav class="page-nav"></nav>
+        <section class="main-section">
+          <table class="text-center">
+            <tr>
+              <td>
+                <button>Payment Method</button>
+              </td>
+              <td>
+                <button data-aplazame-button="default" data-amount="25000" data-parent="*">
+                  <img src="dist/widgets/assets/img/logo-color.svg"/>
+                </button>
+              </td>
+              <td>
+                <button>Other Payment Method</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+              <td data-aplazame-button-info>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+              <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td colspan="2">
+                <div data-aplazame-simulator="" data-amount="10050"></div>
+              </td>
+            </tr>
+          </table>
+
+          <br/>
+
+          <div>
+          </div>
+
+          <br/>
+
+          <div class="text-right">
+            <button data-aplazame-button-info="default" onclick="loadCheckout();">
+              <img src="dist/widgets/assets/img/aplazame-checkout.svg"/>
+            </button>
+          </div>
+
+          <br/>
+
+          <!--<table style="width: 100%; table-layout: fixed;">
+            <tr>
+              <td colspan="3" class="text-center">
+                <h3>jQuery html</h3>
+              </td>
+            </tr>
+            <tr>
+              <td id="async-widget"></td>
+              <td class="text-center" id="async-button"></td>
+              <td class="text-center" id="async-button2"></td>
+            </tr>
+          </table>-->
+
+        </section>
+      </div>
+    </div>
+    <div class="responsive-container">
+      <footer class="footer"></footer>
+    </div>
+    <script type="text/javascript"
+            src="dist/aplazame.js?sandbox=true"
+            data-aplazame="f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"
+            data-version="v1.2"
+            data-sandbox="true">
+    </script>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript">
+      // aplazame.init({}, { host: 'https://api.dev.aplazame.com/' });
+      $(function () {
+        setTimeout(function () {
+
+          $('#async-widget').html('<div data-aplazame-simulator="" data-amount="25000"></div>');
+
+          $('#async-button').html('<button type="button" id="aplazame-button-async">button</button>');
+
+          $('#async-button2').html('<button type="button" data-aplazame-button="async" data-amount="45000">button</button>');
+
+        }, 1000);
+      });
+    </script>
+    <script type="text/javascript">
+      aplazame.button({
+        selector: 'div.has-test:has(.flag-test)',
+        amount: 15000
+      });
+
+      aplazame.button({
+        selector: '#aplazame-button-async',
+        amount: 22400
+      });
+
+      function loadCheckout() {
+
+        var orderId = 'test-' + parseInt( new Date().getTime() / 60000 );
+
+        aplazame.checkout({
+          "toc": true,
+          "merchant": {
+            "public_api_key": "f5f64b3e9c7d8da5de29d4a45f40d370282f6f05",
+            "confirmation_url": "/confirm?order_id=test3232321",
+            "cancel_url": "/demo-cancel.html",
+            "success_url": "/demo-success.html"
+          },
+          "customer": {
+            "id": "140",
+            "email": "dev@aplazame.com",
+            "address": {
+              "phone": "616123456",
+              "alt_phone": "616001122",
+              "street": "Torre Picasso, Plaza Pablo Ruiz Picasso 1",
+              "address_addition": "Metro Santiago Bernabeu",
+              "city": "Madrid",
+              "state": "Madrid",
+              "country": "ES",
+              "zip": "28020"
+            },
+            "type": "e",
+            "gender": 0,
+            "first_name": "Lucky",
+            "last_name": "Luciano",
+            "date_joined": "2014-08-21T13:56:45+0000",
+            "last_login": "2014-08-27T19:57:56+0000"
+          },
+          "order": {
+            "id": orderId,
+            "articles": [
+              {
+                "id": "acj00412f33f32231231",
+                "name": "RELOJ EN ORO BLANCO DE 18 QUILATES Y DIAMANTES",
+                "description": "Reloj en oro blanco de 18 quilates y diamantes. Pulsera en satén negro.Movimiento de cuarzo de alta precisión.",
+                "url": "http://www.chanel.com/es_ES/Relojeria/relojes_joyer%C3%ADa#reloj-en-oro-blanco-de-18-quilates-y-diamantes-J10211",
+                "image_url": "http://41.media.tumblr.com/44c89cc8b1bc05b24190286643da7406/tumblr_n3oajaviY71rka780o1_1280.jpg",
+                "quantity": 2,
+                "price": 3300,
+                "tax_rate": 2100,
+                "discount_rate": 200
+              },
+              {
+                "id": "f342465j7d32214124",
+                "name": "N°5 EAU PREMIERE SPRAY",
+                "description": "A decidedly lighter, fresher, softer interpretation of N°5. . . a silky-smooth harmony of notes that reveals the delicate facet of the now and forever fragrance. The modern and airy interpretation of N°5 debuts in the iconic Classic Bottle to instantly elevate the N°5 experience.",
+                "url": "http://www.chanel.com/en_US/fragrance-beauty/Fragrance-N%C2%B05-N%C2%B05-88145/sku/138083",
+                "image_url": "http://www.chanel.com/en_US/fragrance-beauty/cms2export/Site1Files/P105170/S105340_XLARGE.jpg",
+                "quantity": 1,
+                "price": 2900,
+                "tax_rate": 2100
+              },
+              {
+                "id": "2r32r23r231231231r",
+                "name": "ILLUSION D'OMBRE",
+                "description": "This intensely shimmering long-wear eyeshadow offers true versatility. An innovative gel texture that is both soft and cushiony allows it to be worn as eyeshadow or eyeliner. Includes a specially designed shadow/liner brush, developed specifically for this unique formula.",
+                "url": "http://www.chanel.com/en_US/fragrance-beauty/Makeup-Eyeshadow-ILLUSION-D%27OMBRE-122567",
+                "image_url": "http://www.chanel.com/en_US/fragrance-beauty/cms2export/Site1Files/P189810/S189830_XLARGE.jpg",
+                "quantity": 1,
+                "price": 1300,
+                "tax_rate": 2100,
+                "discount_rate": 100
+              }
+            ],
+            "discount": 300,
+            "currency": "EUR",
+            "total_amount": 13014
+          },
+          "billing": {
+            "first_name": "Frank",
+            "last_name": "Costello",
+            "phone": "+34932671040",
+            "alt_phone": null,
+            "street": "Torre Picasso, Plaza Pablo Ruiz Picasso 1",
+            "address_addition": "",
+            "city": "Madrid",
+            "state": "Madrid",
+            "country": "ES",
+            "zip": "28020"
+          },
+          "shipping": {
+            "first_name": "Fernando",
+            "last_name": "Cabello",
+            "phone": "616123456",
+            "alt_phone": "616001122",
+            "street": "Torre Picasso, Plaza Pablo Ruiz Picasso 1",
+            "address_addition": "Metro Santiago Bernabeu",
+            "city": "Madrid",
+            "state": "Madrid",
+            "country": "ES",
+            "zip": "28020",
+            "price": 500,
+            "tax_rate": 2100,
+            "name": "SEUR",
+            "discount": 100
+          },
+          "meta": {
+            "source": {
+              "data": {
+                "ecommerce_version": "1.9.0.1"
+              },
+              "client_name": "ecommerce client"
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -85,10 +85,8 @@ function http (url, options) {
       };
       if( request.status >= 200 && request.status < 300 ) {
         request.resolve( response );
-      } else if( request.status >= 400 ) {
-        request.reject( response );
       } else {
-        throw new Error('Unexpected status code ' + request.status);
+        request.reject( response );
       }
     }
   };
@@ -129,6 +127,14 @@ function http (url, options) {
 http.noCache = function (url, options) {
   url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
   return http(url, options);
+};
+
+http.plainResponse = function (response) {
+  return {
+    data: response.data,
+    status: response.status,
+    headers: response.headers()
+  };
 };
 
 module.exports = http;

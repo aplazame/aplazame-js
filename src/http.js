@@ -102,6 +102,8 @@ function http (url, options) {
       options.data = JSON.stringify(options.data);
     }
 
+  } else {
+    
   }
 
   request.send( options.data );

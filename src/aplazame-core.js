@@ -267,7 +267,21 @@ function checkout (options) {
               contentType: 'application/json',
               data: message.data,
               params: message.params
-            } );
+            } ).then(function (response) {
+              e.source.postMessage({
+                aplazame: 'checkout',
+                event: 'success',
+                result: 'ack',
+                response: response
+              }, '*');
+            }, function () {
+              e.source.postMessage({
+                aplazame: 'checkout',
+                event: 'success',
+                result: 'ko',
+                response: response
+              }, '*');
+            });
             // confirmation_url
             break;
         }

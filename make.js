@@ -51,7 +51,7 @@ require('nitro')(function (nitro) {
 
     var renderIndex = nitro.template( nitro.file.read('demo/index.html') );
 
-    nitro.file.write('demo/index.html', renderIndex({ dev: target === 'dev' }) );
+    nitro.file.write('public/index.html', renderIndex({ dev: target === 'dev' }) );
   });
 
   // widgets
@@ -95,7 +95,7 @@ require('nitro')(function (nitro) {
 
     nitro.watch('demo', ['demo:dev']);
 
-    nitro.require('livereload').createServer({ port: 54321 }).watch(['public', 'dist']);
+    nitro.require('livereload').createServer({ port: 12321 }).watch(['public', 'dist']);
 
   });
 

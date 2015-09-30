@@ -14,7 +14,7 @@ install.npm:
 auto.install: git.hooks
 	@node auto-install
 
-test: auto.install
+test:
 	@node make test.jshint
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
@@ -45,6 +45,7 @@ release: auto.install test git.increaseVersion git.updateRelease build
 	@git add aplazame.js -f
 	@git add aplazame.min.js -f
 	@git add dist -f --all
+	@git add public -f --all
 	git commit -n -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node make pkg:version)\n"

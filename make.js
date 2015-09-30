@@ -46,8 +46,10 @@ require('nitro')(function (nitro) {
 
   // demo
 
-  nitro.task('demo-sass', function () {
-    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass', { autoprefix: true, sourceMap: true }).write('demo');
+  nitro.task('demo', function () {
+    nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass', { autoprefix: true, sourceMap: true }).write('public');
+
+    nitro.file.copy('demo/index.html', 'public/index.html');
   });
 
   // widgets
@@ -72,11 +74,14 @@ require('nitro')(function (nitro) {
 
   nitro.task('widgets', [ 'widgets.assets', 'widgets.js', 'widgets.html', 'widgets.css' ]);
 
-  // watch
+  // main tasks
 
-  nitro.task('watch', function () {
+  nitro.task('build', ['clear:dist', 'js', 'widgets', 'demo']);
+
+  nitro.task('dev', ['build'], function () {
 
     nitro.watch('src', ['js']);
+
     nitro.watch('widgets')
       .when('{,**/}*.js', 'widgets.js')
       .when('{,**/}modal-*.html', 'widgets.js')
@@ -84,19 +89,15 @@ require('nitro')(function (nitro) {
       .when('{,**/}*.{sass,scss}', 'widgets.css')
       .when('widgets/assets/**', 'widgets.assets');
 
-  });
+    nitro.watch('demo', ['demo']);
 
-  // main tasks
+    nitro.require('livereload').createServer({ port: 54321 }).watch(['public', 'dist']);
 
-  nitro.task('build', ['clear:dist', 'js', 'widgets']);
-
-  nitro.task('dev', ['build', 'demo-sass', 'watch'], function () {
-    nitro.require('livereload').createServer({ port: 54321 }).watch(['demo', 'dist']);
   });
 
   nitro.task('live', ['dev'], function () {
     nitro.serve({
-       root: 'demo',
+       root: 'public',
        openInBrowser: true,
        dirAlias: {
          'dist': 'dist'

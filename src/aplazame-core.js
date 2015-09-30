@@ -272,14 +272,14 @@ function checkout (options) {
                 aplazame: 'checkout',
                 event: 'confirmation',
                 result: 'success',
-                response: response
+                response: http.plainResponse(response)
               }, '*');
             }, function () {
               e.source.postMessage({
                 aplazame: 'checkout',
                 event: 'confirmation',
                 result: 'error',
-                response: response
+                response: http.plainResponse(response)
               }, '*');
             });
             // confirmation_url

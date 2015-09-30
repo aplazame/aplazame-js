@@ -98,12 +98,17 @@ function http (url, options) {
   if( options.contentType ) {
     request.setRequestHeader( 'Content-Type', options.contentType );
 
-    if( options.contentType === 'application/json' ) {
+    if( options.contentType === 'application/json' && typeof options.data !== 'string' ) {
       options.data = JSON.stringify(options.data);
     }
 
   } else {
-    
+    if( typeof options.data === 'string' ) {
+      options.contentType = 'text/html';
+    } else {
+      options.contentType = 'application/json';
+      options.data = JSON.stringify(options.data);
+    }
   }
 
   request.send( options.data );

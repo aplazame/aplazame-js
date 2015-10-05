@@ -43,15 +43,35 @@ module.exports = function (nitro) {
         indexData = {
           dev: target === 'dev',
           checkout: checkout,
-          shippingPrice: function () {
-            return checkout.shipping.price - checkout.shipping.discount;
+          shippingAmount: function () {
+            return (checkout.shipping.price - checkout.shipping.discount)*(1 + checkout.shipping.tax_rate/10000);
           },
-          totalPrice: function (articles) {
-            return checkout.order.articles.reduce(function (prev, article) {
-              return prev + article.quantity*article.price*(1 + article.tax_rate/10000);
-            }, 0) + ( checkout.shipping.price - checkout.shipping.discount )*(1 + checkout.shipping.tax_rate/10000);
+          articleAmount: function (article, discountApplied ) {
+            var price = article.price;
+            if( discountApplied && article.discount_rate ) {
+              price = price - ( article.price*article.discount_rate/10000 ) - (article.discount || 0);
+            }
+
+            return price*( 1 + article.tax_rate/10000 );
+          },
+          articleDiscount: function (article) {
+            if( !article.discount_rate ) {
+              return 0;
+            }
+            return ( article.price*article.discount_rate/10000 - (article.discount || 0) )*( 1 + article.tax_rate/10000 );
+          },
+          discountAmount: function (article) {
+            return checkout.order.total_amount - parseInt( checkout.order.articles.reduce(function (prev, article) {
+              return prev + article.quantity*indexData.articleAmount( article, true );
+            }, 0) + indexData.shippingAmount() );
+          },
+          totalAmount: function (articles) {
+            return checkout.order.total_amount;
           },
           toEUR: function (amount) {
+            if( amount < 0 ) {
+              return '-' + indexData.toEUR(-amount);
+            }
             var cents = amount%100;
             return parseInt(amount/100) + '.' + ( cents < 10 ? '0' : '' ) + cents + '€';
           }

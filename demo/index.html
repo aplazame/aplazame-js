@@ -64,24 +64,34 @@
               <div class="label">${article.name}</div>
               <div class="price-wrapper">
                 $if{ article.quantity > 1 }<span class="quantity">${article.quantity}x&nbsp;</span>{/}
-                <span class="price">${ toEUR(article.price) }</span>
+                <span class="price">${ toEUR( articleAmount(article) ) }</span>
               </div>
             </div>
           </li>
           {/}
           <li class="row">
-            <div class="col-xs-3">ENVÍO</div>
+            <div class="col-xs-3">
+              <div class="concept">Envío</div>
+            </div>
             <div class="col-xs-9 details">
-              <div class="price-wrapper">
-                <span class="price">${ toEUR( shippingPrice() ) }</span>
-              </div>
+              <span class="price">${ toEUR( shippingAmount() ) }</span>
+            </div>
+          </li>
+          <li class="row">
+            <div class="col-xs-3">
+              <div class="concept">Descuento</div>
+            </div>
+            <div class="col-xs-9 details">
+              <span class="price">${ toEUR( discountAmount() ) }</span>
             </div>
           </li>
         </ul>
 
         <div class="total-wrapper">
           <div class="label">Total</div>
-          <span class="price">${ toEUR( totalPrice() ) }</span>
+          <div class="price-wrapper">
+            <span class="price">${ toEUR( totalAmount() ) }</span>
+          </div>
         </div>
 
         <div class="pay-with-aplazame">

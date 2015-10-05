@@ -3,16 +3,16 @@
 Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8dd982354e686ed/s/master "wercker status")](https://app.wercker.com/project/bykey/e3cdbafb5813b255e8dd982354e686ed) [![drone.io Status](http://drone.aplazame.com/api/badge/github.com/aplazame/aplazame-js/status.svg?branch=master)](http://drone.aplazame.com/github.com/aplazame/aplazame-js)
 ===========
 
-Main File
----------
+Archivo principal
+-----------------
 ``` html
 <script type="text/javascript" src="https://aplazame.com/static/aplazame.js"></script>
 
 <!-- the recommended place for this line is at the end of <body> tag -->
 ```
 
-Instalments Simulator Widget
-----------------------------
+Simulador de cuotas
+-------------------
 ![image](https://cloud.githubusercontent.com/assets/2305833/10167877/aa757ad4-66ca-11e5-8423-079bb444e549.png)
 
 
@@ -21,8 +21,8 @@ Instalments Simulator Widget
 <!-- place this line where you want to show the simulator widget -->
 ```
 
-Aplazame button
----------------
+Botón Aplazame
+--------------
 ![image](https://cloud.githubusercontent.com/assets/2305833/10168408/e6d86bd8-66cc-11e5-9c02-bc5ed52df293.png)
 
 ``` html
@@ -34,10 +34,10 @@ Aplazame button
 <!-- place this line where you want to show the simulator widget -->
 ```
 
-Checkout
+Pasarela de pago (checkout)
 ---------------
 
-[see demo](http://demo.aplazame.com)
+[ver demo](http://demo.aplazame.com)
 
 ![image](https://cloud.githubusercontent.com/assets/2305833/10168159/d4baa520-66cb-11e5-8101-c4f83154a21e.png)
 

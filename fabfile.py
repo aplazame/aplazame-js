@@ -13,9 +13,9 @@ def prod():
     env.hosts = ['aplazame.com']
 
 
-def echo(path):
+def make(path, command):
     with cd(path):
-        run('make echo')
+        run('make ' + command)
 
 
 def deploy(path, branch):

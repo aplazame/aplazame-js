@@ -23,7 +23,7 @@ module.exports = function (nitro) {
   nitro.task('demo-assets', function (target) {
 
     nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
-    nitro.dir('src/images').copy('public/assets/images/src');
+    // nitro.dir('src/images').copy('public/assets/images/src');
 
   });
 

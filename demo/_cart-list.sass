@@ -5,8 +5,10 @@
     margin: 0
     padding: 0
 
-  > li
+  li
     @extend .clearfix
+    border-bottom: 1px solid $grey-light
+    padding: units(1) 0
 
   .img-wrapper
     // width: 8rem
@@ -36,9 +38,9 @@
   .price-wrapper
     margin-top: units(1)
 
-    .price
-      font-size: 2rem
-      color: $grey-dark
+  .price
+    font-size: 2rem
+    color: $grey-dark
 
   .total-wrapper
     text-align: right

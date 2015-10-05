@@ -27,7 +27,14 @@ module.exports = function (nitro) {
       .when('{,**/}*.{sass,scss}', 'widgets.css')
       .when('widgets/assets/**', 'widgets.assets');
 
-    nitro.watch('demo', ['demo-dev']);
+    nitro.watch('demo')
+      .when('{,**/}*.html', 'demo-templates:dev')
+      .when('{,**/}*.{sass,scss}', 'demo-sass:dev');
+
+    nitro.watch('.make', function () {
+      nitro.import('.make');
+      // nitro.tasks.run(['base-build', 'demo-dev']);
+    });
 
     nitro.require('livereload').createServer({ port: 12321 }).watch(['public', 'dist']);
 

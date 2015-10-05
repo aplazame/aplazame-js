@@ -28,10 +28,10 @@
 
         $with{ checkout.order.articles[1] as article }
           <article class="row article-sample">
-            <div class="col-sm-6 img-wrapper">
+            <div class="col-sm-5 col-md-6 img-wrapper">
               <img src="${article.image_url}" alt="${article.name}"/>
             </div>
-            <div class="col-sm-6 details">
+            <div class="col-sm-7 col-md-6 details">
               <div class="label">${article.name}</div>
               <p class="description">${article.description}</p>
               <div class="price">${ toEUR(article.price) }</div>
@@ -53,7 +53,7 @@
         <h2>Carrito de compra</h2>
 
         <ul>
-        $each{ article in checkout.order.articles }
+          $each{ article in checkout.order.articles }
           <li class="row">
             <div class="col-sm-3 text-center">
               <div class="img-wrapper">
@@ -68,14 +68,20 @@
               </div>
             </div>
           </li>
-        {/}
+          {/}
+          <li class="row">
+            <div class="col-xs-3">ENVÍO</div>
+            <div class="col-xs-9 details">
+              <div class="price-wrapper">
+                <span class="price">${ toEUR( shippingPrice() ) }</span>
+              </div>
+            </div>
+          </li>
         </ul>
 
         <div class="total-wrapper">
           <div class="label">Total</div>
-          <div class="price-wrapper">
-            <span class="price">${ toEUR( totalPrice(checkout.order.articles) ) }</span>
-          </div>
+          <span class="price">${ toEUR( totalPrice() ) }</span>
         </div>
 
         <div class="pay-with-aplazame">
@@ -105,7 +111,6 @@
             data-version="v1.2"
             data-sandbox="true">
     </script>
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 
     <script type="text/javascript">
       var loadCheckout = (function () {

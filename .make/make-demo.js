@@ -27,7 +27,7 @@ module.exports = function (nitro) {
 
   });
 
-  nitro.task('demo-build', function (target) {
+  nitro.task('demo-templates', function (target) {
 
     nitro.template.cmd('with', function (scope, expression) {
       var parts = expression.split('as'),
@@ -43,10 +43,13 @@ module.exports = function (nitro) {
         indexData = {
           dev: target === 'dev',
           checkout: checkout,
+          shippingPrice: function () {
+            return checkout.shipping.price - checkout.shipping.discount;
+          },
           totalPrice: function (articles) {
-            return articles.reduce(function (prev, article) {
-              return prev + article.quantity*article.price;
-            }, 0);
+            return checkout.order.articles.reduce(function (prev, article) {
+              return prev + article.quantity*article.price*(1 + article.tax_rate/10000);
+            }, 0) + ( checkout.shipping.price - checkout.shipping.discount )*(1 + checkout.shipping.tax_rate/10000);
           },
           toEUR: function (amount) {
             var cents = amount%100;
@@ -59,8 +62,8 @@ module.exports = function (nitro) {
     nitro.file.write('public/playground.html', nitro.template( nitro.file.read('demo/playground.html') )( indexData ) );
   });
 
-  nitro.task('demo-dev', ['demo-clear', 'demo-assets', 'demo-sass:dev', 'demo-build:dev']);
+  nitro.task('demo-dev', ['demo-clear', 'demo-assets', 'demo-sass:dev', 'demo-templates:dev']);
 
-  nitro.task('demo', ['demo-clear', 'demo-assets', 'demo-sass', 'demo-build']);
+  nitro.task('demo', ['demo-clear', 'demo-assets', 'demo-sass', 'demo-templates']);
 
 };

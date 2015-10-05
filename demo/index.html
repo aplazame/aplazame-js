@@ -119,8 +119,8 @@
         function loadCheckout(orderId) {
 
           if( !orderId ) {
-            location.search = 'order=' + randOrderId();
-            return;
+            orderId = randOrderId();
+            location.hash = '/order/' + orderId;
           }
 
           checkoutdata.order.id = orderId;
@@ -128,7 +128,7 @@
           aplazame.checkout(checkoutdata);
         }
 
-        var matchOrderId = ( location.search || '' ).match(/order\=([^&]*)/);
+        var matchOrderId = ( location.hash || '' ).match(/^#\/order\/([^&]*)/);
 
         if( matchOrderId && matchOrderId[1] ) {
           loadCheckout( matchOrderId[1] === 'random' ? randOrderId() : matchOrderId[1] );

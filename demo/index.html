@@ -108,22 +108,35 @@
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 
     <script type="text/javascript">
-      aplazame.button({
-        selector: 'div.has-test:has(.flag-test)',
-        amount: 15000
-      });
+      var loadCheckout = (function () {
 
-      aplazame.button({
-        selector: '#aplazame-button-async',
-        amount: 22400
-      });
+        var checkoutdata = ${ JSON.stringify(checkout, null, '\t') };
 
-      function loadCheckout() {
+        function randOrderId (timeout) {
+          return 'test-' + parseInt( new Date().getTime() / ( timeout || 60000 ) );
+        }
 
-        var orderId = 'test-' + parseInt( new Date().getTime() / 60000 );
+        function loadCheckout(orderId) {
 
-        aplazame.checkout(${ JSON.stringify(checkout, null, '\t') });
-      }
+          if( !orderId ) {
+            location.search = 'order=' + randOrderId();
+            return;
+          }
+
+          checkoutdata.order.id = orderId;
+
+          aplazame.checkout(checkoutdata);
+        }
+
+        var matchOrderId = ( location.search || '' ).match(/order\=([^&]*)/);
+
+        if( matchOrderId && matchOrderId[1] ) {
+          loadCheckout( matchOrderId[1] === 'random' ? randOrderId(1) : matchOrderId[1] );
+        }
+
+        return loadCheckout;
+
+      })();
     </script>
   </body>
 </html>

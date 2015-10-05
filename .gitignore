@@ -1,5 +1,7 @@
 /.tmp
 /node_modules
+/.bower_components
+/bower_components
 /npm-debug.log
 /settings.yml
 /demo/demo.css

@@ -1,0 +1,54 @@
+
+@import functions
+@import resets
+@import mixins/mixins
+
+@import variables/variables
+@import base/base
+
+html, body
+  margin: 0
+  padding: 0
+
+html
+  font-size: $rem-size
+  height: 100%
+
+body
+  font-size: 1.4rem // back to 14px
+  min-height: 100%
+
+a
+  text-decoration: none
+  color: darken($color-brand, 15)
+  &:hover
+    text-decoration: underline
+  &:active
+    color: darken($color-brand, 20)
+
+.inline-block
+  display: inline-block
+
+// header.header
+//   height: 5rem
+//   background: $color-brand
+//   box-shadow: inset 0 -1rem 1rem -1rem rgba(0, 0, 0, 0.2)
+
+.sections > section.container
+  margin-top: units(3)
+
+.sections
+  margin-bottom: units(4)
+
+@import header
+
+footer.footer
+  height: 5rem
+  color: white
+  background: $grey-dark
+  line-height: 5rem
+  font-size: 1.5rem
+
+@import cart-list
+@import article-sample
+@import pay-with-aplazame

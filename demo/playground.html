@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"><title></title>
+    <link rel="stylesheet" href="demo.css"/>
+    $if{dev}<script src="http://localhost:12321/livereload.js"></script>{/}
+  </head>
+  <body>
+    <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
+    <div class="container">
+      <header class="header"></header>
+    </div>
+    <div class="container">
+      <div class="main-wrapper">
+        <nav class="page-nav"></nav>
+        <section class="main-section">
+          <table class="text-center">
+            <tr>
+              <td>
+                <button>Payment Method</button>
+              </td>
+              <td>
+                <button data-aplazame-button="default" data-amount="25000" data-parent="*">
+                  <img src="dist/widgets/assets/img/logo-color.svg"/>
+                </button>
+              </td>
+              <td>
+                <button>Other Payment Method</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+              <td data-aplazame-button-info>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+              <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td colspan="2">
+                <div data-aplazame-simulator="" data-amount="10050"></div>
+              </td>
+            </tr>
+          </table>
+
+          <br/>
+
+          <div>
+          </div>
+
+          <br/>
+
+          <div class="text-right">
+            <button data-aplazame-button-info="default" onclick="loadCheckout();">
+              <img src="dist/widgets/assets/img/aplazame-checkout.svg"/>
+            </button>
+          </div>
+
+          <br/>
+
+          <!--<table style="width: 100%; table-layout: fixed;">
+            <tr>
+              <td colspan="3" class="text-center">
+                <h3>jQuery html</h3>
+              </td>
+            </tr>
+            <tr>
+              <td id="async-widget"></td>
+              <td class="text-center" id="async-button"></td>
+              <td class="text-center" id="async-button2"></td>
+            </tr>
+          </table>-->
+
+        </section>
+      </div>
+    </div>
+    <div class="container">
+      <footer class="footer"></footer>
+    </div>
+    <script type="text/javascript"
+            src="dist/aplazame.js?sandbox=true"
+            data-aplazame="f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"
+            data-version="v1.2"
+            data-sandbox="true">
+    </script>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript">
+      // aplazame.init({}, { host: 'https://api.dev.aplazame.com/' });
+      $(function () {
+        setTimeout(function () {
+
+          $('#async-widget').html('<div data-aplazame-simulator="" data-amount="25000"></div>');
+
+          $('#async-button').html('<button type="button" id="aplazame-button-async">button</button>');
+
+          $('#async-button2').html('<button type="button" data-aplazame-button="async" data-amount="45000">button</button>');
+
+        }, 1000);
+      });
+    </script>
+    <script type="text/javascript">
+      aplazame.button({
+        selector: 'div.has-test:has(.flag-test)',
+        amount: 15000
+      });
+
+      aplazame.button({
+        selector: '#aplazame-button-async',
+        amount: 22400
+      });
+
+      function loadCheckout() {
+
+        var orderId = 'test-' + parseInt( new Date().getTime() / 60000 );
+
+        aplazame.checkout(${ JSON.stringify(checkout, null, '\t') });
+      }
+    </script>
+  </body>
+</html>

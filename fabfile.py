@@ -15,6 +15,8 @@ def prod():
 
 def make(path, command):
     with cd(path):
+        run('npm install')
+        run('$(npm bin)/bower install')
         run('make ' + command)
 
 

@@ -1,0 +1,58 @@
+.cart-list
+
+  ul, li
+    list-style-type: none
+    margin: 0
+    padding: 0
+
+  li
+    @extend .clearfix
+    border-bottom: 1px solid $grey-light
+    padding: units(1) 0
+
+  .img-wrapper
+    // width: 8rem
+    height: units(10)
+
+    @media #{$screen-xs}
+      height: units(20)
+
+    @media #{$screen-sm-up}
+      text-align: left
+
+    img
+      max-width: 100%
+      max-height: 100%
+
+  .concept
+    font-size: 1.8rem
+    color: $grey-dark
+    padding-left: units(1)
+
+  .details
+    text-align: right
+
+    .label
+      font-size: 1.5rem
+      font-weight: bold
+
+      @media #{$screen-xs}
+        margin-top: units(2)
+        text-align: left
+
+  .price-wrapper
+    margin-top: units(1)
+
+  .price
+    font-size: 2rem
+    color: $grey-dark
+
+  .total-wrapper
+    text-align: right
+    border-top: 2px solid $grey-dark
+    padding-top: units(1)
+    margin-top: units(4)
+
+    .label
+      font-size: 2rem
+      font-weight: bold

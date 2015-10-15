@@ -219,7 +219,13 @@ function checkout (options) {
           height: '100%',
           background: 'transparent',
           'z-index': 2147483647
-        });
+        }),
+        blur = document.createElement('style');
+
+    iframe.className = 'aplazame-checkout';
+
+    blur.setAttribute('rel', 'stylesheet');
+    blur.textContent = 'body > *:not(script):not(.aplazame-checkout) { -webkit-filter: blur(3px); filter: blur(3px); }';
 
     // iframe.setAttribute('allowtransparency', 'true');
     // iframe.setAttribute('allowfullscreen', 'true');
@@ -259,6 +265,9 @@ function checkout (options) {
       if( message.aplazame === 'checkout' ) {
 
         switch( message.event ) {
+          case 'drop-blur':
+            document.body.removeChild(blur);
+            break;
           case 'success':
             console.log('aplazame.checkout:success', message);
 
@@ -287,6 +296,7 @@ function checkout (options) {
         }
 
         if( message.require === 'merchant' ) {
+          document.body.appendChild(blur);
           e.source.postMessage({
             checkout: options
           }, '*');
@@ -309,6 +319,7 @@ function checkout (options) {
       }
 
     });
+
   }, function () {
     throw new Error('can not connect to ' + baseUrl);
   });

@@ -22,6 +22,6 @@
 		"tests"
 	],
 	"devDependencies": {
-		"ng-aplazame": "ssh://git@github.com/aplazame/ng-aplazame.git#release"
+		"ng-aplazame": "ssh://git@github.com/aplazame/ng-aplazame.git#^0.0.9"
 	}
 }

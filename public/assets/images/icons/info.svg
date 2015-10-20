@@ -5,8 +5,8 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="colored-icons" sketch:type="MSLayerGroup" transform="translate(-127.000000, -375.000000)" fill="#448CC0">
-            <g id="info" transform="translate(127.000000, 375.000000)" sketch:type="MSShapeGroup">
+        <g id="colored-icons" sketch:type="MSLayerGroup" transform="translate(-126.000000, -375.000000)" fill="#448CC0">
+            <g id="info" transform="translate(126.000000, 375.000000)" sketch:type="MSShapeGroup">
                 <rect id="Rectangle-10483-Copy-3" fill-opacity="0.16" x="2.18181818" y="2.18181818" width="22" height="22" rx="16.3636364"></rect>
                 <path d="M1,11 L1,11 C1,16.5237031 5.47667235,21 11,21 C16.5237031,21 21,16.5233276 21,11 C21,5.47629686 16.5233276,1 11,1 C5.47629686,1 1,5.47667235 1,11 L1,11 Z M0,11 C0,4.92486775 4.923532,0 11,0 C17.0751322,0 22,4.923532 22,11 C22,17.0751322 17.076468,22 11,22 C4.92486775,22 0,17.076468 0,11 L0,11 Z" id="Shape"></path>
                 <path d="M10.5,15 L11.5,15 L11.5,10 L10.5,10 L10.5,15 Z M10.5,8 L11.5,8 L11.5,7 L10.5,7 L10.5,8 Z" id="i"></path>

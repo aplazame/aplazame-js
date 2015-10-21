@@ -11,20 +11,13 @@ module.exports = function (nitro) {
 
     nitro.dir('demo').load('{,**/}*.{sass,scss}').process('sass', {
       includePaths: [
-        '../.bower_components/ng-aplazame/styles'
+        '../.bower_components'
       ],
       autoprefix: true,
       sourceMap: dev,
       sourceComments: dev,
       outputStyle: dev ? 'nested' : 'compressed'
     }).write('public');
-  });
-
-  nitro.task('demo-assets', function (target) {
-
-    nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
-    // nitro.dir('src/images').copy('public/assets/images/src');
-
   });
 
   nitro.task('demo-templates', function (target) {
@@ -82,8 +75,8 @@ module.exports = function (nitro) {
     nitro.file.write('public/playground.html', nitro.template( nitro.file.read('demo/playground.html') )( indexData ) );
   });
 
-  nitro.task('demo-dev', ['demo-clear', 'demo-assets', 'demo-sass:dev', 'demo-templates:dev']);
+  nitro.task('demo-dev', ['demo-clear', 'demo-sass:dev', 'demo-templates:dev']);
 
-  nitro.task('demo', ['demo-clear', 'demo-assets', 'demo-sass', 'demo-templates']);
+  nitro.task('demo', ['demo-clear', 'demo-sass', 'demo-templates']);
 
 };

@@ -41,7 +41,7 @@ _.listen(window, 'load', emitSize);
 _.listen(window, 'resize', emitSize);
 
 function showText () {
-  main.innerHTML = _.template('info', {
+  main.innerHTML = _.template('widget', {
     getAmount: getAmount,
     choice: selectedChoice
   });
@@ -87,7 +87,8 @@ _.listen(main, 'click', function (e) {
         aplazame: 'modal',
         event: 'open',
         data: {
-          box: require('../../.tmp/simulator/modal-box.js')
+          cta: false,
+          box: require('../../.tmp/simulator/modal-info.js')
         }
       }, '*');
       break;

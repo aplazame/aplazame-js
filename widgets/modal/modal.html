@@ -7,16 +7,43 @@
     body {
       display: none;
     }
-    .canvas {
+    /*.canvas {
       opacity: 0;
-    }
+    }*/
   </style>
   <link type="text/css" rel="stylesheet" href="widgets/modal/modal.css"/>
 
-</head>
+  $if{dev}
+  <link rel="stylesheet" type="text/css" href="widgets/assets/fonts/font-gotham.css" />{:}
+  <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />{/}
 
-  <body class="shown">
-    <div class="canvas h-valign">
+</head>
+<body class="shown">
+
+  <div class="modal-wrapper <% if( cta ) { %> has-cta<% } %>is-opening">
+    <div class="card">
+      <div class="card-header">
+        <h2>Título del modal</h2>
+      </div>
+      <div class="card-content">
+        <% if( box ) { %><%= box %><% } else { %>
+          <div class="box-title"><%= title %></div>
+          <div class="box-message"><%= message %></div>
+        <% } %>
+      </div>
+      <% if( cta ) { %>
+      <div class="cta">
+        <button type="submit" class="box-form-button primary">
+          <span class="cta-title">Título</span>
+          <span class="cta-subtitle">subtítulo del CTA</span>
+        </button>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+
+    <!-- <div class="canvas h-valign">
       <div class="container">
 
         <div class="box">
@@ -38,9 +65,9 @@
       <a href="javascript:;">
         <span>Volver</span>&nbsp;&nbsp;<span>✖</span>
       </a>
-    </div>
+    </div> -->
 
     <script type="text/javascript" src="widgets/modal/modal.js"></script>
-  </body>
 
+</body>
 </html>

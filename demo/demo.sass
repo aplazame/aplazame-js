@@ -1,10 +1,5 @@
 
-@import functions
-@import resets
-@import mixins/mixins
-
-@import variables/variables
-@import base/base
+@import 'ng-aplazame/styles/core'
 
 html, body
   margin: 0
@@ -25,6 +20,9 @@ a
     text-decoration: underline
   &:active
     color: darken($color-brand, 20)
+
+hr
+  border: 1px solid lighten($grey-medium, 20)
 
 .inline-block
   display: inline-block

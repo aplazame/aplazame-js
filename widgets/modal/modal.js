@@ -1,19 +1,20 @@
 var _ = require('../../src/utils');
 
-var box = document.querySelector('.box');
+var card = document.querySelector('.card'),
+    modal = document.querySelector('.modal-wrapper');
 
 function closeModal (e) {
-  document.body.className = 'closing';
+  modal.className = 'modal-wrapper is-closing';
 
   setTimeout(function () {
     parent.window.postMessage({
       aplazame: 'modal',
       event: 'close'
     }, '*');
-  }, 400);
+  }, 600);
 }
 _.listen(document.body, 'click', closeModal);
 
-_.listen(box, 'click', function (e) {
+_.listen(card, 'click', function (e) {
   e.stopPropagation();
 });

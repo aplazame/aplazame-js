@@ -225,7 +225,7 @@ function checkout (options) {
     iframe.className = 'aplazame-checkout';
 
     blur.setAttribute('rel', 'stylesheet');
-    blur.textContent = 'body > *:not(script):not(.aplazame-checkout) { -webkit-filter: blur(3px); filter: blur(3px); }';
+    blur.textContent = 'body > *:not(script):not(iframe.aplazame-checkout) { -webkit-filter: blur(3px); filter: blur(3px); }';
 
     // iframe.setAttribute('allowtransparency', 'true');
     // iframe.setAttribute('allowfullscreen', 'true');

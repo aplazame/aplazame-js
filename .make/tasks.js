@@ -12,20 +12,18 @@ module.exports = function (nitro) {
 
   // main tasks
 
-  nitro.task('base-build', ['clear:dist', 'js', 'widgets']);
+  nitro.task('build', ['clear:dist', 'js', 'widgets', 'demo']);
 
-  nitro.task('build', ['base-build', 'demo']);
-
-  nitro.task('dev', ['base-build', 'demo-dev'], function () {
+  nitro.task('dev', ['clear:dist', 'js:dev', 'widgets-dev', 'demo-dev'], function () {
 
     nitro.watch('src', ['js']);
 
     nitro.watch('widgets')
-      .when('{,**/}*.js', 'widgets.js')
-      .when('{,**/}modal-*.html', 'widgets.js')
-      .when(['{,**/}*.html', '!{,**/}modal-*.html'], 'widgets.html')
-      .when('{,**/}*.{sass,scss}', 'widgets.css')
-      .when('widgets/assets/**', 'widgets.assets');
+      .when('{,**/}*.js', 'widgets.js:dev')
+      .when('{,**/}modal-*.html', 'widgets.js:dev')
+      .when(['{,**/}*.html', '!{,**/}modal-*.html'], 'widgets.html:dev')
+      .when('{,**/}*.{sass,scss}', 'widgets.sass:dev')
+      .when('widgets/assets/**', 'widgets.assets:dev');
 
     nitro.watch('demo')
       .when('{,**/}*.html', 'demo-templates:dev')
@@ -36,7 +34,7 @@ module.exports = function (nitro) {
       // nitro.tasks.run(['base-build', 'demo-dev']);
     });
 
-    nitro.require('livereload').createServer({ port: 12321 }).watch(['public', 'dist']);
+    nitro.livereload(['public', 'dist'], { port: 12321 });
 
   });
 

@@ -87,8 +87,8 @@ _.listen(main, 'click', function (e) {
         aplazame: 'modal',
         event: 'open',
         data: {
-          cta: false,
-          box: require('../../.tmp/simulator/modal-info.js')
+          cardClass: 'hola-adios',
+          card: require('../../.tmp/simulator/modal-info.js')
         }
       }, '*');
       break;

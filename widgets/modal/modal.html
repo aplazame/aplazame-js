@@ -20,54 +20,11 @@
 </head>
 <body class="shown">
 
-  <div class="modal-wrapper <% if( cta ) { %> has-cta<% } %>is-opening">
-    <div class="card">
-      <div class="card-header">
-        <h2>Título del modal</h2>
-      </div>
-      <div class="card-content">
-        <% if( box ) { %><%= box %><% } else { %>
-          <div class="box-title"><%= title %></div>
-          <div class="box-message"><%= message %></div>
-        <% } %>
-      </div>
-      <% if( cta ) { %>
-      <div class="cta">
-        <button type="submit" class="box-form-button primary">
-          <span class="cta-title">Título</span>
-          <span class="cta-subtitle">subtítulo del CTA</span>
-        </button>
-      </div>
-      <% } %>
-    </div>
+  <div class="modal-wrapper <% if( typeof modalClass !== 'undefined' ) { %><%= modalClass %><% } %>is-opening">
+    <div class="card <% if( typeof cardClass !== 'undefined' ) { %><%= cardClass %><% } %>"><%= card %></div>
   </div>
 
-
-    <!-- <div class="canvas h-valign">
-      <div class="container">
-
-        <div class="box">
-
-          <div class="img-wrapper">
-            <img src="widgets/assets/img/info-lg.svg"/>
-          </div>
-
-          <% if( box ) { %><%= box %><% } else { %>
-            <div class="box-title"><%= title %></div>
-            <div class="box-message"><%= message %></div>
-          <% } %>
-
-        </div>
-
-      </div>
-    </div>
-    <div class="close-checkout">
-      <a href="javascript:;">
-        <span>Volver</span>&nbsp;&nbsp;<span>✖</span>
-      </a>
-    </div> -->
-
-    <script type="text/javascript" src="widgets/modal/modal.js"></script>
+  <script type="text/javascript" src="widgets/modal/modal.js"></script>
 
 </body>
 </html>

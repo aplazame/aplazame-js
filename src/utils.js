@@ -30,12 +30,42 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
-var listen = window.addEventListener ? function (element, eventName, listener) {
+if( window.attachEvent && !window.HTMLElement.prototype.addEventListener ) {
+  window.HTMLElement.prototype.addEventListener = function (eventName, listener) {
+    this.attachEvent('on' + eventName, listener);
+  };
+}
+
+function listen (element, eventName, listener) {
+  if( element instanceof Array ) {
+    for( var i = 0, n = element.length ; i < n ; i++ ) {
+      element[i].addEventListener(eventName, listener, false);
+    }
+    return;
+  }
   element.addEventListener(eventName, listener, false);
-} : ( window.attachEvent && function (element, eventName, listener) {
-  element.attachEvent('on' + eventName, listener);
-} );
-if( !listen ) {
+}
+
+// var listen = window.addEventListener ? function (element, eventName, listener) {
+//   if( element instanceof Array ) {
+//     for( var i = 0, n = element.length ; i < n ; i++ ) {
+//       element[i].addEventListener(eventName, listener, false);
+//     }
+//     return;
+//   }
+//   element.addEventListener(eventName, listener, false);
+// } : ( window.attachEvent && function (element, eventName, listener) {
+//   if( element instanceof Array ) {
+//     for( var i = 0, n = element.length ; i < n ; i++ ) {
+//       element[i].addEventListener(eventName, listener, false);
+//     }
+//     return;
+//   }
+//   element.attachEvent('on' + eventName, listener);
+// } );
+
+
+if( !window.HTMLElement.prototype.addEventListener ) {
   throw new Error('Your Browser does not support events');
 }
 

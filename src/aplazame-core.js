@@ -361,6 +361,8 @@ function modal (data, options) {
     });
   }
 
+  options = options || {};
+
   modal.iframe = _.getIFrame({
         position: 'fixed',
         top: 0,
@@ -385,13 +387,24 @@ _.listen(window, 'message', function (e) {
   if( message.aplazame && message.aplazame === 'modal' ) {
     switch( message.event ) {
       case 'open':
+        modal.referrer = e.source;
+        modal.message = message;
         modal(message.data);
         break;
       case 'close':
         if( modal.iframe ) {
           document.body.style.overflow = modal.iframe.overflow;
           document.body.removeChild(modal.iframe);
+          modal.referrer.postMessage({
+            aplazame: 'modal',
+            event: 'closed',
+            name: modal.message.name,
+            resolved: message.resolved,
+            value: message.value
+          }, '*');
+          delete modal.message;
           delete modal.iframe;
+          delete modal.referrer;
         }
         break;
     }

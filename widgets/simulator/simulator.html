@@ -36,11 +36,11 @@
             </div>
             <div class="widget-configure">
               <div class="widget-payment">
-                <p class="monthly">8,36<span>€/mes</span></p>
+                <p class="monthly"><%= getAmount(choice.amount) %><span>€/mes</span></p>
                 <p class="tae">TAE <%= getAmount(choice.annual_equivalent) %>%</p>
               </div>
-              <button class="instalments-select" type="button">
-                <span>10 mensualidades</span>
+              <button class="instalments-select" type="button" data-action="changeInstalments">
+                <span><%= choice.num_instalments %> <%= choice.num_instalments > 1 ? 'mensualidades' : 'mensualidad' %></span>
                 <i class="i-sort-column"></i>
               </button>
             </div>

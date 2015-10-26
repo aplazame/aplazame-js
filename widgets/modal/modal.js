@@ -1,20 +1,33 @@
 var _ = require('../../src/utils');
 
-var card = document.querySelector('.card'),
-    modal = document.querySelector('.modal-wrapper');
+var modal = document.querySelector('.modal');
 
-function closeModal (e) {
-  modal.className = 'modal-wrapper is-closing';
+function closeModal (resolved, value) {
+  modal.className = 'modal is-closing';
 
   setTimeout(function () {
     parent.window.postMessage({
       aplazame: 'modal',
-      event: 'close'
+      event: 'close',
+      resolved: resolved,
+      value: value
     }, '*');
   }, 600);
 }
-_.listen(document.body, 'click', closeModal);
+_.listen(document.body, 'click', function () {
+  closeModal('dismiss', null);
+});
 
-_.listen(card, 'click', function (e) {
-  e.stopPropagation();
+[].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {
+  _.listen( element, 'click', function (e) {
+    e.stopPropagation();
+    closeModal(true, element.getAttribute('modal-resolve') );
+  });
+});
+
+[].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
+  _.listen( element, 'click', function (e) {
+    e.stopPropagation();
+    closeModal(false, element.getAttribute('modal-reject') );
+  });
 });

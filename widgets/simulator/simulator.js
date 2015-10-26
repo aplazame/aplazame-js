@@ -40,14 +40,6 @@ function emitSize () {
 _.listen(window, 'load', emitSize);
 _.listen(window, 'resize', emitSize);
 
-function showText () {
-  main.innerHTML = _.template('widget', {
-    getAmount: getAmount,
-    choice: selectedChoice
-  });
-  emitSize();
-}
-
 function showChoices () {
   main.innerHTML = _.template('choices', { selectedChoice: selectedChoice, choices: choices });
   emitSize();
@@ -68,31 +60,72 @@ function maxInstalments (prev, choice) {
 
 setChoice( choices.reduce(maxInstalments, null) );
 
-_.listen(main, 'click', function (e) {
-  var action = e.target.getAttribute('data-action');
-  if( action !== undefined ) {
-    e.preventDefault();
-  }
-
+function runAction (action, data) {
   switch( action ) {
     case 'showChoices':
       showChoices();
-      break;
-    case 'selectChoice':
-      setChoice( choices[ Number(e.target.getAttribute('data-choice')) ] );
-      showText();
       break;
     case 'showInfo':
       parent.window.postMessage({
         aplazame: 'modal',
         event: 'open',
+        name: 'info',
         data: {
           cardClass: 'hola-adios',
           card: require('../../.tmp/simulator/modal-info.js')
         }
       }, '*');
       break;
+    case 'changeInstalments':
+      parent.window.postMessage({
+        aplazame: 'modal',
+        event: 'open',
+        name: 'instalments',
+        data: {
+          cardClass: 'hola-adios',
+          card: require('../../.tmp/simulator/modal-instalments.js')
+        }
+      }, '*');
+      break;
+  }
+}
+
+function renderWidget () {
+  main.innerHTML = _.template('widget', {
+    getAmount: getAmount,
+    choice: selectedChoice
+  });
+  emitSize();
+
+  [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
+
+    console.log('[data-action]', element);
+    _.listen(element, 'click', function (e) {
+      var action = element.getAttribute('data-action');
+
+      console.log('data-action');
+
+      if( action !== undefined ) {
+        e.preventDefault();
+      }
+
+      runAction(action);
+    });
+
+  } );
+}
+
+renderWidget();
+
+_.listen(window, 'message', function (e) {
+  var message = e.data;
+
+
+  if( message.aplazame === 'modal' && message.event === 'closed' ) {
+    if( message.name === 'instalments' && message.resolved ) {
+      console.log('simulator message', message, choices[ Number(message.value) ]);
+      setChoice( choices[ Number(message.value) ] );
+      renderWidget();
+    }
   }
 });
-
-showText();

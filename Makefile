@@ -20,6 +20,7 @@ test:
 	# @$(npmdir)/karma start karma/min.conf.js
 
 build: auto.install
+	bower install
 	@node make build
 
 dev: auto.install

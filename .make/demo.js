@@ -75,6 +75,8 @@ module.exports = function (nitro) {
     nitro.file.write('public/demo-cancel.html', renderIndex( indexData.$$new({ result: { closed: true, success: false } }) ) );
 
     nitro.file.write('public/playground.html', nitro.template( nitro.file.read('demo/playground.html') )( indexData ) );
+
+    nitro.file.write('public/simulator/index.html', nitro.template( nitro.file.read('demo/simulator.html') )( indexData ) );
   });
 
   nitro.task('demo-dev', ['demo-clear', 'demo-sass:dev', 'demo-templates:dev']);

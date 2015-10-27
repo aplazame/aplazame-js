@@ -13,11 +13,13 @@ function closeModal (resolved, value) {
     event: 'closing'
   }, '*');
 
-  parent.window.postMessage({
-    aplazame: 'modal',
-    event: 'resolved',
-    value: value
-  }, '*');
+  if( resolved ) {
+    parent.window.postMessage({
+      aplazame: 'modal',
+      event: 'resolved',
+      value: value
+    }, '*');
+  }
 
   setTimeout(function () {
     parent.window.postMessage({

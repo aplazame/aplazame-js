@@ -23,6 +23,6 @@
 	],
 	"devDependencies": {
 		"sasslets-animate": "*",
-		"ng-aplazame": "ssh://git@github.com/aplazame/ng-aplazame.git#0.0.25"
+		"ng-aplazame": "ssh://git@github.com/aplazame/ng-aplazame.git#0.0.28"
 	}
 }

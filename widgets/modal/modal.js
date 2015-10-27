@@ -17,13 +17,17 @@ function closeModal (resolved, value) {
     }, '*');
   }, isMobile.matches ? 0 : 600 );
 }
+
+_.listen( modal.querySelector('.card'), 'click', function (e) {
+  e.stopPropagation();
+});
+
 _.listen(document.body, 'click', function () {
   closeModal(false);
 });
 
 [].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {
   _.listen( element, 'click', function (e) {
-    e.stopPropagation();
     closeModal(true, element.getAttribute('modal-resolve') );
   });
 });

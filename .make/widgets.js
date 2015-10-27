@@ -26,7 +26,7 @@ module.exports = function (nitro) {
         });
 
     nitro.dir('widgets')
-      .load(['{,**/}*.html', '!simulator/modal-box.html'])
+      .load(['{,**/}*.html', '!{,**/}templates/*.html'])
       .each(function (f) {
         f.setSrc( nitro.template(f.getSrc())(scope) );
       })

@@ -1,6 +1,9 @@
 var _ = require('../../src/utils');
 
-var modal = document.querySelector('.modal');
+window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
+
+var modal = document.querySelector('.modal'),
+    isMobile = window.matchMedia('( max-width: 767px )');
 
 function closeModal (resolved, value) {
   modal.className = 'modal is-closing';
@@ -12,10 +15,10 @@ function closeModal (resolved, value) {
       resolved: resolved,
       value: value
     }, '*');
-  }, 600);
+  }, isMobile.matches ? 0 : 600 );
 }
 _.listen(document.body, 'click', function () {
-  closeModal('dismiss', null);
+  closeModal(false);
 });
 
 [].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {

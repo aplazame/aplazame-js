@@ -1,13 +1,25 @@
-<div class="card-content content-padding">
-  <% for( var i = 0, n = choices.length; i < n ; i++ ) {
-    %><div class="choice-wrapper">
-      <button class="instalments-choice" modal-resolve="<%= i %>">
-        <div class="num-instalments"><%= choices[i].num_instalments %></div>
-        <div class="amount"><%= getAmount(choices[i].amount) %> €</div>
-      </button>
-    </div><%
-  } %>
+<div class="close-button">
+  <div class="button">&times;&nbsp;Volver</div>
 </div>
+<div class="card-content">
+  <div class="modal-instalments-list">
+    <div class="choices-wrapper">
+
+      <% for( var i = 0, n = choices.length; i < n ; i++ ) {
+      %><div class="choice">
+          <button type="button" class="button" modal-resolve="<%= i %>">
+            <div class="wrapper">
+              <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>
+              <div class="amount"><%= getAmount(choices[i].amount) %> €</div>
+            </div>
+          </button>
+        </div><%
+      } %>
+
+    </div>
+  </div>
+</div>
+
 <style rel="stylesheet">
   .choice-wrapper {
     display: inline-block;

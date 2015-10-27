@@ -3,8 +3,8 @@ var _ = require('../../src/utils');
 
 _.template.lookup();
 
-_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments.js') )
-_.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') )
+_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments.js') );
+_.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') );
 
 var main = document.getElementById('main'),
     selectedChoice, choices = window.choices;
@@ -88,7 +88,10 @@ function runAction (action, data) {
           cardClass: 'hola-adios',
           card: _.template('modal-instalments', {
             choices: choices,
-            getAmount: getAmount
+            getAmount: getAmount,
+            months: function (m) {
+              return m > 1 ? 'meses' : 'mes';
+            }
           })
         }
       }, '*');

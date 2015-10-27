@@ -5,15 +5,34 @@ window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMa
 var modal = document.querySelector('.modal'),
     isMobile = window.matchMedia('( max-width: 767px )');
 
+modal.className = 'modal is-opening';
+
+if( isMobile.matches ) {
+  setTimeout(function () {
+    modal.className = 'modal';
+  }, 600);
+}
+
 function closeModal (resolved, value) {
   modal.className = 'modal is-closing';
+
+  parent.window.postMessage({
+    aplazame: 'modal',
+    event: 'closing'
+  }, '*');
+
+  if( resolved ) {
+    parent.window.postMessage({
+      aplazame: 'modal',
+      event: 'resolved',
+      value: value
+    }, '*');
+  }
 
   setTimeout(function () {
     parent.window.postMessage({
       aplazame: 'modal',
-      event: 'close',
-      resolved: resolved,
-      value: value
+      event: 'close'
     }, '*');
   }, isMobile.matches ? 0 : 600 );
 }

@@ -1,5 +1,6 @@
 
-var _ = require('../../src/utils');
+var _ = require('../../src/utils'),
+    choices = [];
 
 _.template.lookup();
 
@@ -53,16 +54,6 @@ function setChoice (choice) {
   return choice;
 }
 
-function maxInstalments (prev, choice) {
-  if( prev === null ) {
-    return choice;
-  } else {
-    return choice.num_instalments > prev.num_instalments ? choice : prev;
-  }
-}
-
-setChoice( choices.reduce(maxInstalments, null) );
-
 function runAction (action, data) {
   switch( action ) {
     case 'showChoices':
@@ -87,6 +78,7 @@ function runAction (action, data) {
         data: {
           cardClass: 'hola-adios',
           card: _.template('modal-instalments', {
+            selectedChoice: selectedChoice,
             choices: choices,
             getAmount: getAmount,
             months: function (m) {
@@ -108,7 +100,6 @@ function renderWidget () {
 
   [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
 
-    console.log('[data-action]', element);
     _.listen(element, 'click', function (e) {
       var action = element.getAttribute('data-action');
 
@@ -124,17 +115,48 @@ function renderWidget () {
   } );
 }
 
-renderWidget();
+function maxInstalments (prev, choice) {
+  if( prev === null ) {
+    return choice;
+  } else {
+    return choice.num_instalments > prev.num_instalments ? choice : prev;
+  }
+}
 
 _.listen(window, 'message', function (e) {
   var message = e.data;
 
+  if( e.used ) {
+    return;
+  }
 
-  if( message.aplazame === 'modal' && message.event === 'closed' ) {
-    if( message.name === 'instalments' && message.resolved ) {
+  if( message.aplazame === 'simulator' ) {
+    e.used = true;
+
+    switch ( message.event ) {
+      case 'choices':
+        console.log('choices', message);
+        choices = message.data;
+        setChoice( choices.reduce(maxInstalments, null) );
+        renderWidget();
+        break;
+      default:
+
+    }
+  }
+
+  if( message.aplazame === 'modal' ) {
+    e.used = true;
+
+    if( message.event === 'resolved' && message.name === 'instalments' ) {
       console.log('simulator message', message, choices[ Number(message.value) ]);
       setChoice( choices[ Number(message.value) ] );
       renderWidget();
     }
   }
 });
+
+parent.window.postMessage({
+  aplazame: 'simulator',
+  event: 'require:choices'
+}, '*');

@@ -12,18 +12,31 @@ function widgetsLookup (element) {
   if( simulators.length ) {
 
     var http = require('./http'),
-        iframes = [];
+        iframes = [],
+        choices = [];
 
     _.listen(window, 'message', function (e) {
       var message = e.data;
 
+      if( !e.used && message.aplazame === 'simulator' ) {
+        e.used = true;
 
-      if( message.aplazame === 'simulator' ) {
-        iframes.forEach(function (iframe) {
-          if( iframe.contentWindow === e.source ) {
-            iframe.style.height = message.data.height + 'px';
-          }
-        });
+        switch (message.event) {
+          case 'resize':
+            iframes.forEach(function (iframe) {
+              if( iframe.contentWindow === e.source ) {
+                iframe.style.height = message.data.height + 'px';
+              }
+            });
+            break;
+          case 'require:choices':
+            e.source.postMessage({
+              aplazame: 'simulator',
+              event: 'choices',
+              data: choices
+            }, '*');
+            break;
+        }
       }
     });
 
@@ -44,24 +57,30 @@ function widgetsLookup (element) {
 
       simulator.innerHTML = 'cargando cuotas...';
 
-      aplazame.simulator(simulatorParams.amount, function (choices) {
-        var child = simulator.firstChild;
+      aplazame.simulator(simulatorParams.amount, function (_choices) {
+        var child = simulator.firstChild,
+            now = new Date().getTime();
+
+        choices = _choices;
+
         while( child ) {
           simulator.removeChild(child);
           child = simulator.firstChild;
         }
 
-        http( api.baseUrl + 'widgets/simulator/simulator.html?' + new Date().getTime() ).then(function (response) {
+        http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
           var iframe = _.getIFrame({
             width: '100%'
           });
           iframes.push(iframe);
+          iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
           simulator.appendChild(iframe);
-          _.writeIframe(iframe,
-            response.data
-              .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
-              .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
-          );
+
+          // _.writeIframe(iframe,
+          //   response.data
+          //     .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
+          //     .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
+          // );
         }, function () {
           simulator.innerHTML = '';
         });

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.69';
+module.exports = '0.0.70';
 },{}],2:[function(require,module,exports){
 'use strict';
 
@@ -276,7 +276,8 @@ function checkout (options) {
 
       var message = e.data;
 
-      if( message.aplazame === 'checkout' ) {
+      if( !e.used && message.aplazame === 'checkout' ) {
+        e.used = true;
 
         switch( message.event ) {
           case 'drop-blur':
@@ -388,37 +389,55 @@ function modal (data, options) {
       });
 
   modal.iframe.overflow = document.body.style.overflow;
-  document.body.style.overflow = 'hidden';
 
   document.body.appendChild(modal.iframe);
   _.writeIframe(modal.iframe, modal.cached(data || {}) );
+
+  document.body.style.overflow = 'hidden';
 }
 
 _.listen(window, 'message', function (e) {
 
   var message = e.data;
 
-  if( message.aplazame && message.aplazame === 'modal' ) {
+  if( !e.used && message.aplazame === 'modal' ) {
+    e.used = true;
+
     switch( message.event ) {
       case 'open':
         modal.referrer = e.source;
         modal.message = message;
         modal(message.data);
         break;
+      case 'resolved':
+        modal.referrer.postMessage({
+          aplazame: 'modal',
+          event: 'resolved',
+          name: modal.message.name,
+          value: message.value
+        }, '*');
+        delete modal.referrer;
+        break;
+      case 'closing':
+        document.body.style.overflow = modal.iframe.overflow;
+        break;
       case 'close':
         if( modal.iframe ) {
-          document.body.style.overflow = modal.iframe.overflow;
           document.body.removeChild(modal.iframe);
-          modal.referrer.postMessage({
-            aplazame: 'modal',
-            event: 'closed',
-            name: modal.message.name,
-            resolved: message.resolved,
-            value: message.value
-          }, '*');
-          delete modal.message;
+
+          if( modal.referrer ) {
+            modal.referrer.postMessage({
+              aplazame: 'modal',
+              event: 'dismiss',
+              name: modal.message.name
+            }, '*');
+            delete modal.referrer;
+          }
+
+          if( modal.message ) {
+            delete modal.message;
+          }
           delete modal.iframe;
-          delete modal.referrer;
         }
         break;
     }
@@ -549,18 +568,31 @@ function widgetsLookup (element) {
   if( simulators.length ) {
 
     var http = require('./http'),
-        iframes = [];
+        iframes = [],
+        choices = [];
 
     _.listen(window, 'message', function (e) {
       var message = e.data;
 
+      if( !e.used && message.aplazame === 'simulator' ) {
+        e.used = true;
 
-      if( message.aplazame === 'simulator' ) {
-        iframes.forEach(function (iframe) {
-          if( iframe.contentWindow === e.source ) {
-            iframe.style.height = message.data.height + 'px';
-          }
-        });
+        switch (message.event) {
+          case 'resize':
+            iframes.forEach(function (iframe) {
+              if( iframe.contentWindow === e.source ) {
+                iframe.style.height = message.data.height + 'px';
+              }
+            });
+            break;
+          case 'require:choices':
+            e.source.postMessage({
+              aplazame: 'simulator',
+              event: 'choices',
+              data: choices
+            }, '*');
+            break;
+        }
       }
     });
 
@@ -581,24 +613,30 @@ function widgetsLookup (element) {
 
       simulator.innerHTML = 'cargando cuotas...';
 
-      aplazame.simulator(simulatorParams.amount, function (choices) {
-        var child = simulator.firstChild;
+      aplazame.simulator(simulatorParams.amount, function (_choices) {
+        var child = simulator.firstChild,
+            now = new Date().getTime();
+
+        choices = _choices;
+
         while( child ) {
           simulator.removeChild(child);
           child = simulator.firstChild;
         }
 
-        http( api.baseUrl + 'widgets/simulator/simulator.html?' + new Date().getTime() ).then(function (response) {
+        http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
           var iframe = _.getIFrame({
             width: '100%'
           });
           iframes.push(iframe);
+          iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
           simulator.appendChild(iframe);
-          _.writeIframe(iframe,
-            response.data
-              .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
-              .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
-          );
+
+          // _.writeIframe(iframe,
+          //   response.data
+          //     .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
+          //     .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
+          // );
         }, function () {
           simulator.innerHTML = '';
         });

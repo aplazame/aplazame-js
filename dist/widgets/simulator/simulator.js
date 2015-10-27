@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar ahora<br/>y pagar después.</h2></div><div class="card-content content-padding">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul class="styled">    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a <%= creditThreshold %> €.</li>    <li>¿Tienes alguna duda? Llámanos al 91 290 89 23 o escríbenos un email a <a class="link" href="mailto:hola@aplazame.com">hola@aplazame.com</a>.</li>  </ul></div><div class="cta">  <button type="submit" class="button" modal-resolve="ok">    <span class="cta-title">Entendido</span>  </button></div>';
 },{}],2:[function(require,module,exports){
-module.exports = '<div class="close-button">  <div class="button" modal-reject="">&times;&nbsp;Volver</div></div><div class="card-content">  <div class="modal-instalments-list">    <div class="choices-wrapper">      <% for( var i = 0, n = choices.length; i < n ; i++ ) {      %><div class="choice">          <button type="button" class="button" modal-resolve="<%= i %>">            <div class="wrapper">              <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>              <div class="amount"><%= getAmount(choices[i].amount) %> €</div>            </div>          </button>        </div><%      } %>    </div>  </div></div><style rel="stylesheet">  .choice-wrapper {    display: inline-block;    width: 25%;    text-align: center;  }  .instalments-choice {    width: 80%;    font-size: 2rem;    padding: 0.5rem;    margin-bottom: 1rem;    background: white;    border: 1px solid royalblue;    cursor: pointer;  }</style>';
+module.exports = '<div class="close-button">  <div class="button" modal-reject="">&times;&nbsp;Volver</div></div><div class="card-content">  <div class="modal-instalments-list">    <div class="choices-wrapper">      <% for( var i = 0, n = choices.length; i < n ; i++ ) {      %><div class="choice">          <button type="button" class="button<% if(choices[i] === selectedChoice) { %> active<% }%>" modal-resolve="<%= i %>">            <div class="wrapper">              <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>              <div class="amount"><%= getAmount(choices[i].amount) %> €</div>            </div>          </button>        </div><%      } %>    </div>  </div></div><style rel="stylesheet">  .choice-wrapper {    display: inline-block;    width: 25%;    text-align: center;  }  .instalments-choice {    width: 80%;    font-size: 2rem;    padding: 0.5rem;    margin-bottom: 1rem;    background: white;    border: 1px solid royalblue;    cursor: pointer;  }</style>';
 },{}],3:[function(require,module,exports){
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
@@ -318,7 +318,8 @@ module.exports = {
 
 },{}],4:[function(require,module,exports){
 
-var _ = require('../../src/utils');
+var _ = require('../../src/utils'),
+    choices = [];
 
 _.template.lookup();
 
@@ -372,16 +373,6 @@ function setChoice (choice) {
   return choice;
 }
 
-function maxInstalments (prev, choice) {
-  if( prev === null ) {
-    return choice;
-  } else {
-    return choice.num_instalments > prev.num_instalments ? choice : prev;
-  }
-}
-
-setChoice( choices.reduce(maxInstalments, null) );
-
 function runAction (action, data) {
   switch( action ) {
     case 'showChoices':
@@ -406,6 +397,7 @@ function runAction (action, data) {
         data: {
           cardClass: 'hola-adios',
           card: _.template('modal-instalments', {
+            selectedChoice: selectedChoice,
             choices: choices,
             getAmount: getAmount,
             months: function (m) {
@@ -427,7 +419,6 @@ function renderWidget () {
 
   [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
 
-    console.log('[data-action]', element);
     _.listen(element, 'click', function (e) {
       var action = element.getAttribute('data-action');
 
@@ -443,19 +434,50 @@ function renderWidget () {
   } );
 }
 
-renderWidget();
+function maxInstalments (prev, choice) {
+  if( prev === null ) {
+    return choice;
+  } else {
+    return choice.num_instalments > prev.num_instalments ? choice : prev;
+  }
+}
 
 _.listen(window, 'message', function (e) {
   var message = e.data;
 
+  if( e.used ) {
+    return;
+  }
 
-  if( message.aplazame === 'modal' && message.event === 'closed' ) {
-    if( message.name === 'instalments' && message.resolved ) {
+  if( message.aplazame === 'simulator' ) {
+    e.used = true;
+
+    switch ( message.event ) {
+      case 'choices':
+        console.log('choices', message);
+        choices = message.data;
+        setChoice( choices.reduce(maxInstalments, null) );
+        renderWidget();
+        break;
+      default:
+
+    }
+  }
+
+  if( message.aplazame === 'modal' ) {
+    e.used = true;
+
+    if( message.event === 'resolved' && message.name === 'instalments' ) {
       console.log('simulator message', message, choices[ Number(message.value) ]);
       setChoice( choices[ Number(message.value) ] );
       renderWidget();
     }
   }
 });
+
+parent.window.postMessage({
+  aplazame: 'simulator',
+  event: 'require:choices'
+}, '*');
 
 },{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/utils":3}]},{},[4]);

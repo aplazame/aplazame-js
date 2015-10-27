@@ -8,12 +8,21 @@ var modal = document.querySelector('.modal'),
 function closeModal (resolved, value) {
   modal.className = 'modal is-closing';
 
+  parent.window.postMessage({
+    aplazame: 'modal',
+    event: 'closing'
+  }, '*');
+
+  parent.window.postMessage({
+    aplazame: 'modal',
+    event: 'resolved',
+    value: value
+  }, '*');
+
   setTimeout(function () {
     parent.window.postMessage({
       aplazame: 'modal',
-      event: 'close',
-      resolved: resolved,
-      value: value
+      event: 'close'
     }, '*');
   }, isMobile.matches ? 0 : 600 );
 }

@@ -3,18 +3,13 @@
   <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="widgets/simulator/simulator.css" />
+    <link rel="stylesheet" href="simulator.css" />
 
     $if{dev}
-    <link rel="stylesheet" type="text/css" href="widgets/assets/fonts/font-gotham.css" />{:}
+    <link rel="stylesheet" type="text/css" href="../assets/fonts/font-gotham.css" />{:}
     <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />{/}
   </head>
   <body>
-    <script type="text/javascript">
-      var choices = [];
-
-      // choices = []; // this is replaced with real data
-    </script>
     <div class="text-center">
       <div id="main"></div>
     </div>
@@ -57,6 +52,6 @@
         <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
       <% } %>
     </script>
-    <script type="text/javascript" src="widgets/simulator/simulator.js"></script>
+    <script type="text/javascript" src="simulator.js"></script>
   </body>
 </html>

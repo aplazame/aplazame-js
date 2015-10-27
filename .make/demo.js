@@ -33,7 +33,7 @@ module.exports = function (nitro) {
 
     var renderIndex = nitro.template( nitro.file.read('demo/index.html') ),
         checkout = nitro.file.readJSON('./demo/checkout.json'),
-        indexData = {
+        indexData = nitro.tools.scope({
           dev: target === 'dev',
           checkout: checkout,
           shippingAmount: function () {
@@ -68,9 +68,11 @@ module.exports = function (nitro) {
             var cents = amount%100;
             return parseInt(amount/100) + '.' + ( cents < 10 ? '0' : '' ) + cents + '€';
           }
-        };
+        });
 
     nitro.file.write('public/index.html', renderIndex( indexData ) );
+    nitro.file.write('public/demo-success.html', renderIndex( indexData.$$new({ result: { closed: true, success: true } }) ) );
+    nitro.file.write('public/demo-cancel.html', renderIndex( indexData.$$new({ result: { closed: true, success: false } }) ) );
 
     nitro.file.write('public/playground.html', nitro.template( nitro.file.read('demo/playground.html') )( indexData ) );
   });

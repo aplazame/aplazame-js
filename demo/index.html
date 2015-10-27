@@ -27,6 +27,7 @@
 
     <div class="sections">
 
+      $if{result}{:}
       <section class="container">
 
         <h2>Simulador de cuotas</h2>
@@ -53,6 +54,7 @@
           </article>
         {/}
       </section>
+      {/}
 
       <section class="container cart-list">
 
@@ -100,16 +102,20 @@
           </div>
         </div>
 
-        <div class="pay-with-aplazame">
-
-          <button data-aplazame-button-info="default" onclick="loadCheckout();">
-            <span>Pagar con&nbsp;</span><img src="/dist/widgets/assets/images/logo.svg"/>
-          </button>
-
-          <!-- <button data-aplazame-button-info="default" onclick="loadCheckout();">
-            <img src="dist/widgets/assets/img/aplazame-checkout.svg"/>
-          </button> -->
-        </div>
+        $if{result}
+          <br/>
+          $if{result.success}
+            <div class="alert alert-brand">Pago completado!</div>
+          {:}
+            <div class="alert alert-danger">Pago cancelado</div>
+          {/}
+        {:}
+          <div class="pay-with-aplazame">
+            <button data-aplazame-button-info="default" onclick="loadCheckout();">
+              <span>Pagar con&nbsp;</span><img src="/dist/widgets/assets/images/logo.svg"/>
+            </button>
+          </div>
+        {/}
 
       </section>
 

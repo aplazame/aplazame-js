@@ -1,5 +1,6 @@
 
-var _ = require('../../src/utils');
+var _ = require('../../src/utils'),
+    choices = [];
 
 _.template.lookup();
 
@@ -52,16 +53,6 @@ function setChoice (choice) {
   selectedChoice = choice;
   return choice;
 }
-
-function maxInstalments (prev, choice) {
-  if( prev === null ) {
-    return choice;
-  } else {
-    return choice.num_instalments > prev.num_instalments ? choice : prev;
-  }
-}
-
-setChoice( choices.reduce(maxInstalments, null) );
 
 function runAction (action, data) {
   switch( action ) {
@@ -124,11 +115,29 @@ function renderWidget () {
   } );
 }
 
-renderWidget();
+function maxInstalments (prev, choice) {
+  if( prev === null ) {
+    return choice;
+  } else {
+    return choice.num_instalments > prev.num_instalments ? choice : prev;
+  }
+}
 
 _.listen(window, 'message', function (e) {
   var message = e.data;
 
+  if( message.aplazame === 'simulator' ) {
+    switch ( message.event ) {
+      case 'choices':
+        console.log('choices', message);
+        choices = message.data;
+        setChoice( choices.reduce(maxInstalments, null) );
+        renderWidget();
+        break;
+      default:
+
+    }
+  }
 
   if( message.aplazame === 'modal' && message.event === 'closed' ) {
     if( message.name === 'instalments' && message.resolved ) {
@@ -138,3 +147,8 @@ _.listen(window, 'message', function (e) {
     }
   }
 });
+
+parent.window.postMessage({
+  aplazame: 'simulator',
+  event: 'require:choices'
+}, '*');

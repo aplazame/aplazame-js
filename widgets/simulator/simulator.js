@@ -99,7 +99,6 @@ function renderWidget () {
 
   [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
 
-    console.log('[data-action]', element);
     _.listen(element, 'click', function (e) {
       var action = element.getAttribute('data-action');
 
@@ -126,7 +125,13 @@ function maxInstalments (prev, choice) {
 _.listen(window, 'message', function (e) {
   var message = e.data;
 
+  if( e.used ) {
+    return;
+  }
+
   if( message.aplazame === 'simulator' ) {
+    e.used = true;
+
     switch ( message.event ) {
       case 'choices':
         console.log('choices', message);
@@ -139,8 +144,10 @@ _.listen(window, 'message', function (e) {
     }
   }
 
-  if( message.aplazame === 'modal' && message.event === 'closed' ) {
-    if( message.name === 'instalments' && message.resolved ) {
+  if( message.aplazame === 'modal' ) {
+    e.used = true;
+
+    if( message.event === 'resolved' && message.name === 'instalments' && message.resolved ) {
       console.log('simulator message', message, choices[ Number(message.value) ]);
       setChoice( choices[ Number(message.value) ] );
       renderWidget();

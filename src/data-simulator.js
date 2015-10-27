@@ -18,9 +18,8 @@ function widgetsLookup (element) {
     _.listen(window, 'message', function (e) {
       var message = e.data;
 
-
-      if( message.aplazame === 'simulator' ) {
-        console.log('message:simulator', e.data, e.data.event);
+      if( !e.used && message.aplazame === 'simulator' ) {
+        e.used = true;
 
         switch (message.event) {
           case 'resize':

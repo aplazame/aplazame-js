@@ -3,6 +3,9 @@ var _ = require('../../src/utils');
 
 _.template.lookup();
 
+_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments.js') )
+_.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') )
+
 var main = document.getElementById('main'),
     selectedChoice, choices = window.choices;
 
@@ -72,7 +75,7 @@ function runAction (action, data) {
         name: 'info',
         data: {
           cardClass: 'hola-adios',
-          card: require('../../.tmp/simulator/modal-info.js')
+          card: _.template('modal-info', { creditThreshold: 100 })
         }
       }, '*');
       break;
@@ -83,7 +86,10 @@ function runAction (action, data) {
         name: 'instalments',
         data: {
           cardClass: 'hola-adios',
-          card: require('../../.tmp/simulator/modal-instalments.js')
+          card: _.template('modal-instalments', {
+            choices: choices,
+            getAmount: getAmount
+          })
         }
       }, '*');
       break;

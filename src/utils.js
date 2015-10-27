@@ -172,7 +172,7 @@ function getIFrame (iframeStyles) {
 }
 
 function template (name, data){
-  return template.cache[name](data);
+  return template.cache[name](data || {});
 }
 
 template.cache = {};

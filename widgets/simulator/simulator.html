@@ -52,10 +52,10 @@
         </div>
     </script>
     <script type="application/x-template" data-template="choices">
-        <div>Elige el número de cuotas</div>
-        <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
-          <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
-        <% } %>
+      <div>Elige el número de cuotas</div>
+      <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
+        <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
+      <% } %>
     </script>
     <script type="text/javascript" src="widgets/simulator/simulator.js"></script>
   </body>

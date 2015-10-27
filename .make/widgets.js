@@ -11,7 +11,7 @@ module.exports = function (nitro) {
 
   nitro.task('widgets.js', function () {
     // nitro.file.write('.tmp/simulator/modal-info.js', 'module.exports = \'' + nitro.file.read('widgets/simulator/modal-info.html').replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
-    nitro.dir('widgets').load('{,**/}*.html').each(function () {
+    nitro.dir('widgets').load('{,**/}templates/*.html').each(function () {
       nitro.file.write( path.join('.tmp', this.getPath().replace(/\.html$/, '.js') ), 'module.exports = \'' + this.getSrc().replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
     });
 

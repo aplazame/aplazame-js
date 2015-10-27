@@ -5,6 +5,14 @@ window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMa
 var modal = document.querySelector('.modal'),
     isMobile = window.matchMedia('( max-width: 767px )');
 
+modal.className = 'modal is-opening';
+
+if( isMobile.matches ) {
+  setTimeout(function () {
+    modal.className = 'modal';
+  }, 600);
+}
+
 function closeModal (resolved, value) {
   modal.className = 'modal is-closing';
 

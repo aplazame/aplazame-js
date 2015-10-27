@@ -78,6 +78,7 @@ function runAction (action, data) {
         data: {
           cardClass: 'hola-adios',
           card: _.template('modal-instalments', {
+            selectedChoice: selectedChoice,
             choices: choices,
             getAmount: getAmount,
             months: function (m) {
@@ -147,7 +148,7 @@ _.listen(window, 'message', function (e) {
   if( message.aplazame === 'modal' ) {
     e.used = true;
 
-    if( message.event === 'resolved' && message.name === 'instalments' && message.resolved ) {
+    if( message.event === 'resolved' && message.name === 'instalments' ) {
       console.log('simulator message', message, choices[ Number(message.value) ]);
       setChoice( choices[ Number(message.value) ] );
       renderWidget();

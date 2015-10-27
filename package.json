@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.66",
+	"version": "0.0.67",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {
@@ -22,13 +22,13 @@
 	"license": "GPL-3.0",
 	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
 	"devDependencies": {
+		"nitro": "^1.5.18",
 		"bower": "^1.5.3",
 		"jasmine-core": "^2.3.4",
 		"karma": "^0.12.37",
 		"karma-chrome-launcher": "^0.2.0",
 		"karma-firefox-launcher": "^0.1.6",
 		"karma-jasmine": "^0.3.6",
-		"karma-story-reporter": "^0.3.1",
-		"nitro": "1.5.7"
+		"karma-story-reporter": "^0.3.1"
 	}
 }

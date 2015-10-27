@@ -7,40 +7,23 @@
     body {
       display: none;
     }
-    .canvas {
+    /*.canvas {
       opacity: 0;
-    }
+    }*/
   </style>
   <link type="text/css" rel="stylesheet" href="widgets/modal/modal.css"/>
 
+  
+  <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />
+
 </head>
+<body class="shown">
 
-  <body class="shown">
-    <div class="canvas h-valign">
-      <div class="container">
+  <div class="modal <% if( typeof modalClass !== 'undefined' ) { %><%= modalClass %><% } %>is-opening">
+    <div class="card <% if( typeof cardClass !== 'undefined' ) { %><%= cardClass %><% } %>"><%= card %></div>
+  </div>
 
-        <div class="box">
+  <script type="text/javascript" src="widgets/modal/modal.js"></script>
 
-          <div class="img-wrapper">
-            <img src="widgets/assets/img/info-lg.svg"/>
-          </div>
-
-          <% if( box ) { %><%= box %><% } else { %>
-            <div class="box-title"><%= title %></div>
-            <div class="box-message"><%= message %></div>
-          <% } %>
-
-        </div>
-
-      </div>
-    </div>
-    <div class="close-checkout">
-      <a href="javascript:;">
-        <span>Volver</span>&nbsp;&nbsp;<span>✖</span>
-      </a>
-    </div>
-
-    <script type="text/javascript" src="widgets/modal/modal.js"></script>
-  </body>
-
+</body>
 </html>

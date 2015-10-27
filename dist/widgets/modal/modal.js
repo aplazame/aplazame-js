@@ -31,12 +31,42 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
-var listen = window.addEventListener ? function (element, eventName, listener) {
+if( window.attachEvent && !window.HTMLElement.prototype.addEventListener ) {
+  window.HTMLElement.prototype.addEventListener = function (eventName, listener) {
+    this.attachEvent('on' + eventName, listener);
+  };
+}
+
+function listen (element, eventName, listener) {
+  if( element instanceof Array ) {
+    for( var i = 0, n = element.length ; i < n ; i++ ) {
+      element[i].addEventListener(eventName, listener, false);
+    }
+    return;
+  }
   element.addEventListener(eventName, listener, false);
-} : ( window.attachEvent && function (element, eventName, listener) {
-  element.attachEvent('on' + eventName, listener);
-} );
-if( !listen ) {
+}
+
+// var listen = window.addEventListener ? function (element, eventName, listener) {
+//   if( element instanceof Array ) {
+//     for( var i = 0, n = element.length ; i < n ; i++ ) {
+//       element[i].addEventListener(eventName, listener, false);
+//     }
+//     return;
+//   }
+//   element.addEventListener(eventName, listener, false);
+// } : ( window.attachEvent && function (element, eventName, listener) {
+//   if( element instanceof Array ) {
+//     for( var i = 0, n = element.length ; i < n ; i++ ) {
+//       element[i].addEventListener(eventName, listener, false);
+//     }
+//     return;
+//   }
+//   element.attachEvent('on' + eventName, listener);
+// } );
+
+
+if( !window.HTMLElement.prototype.addEventListener ) {
   throw new Error('Your Browser does not support events');
 }
 
@@ -143,7 +173,7 @@ function getIFrame (iframeStyles) {
 }
 
 function template (name, data){
-  return template.cache[name](data);
+  return template.cache[name](data || {});
 }
 
 template.cache = {};
@@ -285,22 +315,43 @@ module.exports = {
 },{}],2:[function(require,module,exports){
 var _ = require('../../src/utils');
 
-var box = document.querySelector('.box');
+window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 
-function closeModal (e) {
-  document.body.className = 'closing';
+var modal = document.querySelector('.modal'),
+    isMobile = window.matchMedia('( max-width: 767px )');
+
+function closeModal (resolved, value) {
+  modal.className = 'modal is-closing';
 
   setTimeout(function () {
     parent.window.postMessage({
       aplazame: 'modal',
-      event: 'close'
+      event: 'close',
+      resolved: resolved,
+      value: value
     }, '*');
-  }, 400);
+  }, isMobile.matches ? 0 : 600 );
 }
-_.listen(document.body, 'click', closeModal);
 
-_.listen(box, 'click', function (e) {
+_.listen( modal.querySelector('.card'), 'click', function (e) {
   e.stopPropagation();
+});
+
+_.listen(document.body, 'click', function () {
+  closeModal(false);
+});
+
+[].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {
+  _.listen( element, 'click', function (e) {
+    closeModal(true, element.getAttribute('modal-resolve') );
+  });
+});
+
+[].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
+  _.listen( element, 'click', function (e) {
+    e.stopPropagation();
+    closeModal(false, element.getAttribute('modal-reject') );
+  });
 });
 
 },{"../../src/utils":1}]},{},[2]);

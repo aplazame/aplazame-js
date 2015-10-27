@@ -19,7 +19,7 @@ test:
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
 
-build: test
+build: auto.install
 	@node make build
 
 dev: auto.install

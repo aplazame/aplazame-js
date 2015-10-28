@@ -76,8 +76,11 @@
               <span class="tae"><%= choices[i].annual_equivalent/100 %>%<span>
             </td>
             <td class="demo-column-amount">
-              <span class="amount"><%= getAmount(choices[i].amount) %><span><!--
-              --><span class="currency">&nbsp;€<span class="per-month">/mes</span></span>
+              <div>
+                <span class="amount"><%= getAmount(choices[i].amount) %><span><!--
+                --><span class="currency">&nbsp;€<span class="per-month">/mes</span></span>
+              </div>
+              <div class="downpayment-amount"><%= getAmount(choices[i].downpayment_amount) %>€<span class="label">&nbsp;p. inicial</span></div>
             </td>
           </tr><% } %>
         </tbody>

@@ -90,6 +90,9 @@ table.table
     th, td
       font-size: 1.6rem
 
+    @media #{$screen-sm-down}
+      table-layout: auto
+
   th, td
     &.demo-column-instalments, &.demo-column-tae, &.demo-column-amount
       text-align: center
@@ -103,8 +106,18 @@ table.table
       color: $grey-dark
 
   td.demo-column-amount
-    .currency
+    .amount
+      font-weight: $font-bold
+
+    .currency, .downpayment-amount
       color: $grey-dark
+
+    .downpayment-amount
+      font-size: 0.9em
+      margin-top: units(1)
+      .label
+        color: $grey-medium
+        font-size: 0.8em
 
     .per-month
       vertical-align: bottom

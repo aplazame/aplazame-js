@@ -34,7 +34,7 @@
           <div class="col-sm-6">
             <div class="demo-input-wrapper">
               <div class="demo-input-currency">€</div>
-              <input type="number" step="0.01" name="amount" class="demo-input" placeholder="cantidad a financiar" autofocus autocomplete="off"></input>
+              <input type="number" step="0.01" name="amount" class="demo-input" placeholder="cantidad a financiar" autofocus autocomplete="off" required></input>
             </div>
           </div>
           <div class="col-sm-6">
@@ -73,7 +73,7 @@
               <span class="num-instalments"><%= choices[i].num_instalments %></span><!--
               --><span class="months">&nbsp;<%= months(choices[i].num_instalments) %></span></td>
             <td class="demo-column-tae">
-              <span class="tae"><%= choices[i].annual_equivalent/1000 %>%<span>
+              <span class="tae"><%= choices[i].annual_equivalent/100 %>%<span>
             </td>
             <td class="demo-column-amount">
               <span class="amount"><%= getAmount(choices[i].amount) %><span><!--

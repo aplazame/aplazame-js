@@ -73,8 +73,13 @@ function widgetsLookup (element) {
             width: '100%'
           });
           iframes.push(iframe);
-          iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
+          // iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
           simulator.appendChild(iframe);
+
+          _.writeIframe(iframe,
+            response.data
+              .replace(/<head\>/, '<head><base href="' + api.baseUrl + 'widgets/simulator/" />')
+          );
 
           // _.writeIframe(iframe,
           //   response.data

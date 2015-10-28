@@ -1,6 +1,11 @@
 
+$height-header: 6rem
+$footer-header: 5rem
+
 @import 'ng-aplazame/styles/core'
 @import 'ng-aplazame/styles/components/alert'
+@import 'ng-aplazame/styles/components/input'
+@import 'ng-aplazame/styles/drafts/merchants/table'
 
 html, body
   margin: 0
@@ -13,6 +18,8 @@ html
 body
   font-size: 1.4rem // back to 14px
   min-height: 100%
+  position: relative
+  padding-bottom: $footer-header
 
 a
   text-decoration: none
@@ -25,8 +32,85 @@ a
 hr
   border: 1px solid lighten($grey-medium, 20)
 
+.demo-input-wrapper
+  font-size: 1rem
+  position: relative
+
+.demo-input
+  background: transparent
+  display: block
+  width: 100%
+  line-height: 4rem
+  padding: 0 units(2)
+  outline: 0
+  border-bottom: 1px solid $grey-medium
+  font-size: 2rem
+  color: $color-brand
+
+  &:focus
+    border-color: $color-brand
+
+  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button
+      /* display: none; <- Crashes Chrome on hover */
+      -webkit-appearance: none
+      margin: 0 // <-- Apparently some margin are still there even though it's hidden
+
+.demo-input-currency
+  @include absolute(right)
+  margin: auto
+  font-size: 2em
+  height: 1em
+  color: $color-brand
+
+  & + .demo-input
+    text-align: right
+    padding-right: 1.5em
+
+
+.demo-btn
+  border: 0
+  line-height: 4rem
+  @include background-active($color-brand)
+  width: 100%
+  font-size: 2rem
+  color: white
+  cursor: pointer
+
 .inline-block
   display: inline-block
+
+.demo-simulator-results
+
+  .loading
+    font-size: 1.4em
+    text-align: center
+
+table.table
+  &.demo-table
+    th, td
+      font-size: 1.6rem
+
+  th, td
+    &.demo-column-instalments, &.demo-column-tae, &.demo-column-amount
+      text-align: center
+
+  td.demo-column-tae
+    font-size: 0.9em
+    color: $grey-dark
+
+  td.demo-column-instalments
+    .months
+      color: $grey-dark
+
+  td.demo-column-amount
+    .currency
+      color: $grey-dark
+
+    .per-month
+      vertical-align: bottom
+      font-size: 0.8em
+      color: $grey-medium
+
 
 // header.header
 //   height: 5rem
@@ -42,11 +126,19 @@ hr
 @import header
 
 footer.footer
-  height: 5rem
+  @include absolute(bottom)
+  height: $footer-header
   color: white
   background: $grey-dark
   line-height: 5rem
   font-size: 1.5rem
+
+  .demo-footer-link
+    color: white
+    border-bottom: 1px dotted $grey-light
+    &:hover
+      text-decoration: none
+      border-bottom-style: solid
 
 @import cart-list
 @import article-sample

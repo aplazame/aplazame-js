@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Aplazame - DEMO</title>
+    <link rel="stylesheet" href="../demo.css"/>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    $if{dev}
+    <link rel="stylesheet" type="text/css" href="../dist/widgets/assets/fonts/font-gotham.css" />{:}
+    <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />{/}
+
+    $if{dev}<script src="http://localhost:12321/livereload.js"></script>{/}
+  </head>
+  <body>
+    <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
+    <header class="header">
+      <div class="container">
+        <div class="inline-block">
+          <a class="logo-link" href="/">
+            <img src="../dist/widgets/assets/images/logo.svg" alt="aplazame logo"/>
+            <span>|</span><span class="docs">Demo</span>
+          </a>
+        <div>
+      </div>
+    </header>
+
+    <div class="sections">
+
+      <div class="container-md">
+
+        <br/>
+
+        <form class="row" data-submit="updateValues">
+
+          <div class="col-sm-6">
+            <div class="demo-input-wrapper">
+              <div class="demo-input-currency">€</div>
+              <input type="number" step="0.01" name="amount" class="demo-input" placeholder="cantidad a financiar" autofocus autocomplete="off"></input>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="demo-btn">calcular</button>
+          </div>
+
+        </form>
+
+        <br/>
+        <br/>
+
+        <div class="demo-simulator-results"></div>
+
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <span>&copy;&nbsp;Aplazame S.L.</span>
+      </div>
+    </footer>
+
+    <script type="application/x-template" data-template="results">
+      <table class="table demo-table">
+        <thead>
+          <tr>
+            <th class="demo-column-instalments">Plazos</th>
+            <th class="demo-column-tae">Importe</th>
+            <th class="demo-column-amount">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for ( var i = 0, n = choices.length ; i < n ; i++ ) { %><tr>
+            <td class="demo-column-instalments">
+              <span class="num-instalments"><%= choices[i].num_instalments %></span><!--
+              --><span class="months">&nbsp;<%= months(choices[i].num_instalments) %></span></td>
+            <td class="demo-column-tae">
+              <span class="tae"><%= choices[i].annual_equivalent/1000 %>%<span>
+            </td>
+            <td class="demo-column-amount">
+              <span class="amount"><%= getAmount(choices[i].amount) %><span><!--
+              --><span class="currency">&nbsp;€<span class="per-month">/mes</span></span>
+            </td>
+          </tr><% } %>
+        </tbody>
+      </table>
+    </script>
+
+    <script type="text/javascript"
+            src="../dist/aplazame.js?sandbox=true"
+            data-aplazame="f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"
+            data-version="v1.2"
+            data-sandbox="true">
+    </script>
+    <script src="demo-simulator.js"></script>
+
+  </body>
+</html>

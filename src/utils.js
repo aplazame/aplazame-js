@@ -278,6 +278,24 @@ function cssQuery (_selector, rootElement) {
   }, []);
 }
 
+function getAmount (amount) {
+  var prefix = '';
+
+  if( amount < 0 ) {
+    prefix = '-';
+    amount = 0 - amount;
+  }
+
+  if( !amount ) {
+    return '0,00';
+  } else if( amount < 10 ) {
+    return '0,0' + amount;
+  } else if( amount < 100 ) {
+    return '0,' + amount;
+  }
+  return prefix + ('' + amount).replace(/..$/, ',$&');
+}
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -298,6 +316,7 @@ module.exports = {
   getIFrame: getIFrame,
   template: template,
   cssQuery: cssQuery,
+  getAmount: getAmount,
   elementData: document.createElement('div').dataset ? function (el, key, value) {
     if( value !== undefined ) {
       el.dataset[key] = value;

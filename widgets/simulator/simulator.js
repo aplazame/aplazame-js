@@ -10,24 +10,6 @@ _.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.
 var main = document.getElementById('main'),
     selectedChoice, choices = window.choices;
 
-function getAmount (amount) {
-  var prefix = '';
-
-  if( amount < 0 ) {
-    prefix = '-';
-    amount = 0 - amount;
-  }
-
-  if( !amount ) {
-    return '0,00';
-  } else if( amount < 10 ) {
-    return '0,0' + amount;
-  } else if( amount < 100 ) {
-    return '0,' + amount;
-  }
-  return prefix + ('' + amount).replace(/..$/, ',$&');
-}
-
 function emitSize () {
   setTimeout(function () {
     parent.window.postMessage({
@@ -80,7 +62,7 @@ function runAction (action, data) {
           card: _.template('modal-instalments', {
             selectedChoice: selectedChoice,
             choices: choices,
-            getAmount: getAmount,
+            getAmount: _.getAmount,
             months: function (m) {
               return m > 1 ? 'meses' : 'mes';
             }
@@ -93,7 +75,7 @@ function runAction (action, data) {
 
 function renderWidget () {
   main.innerHTML = _.template('widget', {
-    getAmount: getAmount,
+    getAmount: _.getAmount,
     choice: selectedChoice
   });
   emitSize();

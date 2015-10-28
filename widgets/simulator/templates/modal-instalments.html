@@ -10,7 +10,7 @@
           <button type="button" class="button<% if(choices[i] === selectedChoice) { %> active<% }%>" modal-resolve="<%= i %>">
             <div class="wrapper">
               <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>
-              <div class="amount"><%= getAmount(choices[i].amount) %> €</div>
+              <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>
             </div>
           </button>
         </div><%

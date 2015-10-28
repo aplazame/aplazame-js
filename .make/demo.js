@@ -20,6 +20,12 @@ module.exports = function (nitro) {
     }).write('public');
   });
 
+  nitro.task('demo-js', function (target) {
+
+    nitro.dir('demo').load('demo-simulator.js').process('browserify').write('public/simulator');
+
+  });
+
   nitro.task('demo-templates', function (target) {
 
     nitro.template.cmd('with', function (scope, expression) {
@@ -75,10 +81,12 @@ module.exports = function (nitro) {
     nitro.file.write('public/demo-cancel.html', renderIndex( indexData.$$new({ result: { closed: true, success: false } }) ) );
 
     nitro.file.write('public/playground.html', nitro.template( nitro.file.read('demo/playground.html') )( indexData ) );
+
+    nitro.file.write('public/simulator/index.html', nitro.template( nitro.file.read('demo/demo-simulator.html') )( indexData ) );
   });
 
-  nitro.task('demo-dev', ['demo-clear', 'demo-sass:dev', 'demo-templates:dev']);
+  nitro.task('demo-dev', ['demo-clear', 'demo-js', 'demo-sass:dev', 'demo-templates:dev']);
 
-  nitro.task('demo', ['demo-clear', 'demo-sass', 'demo-templates']);
+  nitro.task('demo', ['demo-clear', 'demo-js', 'demo-sass', 'demo-templates']);
 
 };

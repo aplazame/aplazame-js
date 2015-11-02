@@ -1,3 +1,5 @@
+'use strict';
+
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
     Element.prototype.webkitMatchesSelector ||
@@ -296,7 +298,7 @@ function getAmount (amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-module.exports = {
+var _ = {
   isObject: _isObject,
   isFunction: _isFunction,
   isString: _isString,
@@ -317,6 +319,8 @@ module.exports = {
   template: template,
   cssQuery: cssQuery,
   getAmount: getAmount,
+  liveDOM: require('./live-dom')(_),
+  http: require('./http'),
   elementData: document.createElement('div').dataset ? function (el, key, value) {
     if( value !== undefined ) {
       el.dataset[key] = value;
@@ -329,3 +333,5 @@ module.exports = {
     return el.getAttribute('data-' + key);
   }
 };
+
+module.exports = _;

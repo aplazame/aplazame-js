@@ -6,7 +6,7 @@
 		"Jesús Germade <jesus@aplazame.com>"
 	],
 	"description": "javascript sdk for aplazame.com api",
-	"main": "aplazame.js",
+	"main": "dist/aplazame.js",
 	"keywords": [
 		"aplazame",
 		"sdk",

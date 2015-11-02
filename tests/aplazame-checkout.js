@@ -1,4 +1,4 @@
-
+/* globals aplazame, describe, it, expect */
 
 describe('aplazame checkout', function () {
 

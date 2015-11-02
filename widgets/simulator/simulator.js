@@ -1,5 +1,5 @@
 
-var _ = require('../../src/utils'),
+var _ = require('../../src/tools/tools'),
     choices = [];
 
 _.template.lookup();
@@ -85,7 +85,7 @@ function renderWidget () {
     _.listen(element, 'click', function (e) {
       var action = element.getAttribute('data-action');
 
-      console.log('data-action');
+      // console.log('data-action');
 
       if( action !== undefined ) {
         e.preventDefault();
@@ -117,7 +117,7 @@ _.listen(window, 'message', function (e) {
 
     switch ( message.event ) {
       case 'choices':
-        console.log('choices', message);
+        // console.log('choices', message);
         choices = message.data;
         setChoice( choices.reduce(maxInstalments, null) );
         renderWidget();
@@ -131,7 +131,7 @@ _.listen(window, 'message', function (e) {
     e.used = true;
 
     if( message.event === 'resolved' && message.name === 'instalments' ) {
-      console.log('simulator message', message, choices[ Number(message.value) ]);
+      // console.log('simulator message', message, choices[ Number(message.value) ]);
       setChoice( choices[ Number(message.value) ] );
       renderWidget();
     }

@@ -1,12 +1,12 @@
 {
 	"name": "aplazame",
-	"version": "0.0.79",
+	"version": "0.0.80",
 	"homepage": "https://github.com/aplazame/aplazame-js",
 	"authors": [
 		"Jesús Germade <jesus@aplazame.com>"
 	],
 	"description": "javascript sdk for aplazame.com api",
-	"main": "aplazame.js",
+	"main": "dist/aplazame.js",
 	"keywords": [
 		"aplazame",
 		"sdk",

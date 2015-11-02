@@ -31,10 +31,10 @@ function checkout (options) {
         }),
         blur = document.createElement('style');
 
-    iframe.className = 'aplazame-checkout';
+    iframe.className = 'aplazame-checkout-iframe';
 
     blur.setAttribute('rel', 'stylesheet');
-    blur.textContent = 'body > *:not(script):not(iframe.aplazame-checkout) { -webkit-filter: blur(3px); filter: blur(3px); }';
+    blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
 
     // iframe.setAttribute('allowtransparency', 'true');
     // iframe.setAttribute('allowfullscreen', 'true');
@@ -67,8 +67,15 @@ function checkout (options) {
     _.onMessage('checkout', function (e, message) {
 
       switch( message.event ) {
+        case 'merchant':
+          console.log('mechant event [gogogo]');
+          document.head.appendChild(blur);
+          e.source.postMessage({
+            checkout: options
+          }, '*');
+          break;
         case 'drop-blur':
-          document.body.removeChild(blur);
+          document.head.removeChild(blur);
           break;
         case 'success':
           console.log('aplazame.checkout:success', message);
@@ -95,10 +102,29 @@ function checkout (options) {
           });
           // confirmation_url
           break;
+        case 'close':
+          if( iframe && message.close ) {
+            document.body.removeChild(iframe);
+            iframe = null;
+
+            switch( message.result ) {
+              case 'dismiss':
+                location.replace(options.merchant.checkout_url || '/');
+                break;
+              case 'success':
+                location.replace(options.merchant.success_url);
+                break;
+              case 'cancel':
+                location.replace(options.merchant.cancel_url);
+                break;
+            }
+          }
+          break;
       }
 
       if( message.require === 'merchant' ) {
-        document.body.appendChild(blur);
+        console.log('mechant event [gogogo]');
+        document.head.appendChild(blur);
         e.source.postMessage({
           checkout: options
         }, '*');

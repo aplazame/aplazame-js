@@ -1,97 +1,27 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.79';
+module.exports = '0.0.80';
 },{}],2:[function(require,module,exports){
+(function (global){
+
+global.aplazame = require('./core/core');
+
+global.aplazame.checkout = require('./apps/checkout');
+global.aplazame.button = require('./apps/button');
+global.aplazame.simulator = require('./apps/simulator');
+global.aplazame.modal = require('./apps/modal');
+
+require('./apps/http-service');
+
+require('./loaders/data-aplazame')(global.aplazame);
+require('./loaders/data-button')(global.aplazame);
+require('./loaders/data-simulator')(global.aplazame);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./apps/button":3,"./apps/checkout":4,"./apps/http-service":5,"./apps/modal":6,"./apps/simulator":7,"./core/core":10,"./loaders/data-aplazame":12,"./loaders/data-button":13,"./loaders/data-simulator":14}],3:[function(require,module,exports){
 'use strict';
 
-module.exports = {
-  host: 'https://api.aplazame.com/',
-  baseUrl: 'https://aplazame.com/static/',
-  version: 1,
-  checkoutVersion: 1,
-  sandbox: false
-};
-
-},{}],3:[function(require,module,exports){
-'use strict'; // jshint ignore:line
-
-var http = require('./http'),
-    _ = require('./utils'),
-    api = require('./api'),
-    acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json';
-
-function init (options) {
-  options = options || {};
-
-  if( typeof options.version === 'string' ) {
-    var matchVersion = options.version.match(/^v?(\d)(\.(\d))?$/);
-
-    if( !matchVersion ) {
-      throw new Error('malformed version, should be like \'v1.2\'');
-    }
-
-    options.version = Number(matchVersion[1]);
-
-    if( matchVersion[3] !== undefined ) {
-      options.checkoutVersion = Number(matchVersion[3]);
-    }
-  }
-
-  if( typeof options.sandbox === 'string' ) {
-    options.sandbox = options.sandbox === 'true';
-  }
-
-  if( typeof options.analytics === 'string' ) {
-    options.analytics = options.analytics === 'true';
-  }
-
-  _.extend(api, options);
-}
-
-// aplazame methods
-
-function apiOptions (options) {
-  options = options || {};
-  var publicKey = options.publicKey || api.publicKey;
-
-  if( !publicKey ) {
-    throw new Error('public key needs to be specified');
-  }
-
-  options = _.merge({}, {
-    headers: {
-      authorization: 'Bearer ' + publicKey
-    }
-  }, options);
-
-  options.version = options.version || api.version;
-  options.sandbox = ( options.sandbox === undefined ? api.sandbox : options.sandbox ) ? '.sandbox' : '';
-  options.paramsStr = '';
-  if( options.params ) {
-    for( var key in options.params ) {
-      options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
-    }
-  }
-
-  return _.merge(options, {
-    headers: {
-      accept: _.replaceKeys(acceptTmpl, options)
-    }
-  });
-}
-
-function apiGet (path, options) {
-  options = apiOptions(options);
-  var url = path ? _.joinPath(api.host, path) : api.host;
-
-  return http( url + options.paramsStr, options );
-}
-
-function apiPost (path, data, options) {
-  options = apiOptions(options);
-  var url = path ? _.joinPath(api.host, path) : api.host;
-
-  return http( url + options.paramsStr, _.merge(options, { method: 'post', data: data }) );
-}
+var apiHttp = require('../core/api-http'),
+    _ = require('../tools/tools');
 
 function getCartPrice () {
    var priceParts = document.querySelector('#total_price').textContent.match(/(\d+)([,.](\d+))?/);
@@ -157,7 +87,7 @@ function button (options) {
   if( !options.$$running && options.selector ) {
     options.$$running = true;
 
-    require('./live-dom').subscribe(function (el) {
+    _.liveDOM.subscribe(function (el) {
       button(options);
     });
   }
@@ -187,6 +117,23 @@ function button (options) {
     el.style.display = 'none';
   });
 
+  button.check(options, function () {
+    var elms = elements.slice();
+    elms.forEach(function (el) {
+      el.style.display = el.__display;
+    });
+  });
+
+  elements.forEach(function (el) {
+    _.elementData(el, 'buttonInitialized', true);
+  });
+}
+
+button.check = function (options, callback) {
+  if( _.isString(options) || _.isNumber(options) ) {
+    options = { amount: Number(options) };
+  }
+
   var params = {
     amount: options.amount,
     currency: options.currency || 'EUR'
@@ -196,20 +143,25 @@ function button (options) {
     params.country = options.country;
   }
 
-  apiGet('checkout/button', { params: params })
-    .then(function () {
-      var elms = elements.slice();
-      elms.forEach(function (el) {
-        el.style.display = el.__display;
-      });
-    });
+  var checkPromise = apiHttp.get('checkout/button', { params: params });
 
-  elements.forEach(function (el) {
-    _.elementData(el, 'buttonInitialized', true);
-  });
-}
+  if( _.isFunction(callback) ) {
+    checkPromise.then(function (response) { callback(true, response); }, function (response) { callback(false, response); });
+  }
+
+  return checkPromise;
+};
+
+module.exports = button;
+
+},{"../core/api-http":8,"../tools/tools":19}],4:[function(require,module,exports){
+'use strict';
+
+var api = require('../core/api'),
+    _ = require('../tools/tools');
 
 function checkout (options) {
+
   options = options || {};
   var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
 
@@ -221,7 +173,7 @@ function checkout (options) {
 
   options.api = api;
 
-  http( iframeSrc ).then(function (response) {
+  _.http( iframeSrc ).then(function (response) {
     document.body.style.overflow = 'hidden';
     // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
     var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
@@ -236,10 +188,10 @@ function checkout (options) {
         }),
         blur = document.createElement('style');
 
-    iframe.className = 'aplazame-checkout';
+    iframe.className = 'aplazame-checkout-iframe';
 
     blur.setAttribute('rel', 'stylesheet');
-    blur.textContent = 'body > *:not(script):not(iframe.aplazame-checkout) { -webkit-filter: blur(3px); filter: blur(3px); }';
+    blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
 
     // iframe.setAttribute('allowtransparency', 'true');
     // iframe.setAttribute('allowfullscreen', 'true');
@@ -269,67 +221,84 @@ function checkout (options) {
       origin: location.origin
     };
 
-    _.listen(window, 'message', function (e) {
-      if( !iframe ) {
-        return;
-      }
+    _.onMessage('checkout', function (e, message) {
 
-      var message = e.data;
-
-      if( !e.used && message.aplazame === 'checkout' ) {
-        e.used = true;
-
-        switch( message.event ) {
-          case 'drop-blur':
-            document.body.removeChild(blur);
-            break;
-          case 'success':
-            console.log('aplazame.checkout:success', message);
-
-            http( options.merchant.confirmation_url, {
-              method: 'post',
-              contentType: 'application/json',
-              data: message.data,
-              params: message.params
-            } ).then(function (response) {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
-                result: 'success',
-                response: http.plainResponse(response)
-              }, '*');
-            }, function () {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
-                result: 'error',
-                response: http.plainResponse(response)
-              }, '*');
-            });
-            // confirmation_url
-            break;
-        }
-
-        if( message.require === 'merchant' ) {
-          document.body.appendChild(blur);
+      switch( message.event ) {
+        case 'merchant':
+          console.log('mechant event [gogogo]');
+          document.head.appendChild(blur);
           e.source.postMessage({
             checkout: options
           }, '*');
-        } else if( message.close ) {
-          document.body.removeChild(iframe);
-          iframe = null;
+          break;
+        case 'drop-blur':
+          document.head.removeChild(blur);
+          break;
+        case 'success':
+          console.log('aplazame.checkout:success', message);
 
-          switch( message.close ) {
-            case 'dismiss':
-              location.replace(options.merchant.checkout_url || '/');
-              break;
-            case 'success':
-              location.replace(options.merchant.success_url);
-              break;
-            case 'cancel':
-              location.replace(options.merchant.cancel_url);
-              break;
+          _.http( options.merchant.confirmation_url, {
+            method: 'post',
+            contentType: 'application/json',
+            data: message.data,
+            params: message.params
+          } ).then(function (response) {
+            e.source.postMessage({
+              aplazame: 'checkout',
+              event: 'confirmation',
+              result: 'success',
+              response: _.http.plainResponse(response)
+            }, '*');
+          }, function () {
+            e.source.postMessage({
+              aplazame: 'checkout',
+              event: 'confirmation',
+              result: 'error',
+              response: _.http.plainResponse(response)
+            }, '*');
+          });
+          // confirmation_url
+          break;
+        case 'close':
+          if( iframe && message.close ) {
+            document.body.removeChild(iframe);
+            iframe = null;
+
+            switch( message.result ) {
+              case 'dismiss':
+                location.replace(options.merchant.checkout_url || '/');
+                break;
+              case 'success':
+                location.replace(options.merchant.success_url);
+                break;
+              case 'cancel':
+                location.replace(options.merchant.cancel_url);
+                break;
+            }
           }
+          break;
+      }
+
+      if( message.require === 'merchant' ) {
+        console.log('mechant event [gogogo]');
+        document.head.appendChild(blur);
+        e.source.postMessage({
+          checkout: options
+        }, '*');
+      } else if( iframe && message.close ) {
+        document.body.removeChild(iframe);
+        iframe = null;
+
+        switch( message.close ) {
+          case 'dismiss':
+            location.replace(options.merchant.checkout_url || '/');
+            break;
+          case 'success':
+            location.replace(options.merchant.success_url);
+            break;
+          case 'cancel':
+            location.replace(options.merchant.cancel_url);
+            break;
         }
       }
 
@@ -341,36 +310,50 @@ function checkout (options) {
 
 }
 
-function simulator (amount, _options, callback, onError) {
-  if( _.isFunction(_options) ) {
-    onError = callback;
-    callback = _options;
-    _options = {};
-  } else {
-    _options = _options || {};
-  }
-  var options = {
-    params: {
-      amount: amount
-    }
-  };
-  if( _options.payday ) {
-    options.params.payday = _options.payday;
-  }
-  if( _options.publicKey ) {
-    options.publicKey = _options.publicKey;
-  }
-  apiGet('instalment-plan-simulator', options ).then(function (response) {
-    if( _.isFunction(callback) ) {
-      callback(response.data.choices[0].instalments, response.data.options, response.data);
-    }
-  }, onError);
-}
+module.exports = checkout;
+
+},{"../core/api":9,"../tools/tools":19}],5:[function(require,module,exports){
+'use strict';
+
+var _ = require('../tools/tools');
+
+_.onMessage('http', function (e, message) {
+
+  _.http( message.url, {
+    method: message.method,
+    contentType: message.contentType,
+    data: message.data,
+    params: message.params
+  } ).then(function (response) {
+    e.source.postMessage({
+      aplazame: 'http',
+      event: 'response',
+      result: 'success',
+      response: _.http.plainResponse(response)
+    }, '*');
+  }, function (response) {
+    e.source.postMessage({
+      aplazame: 'http',
+      event: 'response',
+      result: 'error',
+      response: _.http.plainResponse(response)
+    }, '*');
+  });
+
+});
+
+module.exports = { ready: true };
+
+},{"../tools/tools":19}],6:[function(require,module,exports){
+'use strict';
+
+var api = require('../core/api'),
+    _ = require('../tools/tools');
 
 function modal (data, options) {
 
   if( !modal.cached ) {
-    return require('./http').noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
+    return _.http.noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
       modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
       modal(data, options);
     });
@@ -396,444 +379,405 @@ function modal (data, options) {
   document.body.style.overflow = 'hidden';
 }
 
-_.listen(window, 'message', function (e) {
+_.onMessage('modal', function (e, message) {
 
-  var message = e.data;
+  switch( message.event ) {
+    case 'open':
+      modal.referrer = e.source;
+      modal.message = message;
+      modal(message.data);
+      break;
+    case 'resolved':
+      modal.referrer.postMessage({
+        aplazame: 'modal',
+        event: 'resolved',
+        name: modal.message.name,
+        value: message.value
+      }, '*');
+      delete modal.referrer;
+      break;
+    case 'closing':
+      document.body.style.overflow = modal.iframe.overflow;
+      break;
+    case 'close':
+      if( modal.iframe ) {
+        document.body.removeChild(modal.iframe);
 
-  if( !e.used && message.aplazame === 'modal' ) {
-    e.used = true;
-
-    switch( message.event ) {
-      case 'open':
-        modal.referrer = e.source;
-        modal.message = message;
-        modal(message.data);
-        break;
-      case 'resolved':
-        modal.referrer.postMessage({
-          aplazame: 'modal',
-          event: 'resolved',
-          name: modal.message.name,
-          value: message.value
-        }, '*');
-        delete modal.referrer;
-        break;
-      case 'closing':
-        document.body.style.overflow = modal.iframe.overflow;
-        break;
-      case 'close':
-        if( modal.iframe ) {
-          document.body.removeChild(modal.iframe);
-
-          if( modal.referrer ) {
-            modal.referrer.postMessage({
-              aplazame: 'modal',
-              event: 'dismiss',
-              name: modal.message.name
-            }, '*');
-            delete modal.referrer;
-          }
-
-          if( modal.message ) {
-            delete modal.message;
-          }
-          delete modal.iframe;
+        if( modal.referrer ) {
+          modal.referrer.postMessage({
+            aplazame: 'modal',
+            event: 'dismiss',
+            name: modal.message.name
+          }, '*');
+          delete modal.referrer;
         }
-        break;
-    }
+
+        if( modal.message ) {
+          delete modal.message;
+        }
+        delete modal.iframe;
+      }
+      break;
   }
+  
 });
 
-module.exports = {
-  _: _,
-  init: init,
-  checkout: checkout,
-  button: button,
-  apiGet: apiGet,
-  apiPost: apiPost,
-  simulator: simulator,
-  modal: modal,
-  version: require('../.tmp/aplazame-version')
-};
+module.exports = modal;
 
-},{"../.tmp/aplazame-version":1,"./api":2,"./http":8,"./live-dom":9,"./utils":10}],4:[function(require,module,exports){
-(function (global){
+},{"../core/api":9,"../tools/tools":19}],7:[function(require,module,exports){
+'use strict';
 
-global.aplazame = require('./aplazame-core');
+var apiHttp = require('../core/api-http'),
+    _ = require('../tools/tools');
 
-require('./data-aplazame');
-require('./data-button');
-require('./data-simulator');
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./aplazame-core":3,"./data-aplazame":5,"./data-button":6,"./data-simulator":7}],5:[function(require,module,exports){
-var aplazame = require('./aplazame-core'),
-    aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
-    scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
-
-if( !/\/$/.test(scriptBase) ) {
-  scriptBase += '/';
-}
-
-if( aplazameScript ) {
-  var href = aplazameScript.src.split('?'),
-      sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
-
-  if( sandboxMatch ) {
-    aplazame.init({}, { sandbox: sandboxMatch[1] === '1' || sandboxMatch[1] === 'true' });
-  }
-}
-
-if( document.querySelector('script[data-aplazame]') ) {
-
-  var script = document.querySelector('script[data-aplazame]'),
-      initText = script.getAttribute('data-aplazame'),
-      options = {
-        baseUrl: scriptBase
-      };
-
-  if( /\:/.test(initText) ) {
-    initText.split(',').forEach(function (part) {
-      var keys = part.match(/^([^\:]+)\:(.*)/);
-      options[keys[1].trim()] = keys[2].trim();
-    });
+function simulator (amount, _options, callback, onError) {
+  if( _.isFunction(_options) ) {
+    onError = callback;
+    callback = _options;
+    _options = {};
   } else {
-    if( initText ) {
-      options.publicKey = initText;
+    _options = _options || {};
+  }
+  var options = {
+    params: {
+      amount: amount
     }
+  };
+  if( _options.payday ) {
+    options.params.payday = _options.payday;
   }
-
-  if( script.getAttribute('data-version') ) {
-    options.version = script.getAttribute('data-version');
+  if( _options.publicKey ) {
+    options.publicKey = _options.publicKey;
   }
-
-  if( script.getAttribute('data-sandbox') ) {
-    options.sandbox = script.getAttribute('data-sandbox');
-  }
-  if( script.getAttribute('data-analytics') ) {
-    options.analytics = script.getAttribute('data-analytics');
-  }
-
-  aplazame.init(options);
+  apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
+    if( _.isFunction(callback) ) {
+      callback(response.data.choices[0].instalments, response.data.options, response.data);
+    }
+  }, onError);
 }
 
-},{"./aplazame-core":3}],6:[function(require,module,exports){
-var aplazame = require('./aplazame-core'),
-    _ = require('./utils');
+module.exports = simulator;
 
-function buttonsLookup (element) {
-  if( !element.querySelectorAll ) {
-    return;
-  }
-  var btns = element.querySelectorAll('[data-aplazame-button]');
+},{"../core/api-http":8,"../tools/tools":19}],8:[function(require,module,exports){
+'use strict';
 
-  if( btns.length ) {
-
-    [].forEach.call(btns, function (btn) {
-      var btnId = btn.getAttribute('data-aplazame-button'),
-          btnParams = {
-            selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
-            parent: btn.getAttribute('data-parent'),
-            publicKey: btn.getAttribute('data-public-key'),
-            amount: btn.getAttribute('data-amount'),
-            currency: btn.getAttribute('data-currency') || undefined,
-            sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
-            country: btn.getAttribute('data-country') || undefined
-          };
-
-      aplazame.button(btnParams);
-    });
-
-  }
-}
-
-require('./live-dom').subscribe(buttonsLookup);
-
-_.ready(function () {
-  buttonsLookup(document);
-});
-
-},{"./aplazame-core":3,"./live-dom":9,"./utils":10}],7:[function(require,module,exports){
-var aplazame = require('./aplazame-core'),
-    _ = require('./utils'),
+var acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
+    _ = require('../tools/tools'),
     api = require('./api');
 
-function widgetsLookup (element) {
-  if( !element.querySelectorAll ) {
-    return;
+// aplazame methods
+
+function apiOptions (options) {
+  options = options || {};
+  var publicKey = options.publicKey || api.publicKey;
+
+  if( !publicKey ) {
+    throw new Error('public key needs to be specified');
   }
 
-  var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+  options = _.merge({}, {
+    headers: {
+      authorization: 'Bearer ' + publicKey
+    }
+  }, options);
 
-  if( simulators.length ) {
+  options.version = options.version || api.version;
+  options.sandbox = ( options.sandbox === undefined ? api.sandbox : options.sandbox ) ? '.sandbox' : '';
+  // options.paramsStr = '';
+  // if( options.params ) {
+  //   for( var key in options.params ) {
+  //     options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
+  //   }
+  // }
 
-    var http = require('./http'),
-        iframes = [],
-        choices = [];
+  return _.merge(options, {
+    headers: {
+      accept: _.replaceKeys(acceptTmpl, options)
+    }
+  });
+}
 
-    _.listen(window, 'message', function (e) {
-      var message = e.data;
+module.exports = {
+  get: function (path, options) {
+    options = apiOptions(options);
+    var url = path ? _.joinPath(api.host, path) : api.host;
 
-      if( !e.used && message.aplazame === 'simulator' ) {
-        e.used = true;
+    return _.http( url, options );
+  },
+  post: function (path, data, options) {
+    options = apiOptions(options);
+    var url = path ? _.joinPath(api.host, path) : api.host;
 
-        switch (message.event) {
-          case 'resize':
-            iframes.forEach(function (iframe) {
-              if( iframe.contentWindow === e.source ) {
-                iframe.style.height = message.data.height + 'px';
-              }
+    return _.http( url, _.merge(options, { method: 'post', data: data }) );
+  }
+};
+
+},{"../tools/tools":19,"./api":9}],9:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+  host: 'https://api.aplazame.com/',
+  baseUrl: 'https://aplazame.com/static/',
+  version: 1,
+  checkoutVersion: 1,
+  sandbox: false
+};
+
+},{}],10:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+  _: require('../tools/tools'),
+  init: require('./init'),
+  apiGet: require('./api-http').get,
+  apiPost: require('./api-http').post,
+  version: require('../../.tmp/aplazame-version')
+};
+
+},{"../../.tmp/aplazame-version":1,"../tools/tools":19,"./api-http":8,"./init":11}],11:[function(require,module,exports){
+'use strict';
+
+var api = require('./api'),
+    _ = require('../tools/tools');
+
+function init (options) {
+  options = options || {};
+
+  if( typeof options.version === 'string' ) {
+    var matchVersion = options.version.match(/^v?(\d)(\.(\d))?$/);
+
+    if( !matchVersion ) {
+      throw new Error('version mismatch, should be like \'v1.2\'');
+    }
+
+    options.version = Number(matchVersion[1]);
+
+    if( matchVersion[3] !== undefined ) {
+      options.checkoutVersion = Number(matchVersion[3]);
+    }
+  }
+
+  if( typeof options.sandbox === 'string' ) {
+    options.sandbox = options.sandbox === 'true';
+  }
+
+  if( typeof options.analytics === 'string' ) {
+    options.analytics = options.analytics === 'true';
+  }
+
+  _.extend(api, options);
+}
+
+module.exports = init;
+
+},{"../tools/tools":19,"./api":9}],12:[function(require,module,exports){
+'use strict';
+
+module.exports = function (aplazame) {
+
+  var aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
+      scriptBase = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
+
+  if( !/\/$/.test(scriptBase) ) {
+    scriptBase += '/';
+  }
+
+  if( aplazameScript ) {
+    var href = aplazameScript.src.split('?'),
+        sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
+
+    if( sandboxMatch ) {
+      aplazame.init({}, { sandbox: sandboxMatch[1] === '1' || sandboxMatch[1] === 'true' });
+    }
+  }
+
+  if( document.querySelector('script[data-aplazame]') ) {
+
+    var script = document.querySelector('script[data-aplazame]'),
+        initText = script.getAttribute('data-aplazame'),
+        options = {
+          baseUrl: scriptBase
+        };
+
+    if( /\:/.test(initText) ) {
+      initText.split(',').forEach(function (part) {
+        var keys = part.match(/^([^\:]+)\:(.*)/);
+        options[keys[1].trim()] = keys[2].trim();
+      });
+    } else {
+      if( initText ) {
+        options.publicKey = initText;
+      }
+    }
+
+    if( script.getAttribute('data-version') ) {
+      options.version = script.getAttribute('data-version');
+    }
+
+    if( script.getAttribute('data-sandbox') ) {
+      options.sandbox = script.getAttribute('data-sandbox');
+    }
+    if( script.getAttribute('data-analytics') ) {
+      options.analytics = script.getAttribute('data-analytics');
+    }
+
+    aplazame.init(options);
+  }
+
+};
+
+},{}],13:[function(require,module,exports){
+'use strict';
+
+module.exports = function (aplazame) {
+  var _ = require('../tools/tools');
+
+  function buttonsLookup (element) {
+    if( !element.querySelectorAll ) {
+      return;
+    }
+    var btns = element.querySelectorAll('[data-aplazame-button]');
+
+    if( btns.length ) {
+
+      [].forEach.call(btns, function (btn) {
+        var btnId = btn.getAttribute('data-aplazame-button'),
+            btnParams = {
+              selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
+              parent: btn.getAttribute('data-parent'),
+              publicKey: btn.getAttribute('data-public-key'),
+              amount: btn.getAttribute('data-amount'),
+              currency: btn.getAttribute('data-currency') || undefined,
+              sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
+              country: btn.getAttribute('data-country') || undefined
+            };
+
+        aplazame.button(btnParams);
+      });
+
+    }
+  }
+
+  _.liveDOM.subscribe(buttonsLookup);
+
+  _.ready(function () {
+    buttonsLookup(document);
+  });
+
+};
+
+},{"../tools/tools":19}],14:[function(require,module,exports){
+'use strict';
+
+module.exports = function (aplazame) {
+
+  var _ = aplazame._,
+      api = require('../core/api');
+
+  function widgetsLookup (element) {
+    if( !element.querySelectorAll ) {
+      return;
+    }
+
+    var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+
+    if( simulators.length ) {
+
+      var iframes = [],
+          choices = [];
+
+      _.listen(window, 'message', function (e) {
+        var message = e.data;
+
+        if( !e.used && message.aplazame === 'simulator' ) {
+          e.used = true;
+
+          switch (message.event) {
+            case 'resize':
+              iframes.forEach(function (iframe) {
+                if( iframe.contentWindow === e.source ) {
+                  iframe.style.height = message.data.height + 'px';
+                }
+              });
+              break;
+            case 'require:choices':
+              e.source.postMessage({
+                aplazame: 'simulator',
+                event: 'choices',
+                data: choices
+              }, '*');
+              break;
+          }
+        }
+      });
+
+      [].forEach.call(simulators, function (simulator) {
+
+        if( _.elementData(simulator, 'checked') ) {
+          return;
+        }
+
+        _.elementData(simulator, 'checked', true);
+
+        var simulatorParams = {
+          simulator: '[data-aplazame-simulator]',
+          amount: simulator.getAttribute('data-amount'),
+          publicKey: simulator.getAttribute('data-public-key')
+        };
+
+        simulator.innerHTML = 'cargando cuotas...';
+
+        aplazame.simulator(simulatorParams.amount, function (_choices) {
+          var child = simulator.firstChild,
+              now = new Date().getTime();
+
+          choices = _choices;
+
+          while( child ) {
+            simulator.removeChild(child);
+            child = simulator.firstChild;
+          }
+
+          _.http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
+            var iframe = _.getIFrame({
+              width: '100%'
             });
-            break;
-          case 'require:choices':
-            e.source.postMessage({
-              aplazame: 'simulator',
-              event: 'choices',
-              data: choices
-            }, '*');
-            break;
-        }
-      }
-    });
 
-    [].forEach.call(simulators, function (simulator) {
-      'use strict';
+            iframes.push(iframe);
+            // iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
+            simulator.appendChild(iframe);
 
-      if( _.elementData(simulator, 'checked') ) {
-        return;
-      }
+            _.writeIframe(iframe,
+              response.data.replace(/<head\>/, '<head><base href="' + api.baseUrl + 'widgets/simulator/" />')
+            );
 
-      _.elementData(simulator, 'checked', true);
-
-      var simulatorParams = {
-        simulator: '[data-aplazame-simulator]',
-        amount: simulator.getAttribute('data-amount'),
-        publicKey: simulator.getAttribute('data-public-key')
-      };
-
-      simulator.innerHTML = 'cargando cuotas...';
-
-      aplazame.simulator(simulatorParams.amount, function (_choices) {
-        var child = simulator.firstChild,
-            now = new Date().getTime();
-
-        choices = _choices;
-
-        while( child ) {
-          simulator.removeChild(child);
-          child = simulator.firstChild;
-        }
-
-        http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
-          var iframe = _.getIFrame({
-            width: '100%'
+            // _.writeIframe(iframe,
+            //   response.data
+            //     .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
+            //     .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
+            // );
+          }, function () {
+            simulator.innerHTML = '';
           });
-          iframes.push(iframe);
-          // iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
-          simulator.appendChild(iframe);
-
-          _.writeIframe(iframe,
-            response.data
-              .replace(/<head\>/, '<head><base href="' + api.baseUrl + 'widgets/simulator/" />')
-          );
-
-          // _.writeIframe(iframe,
-          //   response.data
-          //     .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
-          //     .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
-          // );
         }, function () {
           simulator.innerHTML = '';
         });
-      }, function () {
-        simulator.innerHTML = '';
+
       });
-
-    });
-    // aplazame.button(btnParams);
-  }
-}
-
-require('./live-dom').subscribe(widgetsLookup);
-
-_.ready(function () {
-  widgetsLookup(document);
-});
-
-},{"./api":2,"./aplazame-core":3,"./http":8,"./live-dom":9,"./utils":10}],8:[function(require,module,exports){
-// factory http
-
-function headerToTitleSlug(text) {
-  var key = text[0].toUpperCase() + text.substr(1);
-  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
-      return lower + '-' + upper;
-  });
-}
-
-function headerToCamelCase(text) {
-  var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
-    return lower + upper;
-  });
-}
-
-var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
-function parseContentType(contentType, text, xml) {
-  var matches = contentType && contentType.match(RE_contentType);
-  return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
-}
-
-function http (url, options) {
-  options = options || {};
-  options.headers = options.headers || {};
-  options.url = url;
-
-  var request = null,
-      on = { resolve: [], reject: [] };
-
-  try { // Firefox, Opera 8.0+, Safari
-      request = new XMLHttpRequest();
-  } catch (e) { // Internet Explorer
-      try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
-      catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
-  }
-  if( request === null ) { throw 'Browser does not support HTTP Request'; }
-
-  if( options.params ) {
-    var i = 0;
-    for( var param in options.params ) {
-      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(options.params[param]);
+      // aplazame.button(btnParams);
     }
   }
 
-  request.open( ( options.method || 'get').toUpperCase(), url );
-
-  if( options.withCredentials ) {
-    request.withCredentials = true;
-  }
-
-  for( var key in options.headers ) {
-      request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
-  }
-
-  request.resolve = function ( response ) {
-    on.resolve.forEach(function (handler) {
-      handler(response);
-    });
-  };
-  request.reject = function ( response ) {
-    on.reject.forEach(function (handler) {
-      handler(response);
-    });
-  };
-
-  var headersCache;
-  request.getHeaders = function () {
-    if( !headersCache ) {
-      headersCache = {};
-      request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
-          headersCache[headerToCamelCase(key)] = value.trim();
-      });
-    }
-    return headersCache;
-  };
-
-  request.onreadystatechange = function(){
-    if( request.readyState === 'complete' || request.readyState === 4 ) {
-      var response = {
-        data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
-        status: request.status,
-        headers: request.getHeaders,
-        xhr: request
-      };
-      if( request.status >= 200 && request.status < 300 ) {
-        request.resolve( response );
-      } else {
-        request.reject( response );
-      }
-    }
-  };
-
-  request.options = options;
-
-  if( options.contentType ) {
-    request.setRequestHeader( 'Content-Type', options.contentType );
-
-    if( options.contentType === 'application/json' && typeof options.data !== 'string' ) {
-      options.data = JSON.stringify(options.data);
-    }
-
-  } else {
-    if( typeof options.data === 'string' ) {
-      options.contentType = 'text/html';
-    } else {
-      options.contentType = 'application/json';
-      options.data = JSON.stringify(options.data);
-    }
-  }
-
-  request.send( options.data );
-
-  return {
-    then: function (onResolve, onReject) {
-      on.resolve.push(onResolve);
-      if( onReject instanceof Function ) {
-        on.reject.push(onReject);
-      }
-    },
-    error: function (onReject) {
-      on.reject.push(onReject);
-    }
-  };
-}
-
-http.noCache = function (url, options) {
-  url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
-  return http(url, options);
-};
-
-http.plainResponse = function (response) {
-  return {
-    data: response.data,
-    status: response.status,
-    headers: response.headers()
-  };
-};
-
-module.exports = http;
-
-},{}],9:[function(require,module,exports){
-
-var suscriptors = [],
-    running = false,
-    _ = require('./utils');
-
-function initLiveDOM () {
+  _.liveDOM.subscribe(widgetsLookup);
 
   _.ready(function () {
-    document.body.addEventListener('DOMSubtreeModified', function(event){
-      // console.debug( 'DOM Changed at ', new Date(), event.target );
-      for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
-        suscriptors[i](event.target);
-      }
-    }, false);
+    widgetsLookup(document);
   });
-  
-}
 
-module.exports = {
-  subscribe: function (handler) {
-    if( !running ) {
-      initLiveDOM(true);
-      running = true;
-    }
-    if( handler instanceof Function ) {
-      suscriptors.push(handler);
-    }
-  }
 };
 
-},{"./utils":10}],10:[function(require,module,exports){
+},{"../core/api":9}],15:[function(require,module,exports){
+
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
     Element.prototype.webkitMatchesSelector ||
@@ -1152,7 +1096,221 @@ module.exports = {
   getIFrame: getIFrame,
   template: template,
   cssQuery: cssQuery,
-  getAmount: getAmount,
+  getAmount: getAmount
+};
+
+},{}],16:[function(require,module,exports){
+// factory http
+
+function headerToTitleSlug(text) {
+  var key = text[0].toUpperCase() + text.substr(1);
+  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+      return lower + '-' + upper;
+  });
+}
+
+function headerToCamelCase(text) {
+  var key = text[0].toLowerCase() + text.substr(1);
+  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+    return lower + upper;
+  });
+}
+
+var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
+function parseContentType(contentType, text, xml) {
+  var matches = contentType && contentType.match(RE_contentType);
+  return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
+}
+
+function http (url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  options.url = url;
+
+  var request = null,
+      on = { resolve: [], reject: [] };
+
+  try { // Firefox, Opera 8.0+, Safari
+      request = new XMLHttpRequest();
+  } catch (e) { // Internet Explorer
+      try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
+      catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
+  }
+  if( request === null ) { throw 'Browser does not support HTTP Request'; }
+
+  if( options.params ) {
+    var i = 0;
+    for( var param in options.params ) {
+      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(options.params[param]);
+    }
+  }
+
+  request.open( ( options.method || 'get').toUpperCase(), url );
+
+  if( options.withCredentials ) {
+    request.withCredentials = true;
+  }
+
+  for( var key in options.headers ) {
+      request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
+  }
+
+  request.resolve = function ( response ) {
+    on.resolve.forEach(function (handler) {
+      handler(response);
+    });
+  };
+  request.reject = function ( response ) {
+    on.reject.forEach(function (handler) {
+      handler(response);
+    });
+  };
+
+  var headersCache;
+  request.getHeaders = function () {
+    if( !headersCache ) {
+      headersCache = {};
+      request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
+          headersCache[headerToCamelCase(key)] = value.trim();
+      });
+    }
+    return headersCache;
+  };
+
+  request.onreadystatechange = function(){
+    if( request.readyState === 'complete' || request.readyState === 4 ) {
+      var response = {
+        data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
+        status: request.status,
+        headers: request.getHeaders,
+        xhr: request
+      };
+      if( request.status >= 200 && request.status < 300 ) {
+        request.resolve( response );
+      } else {
+        request.reject( response );
+      }
+    }
+  };
+
+  request.options = options;
+
+  if( options.contentType ) {
+    request.setRequestHeader( 'Content-Type', options.contentType );
+
+    if( options.contentType === 'application/json' && typeof options.data !== 'string' ) {
+      options.data = JSON.stringify(options.data);
+    }
+
+  } else {
+    if( typeof options.data === 'string' ) {
+      options.contentType = 'text/html';
+    } else {
+      options.contentType = 'application/json';
+      options.data = JSON.stringify(options.data);
+    }
+  }
+
+  request.send( options.data );
+
+  return {
+    then: function (onResolve, onReject) {
+      if( onResolve instanceof Function ) {
+        on.resolve.push(onResolve);
+      }
+      if( onReject instanceof Function ) {
+        on.reject.push(onReject);
+      }
+    },
+    error: function (onReject) {
+      if( onReject instanceof Function ) {
+        on.reject.push(onReject);
+      }
+    }
+  };
+}
+
+http.noCache = function (url, options) {
+  url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
+  return http(url, options);
+};
+
+http.plainResponse = function (response) {
+  return {
+    data: response.data,
+    status: response.status,
+    headers: response.headers()
+  };
+};
+
+module.exports = http;
+
+},{}],17:[function(require,module,exports){
+'use strict';
+
+module.exports = function (_) {
+  var suscriptors = [],
+      running = false;
+
+  function initLiveDOM () {
+
+    _.ready(function () {
+      document.body.addEventListener('DOMSubtreeModified', function(event){
+        // console.debug( 'DOM Changed at ', new Date(), event.target );
+        for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
+          suscriptors[i](event.target);
+        }
+      }, false);
+    });
+
+  }
+
+  return {
+    subscribe: function (handler) {
+      if( !running ) {
+        initLiveDOM(true);
+        running = true;
+      }
+      if( handler instanceof Function ) {
+        suscriptors.push(handler);
+      }
+    }
+  };
+
+};
+
+},{}],18:[function(require,module,exports){
+
+module.exports = function (_) {
+
+  var messageTarget = {};
+
+  _.listen(window, 'message', function (e) {
+    var message = e.data,
+        listener = messageTarget[message.aplazame];
+
+    if( !e.used && listener ) {
+      e.used = true;
+      listener(e, message);
+    }
+  });
+
+  return function (target, handler) {
+    if( _.isString(target) && _.isFunction(handler) ) {
+      messageTarget[target] = handler;
+    }
+  };
+
+};
+
+},{}],19:[function(require,module,exports){
+// 'use strict';
+
+var _ = require('./basic-tools');
+
+_.extend(_, {
+  liveDOM: require('./live-dom')(_),
+  http: require('./http'),
   elementData: document.createElement('div').dataset ? function (el, key, value) {
     if( value !== undefined ) {
       el.dataset[key] = value;
@@ -1163,7 +1321,10 @@ module.exports = {
       el.setAttribute('data-' + key, value);
     }
     return el.getAttribute('data-' + key);
-  }
-};
+  },
+  onMessage: require('./message-listener')(_)
+});
 
-},{}]},{},[4]);
+module.exports = _;
+
+},{"./basic-tools":15,"./http":16,"./live-dom":17,"./message-listener":18}]},{},[2]);

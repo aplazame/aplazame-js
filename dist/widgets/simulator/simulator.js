@@ -3,6 +3,7 @@ module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar aho
 },{}],2:[function(require,module,exports){
 module.exports = '<div class="close-button">  <div class="button" modal-reject="">&times;&nbsp;Volver</div></div><div class="card-content">  <div class="modal-instalments-list">    <div class="choices-wrapper">      <% for( var i = 0, n = choices.length; i < n ; i++ ) {      %><div class="choice">          <button type="button" class="button<% if(choices[i] === selectedChoice) { %> active<% }%>" modal-resolve="<%= i %>">            <div class="wrapper">              <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>              <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>            </div>          </button>        </div><%      } %>    </div>  </div></div>';
 },{}],3:[function(require,module,exports){
+
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
     Element.prototype.webkitMatchesSelector ||
@@ -321,7 +322,221 @@ module.exports = {
   getIFrame: getIFrame,
   template: template,
   cssQuery: cssQuery,
-  getAmount: getAmount,
+  getAmount: getAmount
+};
+
+},{}],4:[function(require,module,exports){
+// factory http
+
+function headerToTitleSlug(text) {
+  var key = text[0].toUpperCase() + text.substr(1);
+  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+      return lower + '-' + upper;
+  });
+}
+
+function headerToCamelCase(text) {
+  var key = text[0].toLowerCase() + text.substr(1);
+  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+    return lower + upper;
+  });
+}
+
+var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
+function parseContentType(contentType, text, xml) {
+  var matches = contentType && contentType.match(RE_contentType);
+  return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
+}
+
+function http (url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  options.url = url;
+
+  var request = null,
+      on = { resolve: [], reject: [] };
+
+  try { // Firefox, Opera 8.0+, Safari
+      request = new XMLHttpRequest();
+  } catch (e) { // Internet Explorer
+      try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
+      catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
+  }
+  if( request === null ) { throw 'Browser does not support HTTP Request'; }
+
+  if( options.params ) {
+    var i = 0;
+    for( var param in options.params ) {
+      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(options.params[param]);
+    }
+  }
+
+  request.open( ( options.method || 'get').toUpperCase(), url );
+
+  if( options.withCredentials ) {
+    request.withCredentials = true;
+  }
+
+  for( var key in options.headers ) {
+      request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
+  }
+
+  request.resolve = function ( response ) {
+    on.resolve.forEach(function (handler) {
+      handler(response);
+    });
+  };
+  request.reject = function ( response ) {
+    on.reject.forEach(function (handler) {
+      handler(response);
+    });
+  };
+
+  var headersCache;
+  request.getHeaders = function () {
+    if( !headersCache ) {
+      headersCache = {};
+      request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
+          headersCache[headerToCamelCase(key)] = value.trim();
+      });
+    }
+    return headersCache;
+  };
+
+  request.onreadystatechange = function(){
+    if( request.readyState === 'complete' || request.readyState === 4 ) {
+      var response = {
+        data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
+        status: request.status,
+        headers: request.getHeaders,
+        xhr: request
+      };
+      if( request.status >= 200 && request.status < 300 ) {
+        request.resolve( response );
+      } else {
+        request.reject( response );
+      }
+    }
+  };
+
+  request.options = options;
+
+  if( options.contentType ) {
+    request.setRequestHeader( 'Content-Type', options.contentType );
+
+    if( options.contentType === 'application/json' && typeof options.data !== 'string' ) {
+      options.data = JSON.stringify(options.data);
+    }
+
+  } else {
+    if( typeof options.data === 'string' ) {
+      options.contentType = 'text/html';
+    } else {
+      options.contentType = 'application/json';
+      options.data = JSON.stringify(options.data);
+    }
+  }
+
+  request.send( options.data );
+
+  return {
+    then: function (onResolve, onReject) {
+      if( onResolve instanceof Function ) {
+        on.resolve.push(onResolve);
+      }
+      if( onReject instanceof Function ) {
+        on.reject.push(onReject);
+      }
+    },
+    error: function (onReject) {
+      if( onReject instanceof Function ) {
+        on.reject.push(onReject);
+      }
+    }
+  };
+}
+
+http.noCache = function (url, options) {
+  url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
+  return http(url, options);
+};
+
+http.plainResponse = function (response) {
+  return {
+    data: response.data,
+    status: response.status,
+    headers: response.headers()
+  };
+};
+
+module.exports = http;
+
+},{}],5:[function(require,module,exports){
+'use strict';
+
+module.exports = function (_) {
+  var suscriptors = [],
+      running = false;
+
+  function initLiveDOM () {
+
+    _.ready(function () {
+      document.body.addEventListener('DOMSubtreeModified', function(event){
+        // console.debug( 'DOM Changed at ', new Date(), event.target );
+        for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
+          suscriptors[i](event.target);
+        }
+      }, false);
+    });
+
+  }
+
+  return {
+    subscribe: function (handler) {
+      if( !running ) {
+        initLiveDOM(true);
+        running = true;
+      }
+      if( handler instanceof Function ) {
+        suscriptors.push(handler);
+      }
+    }
+  };
+
+};
+
+},{}],6:[function(require,module,exports){
+
+module.exports = function (_) {
+
+  var messageTarget = {};
+
+  _.listen(window, 'message', function (e) {
+    var message = e.data,
+        listener = messageTarget[message.aplazame];
+
+    if( !e.used && listener ) {
+      e.used = true;
+      listener(e, message);
+    }
+  });
+
+  return function (target, handler) {
+    if( _.isString(target) && _.isFunction(handler) ) {
+      messageTarget[target] = handler;
+    }
+  };
+
+};
+
+},{}],7:[function(require,module,exports){
+// 'use strict';
+
+var _ = require('./basic-tools');
+
+_.extend(_, {
+  liveDOM: require('./live-dom')(_),
+  http: require('./http'),
   elementData: document.createElement('div').dataset ? function (el, key, value) {
     if( value !== undefined ) {
       el.dataset[key] = value;
@@ -332,12 +547,15 @@ module.exports = {
       el.setAttribute('data-' + key, value);
     }
     return el.getAttribute('data-' + key);
-  }
-};
+  },
+  onMessage: require('./message-listener')(_)
+});
 
-},{}],4:[function(require,module,exports){
+module.exports = _;
 
-var _ = require('../../src/utils'),
+},{"./basic-tools":3,"./http":4,"./live-dom":5,"./message-listener":6}],8:[function(require,module,exports){
+
+var _ = require('../../src/tools/tools'),
     choices = [];
 
 _.template.lookup();
@@ -423,7 +641,7 @@ function renderWidget () {
     _.listen(element, 'click', function (e) {
       var action = element.getAttribute('data-action');
 
-      console.log('data-action');
+      // console.log('data-action');
 
       if( action !== undefined ) {
         e.preventDefault();
@@ -455,7 +673,7 @@ _.listen(window, 'message', function (e) {
 
     switch ( message.event ) {
       case 'choices':
-        console.log('choices', message);
+        // console.log('choices', message);
         choices = message.data;
         setChoice( choices.reduce(maxInstalments, null) );
         renderWidget();
@@ -469,7 +687,7 @@ _.listen(window, 'message', function (e) {
     e.used = true;
 
     if( message.event === 'resolved' && message.name === 'instalments' ) {
-      console.log('simulator message', message, choices[ Number(message.value) ]);
+      // console.log('simulator message', message, choices[ Number(message.value) ]);
       setChoice( choices[ Number(message.value) ] );
       renderWidget();
     }
@@ -481,4 +699,4 @@ parent.window.postMessage({
   event: 'require:choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/utils":3}]},{},[4]);
+},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":7}]},{},[8]);

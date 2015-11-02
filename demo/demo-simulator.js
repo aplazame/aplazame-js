@@ -1,6 +1,6 @@
 /* globals aplazame */
 
-var _ = require('../src/utils');
+var _ = require('../src/tools/tools');
 
 _.template.lookup();
 

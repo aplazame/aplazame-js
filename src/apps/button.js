@@ -97,6 +97,23 @@ function button (options) {
     el.style.display = 'none';
   });
 
+  button.check(options, function () {
+    var elms = elements.slice();
+    elms.forEach(function (el) {
+      el.style.display = el.__display;
+    });
+  });
+
+  elements.forEach(function (el) {
+    _.elementData(el, 'buttonInitialized', true);
+  });
+}
+
+button.check = function (options, callback) {
+  if( _.isString(options) || _.isNumber(options) ) {
+    options = { amount: Number(options) };
+  }
+
   var params = {
     amount: options.amount,
     currency: options.currency || 'EUR'
@@ -106,17 +123,13 @@ function button (options) {
     params.country = options.country;
   }
 
-  apiHttp.get('checkout/button', { params: params })
-    .then(function () {
-      var elms = elements.slice();
-      elms.forEach(function (el) {
-        el.style.display = el.__display;
-      });
-    });
+  var checkPromise = apiHttp.get('checkout/button', { params: params });
 
-  elements.forEach(function (el) {
-    _.elementData(el, 'buttonInitialized', true);
-  });
-}
+  if( _.isFunction(callback) ) {
+    checkPromise.then(function (response) { callback(true, response); }, function (response) { callback(false, response); });
+  }
+
+  return checkPromise;
+};
 
 module.exports = button;

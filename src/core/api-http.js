@@ -22,12 +22,12 @@ function apiOptions (options) {
 
   options.version = options.version || api.version;
   options.sandbox = ( options.sandbox === undefined ? api.sandbox : options.sandbox ) ? '.sandbox' : '';
-  options.paramsStr = '';
-  if( options.params ) {
-    for( var key in options.params ) {
-      options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
-    }
-  }
+  // options.paramsStr = '';
+  // if( options.params ) {
+  //   for( var key in options.params ) {
+  //     options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
+  //   }
+  // }
 
   return _.merge(options, {
     headers: {
@@ -41,12 +41,12 @@ module.exports = {
     options = apiOptions(options);
     var url = path ? _.joinPath(api.host, path) : api.host;
 
-    return _.http( url + options.paramsStr, options );
+    return _.http( url, options );
   },
   post: function (path, data, options) {
     options = apiOptions(options);
     var url = path ? _.joinPath(api.host, path) : api.host;
 
-    return _.http( url + options.paramsStr, _.merge(options, { method: 'post', data: data }) );
+    return _.http( url, _.merge(options, { method: 'post', data: data }) );
   }
 };

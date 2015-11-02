@@ -5,5 +5,5 @@ module.exports = {
   init: require('./init'),
   apiGet: require('./api-http').get,
   apiPost: require('./api-http').post,
-  version: require('../.tmp/aplazame-version')
+  version: require('../../.tmp/aplazame-version')
 };

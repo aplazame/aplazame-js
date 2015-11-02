@@ -32,52 +32,47 @@ function modal (data, options) {
   document.body.style.overflow = 'hidden';
 }
 
-_.listen(window, 'message', function (e) {
+_.onMessage('modal', function (e, message) {
 
-  var message = e.data;
+  switch( message.event ) {
+    case 'open':
+      modal.referrer = e.source;
+      modal.message = message;
+      modal(message.data);
+      break;
+    case 'resolved':
+      modal.referrer.postMessage({
+        aplazame: 'modal',
+        event: 'resolved',
+        name: modal.message.name,
+        value: message.value
+      }, '*');
+      delete modal.referrer;
+      break;
+    case 'closing':
+      document.body.style.overflow = modal.iframe.overflow;
+      break;
+    case 'close':
+      if( modal.iframe ) {
+        document.body.removeChild(modal.iframe);
 
-  if( !e.used && message.aplazame === 'modal' ) {
-    e.used = true;
-
-    switch( message.event ) {
-      case 'open':
-        modal.referrer = e.source;
-        modal.message = message;
-        modal(message.data);
-        break;
-      case 'resolved':
-        modal.referrer.postMessage({
-          aplazame: 'modal',
-          event: 'resolved',
-          name: modal.message.name,
-          value: message.value
-        }, '*');
-        delete modal.referrer;
-        break;
-      case 'closing':
-        document.body.style.overflow = modal.iframe.overflow;
-        break;
-      case 'close':
-        if( modal.iframe ) {
-          document.body.removeChild(modal.iframe);
-
-          if( modal.referrer ) {
-            modal.referrer.postMessage({
-              aplazame: 'modal',
-              event: 'dismiss',
-              name: modal.message.name
-            }, '*');
-            delete modal.referrer;
-          }
-
-          if( modal.message ) {
-            delete modal.message;
-          }
-          delete modal.iframe;
+        if( modal.referrer ) {
+          modal.referrer.postMessage({
+            aplazame: 'modal',
+            event: 'dismiss',
+            name: modal.message.name
+          }, '*');
+          delete modal.referrer;
         }
-        break;
-    }
+
+        if( modal.message ) {
+          delete modal.message;
+        }
+        delete modal.iframe;
+      }
+      break;
   }
+  
 });
 
 module.exports = modal;

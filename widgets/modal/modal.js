@@ -1,4 +1,4 @@
-var _ = require('../../src/utils');
+var _ = require('../../src/tools/tools');
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 

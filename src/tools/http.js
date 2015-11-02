@@ -113,13 +113,17 @@ function http (url, options) {
 
   return {
     then: function (onResolve, onReject) {
-      on.resolve.push(onResolve);
+      if( onResolve instanceof Function ) {
+        on.resolve.push(onResolve);
+      }
       if( onReject instanceof Function ) {
         on.reject.push(onReject);
       }
     },
     error: function (onReject) {
-      on.reject.push(onReject);
+      if( onReject instanceof Function ) {
+        on.reject.push(onReject);
+      }
     }
   };
 }

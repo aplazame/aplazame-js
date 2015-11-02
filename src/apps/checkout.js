@@ -64,67 +64,58 @@ function checkout (options) {
       origin: location.origin
     };
 
-    _.listen(window, 'message', function (e) {
-      if( !iframe ) {
-        return;
+    _.onMessage('checkout', function (e, message) {
+
+      switch( message.event ) {
+        case 'drop-blur':
+          document.body.removeChild(blur);
+          break;
+        case 'success':
+          console.log('aplazame.checkout:success', message);
+
+          _.http( options.merchant.confirmation_url, {
+            method: 'post',
+            contentType: 'application/json',
+            data: message.data,
+            params: message.params
+          } ).then(function (response) {
+            e.source.postMessage({
+              aplazame: 'checkout',
+              event: 'confirmation',
+              result: 'success',
+              response: _.http.plainResponse(response)
+            }, '*');
+          }, function () {
+            e.source.postMessage({
+              aplazame: 'checkout',
+              event: 'confirmation',
+              result: 'error',
+              response: _.http.plainResponse(response)
+            }, '*');
+          });
+          // confirmation_url
+          break;
       }
 
-      var message = e.data;
+      if( message.require === 'merchant' ) {
+        document.body.appendChild(blur);
+        e.source.postMessage({
+          checkout: options
+        }, '*');
+      } else if( iframe && message.close ) {
+        document.body.removeChild(iframe);
+        iframe = null;
 
-      if( !e.used && message.aplazame === 'checkout' ) {
-        e.used = true;
-
-        switch( message.event ) {
-          case 'drop-blur':
-            document.body.removeChild(blur);
+        switch( message.close ) {
+          case 'dismiss':
+            location.replace(options.merchant.checkout_url || '/');
             break;
           case 'success':
-            console.log('aplazame.checkout:success', message);
-
-            _.http( options.merchant.confirmation_url, {
-              method: 'post',
-              contentType: 'application/json',
-              data: message.data,
-              params: message.params
-            } ).then(function (response) {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
-                result: 'success',
-                response: _.http.plainResponse(response)
-              }, '*');
-            }, function () {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
-                result: 'error',
-                response: _.http.plainResponse(response)
-              }, '*');
-            });
-            // confirmation_url
+            location.replace(options.merchant.success_url);
             break;
-        }
-
-        if( message.require === 'merchant' ) {
-          document.body.appendChild(blur);
-          e.source.postMessage({
-            checkout: options
-          }, '*');
-        } else if( message.close ) {
-          document.body.removeChild(iframe);
-          iframe = null;
-
-          switch( message.close ) {
-            case 'dismiss':
-              location.replace(options.merchant.checkout_url || '/');
-              break;
-            case 'success':
-              location.replace(options.merchant.success_url);
-              break;
-            case 'cancel':
-              location.replace(options.merchant.cancel_url);
-              break;
-          }
+          case 'cancel':
+            location.replace(options.merchant.cancel_url);
+            break;
         }
       }
 

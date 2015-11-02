@@ -1,7 +1,7 @@
 'use strict';
 
 var api = require('./api'),
-    _ = require('../utils');
+    _ = require('../tools/tools');
 
 function init (options) {
   options = options || {};
@@ -10,7 +10,7 @@ function init (options) {
     var matchVersion = options.version.match(/^v?(\d)(\.(\d))?$/);
 
     if( !matchVersion ) {
-      throw new Error('malformed version, should be like \'v1.2\'');
+      throw new Error('version mismatch, should be like \'v1.2\'');
     }
 
     options.version = Number(matchVersion[1]);

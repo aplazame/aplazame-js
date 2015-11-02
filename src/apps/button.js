@@ -97,11 +97,13 @@ function button (options) {
     el.style.display = 'none';
   });
 
-  button.check(options, function () {
-    var elms = elements.slice();
-    elms.forEach(function (el) {
-      el.style.display = el.__display;
-    });
+  button.check(options, function (allowed) {
+    if( allowed ) {
+      var elms = elements.slice();
+      elms.forEach(function (el) {
+        el.style.display = el.__display;
+      });
+    }
   });
 
   elements.forEach(function (el) {
@@ -126,7 +128,7 @@ button.check = function (options, callback) {
   var checkPromise = apiHttp.get('checkout/button', { params: params });
 
   if( _.isFunction(callback) ) {
-    checkPromise.then(function (response) { callback(true, response); }, function (response) { callback(false, response); });
+    checkPromise.then(function (response) { callback(response.data.allowed, response); }, function (response) { callback(false, response); });
   }
 
   return checkPromise;

@@ -17,7 +17,6 @@ function getCents(value) {
 }
 
 _.listen(form, 'submit', function (e) {
-  console.log('gogogo!');
   e.preventDefault();
 
   localStorage.setItem('demo-simulator-amount', amount.value);

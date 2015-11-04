@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function (aplazame) {
-  var _ = require('../tools/tools');
+  var _ = aplazame._;
 
   function buttonsLookup (element) {
     if( !element.querySelectorAll ) {

@@ -5,16 +5,16 @@ module.exports = function (aplazame) {
   var aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
       options = {};
 
-  if( aplazameScript && aplazameScript.src ) {
-    options.baseUrl = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
-
-    if( !/\/$/.test(options.baseUrl) ) {
-      options.baseUrl += '/';
-    }
-  }
-
-
   if( aplazameScript ) {
+
+    if( aplazameScript.src ) {
+      options.baseUrl = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
+
+      if( !/\/$/.test(options.baseUrl) ) {
+        options.baseUrl += '/';
+      }
+    }
+
     var href = aplazameScript.src.split('?'),
         sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
 

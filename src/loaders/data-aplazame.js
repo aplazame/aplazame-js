@@ -3,13 +3,16 @@
 module.exports = function (aplazame) {
 
   var aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
-      options = {
-        baseUrl: aplazameScript.src.match(/(.*)\/(.*)$/)[1]
-      };
+      options = {};
 
-  if( !/\/$/.test(options.baseUrl) ) {
-    options.baseUrl += '/';
+  if( aplazameScript && aplazameScript.src ) {
+    options.baseUrl = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
+
+    if( !/\/$/.test(options.baseUrl) ) {
+      options.baseUrl += '/';
+    }
   }
+
 
   if( aplazameScript ) {
     var href = aplazameScript.src.split('?'),
@@ -43,7 +46,7 @@ module.exports = function (aplazame) {
     if( script.getAttribute('data-sandbox') ) {
       options.sandbox = script.getAttribute('data-sandbox');
     }
-    
+
     if( script.getAttribute('data-analytics') ) {
       options.analytics = script.getAttribute('data-analytics');
     }

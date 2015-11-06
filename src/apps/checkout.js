@@ -17,24 +17,25 @@ function checkout (options) {
   options.api = api;
 
   _.http( iframeSrc ).then(function (response) {
-    document.body.style.overflow = 'hidden';
+    // document.body.style.overflow = 'hidden';
     // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
     var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
         iframe = _.getIFrame({
-          position: 'fixed',
+          // position: 'fixed',
           top: 0,
           left: 0,
           width: '100%',
-          height: '100%',
+          height: '0',
           background: 'transparent',
           'z-index': 2147483647
         }),
-        blur = document.createElement('style');
+        cssBlur = _.cssHack('blur'),
+        cssModal = _.cssHack('modal');
 
-    iframe.className = 'aplazame-checkout-iframe';
+    iframe.className = 'aplazame-modal';
 
-    blur.setAttribute('rel', 'stylesheet');
-    blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
+    // blur.setAttribute('rel', 'stylesheet');
+    // blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
 
     // iframe.setAttribute('allowtransparency', 'true');
     // iframe.setAttribute('allowfullscreen', 'true');
@@ -68,14 +69,14 @@ function checkout (options) {
 
       switch( message.event ) {
         case 'merchant':
-          console.log('mechant event [gogogo]');
-          document.head.appendChild(blur);
+          cssModal.hack(true);
+          cssBlur.hack(true);
           e.source.postMessage({
             checkout: options
           }, '*');
           break;
         case 'drop-blur':
-          document.head.removeChild(blur);
+          document.head.removeChild(cssBlur);
           break;
         case 'success':
           console.log('aplazame.checkout:success', message);
@@ -105,6 +106,7 @@ function checkout (options) {
         case 'close':
           if( iframe && message.close ) {
             document.body.removeChild(iframe);
+            cssModal.hack(false);
             iframe = null;
 
             switch( message.result ) {
@@ -123,13 +125,14 @@ function checkout (options) {
       }
 
       if( message.require === 'merchant' ) {
-        console.log('mechant event [gogogo]');
-        document.head.appendChild(blur);
+        cssModal.hack(true);
+        cssBlur.hack(true);
         e.source.postMessage({
           checkout: options
         }, '*');
       } else if( iframe && message.close ) {
         document.body.removeChild(iframe);
+        cssModal.hack(false);
         iframe = null;
 
         switch( message.close ) {

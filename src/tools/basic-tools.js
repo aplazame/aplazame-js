@@ -297,6 +297,46 @@ function getAmount (amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
+var cssHack = (function () {
+  var cache = {},
+      hacks = {
+        blur: 'body > *:not(.aplazame-modal) { -webkit-filter: blur(3px); filter: blur(3px); }',
+        // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
+        modal: '.aplazame-modal { height: 100%; } html, body { height: 100vh; margin: 0; padding: 0; } body { overflow: hidden; }' +
+               '@media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: inherit; } }' +
+               '@media (min-width: 768px) { iframe.aplazame-modal { position: fixed; } }'
+        // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
+        // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
+      };
+
+  return function hack (hackName) {
+    if( !cache[hackName] ) {
+      var style = document.createElement('style');
+      style.setAttribute('rel', 'stylesheet');
+      style.textContent = hacks[hackName].replace(/;/g, ' !important;');
+
+      var enabled = false;
+
+      style.hack = function (enable) {
+        enable = enable === undefined || enable;
+
+        if( enable ) {
+          if( enabled ) { return; }
+          enabled = true;
+          document.head.appendChild(style);
+        } else {
+          if( !enabled ) { return; }
+          enabled = false;
+          document.head.removeChild(style);
+        }
+      };
+
+      cache[hackName] = style;
+    }
+    return cache[hackName];
+  };
+})();
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -317,5 +357,6 @@ module.exports = {
   getIFrame: getIFrame,
   template: template,
   cssQuery: cssQuery,
-  getAmount: getAmount
+  getAmount: getAmount,
+  cssHack: cssHack
 };

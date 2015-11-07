@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.88';
+module.exports = '0.0.89';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -355,6 +355,7 @@ module.exports = { ready: true };
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
+    aplazameVersion = require('../../.tmp/aplazame-version'),
     lastScrollTop;
 
 function modal(content, options) {
@@ -395,7 +396,7 @@ function modal(content, options) {
   // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
-  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html';
+  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
   // _.writeIframe(modal.iframe, modal.cached(content || {}) );
 
   // document.body.style.overflow = 'hidden';
@@ -460,7 +461,7 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../core/api":9,"../tools/tools":19}],7:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":9,"../tools/tools":19}],7:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),

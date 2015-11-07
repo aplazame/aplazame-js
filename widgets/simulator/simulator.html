@@ -3,11 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="simulator.css" />
+    <link rel="stylesheet" href="simulator.css?v=${pkg.version}" />
 
-    $if{dev}
-    <link rel="stylesheet" type="text/css" href="../assets/fonts/font-gotham.css" />{:}
-    <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />{/}
+    <link rel="stylesheet" type="text/css" href="../assets/fonts/font-gotham.css" />
   </head>
   <body>
     <div class="text-center">
@@ -52,6 +50,6 @@
         <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
       <% } %>
     </script>
-    <script type="text/javascript" src="simulator.js"></script>
+    <script type="text/javascript" src="simulator.js?v=${pkg.version}"></script>
   </body>
 </html>

@@ -22,7 +22,8 @@ module.exports = function (nitro) {
   nitro.task('widgets.html', function (target) {
 
     var scope = nitro.tools.scope({
-          dev: target === 'dev'
+          dev: target === 'dev',
+          pkg: require('../package')
         });
 
     nitro.dir('widgets')

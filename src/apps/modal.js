@@ -1,7 +1,8 @@
 'use strict';
 
 var api = require('../core/api'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    lastScrollTop;
 
 function modal (data, options) {
 
@@ -12,19 +13,31 @@ function modal (data, options) {
     });
   }
 
+  if( modal.iframe ) {
+    document.body.removeChild(modal.iframe);
+  }
+
   options = options || {};
 
   modal.iframe = _.getIFrame({
-        position: 'fixed',
         top: 0,
         left: 0,
         width: '100%',
-        height: '100%',
+        height: '0',
         background: 'transparent',
         'z-index': 2147483647
       });
 
-  modal.iframe.overflow = document.body.style.overflow;
+  modal.iframe.className = 'aplazame-modal';
+
+  // lastScrollTop = _.scrollTop();
+  // console.log('scrollTop', lastScrollTop );
+  // _.cssHack('modal').hack(true);
+
+  // var cssBlur = _.cssHack('blur'),
+  //     cssModal = _.cssHack('modal');
+
+  // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
   _.writeIframe(modal.iframe, modal.cached(data || {}) );
@@ -34,11 +47,18 @@ function modal (data, options) {
 
 _.onMessage('modal', function (e, message) {
 
+  console.log('message', 'modal', message);
+
   switch( message.event ) {
     case 'open':
       modal.referrer = e.source;
       modal.message = message;
       modal(message.data);
+      break;
+    case 'opened':
+      lastScrollTop = _.scrollTop();
+      console.log('scrollTop', lastScrollTop );
+      _.cssHack('modal').hack(true);
       break;
     case 'resolved':
       modal.referrer.postMessage({
@@ -53,6 +73,10 @@ _.onMessage('modal', function (e, message) {
       document.body.style.overflow = modal.iframe.overflow;
       break;
     case 'close':
+      _.cssHack('modal').hack(false);
+      setTimeout(function () {
+        _.scrollTop(lastScrollTop);
+      }, 0);
       if( modal.iframe ) {
         document.body.removeChild(modal.iframe);
 
@@ -72,7 +96,7 @@ _.onMessage('modal', function (e, message) {
       }
       break;
   }
-  
+
 });
 
 module.exports = modal;

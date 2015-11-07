@@ -57,3 +57,8 @@ _.listen(document.body, 'click', function () {
     closeModal(false, element.getAttribute('modal-reject') );
   });
 });
+
+parent.window.postMessage({
+  aplazame: 'modal',
+  event: 'opened'
+}, '*');

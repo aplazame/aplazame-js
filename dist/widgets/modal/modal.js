@@ -298,6 +298,54 @@ function getAmount (amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
+var cssHack = (function () {
+  var cache = {},
+      hacks = {
+        blur: 'body > *:not(.aplazame-modal) { -webkit-filter: blur(3px); filter: blur(3px); }',
+        // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
+        modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } body { overflow: hidden; }' +
+               '@media (max-width: 767px) { html, body { height: 100%; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
+               '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
+        // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
+        // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
+      };
+
+  return function hack (hackName) {
+    if( !cache[hackName] ) {
+      var style = document.createElement('style');
+      style.setAttribute('rel', 'stylesheet');
+      style.textContent = hacks[hackName].replace(/;/g, ' !important;');
+
+      var enabled = false;
+
+      style.hack = function (enable) {
+        enable = enable === undefined || enable;
+
+        if( enable ) {
+          if( enabled ) { return; }
+          enabled = true;
+          document.head.appendChild(style);
+        } else {
+          if( !enabled ) { return; }
+          enabled = false;
+          document.head.removeChild(style);
+        }
+      };
+
+      cache[hackName] = style;
+    }
+    return cache[hackName];
+  };
+})();
+
+function scrollTop (value) {
+  if( value !== undefined ) {
+    document.documentElement.scrollTop = value;
+    document.body.scrollTop = value;
+  }
+  return document.documentElement.scrollTop || document.body.scrollTop;
+}
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -318,7 +366,9 @@ module.exports = {
   getIFrame: getIFrame,
   template: template,
   cssQuery: cssQuery,
-  getAmount: getAmount
+  getAmount: getAmount,
+  cssHack: cssHack,
+  scrollTop: scrollTop
 };
 
 },{}],2:[function(require,module,exports){
@@ -555,6 +605,7 @@ var _ = require('../../src/tools/tools');
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 
 var modal = document.querySelector('.modal'),
+    card = modal.querySelector('.card'),
     isMobile = window.matchMedia('( max-width: 767px )');
 
 modal.className = 'modal is-opening';
@@ -589,25 +640,39 @@ function closeModal (resolved, value) {
   }, isMobile.matches ? 0 : 600 );
 }
 
-_.listen( modal.querySelector('.card'), 'click', function (e) {
-  e.stopPropagation();
-});
-
-_.listen(document.body, 'click', function () {
-  closeModal(false);
-});
-
-[].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {
-  _.listen( element, 'click', function (e) {
-    closeModal(true, element.getAttribute('modal-resolve') );
-  });
-});
-
-[].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
-  _.listen( element, 'click', function (e) {
+function initListeners () {
+  _.listen( card, 'click', function (e) {
     e.stopPropagation();
-    closeModal(false, element.getAttribute('modal-reject') );
   });
+
+  _.listen(document.body, 'click', function () {
+    closeModal(false);
+  });
+
+  [].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {
+    _.listen( element, 'click', function (e) {
+      closeModal(true, element.getAttribute('modal-resolve') );
+    });
+  });
+
+  [].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
+    _.listen( element, 'click', function (e) {
+      e.stopPropagation();
+      closeModal(false, element.getAttribute('modal-reject') );
+    });
+  });
+}
+
+_.onMessage('modal', function (e, message) {
+  if( message.event === 'content' ) {
+    card.innerHTML = message.content.card;
+    initListeners();
+  }
 });
+
+parent.window.postMessage({
+  aplazame: 'modal',
+  event: 'opened'
+}, '*');
 
 },{"../../src/tools/tools":5}]},{},[6]);

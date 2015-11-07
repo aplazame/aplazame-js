@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.87';
+module.exports = '0.0.88';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -181,24 +181,25 @@ function checkout(options) {
   options.api = api;
 
   _.http(iframeSrc).then(function (response) {
-    document.body.style.overflow = 'hidden';
+    // document.body.style.overflow = 'hidden';
     // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
     var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
         iframe = _.getIFrame({
-      position: 'fixed',
+      // position: 'fixed',
       top: 0,
       left: 0,
       width: '100%',
-      height: '100%',
+      height: '0',
       background: 'transparent',
       'z-index': 2147483647
     }),
-        blur = document.createElement('style');
+        cssBlur = _.cssHack('blur'),
+        cssModal = _.cssHack('modal');
 
-    iframe.className = 'aplazame-checkout-iframe';
+    iframe.className = 'aplazame-modal';
 
-    blur.setAttribute('rel', 'stylesheet');
-    blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
+    // blur.setAttribute('rel', 'stylesheet');
+    // blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
 
     // iframe.setAttribute('allowtransparency', 'true');
     // iframe.setAttribute('allowfullscreen', 'true');
@@ -232,14 +233,14 @@ function checkout(options) {
 
       switch (message.event) {
         case 'merchant':
-          console.log('mechant event [gogogo]');
-          document.head.appendChild(blur);
+          cssModal.hack(true);
+          cssBlur.hack(true);
           e.source.postMessage({
             checkout: options
           }, '*');
           break;
         case 'drop-blur':
-          document.head.removeChild(blur);
+          document.head.removeChild(cssBlur);
           break;
         case 'success':
           console.log('aplazame.checkout:success', message);
@@ -269,6 +270,7 @@ function checkout(options) {
         case 'close':
           if (iframe && message.close) {
             document.body.removeChild(iframe);
+            cssModal.hack(false);
             iframe = null;
 
             switch (message.result) {
@@ -287,13 +289,14 @@ function checkout(options) {
       }
 
       if (message.require === 'merchant') {
-        console.log('mechant event [gogogo]');
-        document.head.appendChild(blur);
+        cssModal.hack(true);
+        cssBlur.hack(true);
         e.source.postMessage({
           checkout: options
         }, '*');
       } else if (iframe && message.close) {
         document.body.removeChild(iframe);
+        cssModal.hack(false);
         iframe = null;
 
         switch (message.close) {
@@ -351,44 +354,71 @@ module.exports = { ready: true };
 'use strict';
 
 var api = require('../core/api'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    lastScrollTop;
 
-function modal(data, options) {
+function modal(content, options) {
 
-  if (!modal.cached) {
-    return _.http.noCache(api.baseUrl + 'widgets/modal/modal.html').then(function (response) {
-      modal.cached = _.template.compile(response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />'));
-      modal(data, options);
-    });
+  // if( !modal.cached ) {
+  //   return _.http.noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
+  //     modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
+  //     modal(data, options);
+  //   });
+  // }
+
+  if (modal.iframe) {
+    document.body.removeChild(modal.iframe);
   }
 
   options = options || {};
 
   modal.iframe = _.getIFrame({
-    position: 'fixed',
     top: 0,
     left: 0,
     width: '100%',
-    height: '100%',
+    height: '0',
     background: 'transparent',
     'z-index': 2147483647
   });
 
-  modal.iframe.overflow = document.body.style.overflow;
+  modal.iframe.className = 'aplazame-modal';
+
+  modal.iframe.content = content;
+
+  // lastScrollTop = _.scrollTop();
+  // console.log('scrollTop', lastScrollTop );
+  // _.cssHack('modal').hack(true);
+
+  // var cssBlur = _.cssHack('blur'),
+  //     cssModal = _.cssHack('modal');
+
+  // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
-  _.writeIframe(modal.iframe, modal.cached(data || {}));
+  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html';
+  // _.writeIframe(modal.iframe, modal.cached(content || {}) );
 
-  document.body.style.overflow = 'hidden';
+  // document.body.style.overflow = 'hidden';
 }
 
 _.onMessage('modal', function (e, message) {
+
+  console.log('message', 'modal', message);
 
   switch (message.event) {
     case 'open':
       modal.referrer = e.source;
       modal.message = message;
       modal(message.data);
+      break;
+    case 'opened':
+      lastScrollTop = _.scrollTop();
+      _.cssHack('modal').hack(true);
+      e.source.postMessage({
+        aplazame: 'modal',
+        event: 'content',
+        content: modal.iframe.content
+      }, '*');
       break;
     case 'resolved':
       modal.referrer.postMessage({
@@ -403,6 +433,10 @@ _.onMessage('modal', function (e, message) {
       document.body.style.overflow = modal.iframe.overflow;
       break;
     case 'close':
+      _.cssHack('modal').hack(false);
+      setTimeout(function () {
+        _.scrollTop(lastScrollTop);
+      }, 0);
       if (modal.iframe) {
         document.body.removeChild(modal.iframe);
 
@@ -1060,6 +1094,56 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
+var cssHack = (function () {
+  var cache = {},
+      hacks = {
+    blur: 'body > *:not(.aplazame-modal) { -webkit-filter: blur(3px); filter: blur(3px); }',
+    // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
+    modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } body { overflow: hidden; }' + '@media (max-width: 767px) { html, body { height: 100%; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
+    // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
+    // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
+  };
+
+  return function hack(hackName) {
+    if (!cache[hackName]) {
+      var style = document.createElement('style');
+      style.setAttribute('rel', 'stylesheet');
+      style.textContent = hacks[hackName].replace(/;/g, ' !important;');
+
+      var enabled = false;
+
+      style.hack = function (enable) {
+        enable = enable === undefined || enable;
+
+        if (enable) {
+          if (enabled) {
+            return;
+          }
+          enabled = true;
+          document.head.appendChild(style);
+        } else {
+          if (!enabled) {
+            return;
+          }
+          enabled = false;
+          document.head.removeChild(style);
+        }
+      };
+
+      cache[hackName] = style;
+    }
+    return cache[hackName];
+  };
+})();
+
+function scrollTop(value) {
+  if (value !== undefined) {
+    document.documentElement.scrollTop = value;
+    document.body.scrollTop = value;
+  }
+  return document.documentElement.scrollTop || document.body.scrollTop;
+}
+
 module.exports = {
   isObject: _isObject,
   isFunction: _isFunction,
@@ -1080,7 +1164,9 @@ module.exports = {
   getIFrame: getIFrame,
   template: template,
   cssQuery: cssQuery,
-  getAmount: getAmount
+  getAmount: getAmount,
+  cssHack: cssHack,
+  scrollTop: scrollTop
 };
 
 },{}],16:[function(require,module,exports){

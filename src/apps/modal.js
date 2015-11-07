@@ -2,6 +2,7 @@
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
+    aplazameVersion = require('../../.tmp/aplazame-version'),
     lastScrollTop;
 
 function modal (content, options) {
@@ -42,7 +43,7 @@ function modal (content, options) {
   // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
-  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html';
+  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
   // _.writeIframe(modal.iframe, modal.cached(content || {}) );
 
   // document.body.style.overflow = 'hidden';

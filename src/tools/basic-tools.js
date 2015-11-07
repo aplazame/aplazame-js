@@ -302,9 +302,9 @@ var cssHack = (function () {
       hacks = {
         blur: 'body > *:not(.aplazame-modal) { -webkit-filter: blur(3px); filter: blur(3px); }',
         // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
-        modal: '.aplazame-modal { height: 100%; } html, body { height: 100%; margin: 0; padding: 0; } body { overflow: hidden; }' +
-               '@media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
-               '@media (min-width: 768px) { iframe.aplazame-modal { position: fixed; } }'
+        modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } body { overflow: hidden; }' +
+               '@media (max-width: 767px) { html, body { height: 100%; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
+               '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
         // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
         // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
       };

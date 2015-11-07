@@ -4,14 +4,14 @@ var api = require('../core/api'),
     _ = require('../tools/tools'),
     lastScrollTop;
 
-function modal (data, options) {
+function modal (content, options) {
 
-  if( !modal.cached ) {
-    return _.http.noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
-      modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
-      modal(data, options);
-    });
-  }
+  // if( !modal.cached ) {
+  //   return _.http.noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
+  //     modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
+  //     modal(data, options);
+  //   });
+  // }
 
   if( modal.iframe ) {
     document.body.removeChild(modal.iframe);
@@ -30,6 +30,8 @@ function modal (data, options) {
 
   modal.iframe.className = 'aplazame-modal';
 
+  modal.iframe.content = content;
+
   // lastScrollTop = _.scrollTop();
   // console.log('scrollTop', lastScrollTop );
   // _.cssHack('modal').hack(true);
@@ -40,9 +42,10 @@ function modal (data, options) {
   // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
-  _.writeIframe(modal.iframe, modal.cached(data || {}) );
+  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html';
+  // _.writeIframe(modal.iframe, modal.cached(content || {}) );
 
-  document.body.style.overflow = 'hidden';
+  // document.body.style.overflow = 'hidden';
 }
 
 _.onMessage('modal', function (e, message) {
@@ -57,8 +60,12 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();
-      console.log('scrollTop', lastScrollTop );
       _.cssHack('modal').hack(true);
+      e.source.postMessage({
+        aplazame: 'modal',
+        event: 'content',
+        content: modal.iframe.content
+      }, '*');
       break;
     case 'resolved':
       modal.referrer.postMessage({

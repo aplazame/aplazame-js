@@ -22,7 +22,7 @@
 	"license": "GPL-3.0",
 	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
 	"devDependencies": {
-		"nitro": "1.5.20",
+		"nitro": "1.5.23",
 		"bower": "^1.5.3",
 		"jasmine-core": "^2.3.4",
 		"karma": "^0.13.15",

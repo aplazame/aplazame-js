@@ -14,14 +14,16 @@ _.onMessage('http', function (e, message) {
       aplazame: 'http',
       event: 'response',
       result: 'success',
-      response: _.http.plainResponse(response)
+      response: _.http.plainResponse(response),
+      srcMessage: message
     }, '*');
   }, function (response) {
     e.source.postMessage({
       aplazame: 'http',
       event: 'response',
       result: 'error',
-      response: _.http.plainResponse(response)
+      response: _.http.plainResponse(response),
+      srcMessage: message
     }, '*');
   });
 

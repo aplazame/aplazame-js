@@ -398,10 +398,10 @@ function parseContentType(contentType, text, xml) {
   return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
 }
 
-function http (url, options) {
-  options = options || {};
-  options.headers = options.headers || {};
-  options.url = url;
+function http (url, config) {
+  config = config || {};
+  config.headers = config.headers || {};
+  config.url = url;
 
   var request = null,
       on = { resolve: [], reject: [] };
@@ -414,21 +414,21 @@ function http (url, options) {
   }
   if( request === null ) { throw 'Browser does not support HTTP Request'; }
 
-  if( options.params ) {
+  if( config.params ) {
     var i = 0;
-    for( var param in options.params ) {
-      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(options.params[param]);
+    for( var param in config.params ) {
+      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(config.params[param]);
     }
   }
 
-  request.open( ( options.method || 'get').toUpperCase(), url );
+  request.open( ( config.method || 'get').toUpperCase(), url );
 
-  if( options.withCredentials ) {
+  if( config.withCredentials ) {
     request.withCredentials = true;
   }
 
-  for( var key in options.headers ) {
-      request.setRequestHeader( headerToTitleSlug(key), options.headers[key] );
+  for( var key in config.headers ) {
+      request.setRequestHeader( headerToTitleSlug(key), config.headers[key] );
   }
 
   request.resolve = function ( response ) {
@@ -456,6 +456,7 @@ function http (url, options) {
   request.onreadystatechange = function(){
     if( request.readyState === 'complete' || request.readyState === 4 ) {
       var response = {
+        config: request.config,
         data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
         status: request.status,
         headers: request.getHeaders,
@@ -469,25 +470,25 @@ function http (url, options) {
     }
   };
 
-  request.options = options;
+  request.config = config;
 
-  if( options.contentType ) {
-    request.setRequestHeader( 'Content-Type', options.contentType );
+  if( config.contentType ) {
+    request.setRequestHeader( 'Content-Type', config.contentType );
 
-    if( options.contentType === 'application/json' && typeof options.data !== 'string' ) {
-      options.data = JSON.stringify(options.data);
+    if( config.contentType === 'application/json' && typeof config.data !== 'string' ) {
+      config.data = JSON.stringify(config.data);
     }
 
   } else {
-    if( typeof options.data === 'string' ) {
-      options.contentType = 'text/html';
+    if( typeof config.data === 'string' ) {
+      config.contentType = 'text/html';
     } else {
-      options.contentType = 'application/json';
-      options.data = JSON.stringify(options.data);
+      config.contentType = 'application/json';
+      config.data = JSON.stringify(config.data);
     }
   }
 
-  request.send( options.data );
+  request.send( config.data );
 
   return {
     then: function (onResolve, onReject) {
@@ -506,13 +507,14 @@ function http (url, options) {
   };
 }
 
-http.noCache = function (url, options) {
+http.noCache = function (url, config) {
   url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
-  return http(url, options);
+  return http(url, config);
 };
 
 http.plainResponse = function (response) {
   return {
+    config: response.config,
     data: response.data,
     status: response.status,
     headers: response.headers()

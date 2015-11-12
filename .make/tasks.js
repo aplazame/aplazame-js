@@ -2,9 +2,16 @@
 
 module.exports = function (nitro) {
 
-  var canClear = ['dist', '.tmp'];
+  var canClear = ['dist', '.tmp', 'public'];
 
   nitro.task('clear', function (target) {
+    if( target === 'build' ) {
+      canClear.forEach(function (dir) {
+        nitro.dir.remove(dir);
+      });
+      return;
+    }
+
     if( canClear.indexOf(target) !== -1 ) {
       nitro.dir.remove(target);
     }
@@ -12,9 +19,9 @@ module.exports = function (nitro) {
 
   // main tasks
 
-  nitro.task('build', ['clear:dist', 'clear:.tmp', 'js', 'widgets', 'demo']);
+  nitro.task('build', ['clear:build', 'js', 'widgets', 'demo']);
 
-  nitro.task('dev', ['clear:dist', 'clear:.tmp', 'js:dev', 'widgets-dev', 'demo-dev'], function () {
+  nitro.task('dev', ['clear:build', 'js:dev', 'widgets-dev', 'demo-dev'], function () {
 
     nitro.watch('src', ['js']);
 

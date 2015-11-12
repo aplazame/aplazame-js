@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.94';
+module.exports = '0.0.95';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -342,12 +342,7 @@ _.onMessage('http', function (e, message) {
     };
   }
 
-  _.http(message.url, {
-    method: message.method,
-    contentType: message.contentType,
-    data: message.data,
-    params: message.params
-  }).then(processResponse('success'), processResponse('error'));
+  _.http(message.url, message).then(processResponse('success'), processResponse('error'));
 });
 
 module.exports = { ready: true };

@@ -7,7 +7,7 @@ _.onMessage('http', function (e, message) {
   function processResponse(result) {
 
     return function (response) {
-      
+
       var responsep = _.http.plainResponse(response);
       responsep.config = message;
 
@@ -20,12 +20,7 @@ _.onMessage('http', function (e, message) {
     };
   }
 
-  _.http( message.url, {
-    method: message.method,
-    contentType: message.contentType,
-    data: message.data,
-    params: message.params
-  } ).then(processResponse('success'), processResponse('error'));
+  _.http( message.url, message ).then(processResponse('success'), processResponse('error'));
 
 });
 

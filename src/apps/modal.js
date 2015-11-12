@@ -51,7 +51,7 @@ function modal (content, options) {
 
 _.onMessage('modal', function (e, message) {
 
-  console.log('message', 'modal', message);
+  // console.log('message', 'modal', message);
 
   switch( message.event ) {
     case 'open':

@@ -2,11 +2,11 @@ var _ = require('../../src/tools/tools');
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 
-var modal = document.querySelector('.modal'),
-    card = modal.querySelector('.card'),
+var modal, card,
+    // card = modal.querySelector('.card'),
     isMobile = window.matchMedia('( max-width: 767px )');
 
-modal.className = 'modal is-opening';
+// modal.className = 'modal is-opening';
 
 if( isMobile.matches ) {
   setTimeout(function () {
@@ -15,7 +15,7 @@ if( isMobile.matches ) {
 }
 
 function closeModal (resolved, value) {
-  modal.className = 'modal is-closing';
+  modal.className = modal.className.replace(' is-opening', '') + ' is-closing';
 
   parent.window.postMessage({
     aplazame: 'modal',
@@ -63,12 +63,15 @@ function initListeners () {
 
 _.onMessage('modal', function (e, message) {
   if( message.event === 'content' ) {
-    card.innerHTML = message.content.card;
+    document.body.innerHTML = message.content.card;
+    modal = document.querySelector('.modal');
+    card = document.querySelector('.card');
+    modal.className += ' is-opening';
+    // if( message.modalClass ) {
+    //   modal.className = modal.className + ' ' + message.modalClass;
+    // }
     initListeners();
   }
 });
 
-parent.window.postMessage({
-  aplazame: 'modal',
-  event: 'opened'
-}, '*');
+parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');

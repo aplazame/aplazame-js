@@ -14,49 +14,56 @@
   <body>
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
-      <div class="container">
-        <div class="inline-block">
-          <a class="logo-link" href="/">
-            <img src="../dist/widgets/assets/images/logo.svg" alt="aplazame logo"/>
-            <span>|</span><span class="docs">Demo</span>
-          </a>
-        <div>
+      <div class="container-md">
+        <a class="demo-link" href="/">Demo</a>
+        <a class="logo-link" href="/">
+          <img src="/dist/widgets/assets/images/logotipo-white.svg" alt="aplazame logo"/>
+        </a>
       </div>
     </header>
 
-    <div class="sections">
+    <div class="sections container-md">
 
-      <div class="container-md">
+      <section class="section-box">
 
-        <br/>
+        <div class="section-title">
+          <h3>Simulador de cuotas</h3>
+        </div>
 
-        <form class="row" data-submit="updateValues">
+        <article>
 
-          <div class="col-sm-6">
-            <div class="demo-input-wrapper">
-              <div class="demo-input-currency">€</div>
-              <input type="number" step="0.01" name="amount" class="demo-input" placeholder="cantidad a financiar" autofocus autocomplete="off" required></input>
+          <form class="row" data-submit="updateValues">
+
+            <div class="col-sm-6">
+              <div class="demo-input-wrapper">
+                <div class="demo-input-currency">€</div>
+                <input type="number" step="0.01" name="amount" class="demo-input" placeholder="cantidad a financiar" autofocus autocomplete="off" required></input>
+              </div>
             </div>
-          </div>
-          <div class="col-sm-6">
-            <button type="submit" class="demo-btn">calcular</button>
-          </div>
+            <div class="col-sm-6">
+              <button type="submit" class="demo-btn">calcular</button>
+            </div>
 
-        </form>
+          </form>
 
-        <br/>
-        <br/>
+        </article>
 
-        <div class="demo-simulator-results"></div>
+      </section>
 
-      </div>
+      <section class="section-box demo-simulator-section hidden">
+
+        <div class="section-title">
+          <h3>Resultados</h3>
+        </div>
+
+        <article class="demo-simulator-results hidden"></article>
+
+      </section>
 
     </div>
 
-    <footer class="footer">
-      <div class="container">
-        <span>&copy;&nbsp;Aplazame S.L.</span>
-      </div>
+    <footer class="footer container-md">
+      <span>&copy;&nbsp;Aplazame S.L.</span>
     </footer>
 
     <script type="application/x-template" data-template="results">

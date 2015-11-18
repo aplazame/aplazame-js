@@ -24,10 +24,10 @@
       <div class="container">
         <div class="inline-block">
           <a class="logo-link" href="/">
-            <img src="/dist/widgets/assets/images/logo.svg" alt="aplazame logo"/>
-            <span>|</span><span class="docs">Demo</span>
+            <img src="/dist/widgets/assets/images/logo-white.svg" alt="aplazame logo"/>
+            <span>|</span><span class="label">Demo</span>
           </a>
-        <div>
+        </div>
       </div>
     </header>
 
@@ -36,14 +36,14 @@
       $if{result}{:}
       <section class="container">
 
-        <h2>Simulador de cuotas</h2>
+        <h2 class="demo">Simulador de cuotas</h2>
 
         $with{ checkout.order.articles[1] as article }
           <article class="row article-sample">
-            <div class="col-sm-5 col-md-6 img-wrapper">
+            <div class="col-sm-offset-3 col-sm-6 col-md-offset-0 img-wrapper">
               <img src="${article.image_url}" alt="${article.name}"/>
             </div>
-            <div class="col-sm-7 col-md-6 details">
+            <div class="col-md-6 details">
               <div class="label">${article.name}</div>
               <p class="description">${article.description}</p>
               <div class="price">${ toEUR(article.price) }</div>
@@ -64,7 +64,7 @@
 
       <section class="container cart-list">
 
-        <h2>Carrito de compra</h2>
+        <h2 class="demo">Carrito de compra</h2>
 
         <ul>
           $each{ article in checkout.order.articles }
@@ -84,18 +84,18 @@
           </li>
           {/}
           <li class="row">
-            <div class="col-xs-3">
+            <div class="col-xs-8">
               <div class="concept">Envío</div>
             </div>
-            <div class="col-xs-9 details">
+            <div class="col-xs-4 details">
               <span class="price">${ toEUR( shippingAmount() ) }</span>
             </div>
           </li>
           <li class="row">
-            <div class="col-xs-3">
+            <div class="col-xs-8">
               <div class="concept">Descuento</div>
             </div>
-            <div class="col-xs-9 details">
+            <div class="col-xs-4 details">
               <span class="price">${ toEUR( discountAmount() ) }</span>
             </div>
           </li>
@@ -118,7 +118,9 @@
         {:}
           <div class="pay-with-aplazame">
             <button data-aplazame-button-info="default" onclick="loadCheckout();">
-              <span>Pagar con&nbsp;</span><img src="/dist/widgets/assets/images/logo.svg"/>
+              <span>Pagar con&nbsp;</span><!--
+              --><img src="/dist/widgets/assets/images/logo-white.svg"/><!--
+              --><span>&nbsp;aplazame</span>
             </button>
           </div>
         {/}

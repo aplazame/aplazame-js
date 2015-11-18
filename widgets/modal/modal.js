@@ -2,20 +2,20 @@ var _ = require('../../src/tools/tools');
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 
-var modal = document.querySelector('.modal'),
-    card = modal.querySelector('.card'),
+var modal, card,
     isMobile = window.matchMedia('( max-width: 767px )');
+    // card = modal.querySelector('.card'),
 
-modal.className = 'modal is-opening';
+// modal.className = 'modal is-opening';
 
-if( isMobile.matches ) {
-  setTimeout(function () {
-    modal.className = 'modal';
-  }, 600);
-}
+// if( isMobile.matches ) {
+//   setTimeout(function () {
+//     modal.className = 'modal';
+//   }, 600);
+// }
 
 function closeModal (resolved, value) {
-  modal.className = 'modal is-closing';
+  modal.className = modal.className.replace(' is-opening', '') + ' is-closing';
 
   parent.window.postMessage({
     aplazame: 'modal',
@@ -55,20 +55,39 @@ function initListeners () {
 
   [].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
     _.listen( element, 'click', function (e) {
-      e.stopPropagation();
+      // e.stopPropagation();
       closeModal(false, element.getAttribute('modal-reject') );
     });
+  });
+
+  [].forEach.call( document.querySelectorAll('[data-widget="active-group"]'), function (element) {
+
+    var currentChoice;
+
+    [].forEach.call( document.querySelectorAll('[data-widget="active-toggle"]'), function (toggle) {
+      _.listen( toggle, 'click', function (e) {
+        if( currentChoice ) {
+          _.removeClass(currentChoice, 'active');
+        }
+        _.addClass(toggle, 'active');
+        currentChoice = toggle;
+      });
+    });
+
   });
 }
 
 _.onMessage('modal', function (e, message) {
   if( message.event === 'content' ) {
-    card.innerHTML = message.content.card;
+    document.body.innerHTML = message.content.card;
+    modal = document.querySelector('.modal');
+    card = document.querySelector('.card');
+    modal.className += ' is-opening';
+    // if( message.modalClass ) {
+    //   modal.className = modal.className + ' ' + message.modalClass;
+    // }
     initListeners();
   }
 });
 
-parent.window.postMessage({
-  aplazame: 'modal',
-  event: 'opened'
-}, '*');
+parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');

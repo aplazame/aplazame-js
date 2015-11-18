@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.95",
+	"version": "0.0.96",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {
@@ -22,7 +22,7 @@
 	"license": "GPL-3.0",
 	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
 	"devDependencies": {
-		"nitro": "1.5.23",
+		"nitro": "1.5.26",
 		"bower": "^1.5.3",
 		"jasmine-core": "^2.3.4",
 		"karma": "^0.13.15",

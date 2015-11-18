@@ -5,6 +5,7 @@ var _ = require('../src/tools/tools');
 _.template.lookup();
 
 var form = document.querySelector('form[data-submit="updateValues"]'),
+    resultsWrapper = document.querySelector('.demo-simulator-section'),
     results = document.querySelector('.demo-simulator-results'),
     amount = form.querySelector('input[name="amount"]');
 
@@ -22,10 +23,15 @@ _.listen(form, 'submit', function (e) {
 
   var currentAmount = getCents( amount.value );
 
-  results.innerHTML = '<div class="loading">cargando...</div>';
+  resultsWrapper.querySelector('.section-title > h3').innerHTML = 'cargando...';
+  _.removeClass(resultsWrapper, 'hidden');
+  _.addClass(results, 'hidden');
 
   aplazame.simulator(currentAmount, function (choices) {
     console.log('simulator', currentAmount, choices);
+    resultsWrapper.querySelector('.section-title > h3').innerHTML = 'Resultados';
+    _.removeClass(results, 'hidden');
+
     results.innerHTML = _.template('results', {
       getAmount: _.getAmount,
       choices: choices,

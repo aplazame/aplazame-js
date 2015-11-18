@@ -1,8 +1,9 @@
 
 .article-sample
 
-  margin: units(2) 0
-  background: $grey-light
+  // margin: units(2) 0
+  margin: 0
+  // background: $grey-light
   padding: units(1)
 
   .img-wrapper
@@ -17,16 +18,20 @@
     padding: units(1)
 
     .label
-      font-size: 2rem
+      font-size: 1.4em
       margin-bottom: 0.5em
 
       @media #{$screen-xs}
-        font-size: 1.5rem
+        font-size: 1.2em
 
     .description
       color: $grey-dark
       line-height: 1.5
-      font-weight: 500
+      font-weight: $font-regular
+      margin-bottom: 1em
+
+      @media #{$screen-xs}
+        font-size: 0.9em
 
     .price
       text-align: right

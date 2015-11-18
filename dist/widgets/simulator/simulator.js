@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar ahora<br/>y pagar después.</h2></div><div class="card-content content-padding">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul class="styled">    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a <%= creditThreshold %> €.</li>    <li>¿Tienes alguna duda? Llámanos al 91 290 89 23 o escríbenos un email a <a class="link" href="mailto:hola@aplazame.com">hola@aplazame.com</a>.</li>  </ul></div><div class="cta">  <button type="submit" class="button" modal-resolve="ok">    <span class="cta-title">Entendido</span>  </button></div>';
 },{}],2:[function(require,module,exports){
-module.exports = '<div class="close-button">  <div class="button" modal-reject="">&times;&nbsp;Volver</div></div><div class="card-content">  <div class="modal-instalments-list">    <div class="choices-wrapper">      <% for( var i = 0, n = choices.length; i < n ; i++ ) {      %><div class="choice">          <button type="button" class="button<% if(choices[i] === selectedChoice) { %> active<% }%>" modal-resolve="<%= i %>">            <div class="wrapper">              <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>              <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>            </div>          </button>        </div><%      } %>    </div>  </div></div>';
+module.exports = '<div class="modal modal-grey modal-narrow">  <div class="card">    <div class="close-button" modal-reject="">      <div class="button">&times;&nbsp;Volver</div>    </div>    <div class="card-content">      <div class="modal-instalments-list">        <header class="aplazame"></header>        <section class="info desktop">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p class="mobile">En Aplazame te ayudamos a pagar tus compras cuándo y como quieras. <a>¿Quieres saber más?</a></p>          <p class="desktop">Aplazame te ayuda a pagar tus compras cuándo y como quieras.</br>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú. <a>Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = 0, n = choices.length; i < n ; i++ ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>    </div>    <div class="cta fixed">      <button class="button" type="submit" modal-reject="">        <span class="cta-title">Simplemente selecciona Aplazame</span>        <span class="cta-subtitle">cuando vayas a pagar</span>      </button>    </div>  </div></div>';
 },{}],3:[function(require,module,exports){
 
 if( !Element.prototype.matchesSelector ) {
@@ -12,6 +12,12 @@ if( !Element.prototype.matchesSelector ) {
     Element.prototype.oMatchesSelector
   );
 }
+
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
 
 function _isType (type) {
     return function (o) {
@@ -307,8 +313,8 @@ var cssHack = (function () {
       hacks = {
         blur: 'body > *:not(.aplazame-modal) { -webkit-filter: blur(3px); filter: blur(3px); }',
         // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
-        modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } body { overflow: hidden; }' +
-               '@media (max-width: 767px) { html, body { height: 100%; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
+        modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' +
+               '@media (max-width: 767px) { html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
                '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
         // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
         // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
@@ -350,7 +356,35 @@ function scrollTop (value) {
   return document.documentElement.scrollTop || document.body.scrollTop;
 }
 
-module.exports = {
+var _classActions = {
+  add: document.documentElement.classList ? function (element, className) {
+    element.classList.add(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    _classActions.remove(element, className);
+    element.className += ' ' + className;
+  },
+  remove: document.documentElement.classList ? function (element, className) {
+    element.classList.remove(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    element.className = element.className.replace(RE_CLEANCLASS,'');
+  },
+  action: function (action, tools) {
+    return function (element, className) {
+      if( className.indexOf(' ') >= 0 ) {
+        className.split(' ').forEach(function (cn) {
+          _classActions[action](element, cn);
+        });
+      } else {
+        _classActions[action](element, className);
+      }
+      return tools;
+    };
+  }
+};
+
+var tools = {
   isObject: _isObject,
   isFunction: _isFunction,
   isString: _isString,
@@ -372,8 +406,12 @@ module.exports = {
   cssQuery: cssQuery,
   getAmount: getAmount,
   cssHack: cssHack,
-  scrollTop: scrollTop
+  scrollTop: scrollTop,
+  addClass: _classActions.action('add', tools),
+  removeClass: _classActions.action('remove', tools)
 };
+
+module.exports = tools;
 
 },{}],4:[function(require,module,exports){
 // factory http
@@ -713,36 +751,33 @@ function maxInstalments (prev, choice) {
   }
 }
 
-_.listen(window, 'message', function (e) {
-  var message = e.data;
+var isMobile,
+    setMobile = function (mobile) {
+      if( isMobile === undefined || isMobile !== mobile ) {
+        isMobile = mobile;
 
-  if( e.used ) {
-    return;
-  }
-
-  if( message.aplazame === 'simulator' ) {
-    e.used = true;
-
-    switch ( message.event ) {
-      case 'choices':
-        // console.log('choices', message);
+        if( isMobile ) {
+          _.addClass( document.querySelector('.widget-item-instalments'), 'mobile' );
+        } else {
+          _.removeClass( document.querySelector('.widget-item-instalments'), 'mobile' );
+        }
+      }
+    },
+    messageSimulator = {
+      choices: function (message) {
         choices = message.data;
         setChoice( choices.reduce(maxInstalments, null) );
         renderWidget();
-        break;
-      default:
+        setMobile(message.mobile);
+      },
+      mobile: function (message) {
+        setMobile(message.mobile);
+      }
+    };
 
-    }
-  }
-
-  if( message.aplazame === 'modal' ) {
-    e.used = true;
-
-    if( message.event === 'resolved' && message.name === 'instalments' ) {
-      // console.log('simulator message', message, choices[ Number(message.value) ]);
-      setChoice( choices[ Number(message.value) ] );
-      renderWidget();
-    }
+_.onMessage('simulator', function (e, message) {
+  if( messageSimulator[message.event] ) {
+    messageSimulator[message.event](message);
   }
 });
 

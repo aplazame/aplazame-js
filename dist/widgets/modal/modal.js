@@ -9,6 +9,12 @@ if( !Element.prototype.matchesSelector ) {
   );
 }
 
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
+
 function _isType (type) {
     return function (o) {
         return (typeof o === type);
@@ -303,8 +309,8 @@ var cssHack = (function () {
       hacks = {
         blur: 'body > *:not(.aplazame-modal) { -webkit-filter: blur(3px); filter: blur(3px); }',
         // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
-        modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } body { overflow: hidden; }' +
-               '@media (max-width: 767px) { html, body { height: 100%; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
+        modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' +
+               '@media (max-width: 767px) { html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
                '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
         // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
         // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
@@ -346,7 +352,35 @@ function scrollTop (value) {
   return document.documentElement.scrollTop || document.body.scrollTop;
 }
 
-module.exports = {
+var _classActions = {
+  add: document.documentElement.classList ? function (element, className) {
+    element.classList.add(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    _classActions.remove(element, className);
+    element.className += ' ' + className;
+  },
+  remove: document.documentElement.classList ? function (element, className) {
+    element.classList.remove(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    element.className = element.className.replace(RE_CLEANCLASS,'');
+  },
+  action: function (action, tools) {
+    return function (element, className) {
+      if( className.indexOf(' ') >= 0 ) {
+        className.split(' ').forEach(function (cn) {
+          _classActions[action](element, cn);
+        });
+      } else {
+        _classActions[action](element, className);
+      }
+      return tools;
+    };
+  }
+};
+
+var tools = {
   isObject: _isObject,
   isFunction: _isFunction,
   isString: _isString,
@@ -368,8 +402,12 @@ module.exports = {
   cssQuery: cssQuery,
   getAmount: getAmount,
   cssHack: cssHack,
-  scrollTop: scrollTop
+  scrollTop: scrollTop,
+  addClass: _classActions.action('add', tools),
+  removeClass: _classActions.action('remove', tools)
 };
+
+module.exports = tools;
 
 },{}],2:[function(require,module,exports){
 // factory http
@@ -606,20 +644,20 @@ var _ = require('../../src/tools/tools');
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 
-var modal = document.querySelector('.modal'),
-    card = modal.querySelector('.card'),
+var modal, card,
     isMobile = window.matchMedia('( max-width: 767px )');
+    // card = modal.querySelector('.card'),
 
-modal.className = 'modal is-opening';
+// modal.className = 'modal is-opening';
 
-if( isMobile.matches ) {
-  setTimeout(function () {
-    modal.className = 'modal';
-  }, 600);
-}
+// if( isMobile.matches ) {
+//   setTimeout(function () {
+//     modal.className = 'modal';
+//   }, 600);
+// }
 
 function closeModal (resolved, value) {
-  modal.className = 'modal is-closing';
+  modal.className = modal.className.replace(' is-opening', '') + ' is-closing';
 
   parent.window.postMessage({
     aplazame: 'modal',
@@ -659,22 +697,41 @@ function initListeners () {
 
   [].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
     _.listen( element, 'click', function (e) {
-      e.stopPropagation();
+      // e.stopPropagation();
       closeModal(false, element.getAttribute('modal-reject') );
     });
+  });
+
+  [].forEach.call( document.querySelectorAll('[data-widget="active-group"]'), function (element) {
+
+    var currentChoice;
+
+    [].forEach.call( document.querySelectorAll('[data-widget="active-toggle"]'), function (toggle) {
+      _.listen( toggle, 'click', function (e) {
+        if( currentChoice ) {
+          _.removeClass(currentChoice, 'active');
+        }
+        _.addClass(toggle, 'active');
+        currentChoice = toggle;
+      });
+    });
+
   });
 }
 
 _.onMessage('modal', function (e, message) {
   if( message.event === 'content' ) {
-    card.innerHTML = message.content.card;
+    document.body.innerHTML = message.content.card;
+    modal = document.querySelector('.modal');
+    card = document.querySelector('.card');
+    modal.className += ' is-opening';
+    // if( message.modalClass ) {
+    //   modal.className = modal.className + ' ' + message.modalClass;
+    // }
     initListeners();
   }
 });
 
-parent.window.postMessage({
-  aplazame: 'modal',
-  event: 'opened'
-}, '*');
+parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
 
 },{"../../src/tools/tools":5}]},{},[6]);

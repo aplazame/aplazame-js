@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.95';
+module.exports = '0.0.96';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -715,7 +715,8 @@ module.exports = function (aplazame) {
       return;
     }
 
-    var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+    var simulators = element.querySelectorAll('[data-aplazame-simulator]'),
+        isMobile = window.matchMedia('( max-width: 768px )');
 
     if (simulators.length) {
 
@@ -740,11 +741,24 @@ module.exports = function (aplazame) {
               e.source.postMessage({
                 aplazame: 'simulator',
                 event: 'choices',
-                data: choices
+                data: choices,
+                mobile: isMobile.matches
               }, '*');
               break;
           }
         }
+      });
+
+      _.listen(window, 'resize', function (e) {
+
+        iframes.forEach(function (iframe) {
+
+          iframe.contentWindow.postMessage({
+            aplazame: 'simulator',
+            event: 'mobile',
+            mobile: isMobile.matches
+          }, '*');
+        });
       });
 
       [].forEach.call(simulators, function (simulator) {
@@ -813,6 +827,12 @@ module.exports = function (aplazame) {
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
 }
+
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
 
 function _isType(type) {
   return function (o) {
@@ -1097,7 +1117,7 @@ var cssHack = (function () {
       hacks = {
     blur: 'body > *:not(.aplazame-modal) { -webkit-filter: blur(3px); filter: blur(3px); }',
     // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
-    modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } body { overflow: hidden; }' + '@media (max-width: 767px) { html, body { height: 100%; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
+    modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' + '@media (max-width: 767px) { html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
     // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
     // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
   };
@@ -1142,7 +1162,35 @@ function scrollTop(value) {
   return document.documentElement.scrollTop || document.body.scrollTop;
 }
 
-module.exports = {
+var _classActions = {
+  add: document.documentElement.classList ? function (element, className) {
+    element.classList.add(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b', '');
+    _classActions.remove(element, className);
+    element.className += ' ' + className;
+  },
+  remove: document.documentElement.classList ? function (element, className) {
+    element.classList.remove(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b', '');
+    element.className = element.className.replace(RE_CLEANCLASS, '');
+  },
+  action: function (action, tools) {
+    return function (element, className) {
+      if (className.indexOf(' ') >= 0) {
+        className.split(' ').forEach(function (cn) {
+          _classActions[action](element, cn);
+        });
+      } else {
+        _classActions[action](element, className);
+      }
+      return tools;
+    };
+  }
+};
+
+var tools = {
   isObject: _isObject,
   isFunction: _isFunction,
   isString: _isString,
@@ -1164,8 +1212,12 @@ module.exports = {
   cssQuery: cssQuery,
   getAmount: getAmount,
   cssHack: cssHack,
-  scrollTop: scrollTop
+  scrollTop: scrollTop,
+  addClass: _classActions.action('add', tools),
+  removeClass: _classActions.action('remove', tools)
 };
+
+module.exports = tools;
 
 },{}],16:[function(require,module,exports){
 // factory http

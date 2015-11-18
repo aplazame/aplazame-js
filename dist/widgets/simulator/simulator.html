@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="simulator.css?v=0.0.95" />
+    <link rel="stylesheet" href="simulator.css?v=0.0.96" />
 
     <link rel="stylesheet" type="text/css" href="../assets/fonts/font-gotham.css" />
   </head>
@@ -13,34 +13,23 @@
     </div>
 
     <script type="application/x-template" data-template="widget">
-        <div class="widget white">
-          <div class="widget-box">
-            <div class="logo">
-              <svg class="logo-aplazame" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100">
-                <path class="line-short" d="M36.788,81.008,49.92,49.514" stroke-linecap="round" stroke-width="6" fill="none"/>
-                <g class="smile">
-                  <g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)">
-                   <path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>
-                   <path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>
-                  </g>
-                </g>
-                <path class="line-large" stroke-linejoin="round" d="M49.92,49.514,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>
-              </svg>
-            </div>
-            <div class="widget-configure">
-              <div class="widget-payment">
-                <p class="monthly"><%= getAmount(choice.amount) %><span>€/mes</span></p>
-                <p class="tae">TAE <%= getAmount(choice.annual_equivalent) %>%</p>
+        <div class="widget-item-instalments">
+          <div class="wrapper">
+            <button class="button" data-action="changeInstalments">
+              <div class="logo"></div>
+              <div class="text-wrapper">
+                <div class="text-get">Consíguelo desde</div>
+                <div class="text-amount">
+                  <span class="amount"><%= getAmount(choice.amount) %></span><!--
+                  --><span class="currency">&nbsp;€</span><!--
+                  --><span class="per-month">/mes</div>
+                <div class="text-instalments">en 12 mensualidades</div>
               </div>
-              <button class="instalments-select" type="button" data-action="changeInstalments">
-                <span><%= choice.num_instalments %> <%= choice.num_instalments > 1 ? 'mensualidades' : 'mensualidad' %></span>
-                <i class="i-sort-column"></i>
-              </button>
+            </button>
+            <div class="signature">
+              <a data-action="changeInstalments">Más información</a><!--
+              --><span>&nbsp;sobre Aplazame.</span>
             </div>
-          </div>
-
-          <div class="widget-text">
-            <p><a class="cursor-pointer" data-action="showInfo">Más información</a> sobre Aplazame.</p>
           </div>
         </div>
     </script>
@@ -50,6 +39,6 @@
         <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
       <% } %>
     </script>
-    <script type="text/javascript" src="simulator.js?v=0.0.95"></script>
+    <script type="text/javascript" src="simulator.js?v=0.0.96"></script>
   </body>
 </html>

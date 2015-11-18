@@ -1,6 +1,6 @@
 
-$height-header: 6rem
-$footer-header: 5rem
+$height-header: 4rem
+$footer-height: 3rem
 
 @import 'ng-aplazame/styles/core'
 @import 'ng-aplazame/styles/components/alert'
@@ -12,14 +12,14 @@ html, body
   padding: 0
 
 html
-  font-size: $rem-size
+  // font-size: $rem-size
   height: 100%
 
 body
-  font-size: 1.4rem // back to 14px
+  // font-size: 1.4rem // back to 14px
   min-height: 100%
   position: relative
-  padding-bottom: $footer-header
+  padding-bottom: $footer-height
   // -webkit-overflow-scrolling: touch
 
 a
@@ -32,6 +32,11 @@ a
 
 hr
   border: 1px solid lighten($grey-medium, 20)
+
+h2.demo
+  font-size: 1.4rem
+  font-weight: $font-medium
+  margin: 1rem 0
 
 .demo-input-wrapper
   font-size: 1rem
@@ -125,15 +130,6 @@ table.table
       font-size: 0.8em
       color: $grey-medium
 
-
-// header.header
-//   height: 5rem
-//   background: $color-brand
-//   box-shadow: inset 0 -1rem 1rem -1rem rgba(0, 0, 0, 0.2)
-
-.sections > section.container
-  margin-top: units(3)
-
 .sections
   margin-bottom: units(4)
 
@@ -143,9 +139,9 @@ footer.footer
   @include absolute(bottom)
   color: white
   background: $grey-dark
-  line-height: 5rem
-  font-size: 1.5rem
-  height: $footer-header
+  line-height: $footer-height
+  font-size: 1.1rem
+  height: $footer-height
 
   .demo-footer-link
     color: white

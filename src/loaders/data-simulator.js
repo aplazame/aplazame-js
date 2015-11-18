@@ -10,7 +10,8 @@ module.exports = function (aplazame) {
       return;
     }
 
-    var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+    var simulators = element.querySelectorAll('[data-aplazame-simulator]'),
+        isMobile = window.matchMedia('( max-width: 768px )');
 
     if( simulators.length ) {
 
@@ -35,11 +36,26 @@ module.exports = function (aplazame) {
               e.source.postMessage({
                 aplazame: 'simulator',
                 event: 'choices',
-                data: choices
+                data: choices,
+                mobile: isMobile.matches
               }, '*');
               break;
           }
         }
+      });
+
+      _.listen(window, 'resize', function (e) {
+
+        iframes.forEach(function (iframe) {
+
+          iframe.contentWindow.postMessage({
+            aplazame: 'simulator',
+            event: 'mobile',
+            mobile: isMobile.matches
+          }, '*');
+
+        });
+
       });
 
       [].forEach.call(simulators, function (simulator) {

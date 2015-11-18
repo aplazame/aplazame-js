@@ -105,36 +105,33 @@ function maxInstalments (prev, choice) {
   }
 }
 
-_.listen(window, 'message', function (e) {
-  var message = e.data;
+var isMobile,
+    setMobile = function (mobile) {
+      if( isMobile === undefined || isMobile !== mobile ) {
+        isMobile = mobile;
 
-  if( e.used ) {
-    return;
-  }
-
-  if( message.aplazame === 'simulator' ) {
-    e.used = true;
-
-    switch ( message.event ) {
-      case 'choices':
-        // console.log('choices', message);
+        if( isMobile ) {
+          _.addClass( document.querySelector('.widget-item-instalments'), 'mobile' );
+        } else {
+          _.removeClass( document.querySelector('.widget-item-instalments'), 'mobile' );
+        }
+      }
+    },
+    messageSimulator = {
+      choices: function (message) {
         choices = message.data;
         setChoice( choices.reduce(maxInstalments, null) );
         renderWidget();
-        break;
-      default:
+        setMobile(message.mobile);
+      },
+      mobile: function (message) {
+        setMobile(message.mobile);
+      }
+    };
 
-    }
-  }
-
-  if( message.aplazame === 'modal' ) {
-    e.used = true;
-
-    if( message.event === 'resolved' && message.name === 'instalments' ) {
-      // console.log('simulator message', message, choices[ Number(message.value) ]);
-      setChoice( choices[ Number(message.value) ] );
-      renderWidget();
-    }
+_.onMessage('simulator', function (e, message) {
+  if( messageSimulator[message.event] ) {
+    messageSimulator[message.event](message);
   }
 });
 

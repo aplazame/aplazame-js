@@ -40,10 +40,10 @@
 
         $with{ checkout.order.articles[1] as article }
           <article class="row article-sample">
-            <div class="col-sm-5 col-md-6 img-wrapper">
+            <div class="col-sm-offset-3 col-sm-6 col-md-offset-0 img-wrapper">
               <img src="${article.image_url}" alt="${article.name}"/>
             </div>
-            <div class="col-sm-7 col-md-6 details">
+            <div class="col-md-6 details">
               <div class="label">${article.name}</div>
               <p class="description">${article.description}</p>
               <div class="price">${ toEUR(article.price) }</div>

@@ -3,16 +3,16 @@ var _ = require('../../src/tools/tools');
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 
 var modal, card,
-    // card = modal.querySelector('.card'),
     isMobile = window.matchMedia('( max-width: 767px )');
+    // card = modal.querySelector('.card'),
 
 // modal.className = 'modal is-opening';
 
-if( isMobile.matches ) {
-  setTimeout(function () {
-    modal.className = 'modal';
-  }, 600);
-}
+// if( isMobile.matches ) {
+//   setTimeout(function () {
+//     modal.className = 'modal';
+//   }, 600);
+// }
 
 function closeModal (resolved, value) {
   modal.className = modal.className.replace(' is-opening', '') + ' is-closing';
@@ -55,9 +55,25 @@ function initListeners () {
 
   [].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
     _.listen( element, 'click', function (e) {
-      e.stopPropagation();
+      // e.stopPropagation();
       closeModal(false, element.getAttribute('modal-reject') );
     });
+  });
+
+  [].forEach.call( document.querySelectorAll('[data-widget="active-group"]'), function (element) {
+
+    var currentChoice;
+
+    [].forEach.call( document.querySelectorAll('[data-widget="active-toggle"]'), function (toggle) {
+      _.listen( toggle, 'click', function (e) {
+        if( currentChoice ) {
+          _.removeClass(currentChoice, 'active');
+        }
+        _.addClass(toggle, 'active');
+        currentChoice = toggle;
+      });
+    });
+
   });
 }
 

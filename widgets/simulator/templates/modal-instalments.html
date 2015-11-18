@@ -1,7 +1,7 @@
-<div class="modal modal-grey modal-narrow" ng-controller="demoModalInstalmentsCtrl">
+<div class="modal modal-grey modal-narrow">
   <div class="card">
 
-    <div class="close-button">
+    <div class="close-button" modal-reject="">
       <div class="button">&times;&nbsp;Volver</div>
     </div>
 
@@ -16,11 +16,11 @@
           <p class="desktop">Aplazame te ayuda a pagar tus compras cuándo y como quieras.</br>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú. <a>Más información</a></p>
         </section>
 
-        <div class="choices-wrapper">
+        <div data-widget="active-group" class="choices-wrapper">
 
         <% for( var i = 0, n = choices.length; i < n ; i++ ) {
         %><div class="choice">
-            <button type="button" class="button<% if(choices[i] === selectedChoice) { %> active<% }%>" modal-resolve="<%= i %>">
+            <button type="button" class="button" data-widget="active-toggle">
               <div class="wrapper">
                 <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>
                 <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>

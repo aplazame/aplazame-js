@@ -8,6 +8,12 @@ if( !Element.prototype.matchesSelector ) {
   );
 }
 
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
+
 function _isType (type) {
     return function (o) {
         return (typeof o === type);
@@ -345,7 +351,35 @@ function scrollTop (value) {
   return document.documentElement.scrollTop || document.body.scrollTop;
 }
 
-module.exports = {
+var _classActions = {
+  add: document.documentElement.classList ? function (element, className) {
+    element.classList.add(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    _classActions.remove(element, className);
+    element.className += ' ' + className;
+  },
+  remove: document.documentElement.classList ? function (element, className) {
+    element.classList.remove(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    element.className = element.className.replace(RE_CLEANCLASS,'');
+  },
+  action: function (action, tools) {
+    return function (element, className) {
+      if( className.indexOf(' ') >= 0 ) {
+        className.split(' ').forEach(function (cn) {
+          _classActions[action](element, cn);
+        });
+      } else {
+        _classActions[action](element, className);
+      }
+      return tools;
+    };
+  }
+};
+
+var tools = {
   isObject: _isObject,
   isFunction: _isFunction,
   isString: _isString,
@@ -367,5 +401,9 @@ module.exports = {
   cssQuery: cssQuery,
   getAmount: getAmount,
   cssHack: cssHack,
-  scrollTop: scrollTop
+  scrollTop: scrollTop,
+  addClass: _classActions.action('add', tools),
+  removeClass: _classActions.action('remove', tools)
 };
+
+module.exports = tools;

@@ -12,8 +12,8 @@ html, body
   padding: 0
 
 html
-  // font-size: $rem-size
   height: 100%
+  background: $grey-light
 
 body
   // font-size: 1.4rem // back to 14px
@@ -46,11 +46,11 @@ h2.demo
   background: transparent
   display: block
   width: 100%
-  line-height: 4rem
+  line-height: 3rem
   padding: 0 units(2)
   outline: 0
   border-bottom: 1px solid $grey-medium
-  font-size: 2rem
+  font-size: 1.4rem
   color: $color-brand
 
   &:focus
@@ -75,10 +75,10 @@ h2.demo
 
 .demo-btn
   border: 0
-  line-height: 4rem
+  line-height: 3rem
   @include background-active($color-brand)
   width: 100%
-  font-size: 2rem
+  font-size: 1.4rem
   color: white
   cursor: pointer
 
@@ -91,13 +91,22 @@ h2.demo
     font-size: 1.4em
     text-align: center
 
+.no-wrap
+  white-space: nowrap
+
+.hidden
+  display: none
+
 table.table
   &.demo-table
     th, td
-      font-size: 1.6rem
+      font-size: 1.2rem
 
     @media #{$screen-sm-down}
       table-layout: auto
+
+      th, td
+        font-size: 1rem
 
   th, td
     &.demo-column-instalments, &.demo-column-tae, &.demo-column-amount
@@ -131,22 +140,45 @@ table.table
       color: $grey-medium
 
 .sections
-  margin-bottom: units(4)
+  margin-top: -5rem
+  margin-bottom: $footer-height
+
+  .section-box
+    background: white
+    box-shadow: 0 0 0.25rem 0 rgba(black, 0.1)
+    // padding: units(1)
+    margin-bottom: units(4)
+
+    .section-title
+        h3
+          font-size: 1.4rem
+          font-weight: $font-medium
+          line-height: 1
+          color: darken($grey-dark, 30)
+
+        padding: units(2)
+        background-color: #F7F9FA
+        border-bottom: 1px solid darken(#F7F9FA, 5)
+
+    > article
+      padding: units(1)
 
 @import header
 
 footer.footer
   @include absolute(bottom)
-  color: white
-  background: $grey-dark
+  color: $grey-dark
+  background-color: #F7F9FA
+  box-shadow: 0 0 0.25rem 0 rgba(black, 0.1)
   line-height: $footer-height
   font-size: 1.1rem
   height: $footer-height
 
   .demo-footer-link
-    color: white
-    border-bottom: 1px dotted $grey-light
+    color: $grey-dark
+    border-bottom: 1px dotted $grey-dark
     &:hover
+      color: black
       text-decoration: none
       border-bottom-style: solid
 

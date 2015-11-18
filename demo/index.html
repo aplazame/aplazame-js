@@ -21,22 +21,23 @@
   <body>
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
-      <div class="container">
-        <div class="inline-block">
-          <a class="logo-link" href="/">
-            <img src="/dist/widgets/assets/images/logo-white.svg" alt="aplazame logo"/>
-            <span>|</span><span class="label">Demo</span>
-          </a>
-        </div>
+      <div class="container-md">
+        <a class="demo-link" href="/">Demo</a>
+        <a class="logo-link" href="/">
+          <img src="/dist/widgets/assets/images/logotipo-white.svg" alt="aplazame logo"/>
+        </a>
       </div>
     </header>
 
-    <div class="sections">
+    <div class="sections container-md">
 
       $if{result}{:}
-      <section class="container">
+      <section class="section-box">
 
-        <h2 class="demo">Simulador de cuotas</h2>
+        <div class="section-title">
+          <h3>Simulador de cuotas</h3>
+        </div>
+
 
         $with{ checkout.order.articles[1] as article }
           <article class="row article-sample">
@@ -62,81 +63,85 @@
       </section>
       {/}
 
-      <section class="container cart-list">
+      <section class="section-box cart-list">
 
-        <h2 class="demo">Carrito de compra</h2>
-
-        <ul>
-          $each{ article in checkout.order.articles }
-          <li class="row">
-            <div class="col-sm-3 text-center">
-              <div class="img-wrapper">
-                <img src="${article.image_url}" alt="${article.name}"/>
-              </div>
-            </div>
-            <div class="col-sm-9 details">
-              <div class="label">${article.name}</div>
-              <div class="price-wrapper">
-                $if{ article.quantity > 1 }<span class="quantity">${article.quantity}x&nbsp;</span>{/}
-                <span class="price">${ toEUR( articleAmount(article) ) }</span>
-              </div>
-            </div>
-          </li>
-          {/}
-          <li class="row">
-            <div class="col-xs-8">
-              <div class="concept">Envío</div>
-            </div>
-            <div class="col-xs-4 details">
-              <span class="price">${ toEUR( shippingAmount() ) }</span>
-            </div>
-          </li>
-          <li class="row">
-            <div class="col-xs-8">
-              <div class="concept">Descuento</div>
-            </div>
-            <div class="col-xs-4 details">
-              <span class="price">${ toEUR( discountAmount() ) }</span>
-            </div>
-          </li>
-        </ul>
-
-        <div class="total-wrapper">
-          <div class="label">Total</div>
-          <div class="price-wrapper">
-            <span class="price">${ toEUR( totalAmount() ) }</span>
-          </div>
+        <div class="section-title">
+          <h3>Carrito de compra</h3>
         </div>
 
-        $if{result}
-          <br/>
-          $if{result.success}
-            <div class="alert alert-brand">Pago completado!</div>
-          {:}
-            <div class="alert alert-danger">Pago cancelado</div>
-          {/}
-        {:}
-          <div class="pay-with-aplazame">
-            <button data-aplazame-button-info="default" onclick="loadCheckout();">
-              <span>Pagar con&nbsp;</span><!--
-              --><img src="/dist/widgets/assets/images/logo-white.svg"/><!--
-              --><span>&nbsp;aplazame</span>
-            </button>
+        <article>
+
+          <ul>
+            $each{ article in checkout.order.articles }
+            <li class="row">
+              <div class="col-sm-3 text-center">
+                <div class="img-wrapper">
+                  <img src="${article.image_url}" alt="${article.name}"/>
+                </div>
+              </div>
+              <div class="col-sm-9 details">
+                <div class="label">${article.name}</div>
+                <div class="price-wrapper">
+                  $if{ article.quantity > 1 }<span class="quantity">${article.quantity}x&nbsp;</span>{/}
+                  <span class="price">${ toEUR( articleAmount(article) ) }</span>
+                </div>
+              </div>
+            </li>
+            {/}
+            <li class="row">
+              <div class="col-xs-8">
+                <div class="concept">Envío</div>
+              </div>
+              <div class="col-xs-4 details">
+                <span class="price">${ toEUR( shippingAmount() ) }</span>
+              </div>
+            </li>
+            <li class="row">
+              <div class="col-xs-8">
+                <div class="concept">Descuento</div>
+              </div>
+              <div class="col-xs-4 details">
+                <span class="price">${ toEUR( discountAmount() ) }</span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="total-wrapper">
+            <div class="label">Total</div>
+            <div class="price-wrapper">
+              <span class="price">${ toEUR( totalAmount() ) }</span>
+            </div>
           </div>
-        {/}
+
+        </article>
 
       </section>
 
+      $if{result}
+        <br/>
+        $if{result.success}
+          <div class="alert alert-brand">Pago completado!</div>
+        {:}
+          <div class="alert alert-danger">Pago cancelado</div>
+        {/}
+      {:}
+        <div class="pay-with-aplazame">
+          <button data-aplazame-button-info="default" onclick="loadCheckout();">
+            <span>Pagar con&nbsp;</span><!--
+            --><img src="/dist/widgets/assets/images/logo-white.svg"/><!--
+            --><span>&nbsp;aplazame</span>
+          </button>
+        </div>
+      {/}
+
     </div>
 
-    <footer class="footer">
-      <div class="container">
-        <div class="col-xs-6">
-          <span>&copy;&nbsp;Aplazame S.L.</span>
-        </div>
-        <div class="col-xs-6 text-right">
-          <a class="demo-footer-link" href="/simulator/">simulador</a>
-        </div>
+    <footer class="footer container-md">
+      <div class="col-xs-6">
+        <span>&copy;&nbsp;Aplazame S.L.</span>
+      </div>
+      <div class="col-xs-6 text-right">
+        <a class="demo-footer-link" href="/simulator/">simulador</a>
       </div>
     </footer>
 

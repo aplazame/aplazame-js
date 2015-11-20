@@ -169,7 +169,7 @@ function joinPath () {
 
 function writeIframe (iframe, content) {
   var iframeDoc = iframe.contentWindow.document;
-  iframeDoc.charset = 'UTF-8';
+  try { iframeDoc.charset = 'UTF-8'; } catch(err) {}
   iframeDoc.open();
   iframeDoc.write(content);
   iframeDoc.close();

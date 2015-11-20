@@ -4,15 +4,6 @@ window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMa
 
 var modal, card,
     isMobile = window.matchMedia('( max-width: 767px )');
-    // card = modal.querySelector('.card'),
-
-// modal.className = 'modal is-opening';
-
-// if( isMobile.matches ) {
-//   setTimeout(function () {
-//     modal.className = 'modal';
-//   }, 600);
-// }
 
 function closeModal (resolved, value) {
   modal.className = modal.className.replace(' is-opening', '') + ' is-closing';

@@ -20,7 +20,7 @@ function button (options) {
   }
 
   if( document.querySelector('#total_price') ) {
-    options.amount = getCartPrice();
+    options.amount = getCartPrice() || options.amount;
 
     if( !button.watching ) {
       button.watching = true;

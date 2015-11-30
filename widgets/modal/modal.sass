@@ -2,15 +2,10 @@
 $path-fonts: '../assets/fonts'
 $path-images: '../assets/images'
 
-@import 'sasslets-animate/styles/animate'
-
-$timing-function-boing: cubic-bezier(.66,-0.33,.3,1.29)
-
-@include animate('shake')
-@include animate('zoom-in', 0.6s, $timing-function-boing )
-@include animate('zoom-out', 0.6s, $timing-function-boing )
-
 @import 'ng-aplazame/styles/core'
+@import 'ng-aplazame/styles/animations'
+@include animate('shake')
+
 @import 'ng-aplazame/styles/components/modal'
 @import 'ng-aplazame/styles/components/lists'
 @import 'ng-aplazame/styles/components/modal-instalments-list'

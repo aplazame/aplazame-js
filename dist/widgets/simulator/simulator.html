@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="simulator.css?v=0.0.104" />
+    <link rel="stylesheet" href="simulator.css?v=0.0.105" />
 
     <link rel="stylesheet" type="text/css" href="../assets/fonts/font-gotham.css" />
   </head>
@@ -13,7 +13,7 @@
     </div>
 
     <script type="application/x-template" data-template="widget">
-        <div class="widget-item-instalments">
+        <div class="widget-item-instalments default">
           <div class="wrapper">
             <button class="button" data-action="changeInstalments">
               <div class="logo"></div>
@@ -39,6 +39,6 @@
         <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
       <% } %>
     </script>
-    <script type="text/javascript" src="simulator.js?v=0.0.104"></script>
+    <script type="text/javascript" src="simulator.js?v=0.0.105"></script>
   </body>
 </html>

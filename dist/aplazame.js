@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.104';
+module.exports = '0.0.105';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -920,7 +920,11 @@ function once(fn) {
   };
 }
 
-function docReady(callback) {
+function docReady(_callback, delay) {
+  var callback = delay ? function () {
+    setTimeout(_callback, delay);
+  } : _callback;
+
   if (document.readyState === 'complete') {
     callback();
   } else {
@@ -1132,10 +1136,10 @@ function getAmount(amount) {
 var cssHack = (function () {
   var cache = {},
       hacks = {
-    overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; background: rgba(53, 64, 71, 0.9); }',
+    overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
     blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.25s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
     // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
-    modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' + '@media (max-width: 767px) { html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 768px) { .aplazame-modal { position: fixed; } }'
+    modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' + '@media (max-width: 600px) { html { background-color: #333A3E; } html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 601px) { .aplazame-modal { position: fixed; } }'
     // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
     // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
   };

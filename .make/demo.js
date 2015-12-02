@@ -6,6 +6,12 @@ module.exports = function (nitro) {
     nitro.dir('public').remove();
   });
 
+  nitro.task('demo-assets', function (target) {
+
+    nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
+
+  });
+
   nitro.task('demo-sass', function (target) {
     var dev = target === 'dev';
 
@@ -85,8 +91,8 @@ module.exports = function (nitro) {
     nitro.file.write('public/simulator/index.html', nitro.template( nitro.file.read('demo/demo-simulator.html') )( indexData ) );
   });
 
-  nitro.task('demo-dev', ['demo-clear', 'demo-js', 'demo-sass:dev', 'demo-templates:dev']);
+  nitro.task('demo-dev', ['demo-clear', 'demo-assets', 'demo-js', 'demo-sass:dev', 'demo-templates:dev']);
 
-  nitro.task('demo', ['demo-clear', 'demo-js', 'demo-sass', 'demo-templates']);
+  nitro.task('demo', ['demo-clear', 'demo-assets', 'demo-js', 'demo-sass', 'demo-templates']);
 
 };

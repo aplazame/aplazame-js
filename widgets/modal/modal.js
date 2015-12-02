@@ -5,8 +5,13 @@ window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMa
 var modal, card,
     isMobile = window.matchMedia('( max-width: 767px )');
 
+_.ready(function () {
+  var _m = document.querySelector('.modal');
+  _m.className = _m.className.replace(' is-opening', '');
+}, 600);
+
 function closeModal (resolved, value) {
-  modal.className = modal.className.replace(' is-opening', '') + ' is-closing';
+  modal.className += ' is-closing';
 
   parent.window.postMessage({
     aplazame: 'modal',
@@ -26,7 +31,7 @@ function closeModal (resolved, value) {
       aplazame: 'modal',
       event: 'close'
     }, '*');
-  }, isMobile.matches ? 0 : 600 );
+  }, isMobile.matches ? 0 : 500 );
 }
 
 function initListeners () {

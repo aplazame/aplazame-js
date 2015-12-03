@@ -11,7 +11,7 @@ module.exports = function (aplazame) {
     }
 
     var simulators = element.querySelectorAll('[data-aplazame-simulator]'),
-        isMobile = window.matchMedia('( max-width: 768px )');
+        isMobile = window.matchMedia('( max-width: 767px )');
 
     if( simulators.length ) {
 

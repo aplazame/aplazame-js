@@ -1,0 +1,46 @@
+
+.article-type-choices
+  @extend .clearfix
+  font-size: 1rem
+  margin: 1rem 0
+
+  .article-type
+    float: left
+    width: #{100%/3}
+    z-index: 0
+
+    input
+      float: left
+      width: 0
+      height: 0
+      opacity: 0
+
+    .type-label
+      position: relative
+      text-align: center
+      font-size: 0.9em
+      @media ( min-width: 480px )
+        font-size: 1.1em
+
+      // font-weight: $font-medium
+      color: lighten(#6D757A, 15)
+      padding: 0.3em 0
+
+      border: 1px solid lighten(#6D757A, 40)
+      cursor: pointer
+
+      &:hover
+        border-color: lighten(#267bbd, 20)
+        color: #6D757A
+        z-index: 2
+
+    & + .article-type
+      margin-left: -1px
+
+      .type-label
+        padding-left: 1px
+
+    & input:checked + .type-label
+      border-color: #267bbd
+      color: #6D757A
+      z-index: 1

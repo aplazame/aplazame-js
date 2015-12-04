@@ -47,9 +47,25 @@
             <div class="col-md-6 details">
               <div class="label">${article.name}</div>
               <p class="description">${article.description}</p>
-              <div class="price">${ toEUR(article.price) }</div>
+              <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>
 
               <br/>
+
+              <div class="article-type-choices">
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="unboxed"></input>
+                  <div class="type-label">Unboxed</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="retail" checked></input>
+                  <div class="type-label">Retail</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="set"></input>
+                  <div class="type-label">Set</div>
+                </label>
+              </div>
+
               <hr/>
               <br/>
 
@@ -153,6 +169,7 @@
             data-sandbox="true">
     </script>
 
+    <script type="text/javascript" src="/demo-article.js"></script>
     <script type="text/javascript">
       var loadCheckout = (function () {
 

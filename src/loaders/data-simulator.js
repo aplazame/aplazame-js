@@ -11,7 +11,7 @@ module.exports = function (aplazame) {
     }
 
     var simulators = element.querySelectorAll('[data-aplazame-simulator]'),
-        isMobile = window.matchMedia('( max-width: 768px )');
+        isMobile = window.matchMedia('( max-width: 767px )');
 
     if( simulators.length ) {
 
@@ -72,7 +72,7 @@ module.exports = function (aplazame) {
           publicKey: simulator.getAttribute('data-public-key')
         };
 
-        simulator.innerHTML = 'cargando cuotas...';
+        simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
 
         aplazame.simulator(simulatorParams.amount, function (_choices) {
           var child = simulator.firstChild,

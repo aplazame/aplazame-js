@@ -1,5 +1,5 @@
 
-require('./browser-shim');
+require('./browser-polyfills');
 
 function _isType (type) {
     return function (o) {
@@ -40,29 +40,6 @@ function _ready (callback) {
   } else {
     window.addEventListener('load', callback);
   }
-}
-
-// var listen = window.addEventListener ? function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.addEventListener(eventName, listener, false);
-// } : ( window.attachEvent && function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.attachEvent('on' + eventName, listener);
-// } );
-
-
-if( !window.HTMLElement.prototype.addEventListener ) {
-  throw new Error('Your Browser does not support events');
 }
 
 function once (fn) {

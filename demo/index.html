@@ -44,10 +44,14 @@
             <div class="col-sm-offset-3 col-sm-6 col-md-offset-0 img-wrapper">
               <img src="${article.image_url}" alt="${article.name}"/>
             </div>
-            <div class="col-md-6 details">
+            <form class="col-md-6 details">
               <div class="label">${article.name}</div>
               <p class="description">${article.description}</p>
-              <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>
+
+              <div class="price">
+                <input type="text" name="qty" value="1" style="float: left; width: 2em; border: 1px solid #d7dadc; text-align: center; font-size: 1.4rem; padding: 0.4em 0; "></input>
+                <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>
+              </div>
 
               <br/>
 
@@ -73,7 +77,7 @@
                 <div data-aplazame-simulator="" data-amount="${article.price}"></div>
               </div>
 
-            </div>
+            </form>
           </article>
         {/}
       </section>

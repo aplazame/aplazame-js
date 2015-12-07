@@ -1,19 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
-if( !Element.prototype.matchesSelector ) {
-  Element.prototype.matchesSelector = (
-    Element.prototype.webkitMatchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector
-  );
-}
-
-(function (root) {
-  'use strict';
-
-  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
-})(this);
+require('./browser-polyfills');
 
 function _isType (type) {
     return function (o) {
@@ -38,12 +25,6 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
-if( window.attachEvent && !window.HTMLElement.prototype.addEventListener ) {
-  window.HTMLElement.prototype.addEventListener = function (eventName, listener) {
-    this.attachEvent('on' + eventName, listener);
-  };
-}
-
 function listen (element, eventName, listener) {
   if( element instanceof Array ) {
     for( var i = 0, n = element.length ; i < n ; i++ ) {
@@ -54,27 +35,12 @@ function listen (element, eventName, listener) {
   element.addEventListener(eventName, listener, false);
 }
 
-// var listen = window.addEventListener ? function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.addEventListener(eventName, listener, false);
-// } : ( window.attachEvent && function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.attachEvent('on' + eventName, listener);
-// } );
-
-
-if( !window.HTMLElement.prototype.addEventListener ) {
-  throw new Error('Your Browser does not support events');
+function _ready (callback) {
+  if (/loaded|complete/.test(document.readyState)) {
+    callback();
+  } else {
+    window.addEventListener('load', callback);
+  }
 }
 
 function once (fn) {
@@ -412,7 +378,48 @@ var tools = {
 
 module.exports = tools;
 
-},{}],2:[function(require,module,exports){
+},{"./browser-polyfills":2}],2:[function(require,module,exports){
+
+if( !Element.prototype.matchesSelector ) {
+  Element.prototype.matchesSelector = (
+    Element.prototype.webkitMatchesSelector ||
+    Element.prototype.mozMatchesSelector ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.oMatchesSelector
+  );
+}
+
+if( !Element.prototype.closest ) {
+  Element.prototype.closest = function (selector) {
+    var el = this;
+
+    while( el ) {
+      if( el.matchesSelector(selector) ) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    return el;
+  };
+}
+
+if( !Element.prototype.addEventListener ) {
+  if( Element.prototype.attachEvent ) {
+    Element.prototype.addEventListener = function (eventName, listener) {
+      return Element.prototype.attachEvent( 'on' + eventName, listener );
+    };
+  } else {
+    throw 'Browser not compatible with element events';
+  }
+}
+
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
+
+},{}],3:[function(require,module,exports){
 // factory http
 
 function headerToTitleSlug(text) {
@@ -560,7 +567,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -594,7 +601,7 @@ module.exports = function (_) {
 
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -618,7 +625,7 @@ module.exports = function (_) {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -642,7 +649,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./basic-tools":1,"./http":2,"./live-dom":3,"./message-listener":4}],6:[function(require,module,exports){
+},{"./basic-tools":1,"./http":3,"./live-dom":4,"./message-listener":5}],7:[function(require,module,exports){
 var _ = require('../../src/tools/tools');
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
@@ -733,4 +740,4 @@ _.onMessage('modal', function (e, message) {
 
 parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
 
-},{"../../src/tools/tools":5}]},{},[6]);
+},{"../../src/tools/tools":6}]},{},[7]);

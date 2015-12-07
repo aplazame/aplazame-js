@@ -4,20 +4,7 @@ module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar aho
 module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
 },{}],3:[function(require,module,exports){
 
-if( !Element.prototype.matchesSelector ) {
-  Element.prototype.matchesSelector = (
-    Element.prototype.webkitMatchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector
-  );
-}
-
-(function (root) {
-  'use strict';
-
-  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
-})(this);
+require('./browser-polyfills');
 
 function _isType (type) {
     return function (o) {
@@ -42,12 +29,6 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
-if( window.attachEvent && !window.HTMLElement.prototype.addEventListener ) {
-  window.HTMLElement.prototype.addEventListener = function (eventName, listener) {
-    this.attachEvent('on' + eventName, listener);
-  };
-}
-
 function listen (element, eventName, listener) {
   if( element instanceof Array ) {
     for( var i = 0, n = element.length ; i < n ; i++ ) {
@@ -58,27 +39,12 @@ function listen (element, eventName, listener) {
   element.addEventListener(eventName, listener, false);
 }
 
-// var listen = window.addEventListener ? function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.addEventListener(eventName, listener, false);
-// } : ( window.attachEvent && function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.attachEvent('on' + eventName, listener);
-// } );
-
-
-if( !window.HTMLElement.prototype.addEventListener ) {
-  throw new Error('Your Browser does not support events');
+function _ready (callback) {
+  if (/loaded|complete/.test(document.readyState)) {
+    callback();
+  } else {
+    window.addEventListener('load', callback);
+  }
 }
 
 function once (fn) {
@@ -416,7 +382,48 @@ var tools = {
 
 module.exports = tools;
 
-},{}],4:[function(require,module,exports){
+},{"./browser-polyfills":4}],4:[function(require,module,exports){
+
+if( !Element.prototype.matchesSelector ) {
+  Element.prototype.matchesSelector = (
+    Element.prototype.webkitMatchesSelector ||
+    Element.prototype.mozMatchesSelector ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.oMatchesSelector
+  );
+}
+
+if( !Element.prototype.closest ) {
+  Element.prototype.closest = function (selector) {
+    var el = this;
+
+    while( el ) {
+      if( el.matchesSelector(selector) ) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    return el;
+  };
+}
+
+if( !Element.prototype.addEventListener ) {
+  if( Element.prototype.attachEvent ) {
+    Element.prototype.addEventListener = function (eventName, listener) {
+      return Element.prototype.attachEvent( 'on' + eventName, listener );
+    };
+  } else {
+    throw 'Browser not compatible with element events';
+  }
+}
+
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
+
+},{}],5:[function(require,module,exports){
 // factory http
 
 function headerToTitleSlug(text) {
@@ -564,7 +571,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -598,7 +605,7 @@ module.exports = function (_) {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -622,7 +629,7 @@ module.exports = function (_) {
 
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -646,7 +653,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./basic-tools":3,"./http":4,"./live-dom":5,"./message-listener":6}],8:[function(require,module,exports){
+},{"./basic-tools":3,"./http":5,"./live-dom":6,"./message-listener":7}],9:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     choices = [];
@@ -657,7 +664,8 @@ _.template.put('modal-instalments', require('../../.tmp/simulator/templates/moda
 _.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') );
 
 var main = document.getElementById('main'),
-    selectedChoice, choices = window.choices;
+    selectedChoice, choices = window.choices,
+    currentAmount;
 
 function emitSize () {
   setTimeout(function () {
@@ -683,6 +691,11 @@ function showChoices () {
 function setChoice (choice) {
   selectedChoice = choice;
   return choice;
+}
+
+function setAmount (amount) {
+  currentAmount = amount;
+  return currentAmount;
 }
 
 function runAction (action, data) {
@@ -722,30 +735,6 @@ function runAction (action, data) {
   }
 }
 
-function renderWidget () {
-  main.innerHTML = _.template('widget', {
-    getAmount: _.getAmount,
-    choice: selectedChoice
-  });
-  emitSize();
-
-  [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
-
-    _.listen(element, 'click', function (e) {
-      var action = element.getAttribute('data-action');
-
-      // console.log('data-action');
-
-      if( action !== undefined ) {
-        e.preventDefault();
-      }
-
-      runAction(action);
-    });
-
-  } );
-}
-
 function maxInstalments (prev, choice) {
   if( prev === null ) {
     return choice;
@@ -755,6 +744,32 @@ function maxInstalments (prev, choice) {
 }
 
 var isMobile,
+    renderWidget = function (mobile) {
+      isMobile = mobile === undefined || mobile;
+
+      _.removeClass(main, 'loading');
+      main.innerHTML = _.template('widget', {
+        getAmount: _.getAmount,
+        choice: selectedChoice,
+        currentAmount: currentAmount,
+        isMobile: isMobile
+      });
+      emitSize();
+
+      [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
+
+        _.listen(element, 'click', function (e) {
+          var action = element.getAttribute('data-action');
+
+          if( action !== undefined ) {
+            e.preventDefault();
+          }
+
+          runAction(action);
+        });
+
+      } );
+    },
     setMobile = function (mobile) {
       if( isMobile === undefined || isMobile !== mobile ) {
         isMobile = mobile;
@@ -768,13 +783,16 @@ var isMobile,
     },
     messageSimulator = {
       choices: function (message) {
-        choices = message.data;
+        choices = message.choices;
         setChoice( choices.reduce(maxInstalments, null) );
-        renderWidget();
-        setMobile(message.mobile);
+        setAmount( message.amount );
+        renderWidget(message.mobile);
       },
       mobile: function (message) {
         setMobile(message.mobile);
+      },
+      loading: function (message) {
+        _.addClass(main, 'loading');
       }
     };
 
@@ -789,4 +807,4 @@ parent.window.postMessage({
   event: 'require:choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":7}]},{},[8]);
+},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":8}]},{},[9]);

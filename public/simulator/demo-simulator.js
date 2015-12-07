@@ -43,22 +43,9 @@ _.listen(form, 'submit', function (e) {
   });
 });
 
-},{"../src/tools/tools":6}],2:[function(require,module,exports){
+},{"../src/tools/tools":7}],2:[function(require,module,exports){
 
-if( !Element.prototype.matchesSelector ) {
-  Element.prototype.matchesSelector = (
-    Element.prototype.webkitMatchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector
-  );
-}
-
-(function (root) {
-  'use strict';
-
-  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
-})(this);
+require('./browser-polyfills');
 
 function _isType (type) {
     return function (o) {
@@ -83,12 +70,6 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
-if( window.attachEvent && !window.HTMLElement.prototype.addEventListener ) {
-  window.HTMLElement.prototype.addEventListener = function (eventName, listener) {
-    this.attachEvent('on' + eventName, listener);
-  };
-}
-
 function listen (element, eventName, listener) {
   if( element instanceof Array ) {
     for( var i = 0, n = element.length ; i < n ; i++ ) {
@@ -99,27 +80,12 @@ function listen (element, eventName, listener) {
   element.addEventListener(eventName, listener, false);
 }
 
-// var listen = window.addEventListener ? function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.addEventListener(eventName, listener, false);
-// } : ( window.attachEvent && function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.attachEvent('on' + eventName, listener);
-// } );
-
-
-if( !window.HTMLElement.prototype.addEventListener ) {
-  throw new Error('Your Browser does not support events');
+function _ready (callback) {
+  if (/loaded|complete/.test(document.readyState)) {
+    callback();
+  } else {
+    window.addEventListener('load', callback);
+  }
 }
 
 function once (fn) {
@@ -457,7 +423,48 @@ var tools = {
 
 module.exports = tools;
 
-},{}],3:[function(require,module,exports){
+},{"./browser-polyfills":3}],3:[function(require,module,exports){
+
+if( !Element.prototype.matchesSelector ) {
+  Element.prototype.matchesSelector = (
+    Element.prototype.webkitMatchesSelector ||
+    Element.prototype.mozMatchesSelector ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.oMatchesSelector
+  );
+}
+
+if( !Element.prototype.closest ) {
+  Element.prototype.closest = function (selector) {
+    var el = this;
+
+    while( el ) {
+      if( el.matchesSelector(selector) ) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    return el;
+  };
+}
+
+if( !Element.prototype.addEventListener ) {
+  if( Element.prototype.attachEvent ) {
+    Element.prototype.addEventListener = function (eventName, listener) {
+      return Element.prototype.attachEvent( 'on' + eventName, listener );
+    };
+  } else {
+    throw 'Browser not compatible with element events';
+  }
+}
+
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
+
+},{}],4:[function(require,module,exports){
 // factory http
 
 function headerToTitleSlug(text) {
@@ -605,7 +612,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -639,7 +646,7 @@ module.exports = function (_) {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -663,7 +670,7 @@ module.exports = function (_) {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -687,4 +694,4 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./basic-tools":2,"./http":3,"./live-dom":4,"./message-listener":5}]},{},[1]);
+},{"./basic-tools":2,"./http":4,"./live-dom":5,"./message-listener":6}]},{},[1]);

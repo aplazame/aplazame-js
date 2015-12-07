@@ -8,7 +8,8 @@ _.template.put('modal-instalments', require('../../.tmp/simulator/templates/moda
 _.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') );
 
 var main = document.getElementById('main'),
-    selectedChoice, choices = window.choices;
+    selectedChoice, choices = window.choices,
+    currentAmount;
 
 function emitSize () {
   setTimeout(function () {
@@ -34,6 +35,11 @@ function showChoices () {
 function setChoice (choice) {
   selectedChoice = choice;
   return choice;
+}
+
+function setAmount (amount) {
+  currentAmount = amount;
+  return currentAmount;
 }
 
 function runAction (action, data) {
@@ -89,6 +95,7 @@ var isMobile,
       main.innerHTML = _.template('widget', {
         getAmount: _.getAmount,
         choice: selectedChoice,
+        currentAmount: currentAmount,
         isMobile: isMobile
       });
       emitSize();
@@ -120,8 +127,9 @@ var isMobile,
     },
     messageSimulator = {
       choices: function (message) {
-        choices = message.data;
+        choices = message.choices;
         setChoice( choices.reduce(maxInstalments, null) );
+        setAmount( message.amount );
         renderWidget(message.mobile);
       },
       mobile: function (message) {

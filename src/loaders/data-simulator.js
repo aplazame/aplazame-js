@@ -144,8 +144,6 @@ module.exports = function (aplazame) {
             iframe,
             choicesCache = {};
 
-        console.log('simulator', simulator, getAmount() );
-
         simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
 
         aplazame.simulator(simulatorParams.amount, function (_choices) {
@@ -169,16 +167,6 @@ module.exports = function (aplazame) {
             iframes.push(iframe);
             iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
             simulator.appendChild(iframe);
-
-            // _.writeIframe(iframe,
-            //   response.data.replace(/<head\>/, '<head><base href="' + api.baseUrl + 'widgets/simulator/" />')
-            // );
-
-            // _.writeIframe(iframe,
-            //   response.data
-            //     .replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />')
-            //     .replace(/\/\/ choices = \[\];/, 'choices = ' + JSON.stringify(choices) + ';')
-            // );
           }, function () {
             simulator.innerHTML = '';
           });
@@ -229,7 +217,6 @@ module.exports = function (aplazame) {
         }
 
       });
-      // aplazame.button(btnParams);
     }
   }
 

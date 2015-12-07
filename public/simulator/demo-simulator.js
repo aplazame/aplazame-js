@@ -14,7 +14,7 @@ amount.value = localStorage.getItem('demo-simulator-amount');
 
 function getCents(value) {
   var values = value.split(/[,.]/);
-  return '' + ( Number( values[0] ? 100*values[0] : 0 ) + Number( values[1] || 0 ) );
+  return '' + (Number(values[0] ? 100 * values[0] : 0) + Number(values[1] || 0));
 }
 
 _.listen(form, 'submit', function (e) {
@@ -22,7 +22,7 @@ _.listen(form, 'submit', function (e) {
 
   localStorage.setItem('demo-simulator-amount', amount.value);
 
-  var currentAmount = getCents( amount.value );
+  var currentAmount = getCents(amount.value);
 
   resultsWrapper.querySelector('.section-title > h3').innerHTML = 'cargando...';
   _.removeClass(resultsWrapper, 'hidden');
@@ -47,16 +47,16 @@ _.listen(form, 'submit', function (e) {
 
 require('./browser-polyfills');
 
-function _isType (type) {
-    return function (o) {
-        return (typeof o === type);
-    };
+function _isType(type) {
+  return function (o) {
+    return typeof o === type;
+  };
 }
 
-function _instanceOf (_constructor) {
-    return function (o) {
-        return ( o instanceof _constructor );
-    };
+function _instanceOf(_constructor) {
+  return function (o) {
+    return o instanceof _constructor;
+  };
 }
 
 var _isObject = _isType('object'),
@@ -66,13 +66,13 @@ var _isObject = _isType('object'),
     _isArray = Array.isArray || _instanceOf(Array),
     _isDate = _instanceOf(Date),
     _isRegExp = _instanceOf(RegExp),
-    _isElement = function(o) {
-      return o && o.nodeType === 1;
-    };
+    _isElement = function (o) {
+  return o && o.nodeType === 1;
+};
 
-function listen (element, eventName, listener) {
-  if( element instanceof Array ) {
-    for( var i = 0, n = element.length ; i < n ; i++ ) {
+function listen(element, eventName, listener) {
+  if (element instanceof Array) {
+    for (var i = 0, n = element.length; i < n; i++) {
       element[i].addEventListener(eventName, listener, false);
     }
     return;
@@ -80,7 +80,7 @@ function listen (element, eventName, listener) {
   element.addEventListener(eventName, listener, false);
 }
 
-function _ready (callback) {
+function _ready(callback) {
   if (/loaded|complete/.test(document.readyState)) {
     callback();
   } else {
@@ -88,27 +88,29 @@ function _ready (callback) {
   }
 }
 
-function once (fn) {
+function once(fn) {
   var done;
   return function () {
-    if( !done ) {
+    if (!done) {
       done = true;
       return fn.apply(this, arguments);
     }
   };
 }
 
-function docReady (_callback, delay) {
-  var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
+function docReady(_callback, delay) {
+  var callback = delay ? function () {
+    setTimeout(_callback, delay);
+  } : _callback;
 
-  if( document.readyState === 'complete' ) {
+  if (document.readyState === 'complete') {
     callback();
   } else {
     listen(window, 'load', callback);
   }
 }
 
-function replaceKeys (tmpl, keys) {
+function replaceKeys(tmpl, keys) {
   return keys ? tmpl.replace(/\{\{([^\}]+)\}\}/g, function (match, key) {
     return keys[key];
   }) : function (ks) {
@@ -117,13 +119,13 @@ function replaceKeys (tmpl, keys) {
 }
 
 var arrayShift = [].shift;
-function extend () {
-    var dest = arrayShift.call(arguments),
+function extend() {
+  var dest = arrayShift.call(arguments),
       src = arrayShift.call(arguments),
       key;
 
-  while( src ) {
-    for( key in src) {
+  while (src) {
+    for (key in src) {
       dest[key] = src[key];
     }
     src = arrayShift.call(arguments);
@@ -132,59 +134,60 @@ function extend () {
   return dest;
 }
 
-function merge () {
-    var dest = arrayShift.call(arguments),
-        src = arrayShift.call(arguments),
-        key;
+function merge() {
+  var dest = arrayShift.call(arguments),
+      src = arrayShift.call(arguments),
+      key;
 
-    while( src ) {
+  while (src) {
 
-        if( typeof dest !== typeof src ) {
-            dest = _isArray(src) ? [] : ( _isObject(src) ? {} : src );
-        }
-
-        if( _isObject(src) ) {
-
-            for( key in src ) {
-                if( src[key] !== undefined ) {
-                    if( typeof dest[key] !== typeof src[key] ) {
-                        dest[key] = merge(undefined, src[key]);
-                    } else if( _isArray(dest[key]) ) {
-                        [].push.apply(dest[key], src[key]);
-                    } else if( _isObject(dest[key]) ) {
-                        dest[key] = merge(dest[key], src[key]);
-                    } else {
-                        dest[key] = src[key];
-                    }
-                }
-            }
-        }
-        src = arrayShift.call(arguments);
+    if (typeof dest !== typeof src) {
+      dest = _isArray(src) ? [] : _isObject(src) ? {} : src;
     }
 
-    return dest;
+    if (_isObject(src)) {
+
+      for (key in src) {
+        if (src[key] !== undefined) {
+          if (typeof dest[key] !== typeof src[key]) {
+            dest[key] = merge(undefined, src[key]);
+          } else if (_isArray(dest[key])) {
+            [].push.apply(dest[key], src[key]);
+          } else if (_isObject(dest[key])) {
+            dest[key] = merge(dest[key], src[key]);
+          } else {
+            dest[key] = src[key];
+          }
+        }
+      }
+    }
+    src = arrayShift.call(arguments);
+  }
+
+  return dest;
 }
 
-function joinPath () {
+function joinPath() {
   return [].reduce.call(arguments, function (prev, path, index, list) {
 
     path = index ? path.replace(/^\//, '') : path;
-    path = ( index === (list.length - 1) ) ? path : path.replace(/\/$/, '');
+    path = index === list.length - 1 ? path : path.replace(/\/$/, '');
 
-    return prev + ( index ? '/' : '' ) + path;
-
+    return prev + (index ? '/' : '') + path;
   }, '');
 }
 
-function writeIframe (iframe, content) {
+function writeIframe(iframe, content) {
   var iframeDoc = iframe.contentWindow.document;
-  try { iframeDoc.charset = 'UTF-8'; } catch(err) {}
+  try {
+    iframeDoc.charset = 'UTF-8';
+  } catch (err) {}
   iframeDoc.open();
   iframeDoc.write(content);
   iframeDoc.close();
 }
 
-function getIFrame (iframeStyles) {
+function getIFrame(iframeStyles) {
   var iframe = document.createElement('iframe');
   extend(iframe.style, iframeStyles || {});
 
@@ -192,7 +195,7 @@ function getIFrame (iframeStyles) {
   return iframe;
 }
 
-function template (name, data){
+function template(name, data) {
   return template.cache[name](data || {});
 }
 
@@ -201,20 +204,13 @@ template.cache = {};
 template.compile = function (tmpl) {
   // John Resig micro-template
   return new Function('obj', // jshint ignore:line
-    'var p=[],print=function(){p.push.apply(p,arguments);};' +
+  'var p=[],print=function(){p.push.apply(p,arguments);};' +
 
-    // Introduce the data as local variables using with(){}
-    'with(obj){p.push(\'' +
+  // Introduce the data as local variables using with(){}
+  'with(obj){p.push(\'' +
 
-    // Convert the template into pure JavaScript
-    tmpl.trim()
-      .replace(/[\r\t\n]/g, ' ')
-      .split('<%').join('\t')
-      .replace(/((^|%>)[^\t]*)'/g, '$1\r')
-      .replace(/\t=(.*?)%>/g, '\',$1,\'')
-      .split('\t').join('\');')
-      .split('%>').join('p.push(\'')
-      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+  // Convert the template into pure JavaScript
+  tmpl.trim().replace(/[\r\t\n]/g, ' ').split('<%').join('\t').replace(/((^|%>)[^\t]*)'/g, '$1\r').replace(/\t=(.*?)%>/g, '\',$1,\'').split('\t').join('\');').split('%>').join('p.push(\'').split('\r').join('\\\'') + '\');}return p.join(\'\');');
 };
 
 template.put = function (name, tmpl) {
@@ -227,15 +223,14 @@ template.lookup = function () {
   });
 };
 
-
-function findBubbleClose (str) {
+function findBubbleClose(str) {
   var level = 0;
 
-  for( var i = 0, len = str.length; i < len ; i++ ) {
-    if( str[i] === '(' ) {
+  for (var i = 0, len = str.length; i < len; i++) {
+    if (str[i] === '(') {
       level++;
-    } else if( str[i] === ')' ) {
-      if( level === 0 ) {
+    } else if (str[i] === ')') {
+      if (level === 0) {
         return i;
       } else {
         level--;
@@ -246,7 +241,7 @@ function findBubbleClose (str) {
   return -1;
 }
 
-function hasSelector (selector, rootElement) {
+function hasSelector(selector, rootElement) {
   var splitHas = selector.split(':has(');
 
   return splitHas.reduce(function (matches, partial) {
@@ -255,7 +250,7 @@ function hasSelector (selector, rootElement) {
         hasFilter = partial.substr(0, closePosition),
         partialQuery = partial.substr(closePosition + 1).trim();
 
-    if( closePosition === -1 ) {
+    if (closePosition === -1) {
       throw new Error('malformed selector');
     }
 
@@ -263,55 +258,54 @@ function hasSelector (selector, rootElement) {
       return element.querySelector(hasFilter);
     });
 
-    if( partialQuery ) {
+    if (partialQuery) {
       var submatches = [];
 
       matches.forEach(function (element) {
-        [].push.apply(submatches, element.querySelectorAll(partialQuery) );
+        [].push.apply(submatches, element.querySelectorAll(partialQuery));
       });
 
       return submatches;
     }
 
     return matches;
-
-  }, [].slice.call( (rootElement || document).querySelectorAll( splitHas.shift() ) ) );
+  }, [].slice.call((rootElement || document).querySelectorAll(splitHas.shift())));
 }
 
-function querySelector (selector, rootElement) {
+function querySelector(selector, rootElement) {
   // 'tr:has(> .row) div:has(span) img'.split(':has(');
-  if( !selector ) {
+  if (!selector) {
     return [];
   }
 
-  if( !/\:has\(/.test(selector) ) {
-    return [].slice.call( (rootElement || document).querySelectorAll( selector ) );
+  if (!/\:has\(/.test(selector)) {
+    return [].slice.call((rootElement || document).querySelectorAll(selector));
   }
 
   return hasSelector(selector);
 }
 
-function cssQuery (_selector, rootElement) {
+function cssQuery(_selector, rootElement) {
   var selectors = _selector.split(/\s*,\s*/);
 
   return selectors.reduce(function (list, selector) {
-    return list.concat( querySelector(selector, rootElement) );
+    return list.concat(querySelector(selector, rootElement));
   }, []);
 }
 
-function getAmount (amount) {
+function getAmount(amount) {
   var prefix = '';
 
-  if( amount < 0 ) {
+  if (amount < 0) {
     prefix = '-';
     amount = 0 - amount;
   }
 
-  if( !amount ) {
+  if (!amount) {
     return '0,00';
-  } else if( amount < 10 ) {
+  } else if (amount < 10) {
     return '0,0' + amount;
-  } else if( amount < 100 ) {
+  } else if (amount < 100) {
     return '0,' + amount;
   }
   return prefix + ('' + amount).replace(/..$/, ',$&');
@@ -320,18 +314,16 @@ function getAmount (amount) {
 var cssHack = (function () {
   var cache = {},
       hacks = {
-        overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
-        blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.25s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
-        // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
-        modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' +
-               '@media (max-width: 600px) { html { background-color: #333A3E; } html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
-               '@media (min-width: 601px) { .aplazame-modal { position: fixed; } }'
-        // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
-        // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
-      };
+    overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
+    blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.25s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
+    // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
+    modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' + '@media (max-width: 600px) { html { background-color: #333A3E; } html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 601px) { .aplazame-modal { position: fixed; } }'
+    // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
+    // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
+  };
 
-  return function hack (hackName) {
-    if( !cache[hackName] ) {
+  return function hack(hackName) {
+    if (!cache[hackName]) {
       var style = document.createElement('style');
       style.setAttribute('rel', 'stylesheet');
       style.textContent = hacks[hackName].replace(/;/g, ' !important;');
@@ -341,12 +333,16 @@ var cssHack = (function () {
       style.hack = function (enable) {
         enable = enable === undefined || enable;
 
-        if( enable ) {
-          if( enabled ) { return; }
+        if (enable) {
+          if (enabled) {
+            return;
+          }
           enabled = true;
           document.head.appendChild(style);
         } else {
-          if( !enabled ) { return; }
+          if (!enabled) {
+            return;
+          }
           enabled = false;
           document.head.removeChild(style);
         }
@@ -358,8 +354,8 @@ var cssHack = (function () {
   };
 })();
 
-function scrollTop (value) {
-  if( value !== undefined ) {
+function scrollTop(value) {
+  if (value !== undefined) {
     document.documentElement.scrollTop = value;
     document.body.scrollTop = value;
   }
@@ -370,19 +366,19 @@ var _classActions = {
   add: document.documentElement.classList ? function (element, className) {
     element.classList.add(className);
   } : function (element, className) {
-    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b', '');
     _classActions.remove(element, className);
     element.className += ' ' + className;
   },
   remove: document.documentElement.classList ? function (element, className) {
     element.classList.remove(className);
   } : function (element, className) {
-    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
-    element.className = element.className.replace(RE_CLEANCLASS,'');
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b', '');
+    element.className = element.className.replace(RE_CLEANCLASS, '');
   },
   action: function (action, tools) {
     return function (element, className) {
-      if( className.indexOf(' ') >= 0 ) {
+      if (className.indexOf(' ') >= 0) {
         className.split(' ').forEach(function (cn) {
           _classActions[action](element, cn);
         });
@@ -425,21 +421,16 @@ module.exports = tools;
 
 },{"./browser-polyfills":3}],3:[function(require,module,exports){
 
-if( !Element.prototype.matchesSelector ) {
-  Element.prototype.matchesSelector = (
-    Element.prototype.webkitMatchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector
-  );
+if (!Element.prototype.matchesSelector) {
+  Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
 }
 
-if( !Element.prototype.closest ) {
+if (!Element.prototype.closest) {
   Element.prototype.closest = function (selector) {
     var el = this;
 
-    while( el ) {
-      if( el.matchesSelector(selector) ) {
+    while (el) {
+      if (el.matchesSelector(selector)) {
         break;
       }
       el = el.parentElement;
@@ -448,10 +439,10 @@ if( !Element.prototype.closest ) {
   };
 }
 
-if( !Element.prototype.addEventListener ) {
-  if( Element.prototype.attachEvent ) {
+if (!Element.prototype.addEventListener) {
+  if (Element.prototype.attachEvent) {
     Element.prototype.addEventListener = function (eventName, listener) {
-      return Element.prototype.attachEvent( 'on' + eventName, listener );
+      return Element.prototype.attachEvent('on' + eventName, listener);
     };
   } else {
     throw 'Browser not compatible with element events';
@@ -466,7 +457,7 @@ if( !Element.prototype.addEventListener ) {
 
 // from https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Array/find#Polyfill
 if (!Array.prototype.find) {
-  Array.prototype.find = function(iteratee, thisArg) {
+  Array.prototype.find = function (iteratee, thisArg) {
     if (this === null) {
       throw new TypeError('Array.prototype.find called on null or undefined');
     }
@@ -477,9 +468,9 @@ if (!Array.prototype.find) {
     thisArg = thisArg === undefined ? this : thisArg;
     var value;
 
-    for( var i = 0, len = this.length; i < len; i++ ) {
+    for (var i = 0, len = this.length; i < len; i++) {
       value = this[i];
-      if( iteratee.call(thisArg, value, i, this) ) {
+      if (iteratee.call(thisArg, value, i, this)) {
         return value;
       }
     }
@@ -493,7 +484,7 @@ if (!Array.prototype.find) {
 function headerToTitleSlug(text) {
   var key = text[0].toUpperCase() + text.substr(1);
   return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
-      return lower + '-' + upper;
+    return lower + '-' + upper;
   });
 }
 
@@ -507,10 +498,10 @@ function headerToCamelCase(text) {
 var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
 function parseContentType(contentType, text, xml) {
   var matches = contentType && contentType.match(RE_contentType);
-  return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
+  return matches && (matches[3] === 'json' ? JSON.parse(text) : matches[3] === 'xml' ? xml : text);
 }
 
-function http (url, config) {
+function http(url, config) {
   config = config || {};
   config.headers = config.headers || {};
   config.url = url;
@@ -518,37 +509,45 @@ function http (url, config) {
   var request = null,
       on = { resolve: [], reject: [] };
 
-  try { // Firefox, Opera 8.0+, Safari
-      request = new XMLHttpRequest();
-  } catch (e) { // Internet Explorer
-      try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
-      catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
+  try {
+    // Firefox, Opera 8.0+, Safari
+    request = new XMLHttpRequest();
+  } catch (e) {
+    // Internet Explorer
+    try {
+      request = new ActiveXObject('Msxml2.XMLHTTP');
+    } // jshint ignore:line
+    catch (er) {
+      request = new ActiveXObject('Microsoft.XMLHTTP');
+    } // jshint ignore:line
   }
-  if( request === null ) { throw 'Browser does not support HTTP Request'; }
+  if (request === null) {
+    throw 'Browser does not support HTTP Request';
+  }
 
-  if( config.params ) {
+  if (config.params) {
     var i = 0;
-    for( var param in config.params ) {
-      url += ( i++ ? '&' : ( /\?/.test(url) ? '&' : '?' ) ) + param + '=' + encodeURIComponent(config.params[param]);
+    for (var param in config.params) {
+      url += (i++ ? '&' : /\?/.test(url) ? '&' : '?') + param + '=' + encodeURIComponent(config.params[param]);
     }
   }
 
-  request.open( ( config.method || 'get').toUpperCase(), url );
+  request.open((config.method || 'get').toUpperCase(), url);
 
-  if( config.withCredentials ) {
+  if (config.withCredentials) {
     request.withCredentials = true;
   }
 
-  for( var key in config.headers ) {
-      request.setRequestHeader( headerToTitleSlug(key), config.headers[key] );
+  for (var key in config.headers) {
+    request.setRequestHeader(headerToTitleSlug(key), config.headers[key]);
   }
 
-  request.resolve = function ( response ) {
+  request.resolve = function (response) {
     on.resolve.forEach(function (handler) {
       handler(response);
     });
   };
-  request.reject = function ( response ) {
+  request.reject = function (response) {
     on.reject.forEach(function (handler) {
       handler(response);
     });
@@ -556,17 +555,17 @@ function http (url, config) {
 
   var headersCache;
   request.getHeaders = function () {
-    if( !headersCache ) {
+    if (!headersCache) {
       headersCache = {};
       request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
-          headersCache[headerToCamelCase(key)] = value.trim();
+        headersCache[headerToCamelCase(key)] = value.trim();
       });
     }
     return headersCache;
   };
 
-  request.onreadystatechange = function(){
-    if( request.readyState === 'complete' || request.readyState === 4 ) {
+  request.onreadystatechange = function () {
+    if (request.readyState === 'complete' || request.readyState === 4) {
       var response = {
         config: request.config,
         data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
@@ -574,25 +573,24 @@ function http (url, config) {
         headers: request.getHeaders,
         xhr: request
       };
-      if( request.status >= 200 && request.status < 300 ) {
-        request.resolve( response );
+      if (request.status >= 200 && request.status < 300) {
+        request.resolve(response);
       } else {
-        request.reject( response );
+        request.reject(response);
       }
     }
   };
 
   request.config = config;
 
-  if( config.contentType ) {
-    request.setRequestHeader( 'Content-Type', config.contentType );
+  if (config.contentType) {
+    request.setRequestHeader('Content-Type', config.contentType);
 
-    if( config.contentType === 'application/json' && typeof config.data !== 'string' ) {
+    if (config.contentType === 'application/json' && typeof config.data !== 'string') {
       config.data = JSON.stringify(config.data);
     }
-
   } else {
-    if( typeof config.data === 'string' ) {
+    if (typeof config.data === 'string') {
       config.contentType = 'text/html';
     } else {
       config.contentType = 'application/json';
@@ -600,19 +598,19 @@ function http (url, config) {
     }
   }
 
-  request.send( config.data );
+  request.send(config.data);
 
   return {
     then: function (onResolve, onReject) {
-      if( onResolve instanceof Function ) {
+      if (onResolve instanceof Function) {
         on.resolve.push(onResolve);
       }
-      if( onReject instanceof Function ) {
+      if (onReject instanceof Function) {
         on.reject.push(onReject);
       }
     },
     error: function (onReject) {
-      if( onReject instanceof Function ) {
+      if (onReject instanceof Function) {
         on.reject.push(onReject);
       }
     }
@@ -620,7 +618,7 @@ function http (url, config) {
 }
 
 http.noCache = function (url, config) {
-  url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
+  url += (/\?/.test(url) ? '&' : '?') + 't=' + new Date().getTime();
   return http(url, config);
 };
 
@@ -642,31 +640,29 @@ module.exports = function (_) {
   var suscriptors = [],
       running = false;
 
-  function initLiveDOM () {
+  function initLiveDOM() {
 
     _.ready(function () {
-      document.body.addEventListener('DOMSubtreeModified', function(event){
+      document.body.addEventListener('DOMSubtreeModified', function (event) {
         // console.debug( 'DOM Changed at ', new Date(), event.target );
-        for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
+        for (var i = 0, n = suscriptors.length; i < n; i++) {
           suscriptors[i](event.target);
         }
       }, false);
     });
-
   }
 
   return {
     subscribe: function (handler) {
-      if( !running ) {
+      if (!running) {
         initLiveDOM(true);
         running = true;
       }
-      if( handler instanceof Function ) {
+      if (handler instanceof Function) {
         suscriptors.push(handler);
       }
     }
   };
-
 };
 
 },{}],6:[function(require,module,exports){
@@ -679,18 +675,17 @@ module.exports = function (_) {
     var message = e.data,
         listener = messageTarget[message.aplazame];
 
-    if( !e.used && listener ) {
+    if (!e.used && listener) {
       e.used = true;
       listener(e, message);
     }
   });
 
   return function (target, handler) {
-    if( _.isString(target) && _.isFunction(handler) ) {
+    if (_.isString(target) && _.isFunction(handler)) {
       messageTarget[target] = handler;
     }
   };
-
 };
 
 },{}],7:[function(require,module,exports){
@@ -702,12 +697,12 @@ _.extend(_, {
   liveDOM: require('./live-dom')(_),
   http: require('./http'),
   elementData: document.createElement('div').dataset ? function (el, key, value) {
-    if( value !== undefined ) {
+    if (value !== undefined) {
       el.dataset[key] = value;
     }
     return el.dataset[key];
   } : function (el, key, value) {
-    if( value !== undefined ) {
+    if (value !== undefined) {
       el.setAttribute('data-' + key, value);
     }
     return el.getAttribute('data-' + key);

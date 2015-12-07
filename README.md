@@ -21,6 +21,13 @@ Instalments Simulator Widget
 <div data-aplazame-simulator data-amount="10050"></div>
 <!-- place this line where you want to show the simulator widget -->
 ```
+you can specify selectors to watch price and quantity, and those values will be watched for changes
+``` html
+<div data-aplazame-simulator
+     data-price="form#article .regular-price .price"
+     data-qty="form#article input[name='qty']"></div>
+<!-- place this line where you want to show the simulator widget -->
+```
 
 Aplazame button
 ---------------

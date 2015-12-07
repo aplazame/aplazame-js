@@ -20,6 +20,14 @@ Simulador de cuotas
 <div data-aplazame-simulator data-amount="10050"></div>
 <!-- place this line where you want to show the simulator widget -->
 ```
+puedes especificar selectores personalizados donde se muestre el precio y la cantidad, y se vigilarán los cambios dináminamente
+
+``` html
+<div data-aplazame-simulator
+     data-price="form#article .regular-price .price"
+     data-qty="form#article input[name='qty']"></div>
+<!-- place this line where you want to show the simulator widget -->
+```
 
 Botón Aplazame
 --------------

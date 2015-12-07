@@ -3,15 +3,46 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      api = require('../core/api');
+      api = require('../core/api'),
+      isMobile = window.matchMedia('( max-width: 767px )');
+
+  function parsePrice (price) {
+     var priceParts = ( '' + price ).match(/(\d+)([,.](\d+))?/);
+     var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
+     return amount;
+  }
+
+  function getQty (qtyElement) {
+    switch( qtyElement.nodeName.toLowerCase() ) {
+      case 'input':
+        return qtyElement.value; break;
+      case 'select':
+        return qtyElement.querySelector('option[selected]').value; break;
+      default:
+        return qtyElement.textContent; break;
+    }
+  }
+
+  function amountGetter (widgetElement) {
+    var priceSelector = widgetElement.getAttribute('data-price'),
+        qtySelector = widgetElement.getAttribute('data-qty');
+
+    return priceSelector ? function () {
+      var qty = qtySelector ? getQty( document.querySelector(qtySelector) ) : 1,
+          priceElement = document.querySelector( priceSelector );
+
+      return qty * parsePrice( priceElement.value !== undefined ? priceElement.value : priceElement.textContent );
+    } : function () {
+      return widgetElement.getAttribute('data-amount');
+    };
+  }
 
   function widgetsLookup (element) {
     if( !element.querySelectorAll ) {
       return;
     }
 
-    var simulators = element.querySelectorAll('[data-aplazame-simulator]'),
-        isMobile = window.matchMedia('( max-width: 767px )');
+    var simulators = element.querySelectorAll('[data-aplazame-simulator]');
 
     if( simulators.length ) {
 
@@ -66,11 +97,16 @@ module.exports = function (aplazame) {
 
         _.elementData(simulator, 'checked', true);
 
-        var simulatorParams = {
-          simulator: '[data-aplazame-simulator]',
-          amount: simulator.getAttribute('data-amount'),
-          publicKey: simulator.getAttribute('data-public-key')
-        };
+        var getAmount = amountGetter(simulator),
+            simulatorParams = {
+              simulator: '[data-aplazame-simulator]',
+              amount: getAmount(),
+              publicKey: simulator.getAttribute('data-public-key')
+            },
+            iframe,
+            choicesCache = {};
+
+        console.log('simulator', simulator, getAmount() );
 
         simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
 
@@ -80,23 +116,25 @@ module.exports = function (aplazame) {
 
           choices = _choices;
 
+          choicesCache[simulatorParams.amount] = _choices;
+
           while( child ) {
             simulator.removeChild(child);
             child = simulator.firstChild;
           }
 
           _.http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
-            var iframe = _.getIFrame({
+            iframe = _.getIFrame({
               width: '100%'
             });
 
             iframes.push(iframe);
-            // iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
+            iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
             simulator.appendChild(iframe);
 
-            _.writeIframe(iframe,
-              response.data.replace(/<head\>/, '<head><base href="' + api.baseUrl + 'widgets/simulator/" />')
-            );
+            // _.writeIframe(iframe,
+            //   response.data.replace(/<head\>/, '<head><base href="' + api.baseUrl + 'widgets/simulator/" />')
+            // );
 
             // _.writeIframe(iframe,
             //   response.data
@@ -109,6 +147,54 @@ module.exports = function (aplazame) {
         }, function () {
           simulator.innerHTML = '';
         });
+
+        if( simulator.getAttribute('data-price') ) {
+          var priceElement = document.querySelector( simulator.getAttribute('data-price') ),
+              qtyElement = simulator.getAttribute('data-qty') && document.querySelector( simulator.getAttribute('data-qty') ),
+              updateWidgetChoices = function (choices) {
+                iframe.contentWindow.postMessage({
+                  aplazame: 'simulator',
+                  event: 'choices',
+                  data: choices,
+                  mobile: isMobile.matches
+                }, '*');
+              },
+              onPriceChange = function (e) {
+                var amount = getAmount();
+                if( choicesCache[amount] ) {
+                  updateWidgetChoices( choicesCache[amount] );
+                } else {
+                  iframe.contentWindow.postMessage({
+                    aplazame: 'simulator',
+                    event: 'loading'
+                  }, '*');
+                  aplazame.simulator( amount, function (_choices) {
+                    choices = _choices;
+                    choicesCache[amount] = _choices;
+                    updateWidgetChoices(_choices);
+                  });
+                }
+              };
+
+          priceElement.addEventListener('DOMSubtreeModified', onPriceChange);
+          priceElement.addEventListener('change', onPriceChange);
+
+          if( qtyElement ) {
+            var previousQty = getQty(qtyElement);
+
+            setInterval(function () {
+              var qty = getQty(qtyElement);
+
+              if( qty != previousQty ) {
+                previousQty = qty;
+                onPriceChange();
+              }
+            }, 50);
+
+            // qtyElement.addEventListener('DOMSubtreeModified', onPriceChange);
+            // qtyElement.addEventListener('change', onPriceChange);
+          }
+        }
 
       });
       // aplazame.button(btnParams);

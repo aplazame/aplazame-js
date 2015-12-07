@@ -29,4 +29,31 @@ aplazame._.ready(function () {
     });
   });
 
+
+  var qtyCtrl = document.querySelector('.qty-ctrl'),
+      qtyInput = qtyCtrl.querySelector('input'),
+      qtyMinus = qtyCtrl.querySelector('button.minus'),
+      qtyPlus = qtyCtrl.querySelector('button.plus');
+
+  qtyMinus.setAttribute('disabled', 'disabled');
+
+  qtyMinus.addEventListener('click', function () {
+    var newValue = Number(qtyInput.value) - 1;
+
+    if( newValue < 1 ) {
+      newValue = 1;
+    }
+
+    qtyInput.value = '' + newValue;
+
+    if( newValue === 1 ) {
+      qtyMinus.setAttribute('disabled', 'disabled');
+    }
+  });
+
+  qtyPlus.addEventListener('click', function () {
+    qtyInput.value = '' + ( Number(qtyInput.value) + 1 );
+    qtyMinus.removeAttribute('disabled');
+  });
+
 });

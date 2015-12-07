@@ -49,7 +49,11 @@
               <p class="description">${article.description}</p>
 
               <div class="price">
-                <input type="text" name="qty" value="1" style="float: left; width: 2em; border: 1px solid #d7dadc; text-align: center; font-size: 1.4rem; padding: 0.4em 0; "></input>
+                <div class="qty-ctrl">
+                  <button type="button" class="minus" disabled>-</button>
+                  <input type="text" name="qty" value="1"></input>
+                  <button type="button" class="plus">+</button>
+                </div>
                 <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>
               </div>
 
@@ -74,7 +78,7 @@
               <br/>
 
               <div class="text-right">
-                <div data-aplazame-simulator="" data-amount="${article.price}"></div>
+                <div data-aplazame-simulator="" data-amount="${article.price}" data-price="form.details [itemprop='price']" data-qty="form.details input[name='qty']"></div>
               </div>
 
             </form>

@@ -33,7 +33,7 @@ module.exports = function (nitro) {
       .when('widgets/assets/**', 'widgets.assets:dev');
 
     nitro.watch('demo')
-      .when('{,**/}*.html', 'demo-templates:dev')
+      .when('{,**/}*.{html,js}', 'demo-templates:dev')
       .when('{,**/}*.{sass,scss}', 'demo-sass:dev');
 
     nitro.watch('.make', function () {

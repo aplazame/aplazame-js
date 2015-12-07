@@ -1,18 +1,5 @@
 
-if( !Element.prototype.matchesSelector ) {
-  Element.prototype.matchesSelector = (
-    Element.prototype.webkitMatchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector
-  );
-}
-
-(function (root) {
-  'use strict';
-
-  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
-})(this);
+require('./browser-polyfills');
 
 function _isType (type) {
     return function (o) {
@@ -37,12 +24,6 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
-if( window.attachEvent && !window.HTMLElement.prototype.addEventListener ) {
-  window.HTMLElement.prototype.addEventListener = function (eventName, listener) {
-    this.attachEvent('on' + eventName, listener);
-  };
-}
-
 function listen (element, eventName, listener) {
   if( element instanceof Array ) {
     for( var i = 0, n = element.length ; i < n ; i++ ) {
@@ -53,27 +34,12 @@ function listen (element, eventName, listener) {
   element.addEventListener(eventName, listener, false);
 }
 
-// var listen = window.addEventListener ? function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.addEventListener(eventName, listener, false);
-// } : ( window.attachEvent && function (element, eventName, listener) {
-//   if( element instanceof Array ) {
-//     for( var i = 0, n = element.length ; i < n ; i++ ) {
-//       element[i].addEventListener(eventName, listener, false);
-//     }
-//     return;
-//   }
-//   element.attachEvent('on' + eventName, listener);
-// } );
-
-
-if( !window.HTMLElement.prototype.addEventListener ) {
-  throw new Error('Your Browser does not support events');
+function _ready (callback) {
+  if (/loaded|complete/.test(document.readyState)) {
+    callback();
+  } else {
+    window.addEventListener('load', callback);
+  }
 }
 
 function once (fn) {

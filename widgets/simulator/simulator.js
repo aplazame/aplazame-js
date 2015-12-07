@@ -8,7 +8,8 @@ _.template.put('modal-instalments', require('../../.tmp/simulator/templates/moda
 _.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') );
 
 var main = document.getElementById('main'),
-    selectedChoice, choices = window.choices;
+    selectedChoice, choices = window.choices,
+    currentAmount;
 
 function emitSize () {
   setTimeout(function () {
@@ -34,6 +35,11 @@ function showChoices () {
 function setChoice (choice) {
   selectedChoice = choice;
   return choice;
+}
+
+function setAmount (amount) {
+  currentAmount = amount;
+  return currentAmount;
 }
 
 function runAction (action, data) {
@@ -73,30 +79,6 @@ function runAction (action, data) {
   }
 }
 
-function renderWidget () {
-  main.innerHTML = _.template('widget', {
-    getAmount: _.getAmount,
-    choice: selectedChoice
-  });
-  emitSize();
-
-  [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
-
-    _.listen(element, 'click', function (e) {
-      var action = element.getAttribute('data-action');
-
-      // console.log('data-action');
-
-      if( action !== undefined ) {
-        e.preventDefault();
-      }
-
-      runAction(action);
-    });
-
-  } );
-}
-
 function maxInstalments (prev, choice) {
   if( prev === null ) {
     return choice;
@@ -106,6 +88,32 @@ function maxInstalments (prev, choice) {
 }
 
 var isMobile,
+    renderWidget = function (mobile) {
+      isMobile = mobile === undefined || mobile;
+
+      _.removeClass(main, 'loading');
+      main.innerHTML = _.template('widget', {
+        getAmount: _.getAmount,
+        choice: selectedChoice,
+        currentAmount: currentAmount,
+        isMobile: isMobile
+      });
+      emitSize();
+
+      [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
+
+        _.listen(element, 'click', function (e) {
+          var action = element.getAttribute('data-action');
+
+          if( action !== undefined ) {
+            e.preventDefault();
+          }
+
+          runAction(action);
+        });
+
+      } );
+    },
     setMobile = function (mobile) {
       if( isMobile === undefined || isMobile !== mobile ) {
         isMobile = mobile;
@@ -119,13 +127,16 @@ var isMobile,
     },
     messageSimulator = {
       choices: function (message) {
-        choices = message.data;
+        choices = message.choices;
         setChoice( choices.reduce(maxInstalments, null) );
-        renderWidget();
-        setMobile(message.mobile);
+        setAmount( message.amount );
+        renderWidget(message.mobile);
       },
       mobile: function (message) {
         setMobile(message.mobile);
+      },
+      loading: function (message) {
+        _.addClass(main, 'loading');
       }
     };
 

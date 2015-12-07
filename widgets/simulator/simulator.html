@@ -13,9 +13,9 @@
     </div>
 
     <script type="application/x-template" data-template="widget">
-        <div class="widget-item-instalments default">
+        <div class="widget-item-instalments <%= isMobile ? 'mobile ' : '' %>default">
           <div class="wrapper">
-            <button class="button" data-action="changeInstalments">
+            <button class="button" data-action="changeInstalments" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€">
               <div class="logo"></div>
               <div class="text-wrapper">
                 <div class="text-get">Consíguelo desde</div>
@@ -33,12 +33,6 @@
           </div>
         </div>
     </script>
-    <script type="application/x-template" data-template="choices">
-      <div>Elige el número de cuotas</div>
-      <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
-        <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
-      <% } %>
-    </script>
-    <script type="text/javascript" src="simulator.js?v=${pkg.version}"></script>
+    <script type="text/javascript" src="simulator.js?v=${version}"></script>
   </body>
 </html>

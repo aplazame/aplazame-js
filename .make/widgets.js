@@ -21,9 +21,11 @@ module.exports = function (nitro) {
 
   nitro.task('widgets.html', function (target) {
 
-    var scope = nitro.tools.scope({
-          dev: target === 'dev',
-          pkg: require('../package')
+    var pkg = require('../package'),
+        dev = target === 'dev',
+        scope = nitro.tools.scope({
+          dev: dev, pkg: pkg,
+          version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
         });
 
     nitro.dir('widgets')

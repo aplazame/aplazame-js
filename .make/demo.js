@@ -43,10 +43,13 @@ module.exports = function (nitro) {
       return this.content( scope.$new(o) );
     });
 
-    var renderIndex = nitro.template( nitro.file.read('demo/index.html') ),
+    var pkg = require('../package'),
+        dev = target === 'dev',
+        renderIndex = nitro.template( nitro.file.read('demo/index.html') ),
         checkout = nitro.file.readJSON('./demo/checkout.json'),
         indexData = nitro.tools.scope({
-          dev: target === 'dev',
+          dev: dev, pkg: pkg,
+          version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
           checkout: checkout,
           shippingAmount: function () {
             return (checkout.shipping.price - checkout.shipping.discount)*(1 + checkout.shipping.tax_rate/10000);
@@ -73,12 +76,15 @@ module.exports = function (nitro) {
           totalAmount: function (articles) {
             return checkout.order.total_amount;
           },
+          amount2string: function (amount) {
+            var cents = amount%100;
+            return parseInt(amount/100) + '.' + ( cents < 10 ? '0' : '' ) + cents;
+          },
           toEUR: function (amount) {
             if( amount < 0 ) {
               return '-' + indexData.toEUR(-amount);
             }
-            var cents = amount%100;
-            return parseInt(amount/100) + '.' + ( cents < 10 ? '0' : '' ) + cents + '€';
+            return indexData.amount2string(amount) + '€';
           }
         });
 
@@ -89,6 +95,7 @@ module.exports = function (nitro) {
     nitro.file.write('public/playground.html', nitro.template( nitro.file.read('demo/playground.html') )( indexData ) );
 
     nitro.file.write('public/simulator/index.html', nitro.template( nitro.file.read('demo/demo-simulator.html') )( indexData ) );
+    nitro.file.copy('demo/demo-article.js', 'public/demo-article.js');
   });
 
   nitro.task('demo-dev', ['demo-clear', 'demo-assets', 'demo-js', 'demo-sass:dev', 'demo-templates:dev']);

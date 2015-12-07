@@ -38,23 +38,22 @@ if( !Element.prototype.addEventListener ) {
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
 
-// https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Array/find#Polyfill
+// from https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Array/find#Polyfill
 if (!Array.prototype.find) {
-  Array.prototype.find = function(predicate) {
-    if (this == null) {
+  Array.prototype.find = function(iteratee, thisArg) {
+    if (this === null) {
       throw new TypeError('Array.prototype.find called on null or undefined');
     }
-    if (typeof predicate !== 'function') {
+    if (typeof iteratee !== 'function') {
       throw new TypeError('predicate must be a function');
     }
-    var list = Object(this);
-    var length = list.length >>> 0;
-    var thisArg = arguments[1];
+
+    thisArg = thisArg === undefined ? this : thisArg;
     var value;
 
-    for (var i = 0; i < length; i++) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
+    for( var i = 0, len = this.length; i < len; i++ ) {
+      value = this[i];
+      if( iteratee.call(thisArg, value, i, this) ) {
         return value;
       }
     }

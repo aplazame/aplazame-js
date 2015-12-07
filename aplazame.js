@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.120';
+module.exports = '0.0.121';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -1353,6 +1353,29 @@ if (!Element.prototype.addEventListener) {
 
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
+
+// from https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Array/find#Polyfill
+if (!Array.prototype.find) {
+  Array.prototype.find = function (iteratee, thisArg) {
+    if (this === null) {
+      throw new TypeError('Array.prototype.find called on null or undefined');
+    }
+    if (typeof iteratee !== 'function') {
+      throw new TypeError('predicate must be a function');
+    }
+
+    thisArg = thisArg === undefined ? this : thisArg;
+    var value;
+
+    for (var i = 0, len = this.length; i < len; i++) {
+      value = this[i];
+      if (iteratee.call(thisArg, value, i, this)) {
+        return value;
+      }
+    }
+    return undefined;
+  };
+}
 
 },{}],17:[function(require,module,exports){
 // factory http

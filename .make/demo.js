@@ -43,10 +43,13 @@ module.exports = function (nitro) {
       return this.content( scope.$new(o) );
     });
 
-    var renderIndex = nitro.template( nitro.file.read('demo/index.html') ),
+    var pkg = require('../package'),
+        dev = target === 'dev',
+        renderIndex = nitro.template( nitro.file.read('demo/index.html') ),
         checkout = nitro.file.readJSON('./demo/checkout.json'),
         indexData = nitro.tools.scope({
-          dev: target === 'dev',
+          dev: dev, pkg: pkg,
+          version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
           checkout: checkout,
           shippingAmount: function () {
             return (checkout.shipping.price - checkout.shipping.discount)*(1 + checkout.shipping.tax_rate/10000);

@@ -62,7 +62,7 @@ module.exports = function (aplazame) {
 
       return qty * parsePrice( priceElement.value !== undefined ? priceElement.value : priceElement.textContent );
     } : function () {
-      return widgetElement.getAttribute('data-amount');
+      return Number( widgetElement.getAttribute('data-amount') );
     };
 
     getter.priceSelector = priceSelector;
@@ -134,7 +134,7 @@ module.exports = function (aplazame) {
         _.elementData(simulator, 'checked', true);
 
         var getAmount = amountGetter(simulator);
-        currentAmount = simulator.getAttribute('data-amount') || getAmount();
+        currentAmount = Number( simulator.getAttribute('data-amount') ) || getAmount();
 
         var simulatorParams = {
               simulator: '[data-aplazame-simulator]',

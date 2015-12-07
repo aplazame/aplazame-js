@@ -28,7 +28,9 @@ module.exports = function (nitro) {
 
   nitro.task('demo-js', function (target) {
 
-    nitro.dir('demo').load('demo-simulator.js').process('browserify').write('public/simulator');
+    nitro.dir('demo').load('demo-simulator.js').process('browserify', {
+      plugins: [nitro.require('babelify')]
+    }).write('public/simulator');
 
   });
 

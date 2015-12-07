@@ -26,7 +26,7 @@ if( !Element.prototype.addEventListener ) {
   if( Element.prototype.attachEvent ) {
     Element.prototype.addEventListener = function (eventName, listener) {
       return Element.prototype.attachEvent( 'on' + eventName, listener );
-    }
+    };
   } else {
     throw 'Browser not compatible with element events';
   }

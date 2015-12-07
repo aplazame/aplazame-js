@@ -15,11 +15,11 @@ module.exports = function (aplazame) {
   function getQty (qtyElement) {
     switch( qtyElement.nodeName.toLowerCase() ) {
       case 'input':
-        return qtyElement.value; break;
+        return qtyElement.value;
       case 'select':
-        return qtyElement.querySelector('option[selected]').value; break;
+        return qtyElement.querySelector('option[selected]').value;
       default:
-        return qtyElement.textContent; break;
+        return qtyElement.textContent;
     }
   }
 
@@ -185,7 +185,7 @@ module.exports = function (aplazame) {
             setInterval(function () {
               var qty = getQty(qtyElement);
 
-              if( qty != previousQty ) {
+              if( qty !== previousQty ) {
                 previousQty = qty;
                 onPriceChange();
               }

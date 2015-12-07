@@ -1,0 +1,25 @@
+
+.article-sample .qty-ctrl
+  float: left
+  // position: relative
+  // top: 0.25em
+
+  input[name="qty"]
+    width: 2em
+    border: 1px solid #d7dadc
+    text-align: center
+    font-size: 1.3rem
+    padding: 0.1em 0
+
+  button.minus, button.plus
+    font-size: 1.3rem
+    padding: 0.1em 0
+    width: 1.2em
+    cursor: pointer
+    border: 0
+    @include background-active($grey-medium)
+    color: white
+
+    &[disabled]
+      opacity: 0.6
+      cursor: default

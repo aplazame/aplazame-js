@@ -44,20 +44,44 @@
             <div class="col-sm-offset-3 col-sm-6 col-md-offset-0 img-wrapper">
               <img src="${article.image_url}" alt="${article.name}"/>
             </div>
-            <div class="col-md-6 details">
+            <form class="col-md-6 details">
               <div class="label">${article.name}</div>
               <p class="description">${article.description}</p>
-              <div class="price">${ toEUR(article.price) }</div>
+
+              <div class="price">
+                <div class="qty-ctrl">
+                  <button type="button" class="minus" disabled>-</button>
+                  <input type="text" name="qty" value="1"></input>
+                  <button type="button" class="plus">+</button>
+                </div>
+                <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>
+              </div>
 
               <br/>
+
+              <div class="article-type-choices">
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="unboxed"></input>
+                  <div class="type-label">Unboxed</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="retail" checked></input>
+                  <div class="type-label">Retail</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="set"></input>
+                  <div class="type-label">Set</div>
+                </label>
+              </div>
+
               <hr/>
               <br/>
 
               <div class="text-right">
-                <div data-aplazame-simulator="" data-amount="${article.price}"></div>
+                <div data-aplazame-simulator="" data-amount="${article.price}" data-price="form.details [itemprop='price']" data-qty="form.details input[name='qty']"></div>
               </div>
 
-            </div>
+            </form>
           </article>
         {/}
       </section>
@@ -153,6 +177,7 @@
             data-sandbox="true">
     </script>
 
+    <script type="text/javascript" src="/demo-article.js"></script>
     <script type="text/javascript">
       var loadCheckout = (function () {
 

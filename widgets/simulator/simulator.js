@@ -73,30 +73,6 @@ function runAction (action, data) {
   }
 }
 
-function renderWidget () {
-  main.innerHTML = _.template('widget', {
-    getAmount: _.getAmount,
-    choice: selectedChoice
-  });
-  emitSize();
-
-  [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
-
-    _.listen(element, 'click', function (e) {
-      var action = element.getAttribute('data-action');
-
-      // console.log('data-action');
-
-      if( action !== undefined ) {
-        e.preventDefault();
-      }
-
-      runAction(action);
-    });
-
-  } );
-}
-
 function maxInstalments (prev, choice) {
   if( prev === null ) {
     return choice;
@@ -106,6 +82,31 @@ function maxInstalments (prev, choice) {
 }
 
 var isMobile,
+    renderWidget = function (mobile) {
+      isMobile = mobile === undefined || mobile;
+
+      _.removeClass(main, 'loading');
+      main.innerHTML = _.template('widget', {
+        getAmount: _.getAmount,
+        choice: selectedChoice,
+        isMobile: isMobile
+      });
+      emitSize();
+
+      [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
+
+        _.listen(element, 'click', function (e) {
+          var action = element.getAttribute('data-action');
+
+          if( action !== undefined ) {
+            e.preventDefault();
+          }
+
+          runAction(action);
+        });
+
+      } );
+    },
     setMobile = function (mobile) {
       if( isMobile === undefined || isMobile !== mobile ) {
         isMobile = mobile;
@@ -121,11 +122,13 @@ var isMobile,
       choices: function (message) {
         choices = message.data;
         setChoice( choices.reduce(maxInstalments, null) );
-        renderWidget();
-        setMobile(message.mobile);
+        renderWidget(message.mobile);
       },
       mobile: function (message) {
         setMobile(message.mobile);
+      },
+      loading: function (message) {
+        _.addClass(main, 'loading');
       }
     };
 

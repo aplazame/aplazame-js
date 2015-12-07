@@ -6,15 +6,15 @@ Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8
 Archivo principal
 -----------------
 ``` html
-<script type="text/javascript" src="https://aplazame.com/static/aplazame.js"></script>
+<script type="text/javascript" src="https://aplazame.com/static/aplazame.js"
+        data-aplazame="publicKey: f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"></script>
 
 <!-- the recommended place for this line is at the end of <body> tag -->
 ```
 
 Simulador de cuotas
 -------------------
-![image](https://cloud.githubusercontent.com/assets/2305833/10167877/aa757ad4-66ca-11e5-8423-079bb444e549.png)
-
+![image](https://cloud.githubusercontent.com/assets/2305833/11635252/cc93ac0e-9d15-11e5-930d-89a27f2882f1.png)
 
 ``` html
 <div data-aplazame-simulator data-amount="10050"></div>
@@ -23,7 +23,7 @@ Simulador de cuotas
 
 Botón Aplazame
 --------------
-![image](https://cloud.githubusercontent.com/assets/2305833/10168408/e6d86bd8-66cc-11e5-9c02-bc5ed52df293.png)
+![image](https://cloud.githubusercontent.com/assets/2305833/11635328/4417726a-9d16-11e5-9f8c-91205319aaa5.png)
 
 ``` html
 <button>Payment Method</button>
@@ -39,7 +39,7 @@ Pasarela de pago (checkout)
 
 [ver demo](http://demo.aplazame.com)
 
-![image](https://cloud.githubusercontent.com/assets/2305833/10168159/d4baa520-66cb-11e5-8101-c4f83154a21e.png)
+![image](https://cloud.githubusercontent.com/assets/2305833/11635342/5cd3cc90-9d16-11e5-80b4-4e72824ba4ed.png)
 
 ``` js
 aplazame.checkout({

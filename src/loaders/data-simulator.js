@@ -200,10 +200,12 @@ module.exports = function (aplazame) {
                 if( choicesCache[currentAmount] ) {
                   updateWidgetChoices( choicesCache[currentAmount] );
                 } else {
-                  iframe.contentWindow.postMessage({
-                    aplazame: 'simulator',
-                    event: 'loading'
-                  }, '*');
+                  if(iframe) {
+                    iframe.contentWindow.postMessage({
+                      aplazame: 'simulator',
+                      event: 'loading'
+                    }, '*');
+                  }
                   aplazame.simulator( currentAmount, function (_choices) {
                     choices = _choices;
                     choicesCache[currentAmount] = _choices;

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.126';
+module.exports = '0.0.127';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -772,6 +772,13 @@ module.exports = function (aplazame) {
     return document.querySelector(selector);
   }
 
+  function readPrice(element) {
+    return [].reduce.call(document.querySelectorAll('*'), function (prev, elem) {
+      var value = elem.textContent.replace(/[^0-9.]/g, '');
+      return prev + (prev && !/\./.test(prev) ? '.' : '') + value;
+    }, '');
+  }
+
   function amountGetter(widgetElement) {
     var priceSelector = widgetElement.getAttribute('data-price'),
         qtySelector = widgetElement.getAttribute('data-qty');
@@ -803,7 +810,7 @@ module.exports = function (aplazame) {
       var qty = qtySelector ? getQty(qtySelector) : 1,
           priceElement = document.querySelector(priceSelector);
 
-      return qty * parsePrice(priceElement.value !== undefined ? priceElement.value : priceElement.textContent);
+      return qty * parsePrice(priceElement.value !== undefined ? priceElement.value : readPrice(priceElement));
     } : function () {
       return Number(widgetElement.getAttribute('data-amount'));
     };
@@ -927,11 +934,8 @@ module.exports = function (aplazame) {
           },
               onPriceChange = function (e) {
             if (choicesCache[currentAmount]) {
-              if (choicesCache[currentAmount] !== true) {
-                updateWidgetChoices(choicesCache[currentAmount]);
-              }
+              updateWidgetChoices(choicesCache[currentAmount]);
             } else {
-              choicesCache[currentAmount] = true;
               if (iframe) {
                 iframe.contentWindow.postMessage({
                   aplazame: 'simulator',
@@ -952,8 +956,8 @@ module.exports = function (aplazame) {
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-            if (amount !== currentAmount || qty !== previousQty) {
-              currentAmount = getAmount();
+            if (amount && !_.isNumber(amount) && amount !== currentAmount || qty !== previousQty) {
+              currentAmount = amount;
               previousQty = qty;
               onPriceChange();
             }

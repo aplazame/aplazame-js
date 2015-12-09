@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.127';
+module.exports = '0.0.128';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -773,10 +773,17 @@ module.exports = function (aplazame) {
   }
 
   function readPrice(element) {
-    return [].reduce.call(document.querySelectorAll('*'), function (prev, elem) {
+    var addDot,
+        price = element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
       var value = elem.textContent.replace(/[^0-9.]/g, '');
-      return prev + (prev && !/\./.test(prev) ? '.' : '') + value;
-    }, '');
+      if (addDot === undefined && prev && !/\./.test(prev)) {
+        addDot = true;
+      }
+      console.log('part', elem.textContent);
+      return prev + (addDot ? '.' : '') + value;
+    }, '') : element.textContent;
+
+    return price;
   }
 
   function amountGetter(widgetElement) {
@@ -933,8 +940,9 @@ module.exports = function (aplazame) {
             }, '*');
           },
               onPriceChange = function (e) {
-            if (choicesCache[currentAmount]) {
-              updateWidgetChoices(choicesCache[currentAmount]);
+            var requestForAmount = currentAmount;
+            if (choicesCache[requestForAmount]) {
+              updateWidgetChoices(choicesCache[requestForAmount]);
             } else {
               if (iframe) {
                 iframe.contentWindow.postMessage({
@@ -942,10 +950,12 @@ module.exports = function (aplazame) {
                   event: 'loading'
                 }, '*');
               }
-              aplazame.simulator(currentAmount, function (_choices) {
-                choices = _choices;
-                choicesCache[currentAmount] = _choices;
-                updateWidgetChoices(_choices);
+              aplazame.simulator(requestForAmount, function (_choices) {
+                choicesCache[requestForAmount] = _choices;
+                if (requestForAmount === currentAmount) {
+                  choices = _choices;
+                  updateWidgetChoices(_choices);
+                }
               });
             }
           };
@@ -956,7 +966,9 @@ module.exports = function (aplazame) {
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-            if (amount && !_.isNumber(amount) && amount !== currentAmount || qty !== previousQty) {
+            console.log('amount', amount);
+
+            if (amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty) {
               currentAmount = amount;
               previousQty = qty;
               onPriceChange();

@@ -224,8 +224,9 @@ module.exports = function (aplazame) {
                 }, '*');
               },
               onPriceChange = function (e) {
-                if( choicesCache[currentAmount] ) {
-                  updateWidgetChoices( choicesCache[currentAmount] );
+                var requestForAmount = currentAmount;
+                if( choicesCache[requestForAmount] ) {
+                  updateWidgetChoices( choicesCache[requestForAmount] );
                 } else {
                   if(iframe) {
                     iframe.contentWindow.postMessage({
@@ -233,10 +234,12 @@ module.exports = function (aplazame) {
                       event: 'loading'
                     }, '*');
                   }
-                  aplazame.simulator( currentAmount, function (_choices) {
-                    choices = _choices;
-                    choicesCache[currentAmount] = _choices;
-                    updateWidgetChoices(_choices);
+                  aplazame.simulator( requestForAmount, function (_choices) {
+                    choicesCache[requestForAmount] = _choices;
+                    if( requestForAmount === currentAmount ) {
+                      choices = _choices;
+                      updateWidgetChoices(_choices);
+                    }
                   });
                 }
               };
@@ -249,7 +252,7 @@ module.exports = function (aplazame) {
 
             console.log('amount', amount);
 
-            if( amount && !_.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
+            if( amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
               currentAmount = amount;
               previousQty = qty;
               onPriceChange();

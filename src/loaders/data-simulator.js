@@ -250,8 +250,6 @@ module.exports = function (aplazame) {
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-            console.log('amount', amount);
-
             if( amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
               currentAmount = amount;
               previousQty = qty;

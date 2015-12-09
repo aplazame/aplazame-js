@@ -55,10 +55,17 @@ module.exports = function (aplazame) {
   }
 
   function readPrice (element) {
-    return [].reduce.call(document.querySelectorAll('*'), function (prev, elem) {
-      var value = elem.textContent.replace(/[^0-9.]/g,'');
-      return prev + ( ( prev && !/\./.test(prev) ) ? '.' : '' ) + value;
-    }, '');
+    var addDot = undefined,
+        price = element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
+          var value = elem.textContent.replace(/[^0-9.]/g,'');
+          if( addDot === undefined && prev && !/\./.test(prev) ) {
+            addDot = true;
+          }
+          console.log('part', elem.textContent);
+          return prev + ( addDot ? '.' : '' ) + value;
+        }, '') : element.textContent;
+
+    return price;
   }
 
   function amountGetter (widgetElement) {
@@ -239,6 +246,8 @@ module.exports = function (aplazame) {
           setInterval(function () {
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
+
+            console.log('amount', amount);
 
             if( amount && !_.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
               currentAmount = amount;

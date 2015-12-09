@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.123';
+module.exports = '0.0.124';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -733,7 +733,17 @@ module.exports = function (aplazame) {
   }
 
   function getQty(qtySelector) {
-    var qtyElement = document.querySelector(qtySelector);
+    if (!_.isString(qtySelector)) {
+      console.warn('warning: data-qty should be an string. pe: form#article .final-price ');
+      return 1;
+    }
+    var qtyElement;
+    try {
+      qtyElement = document.querySelector(qtySelector);
+    } catch (err) {
+      console.warn(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
+      return 1;
+    }
 
     switch (qtyElement.nodeName.toLowerCase()) {
       case 'input':
@@ -767,10 +777,18 @@ module.exports = function (aplazame) {
         qtySelector = widgetElement.getAttribute('data-qty');
 
     if (!priceSelector) {
-      priceSelector = cmsPriceSelector.find(matchSelector);
+      try {
+        priceSelector = cmsPriceSelector.find(matchSelector);
+      } catch (err) {
+        console.warn(err.message);
+      }
 
       if (priceSelector) {
-        qtySelector = cmsQtySelector.find(matchSelector);
+        try {
+          qtySelector = cmsQtySelector.find(matchSelector);
+        } catch (err) {
+          console.warn(err.message);
+        }
       }
     }
 

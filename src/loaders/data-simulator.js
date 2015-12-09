@@ -13,7 +13,17 @@ module.exports = function (aplazame) {
   }
 
   function getQty (qtySelector) {
-    var qtyElement = document.querySelector(qtySelector);
+    if( !_.isString(qtySelector) ) {
+      console.warn('warning: data-qty should be an string. pe: form#article .final-price ');
+      return 1;
+    }
+    var qtyElement;
+    try {
+      qtyElement = document.querySelector(qtySelector);
+    } catch(err) {
+      console.warn(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
+      return 1;
+    }
 
     switch( qtyElement.nodeName.toLowerCase() ) {
       case 'input':
@@ -49,10 +59,18 @@ module.exports = function (aplazame) {
         qtySelector = widgetElement.getAttribute('data-qty');
 
     if( !priceSelector ) {
-      priceSelector = cmsPriceSelector.find(matchSelector);
+      try{
+        priceSelector = cmsPriceSelector.find(matchSelector);
+      } catch(err) {
+        console.warn(err.message);
+      }
 
       if( priceSelector ) {
-        qtySelector = cmsQtySelector.find(matchSelector);
+        try{
+          qtySelector = cmsQtySelector.find(matchSelector);
+        } catch(err) {
+          console.warn(err.message);
+        }
       }
     }
 

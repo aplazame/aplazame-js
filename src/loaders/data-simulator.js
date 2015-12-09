@@ -55,10 +55,17 @@ module.exports = function (aplazame) {
   }
 
   function readPrice (element) {
-    return [].reduce.call(document.querySelectorAll('*'), function (prev, elem) {
-      var value = elem.textContent.replace(/[^0-9.]/g,'');
-      return prev + ( ( prev && !/\./.test(prev) ) ? '.' : '' ) + value;
-    }, '');
+    var addDot,
+        price = element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
+          var value = elem.textContent.replace(/[^0-9.]/g,'');
+          if( addDot === undefined && prev && !/\./.test(prev) ) {
+            addDot = true;
+          }
+          console.log('part', elem.textContent);
+          return prev + ( addDot ? '.' : '' ) + value;
+        }, '') : element.textContent;
+
+    return price;
   }
 
   function amountGetter (widgetElement) {
@@ -217,8 +224,9 @@ module.exports = function (aplazame) {
                 }, '*');
               },
               onPriceChange = function (e) {
-                if( choicesCache[currentAmount] ) {
-                  updateWidgetChoices( choicesCache[currentAmount] );
+                var requestForAmount = currentAmount;
+                if( choicesCache[requestForAmount] ) {
+                  updateWidgetChoices( choicesCache[requestForAmount] );
                 } else {
                   if(iframe) {
                     iframe.contentWindow.postMessage({
@@ -226,10 +234,12 @@ module.exports = function (aplazame) {
                       event: 'loading'
                     }, '*');
                   }
-                  aplazame.simulator( currentAmount, function (_choices) {
-                    choices = _choices;
-                    choicesCache[currentAmount] = _choices;
-                    updateWidgetChoices(_choices);
+                  aplazame.simulator( requestForAmount, function (_choices) {
+                    choicesCache[requestForAmount] = _choices;
+                    if( requestForAmount === currentAmount ) {
+                      choices = _choices;
+                      updateWidgetChoices(_choices);
+                    }
                   });
                 }
               };
@@ -240,7 +250,9 @@ module.exports = function (aplazame) {
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-            if( amount && !_.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
+            console.log('amount', amount);
+
+            if( amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
               currentAmount = amount;
               previousQty = qty;
               onPriceChange();

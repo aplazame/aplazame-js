@@ -211,8 +211,11 @@ module.exports = function (aplazame) {
               },
               onPriceChange = function (e) {
                 if( choicesCache[currentAmount] ) {
-                  updateWidgetChoices( choicesCache[currentAmount] );
+                  if( choicesCache[currentAmount] !== true ) {
+                    updateWidgetChoices( choicesCache[currentAmount] );
+                  }
                 } else {
+                  choicesCache[currentAmount] = true;
                   if(iframe) {
                     iframe.contentWindow.postMessage({
                       aplazame: 'simulator',

@@ -55,7 +55,7 @@ module.exports = function (aplazame) {
   }
 
   function readPrice (element) {
-    var addDot = undefined,
+    var addDot,
         price = element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
           var value = elem.textContent.replace(/[^0-9.]/g,'');
           if( addDot === undefined && prev && !/\./.test(prev) ) {

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.129';
+module.exports = '0.0.130';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -724,7 +724,8 @@ module.exports = function (aplazame) {
 
   var _ = aplazame._,
       api = require('../core/api'),
-      isMobile = window.matchMedia('( max-width: 767px )');
+      isMobile = window.matchMedia('( max-width: 767px )'),
+      widgetForbidden = false;
 
   function parsePrice(price) {
     var priceParts = ('' + price).match(/(\d+)([,.](\d+))?/);
@@ -779,7 +780,6 @@ module.exports = function (aplazame) {
       if (addDot === undefined && prev && !/\./.test(prev)) {
         addDot = true;
       }
-      console.log('part', elem.textContent);
       return prev + (addDot ? '.' : '') + value;
     }, '') : element.textContent;
 
@@ -927,6 +927,10 @@ module.exports = function (aplazame) {
           });
         }, function () {
           simulator.innerHTML = '';
+        }, function (response) {
+          if (response.status === 403) {
+            widgetForbidden = true;
+          }
         });
 
         if (getAmount.priceSelector) {
@@ -963,6 +967,9 @@ module.exports = function (aplazame) {
           var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
           setInterval(function () {
+            if (widgetForbidden) {
+              return;
+            }
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 

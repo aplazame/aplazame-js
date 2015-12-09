@@ -58,19 +58,26 @@ module.exports = function (aplazame) {
     var priceSelector = widgetElement.getAttribute('data-price'),
         qtySelector = widgetElement.getAttribute('data-qty');
 
-    if( !priceSelector ) {
+    if( priceSelector ) {
       try{
-        priceSelector = cmsPriceSelector.find(matchSelector);
+        document.querySelector(priceSelector);
       } catch(err) {
+        priceSelector = null;
         console.warn(err.message);
       }
-
-      if( priceSelector ) {
+      if( qtySelector ) {
         try{
-          qtySelector = cmsQtySelector.find(matchSelector);
+          document.querySelector(qtySelector);
         } catch(err) {
+          qtySelector = null;
           console.warn(err.message);
         }
+      }
+    } else {
+      priceSelector = cmsPriceSelector.find(matchSelector);
+
+      if( priceSelector ) {
+        qtySelector = cmsQtySelector.find(matchSelector);
       }
     }
 

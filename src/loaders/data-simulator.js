@@ -4,7 +4,8 @@ module.exports = function (aplazame) {
 
   var _ = aplazame._,
       api = require('../core/api'),
-      isMobile = window.matchMedia('( max-width: 767px )');
+      isMobile = window.matchMedia('( max-width: 767px )'),
+      widgetForbidden = false;
 
   function parsePrice (price) {
      var priceParts = ( '' + price ).match(/(\d+)([,.](\d+))?/);
@@ -61,7 +62,6 @@ module.exports = function (aplazame) {
           if( addDot === undefined && prev && !/\./.test(prev) ) {
             addDot = true;
           }
-          console.log('part', elem.textContent);
           return prev + ( addDot ? '.' : '' ) + value;
         }, '') : element.textContent;
 
@@ -211,6 +211,10 @@ module.exports = function (aplazame) {
           });
         }, function () {
           simulator.innerHTML = '';
+        }, function (response) {
+          if( response.status === 403 ) {
+            widgetForbidden = true;
+          }
         });
 
         if( getAmount.priceSelector ) {
@@ -247,6 +251,9 @@ module.exports = function (aplazame) {
           var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
           setInterval(function () {
+            if( widgetForbidden ) {
+              return;
+            }
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 

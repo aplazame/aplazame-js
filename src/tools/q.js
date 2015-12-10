@@ -1,18 +1,26 @@
 
 var P = (function () {
 
-  function processListeners(listeners, err, result) {
-    var step = listeners.shift(), type = err ? 'catch' : 'then', value;
+  function processQueue(queue, err, result) {
+    var step = queue.shift(), type = err ? 'catch' : 'then', value;
 
     while( step && !step[type] ) {
-      step = listeners.shift();
+      step = queue.shift();
     }
 
     if( step && step[type] ) {
       try {
-        processListeners(listeners, false, step[type](result) );
+        processQueue(queue, false, step[type](result) );
       } catch (err) {
-        processListeners(listeners, true, err );
+        processQueue(queue, true, err );
+      }
+    } else if( err ) {
+      throw new Error('promise catch lost');
+    } else {
+      step = queue.finally.shift();
+      while( step ) {
+        step(result);
+        step = queue.finally.shift();
       }
     }
   }
@@ -22,22 +30,23 @@ var P = (function () {
       throw new Error('promise argument should be a function');
     }
 
-    var listeners = [];
+    var queue = [];
+    queue.finally = [];
 
     setTimeout(function () {
       behavior(function (result) {
-        processListeners(listeners, false, result);
+        processQueue(queue, false, result);
       }, function (reason) {
-        processListeners(listeners, true, reason);
+        processQueue(queue, true, reason);
       });
     }, 0);
 
     this.then = function (onResolve, onReject) {
-      listeners.push({ then: onResolve, catch: onReject });
+      queue.push({ then: onResolve, catch: onReject });
       return this;
     };
     this.catch = function (onReject) {
-      listeners.push({ catch: onReject });
+      queue.push({ catch: onReject });
       return this;
     };
   }

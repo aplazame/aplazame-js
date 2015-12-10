@@ -24,7 +24,7 @@ function parseContentType(contentType, text, xml) {
 }
 
 function _getHeaders (request) {
-  headers = {};
+  var headers = {};
   request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
       headers[headerToCamelCase(key)] = value.trim();
   });
@@ -81,7 +81,7 @@ function http (url, config) {
                 headersCache = _getHeaders(request);
               }
               return headersCache;
-            }
+            };
           })(),
           xhr: request
         };

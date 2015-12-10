@@ -215,8 +215,6 @@ module.exports = function (aplazame) {
           });
         }, function () {
           simulator.innerHTML = '';
-        }, function (response) {
-          console.log('widget disabled');
           widgetForbidden = true;
           if( watchInterval ) {
             clearInterval(watchInterval);

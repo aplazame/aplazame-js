@@ -22,7 +22,7 @@ function simulator (amount, _options, callback, onError) {
   if( _options.publicKey ) {
     options.publicKey = _options.publicKey;
   }
-  apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
+  return apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
     if( _.isFunction(callback) ) {
       callback(response.data.choices[0].instalments, response.data.options, response.data);
     }

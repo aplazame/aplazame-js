@@ -452,7 +452,7 @@ function headerToTitleSlug(text) {
   var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
     return lower + '-' + upper;
   });
-  key[0] = key[0].toUpperCase();
+  key = key[0].toUpperCase() + key.substr(1);
 
   return key;
 }

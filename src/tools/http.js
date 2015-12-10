@@ -3,10 +3,13 @@
 var $q = require('./q');
 
 function headerToTitleSlug(text) {
-  var key = text[0].toUpperCase() + text.substr(1);
-  return key.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
+  console.log('headerToTitleSlug', text);
+  var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
       return lower + '-' + upper;
   });
+  key[0] = key[0].toUpperCase();
+
+  return key;
 }
 
 function headerToCamelCase(text) {

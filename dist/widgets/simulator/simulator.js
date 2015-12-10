@@ -1,10 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar ahora<br/>y pagar después.</h2></div><div class="card-content content-padding">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul class="styled">    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a <%= creditThreshold %> €.</li>    <li>¿Tienes alguna duda? Llámanos al 91 290 89 23 o escríbenos un email a <a class="link" href="mailto:hola@aplazame.com">hola@aplazame.com</a>.</li>  </ul></div><div class="cta">  <button type="submit" class="button" modal-resolve="ok">    <span class="cta-title">Entendido</span>  </button></div>';
+module.exports = '0.0.135';
 
 },{}],2:[function(require,module,exports){
-module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
+module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar ahora<br/>y pagar después.</h2></div><div class="card-content content-padding">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul class="styled">    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a <%= creditThreshold %> €.</li>    <li>¿Tienes alguna duda? Llámanos al 91 290 89 23 o escríbenos un email a <a class="link" href="mailto:hola@aplazame.com">hola@aplazame.com</a>.</li>  </ul></div><div class="cta">  <button type="submit" class="button" modal-resolve="ok">    <span class="cta-title">Entendido</span>  </button></div>';
 
 },{}],3:[function(require,module,exports){
+module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
+
+},{}],4:[function(require,module,exports){
 
 require('./browser-polyfills');
 
@@ -380,7 +383,7 @@ var tools = {
 
 module.exports = tools;
 
-},{"./browser-polyfills":4}],4:[function(require,module,exports){
+},{"./browser-polyfills":5}],5:[function(require,module,exports){
 
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
@@ -442,8 +445,11 @@ if (!Array.prototype.find) {
   };
 }
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 // factory http
+
+var $q = require('./promise-polyfill'),
+    apzVersion = require('../../.tmp/aplazame-version');
 
 function headerToTitleSlug(text) {
   var key = text[0].toUpperCase() + text.substr(1);
@@ -465,120 +471,103 @@ function parseContentType(contentType, text, xml) {
   return matches && (matches[3] === 'json' ? JSON.parse(text) : matches[3] === 'xml' ? xml : text);
 }
 
+function _getHeaders(request) {
+  var headers = {};
+  request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
+    headers[headerToCamelCase(key)] = value.trim();
+  });
+
+  return headers;
+}
+
 function http(url, config) {
-  config = config || {};
-  config.headers = config.headers || {};
-  config.url = url;
 
-  var request = null,
-      on = { resolve: [], reject: [] };
+  return $q(function (resolve, reject) {
 
-  try {
-    // Firefox, Opera 8.0+, Safari
-    request = new XMLHttpRequest();
-  } catch (e) {
-    // Internet Explorer
+    config = config || {};
+    config.headers = config.headers || {};
+    config.url = url;
+
+    var request = null;
+
     try {
-      request = new ActiveXObject('Msxml2.XMLHTTP');
-    } // jshint ignore:line
-    catch (er) {
-      request = new ActiveXObject('Microsoft.XMLHTTP');
-    } // jshint ignore:line
-  }
-  if (request === null) {
-    throw 'Browser does not support HTTP Request';
-  }
-
-  if (config.params) {
-    var i = 0;
-    for (var param in config.params) {
-      url += (i++ ? '&' : /\?/.test(url) ? '&' : '?') + param + '=' + encodeURIComponent(config.params[param]);
+      // Firefox, Opera 8.0+, Safari
+      request = new XMLHttpRequest();
+    } catch (e) {
+      // Internet Explorer
+      try {
+        request = new ActiveXObject('Msxml2.XMLHTTP');
+      } // jshint ignore:line
+      catch (er) {
+        request = new ActiveXObject('Microsoft.XMLHTTP');
+      } // jshint ignore:line
     }
-  }
-
-  request.open((config.method || 'get').toUpperCase(), url);
-
-  if (config.withCredentials) {
-    request.withCredentials = true;
-  }
-
-  for (var key in config.headers) {
-    request.setRequestHeader(headerToTitleSlug(key), config.headers[key]);
-  }
-
-  request.resolve = function (response) {
-    on.resolve.forEach(function (handler) {
-      handler(response);
-    });
-  };
-  request.reject = function (response) {
-    on.reject.forEach(function (handler) {
-      handler(response);
-    });
-  };
-
-  var headersCache;
-  request.getHeaders = function () {
-    if (!headersCache) {
-      headersCache = {};
-      request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
-        headersCache[headerToCamelCase(key)] = value.trim();
-      });
+    if (request === null) {
+      throw 'Browser does not support HTTP Request';
     }
-    return headersCache;
-  };
 
-  request.onreadystatechange = function () {
-    if (request.readyState === 'complete' || request.readyState === 4) {
-      var response = {
-        config: request.config,
-        data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
-        status: request.status,
-        headers: request.getHeaders,
-        xhr: request
-      };
-      if (request.status >= 200 && request.status < 300) {
-        request.resolve(response);
-      } else {
-        request.reject(response);
+    if (config.params) {
+      var i = 0;
+      for (var param in config.params) {
+        url += (i++ ? '&' : /\?/.test(url) ? '&' : '?') + param + '=' + encodeURIComponent(config.params[param]);
       }
     }
-  };
 
-  request.config = config;
+    request.open((config.method || 'get').toUpperCase(), url);
 
-  if (config.contentType) {
-    request.setRequestHeader('Content-Type', config.contentType);
-
-    if (config.contentType === 'application/json' && typeof config.data !== 'string') {
-      config.data = JSON.stringify(config.data);
+    if (config.withCredentials) {
+      request.withCredentials = true;
     }
-  } else {
-    if (typeof config.data === 'string') {
-      config.contentType = 'text/html';
+
+    request.setRequestHeader('X-AJS-Version', apzVersion);
+    for (var key in config.headers) {
+      request.setRequestHeader(headerToTitleSlug(key), config.headers[key]);
+    }
+
+    request.onreadystatechange = function () {
+      if (request.readyState === 'complete' || request.readyState === 4) {
+        var response = {
+          config: request.config,
+          data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
+          status: request.status,
+          headers: (function () {
+            var headersCache;
+            return function () {
+              if (!headersCache) {
+                headersCache = _getHeaders(request);
+              }
+              return headersCache;
+            };
+          })(),
+          xhr: request
+        };
+        if (request.status >= 200 && request.status < 300) {
+          resolve(response);
+        } else {
+          reject(response);
+        }
+      }
+    };
+
+    request.config = config;
+
+    if (config.contentType) {
+      request.setRequestHeader('Content-Type', config.contentType);
+
+      if (config.contentType === 'application/json' && typeof config.data !== 'string') {
+        config.data = JSON.stringify(config.data);
+      }
     } else {
-      config.contentType = 'application/json';
-      config.data = JSON.stringify(config.data);
-    }
-  }
-
-  request.send(config.data);
-
-  return {
-    then: function (onResolve, onReject) {
-      if (onResolve instanceof Function) {
-        on.resolve.push(onResolve);
-      }
-      if (onReject instanceof Function) {
-        on.reject.push(onReject);
-      }
-    },
-    error: function (onReject) {
-      if (onReject instanceof Function) {
-        on.reject.push(onReject);
+      if (typeof config.data === 'string') {
+        config.contentType = 'text/html';
+      } else {
+        config.contentType = 'application/json';
+        config.data = JSON.stringify(config.data);
       }
     }
-  };
+
+    request.send(config.data);
+  });
 }
 
 http.noCache = function (url, config) {
@@ -597,7 +586,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{}],6:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"./promise-polyfill":9}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -629,7 +618,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -652,7 +641,87 @@ module.exports = function (_) {
   };
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+(function (global){
+
+var P = (function () {
+
+  function processListeners(listeners, err, result) {
+    var step = listeners.shift(),
+        type = err ? 'catch' : 'then',
+        value;
+
+    while (step && !step[type]) {
+      step = listeners.shift();
+    }
+
+    if (step && step[type]) {
+      try {
+        processListeners(listeners, false, step[type](result));
+      } catch (err) {
+        processListeners(listeners, true, err);
+      }
+    }
+  }
+
+  function P(behavior) {
+    if (!(behavior instanceof Function)) {
+      throw new Error('promise argument should be a function');
+    }
+
+    var listeners = [];
+
+    setTimeout(function () {
+      behavior(function (result) {
+        processListeners(listeners, false, result);
+      }, function (reason) {
+        processListeners(listeners, true, reason);
+      });
+    }, 0);
+
+    this.then = function (onResolve, onReject) {
+      listeners.push({ then: onResolve, catch: onReject });
+      return this;
+    };
+    this.catch = function (onReject) {
+      listeners.push({ catch: onReject });
+      return this;
+    };
+  }
+
+  P.resolve = function (result) {
+    return new P(function (resolve, reject) {
+      resolve(result);
+    });
+  };
+
+  P.reject = function (reason) {
+    return new P(function (resolve, reject) {
+      reject(reason);
+    });
+  };
+
+  return P;
+})();
+
+module.exports = (function (Promise) {
+
+  function q(fn) {
+    return new Promise(fn);
+  }
+
+  ['resolve', 'reject'].forEach(function (fnName) {
+    q[fnName] = Promise[fnName];
+  });
+  q.when = function (p) {
+    return p && p.then ? p : P.resolve(p);
+  };
+
+  return q;
+})(global.Promise || P);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],10:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -676,7 +745,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./basic-tools":3,"./http":5,"./live-dom":6,"./message-listener":7}],9:[function(require,module,exports){
+},{"./basic-tools":4,"./http":6,"./live-dom":7,"./message-listener":8}],11:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     choices = [];
@@ -830,4 +899,4 @@ parent.window.postMessage({
   event: 'require:choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":8}]},{},[9]);
+},{"../../.tmp/simulator/templates/modal-info.js":2,"../../.tmp/simulator/templates/modal-instalments.js":3,"../../src/tools/tools":10}]},{},[11]);

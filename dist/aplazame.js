@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.134';
+module.exports = '0.0.135';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -161,7 +161,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":8,"../tools/tools":20}],4:[function(require,module,exports){
+},{"../core/api-http":8,"../tools/tools":21}],4:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -334,7 +334,7 @@ function checkout(options) {
 
 module.exports = checkout;
 
-},{"../core/api":9,"../tools/tools":20}],5:[function(require,module,exports){
+},{"../core/api":9,"../tools/tools":21}],5:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools');
@@ -362,7 +362,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":20}],6:[function(require,module,exports){
+},{"../tools/tools":21}],6:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -473,7 +473,7 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":9,"../tools/tools":20}],7:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":9,"../tools/tools":21}],7:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -507,7 +507,7 @@ function simulator(amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":8,"../tools/tools":20}],8:[function(require,module,exports){
+},{"../core/api-http":8,"../tools/tools":21}],8:[function(require,module,exports){
 'use strict';
 
 var acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
@@ -561,7 +561,7 @@ module.exports = {
   }
 };
 
-},{"../tools/tools":20,"./api":9}],9:[function(require,module,exports){
+},{"../tools/tools":21,"./api":9}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -583,7 +583,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":20,"./api-http":8,"./init":11}],11:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":21,"./api-http":8,"./init":11}],11:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -621,7 +621,7 @@ function init(options) {
 
 module.exports = init;
 
-},{"../tools/tools":20,"./api":9}],12:[function(require,module,exports){
+},{"../tools/tools":21,"./api":9}],12:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -968,6 +968,8 @@ module.exports = function (aplazame) {
                   choices = _choices;
                   updateWidgetChoices(_choices);
                 }
+              }, function (reason) {
+                console.log('error retrieving simulator choices', reason);
               });
             }
           };
@@ -1439,6 +1441,9 @@ if (!Array.prototype.find) {
 },{}],17:[function(require,module,exports){
 // factory http
 
+var $q = require('./promise-polyfill'),
+    apzVersion = require('../../.tmp/aplazame-version');
+
 function headerToTitleSlug(text) {
   var key = text[0].toUpperCase() + text.substr(1);
   return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
@@ -1459,120 +1464,103 @@ function parseContentType(contentType, text, xml) {
   return matches && (matches[3] === 'json' ? JSON.parse(text) : matches[3] === 'xml' ? xml : text);
 }
 
+function _getHeaders(request) {
+  var headers = {};
+  request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
+    headers[headerToCamelCase(key)] = value.trim();
+  });
+
+  return headers;
+}
+
 function http(url, config) {
-  config = config || {};
-  config.headers = config.headers || {};
-  config.url = url;
 
-  var request = null,
-      on = { resolve: [], reject: [] };
+  return $q(function (resolve, reject) {
 
-  try {
-    // Firefox, Opera 8.0+, Safari
-    request = new XMLHttpRequest();
-  } catch (e) {
-    // Internet Explorer
+    config = config || {};
+    config.headers = config.headers || {};
+    config.url = url;
+
+    var request = null;
+
     try {
-      request = new ActiveXObject('Msxml2.XMLHTTP');
-    } // jshint ignore:line
-    catch (er) {
-      request = new ActiveXObject('Microsoft.XMLHTTP');
-    } // jshint ignore:line
-  }
-  if (request === null) {
-    throw 'Browser does not support HTTP Request';
-  }
-
-  if (config.params) {
-    var i = 0;
-    for (var param in config.params) {
-      url += (i++ ? '&' : /\?/.test(url) ? '&' : '?') + param + '=' + encodeURIComponent(config.params[param]);
+      // Firefox, Opera 8.0+, Safari
+      request = new XMLHttpRequest();
+    } catch (e) {
+      // Internet Explorer
+      try {
+        request = new ActiveXObject('Msxml2.XMLHTTP');
+      } // jshint ignore:line
+      catch (er) {
+        request = new ActiveXObject('Microsoft.XMLHTTP');
+      } // jshint ignore:line
     }
-  }
-
-  request.open((config.method || 'get').toUpperCase(), url);
-
-  if (config.withCredentials) {
-    request.withCredentials = true;
-  }
-
-  for (var key in config.headers) {
-    request.setRequestHeader(headerToTitleSlug(key), config.headers[key]);
-  }
-
-  request.resolve = function (response) {
-    on.resolve.forEach(function (handler) {
-      handler(response);
-    });
-  };
-  request.reject = function (response) {
-    on.reject.forEach(function (handler) {
-      handler(response);
-    });
-  };
-
-  var headersCache;
-  request.getHeaders = function () {
-    if (!headersCache) {
-      headersCache = {};
-      request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
-        headersCache[headerToCamelCase(key)] = value.trim();
-      });
+    if (request === null) {
+      throw 'Browser does not support HTTP Request';
     }
-    return headersCache;
-  };
 
-  request.onreadystatechange = function () {
-    if (request.readyState === 'complete' || request.readyState === 4) {
-      var response = {
-        config: request.config,
-        data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
-        status: request.status,
-        headers: request.getHeaders,
-        xhr: request
-      };
-      if (request.status >= 200 && request.status < 300) {
-        request.resolve(response);
-      } else {
-        request.reject(response);
+    if (config.params) {
+      var i = 0;
+      for (var param in config.params) {
+        url += (i++ ? '&' : /\?/.test(url) ? '&' : '?') + param + '=' + encodeURIComponent(config.params[param]);
       }
     }
-  };
 
-  request.config = config;
+    request.open((config.method || 'get').toUpperCase(), url);
 
-  if (config.contentType) {
-    request.setRequestHeader('Content-Type', config.contentType);
-
-    if (config.contentType === 'application/json' && typeof config.data !== 'string') {
-      config.data = JSON.stringify(config.data);
+    if (config.withCredentials) {
+      request.withCredentials = true;
     }
-  } else {
-    if (typeof config.data === 'string') {
-      config.contentType = 'text/html';
+
+    request.setRequestHeader('X-AJS-Version', apzVersion);
+    for (var key in config.headers) {
+      request.setRequestHeader(headerToTitleSlug(key), config.headers[key]);
+    }
+
+    request.onreadystatechange = function () {
+      if (request.readyState === 'complete' || request.readyState === 4) {
+        var response = {
+          config: request.config,
+          data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
+          status: request.status,
+          headers: (function () {
+            var headersCache;
+            return function () {
+              if (!headersCache) {
+                headersCache = _getHeaders(request);
+              }
+              return headersCache;
+            };
+          })(),
+          xhr: request
+        };
+        if (request.status >= 200 && request.status < 300) {
+          resolve(response);
+        } else {
+          reject(response);
+        }
+      }
+    };
+
+    request.config = config;
+
+    if (config.contentType) {
+      request.setRequestHeader('Content-Type', config.contentType);
+
+      if (config.contentType === 'application/json' && typeof config.data !== 'string') {
+        config.data = JSON.stringify(config.data);
+      }
     } else {
-      config.contentType = 'application/json';
-      config.data = JSON.stringify(config.data);
-    }
-  }
-
-  request.send(config.data);
-
-  return {
-    then: function (onResolve, onReject) {
-      if (onResolve instanceof Function) {
-        on.resolve.push(onResolve);
-      }
-      if (onReject instanceof Function) {
-        on.reject.push(onReject);
-      }
-    },
-    error: function (onReject) {
-      if (onReject instanceof Function) {
-        on.reject.push(onReject);
+      if (typeof config.data === 'string') {
+        config.contentType = 'text/html';
+      } else {
+        config.contentType = 'application/json';
+        config.data = JSON.stringify(config.data);
       }
     }
-  };
+
+    request.send(config.data);
+  });
 }
 
 http.noCache = function (url, config) {
@@ -1591,7 +1579,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{}],18:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"./promise-polyfill":20}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -1647,6 +1635,86 @@ module.exports = function (_) {
 };
 
 },{}],20:[function(require,module,exports){
+(function (global){
+
+var P = (function () {
+
+  function processListeners(listeners, err, result) {
+    var step = listeners.shift(),
+        type = err ? 'catch' : 'then',
+        value;
+
+    while (step && !step[type]) {
+      step = listeners.shift();
+    }
+
+    if (step && step[type]) {
+      try {
+        processListeners(listeners, false, step[type](result));
+      } catch (err) {
+        processListeners(listeners, true, err);
+      }
+    }
+  }
+
+  function P(behavior) {
+    if (!(behavior instanceof Function)) {
+      throw new Error('promise argument should be a function');
+    }
+
+    var listeners = [];
+
+    setTimeout(function () {
+      behavior(function (result) {
+        processListeners(listeners, false, result);
+      }, function (reason) {
+        processListeners(listeners, true, reason);
+      });
+    }, 0);
+
+    this.then = function (onResolve, onReject) {
+      listeners.push({ then: onResolve, catch: onReject });
+      return this;
+    };
+    this.catch = function (onReject) {
+      listeners.push({ catch: onReject });
+      return this;
+    };
+  }
+
+  P.resolve = function (result) {
+    return new P(function (resolve, reject) {
+      resolve(result);
+    });
+  };
+
+  P.reject = function (reason) {
+    return new P(function (resolve, reject) {
+      reject(reason);
+    });
+  };
+
+  return P;
+})();
+
+module.exports = (function (Promise) {
+
+  function q(fn) {
+    return new Promise(fn);
+  }
+
+  ['resolve', 'reject'].forEach(function (fnName) {
+    q[fnName] = Promise[fnName];
+  });
+  q.when = function (p) {
+    return p && p.then ? p : P.resolve(p);
+  };
+
+  return q;
+})(global.Promise || P);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],21:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');

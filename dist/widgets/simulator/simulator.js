@@ -1,13 +1,10 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.138';
-
-},{}],2:[function(require,module,exports){
 module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar ahora<br/>y pagar después.</h2></div><div class="card-content content-padding">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul class="styled">    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a <%= creditThreshold %> €.</li>    <li>¿Tienes alguna duda? Llámanos al 91 290 89 23 o escríbenos un email a <a class="link" href="mailto:hola@aplazame.com">hola@aplazame.com</a>.</li>  </ul></div><div class="cta">  <button type="submit" class="button" modal-resolve="ok">    <span class="cta-title">Entendido</span>  </button></div>';
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 
 require('./browser-polyfills');
 
@@ -383,7 +380,7 @@ var tools = {
 
 module.exports = tools;
 
-},{"./browser-polyfills":5}],5:[function(require,module,exports){
+},{"./browser-polyfills":4}],4:[function(require,module,exports){
 
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
@@ -445,22 +442,24 @@ if (!Array.prototype.find) {
   };
 }
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 // factory http
 
-var $q = require('./q'),
-    apzVersion = require('../../.tmp/aplazame-version');
+var $q = require('./q');
 
 function headerToTitleSlug(text) {
-  var key = text[0].toUpperCase() + text.substr(1);
-  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+  console.log('headerToTitleSlug', text);
+  var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
     return lower + '-' + upper;
   });
+  key[0] = key[0].toUpperCase();
+
+  return key;
 }
 
 function headerToCamelCase(text) {
   var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+  return key.replace(/([a-z])-([A-Z])/g, function (match, lower, upper) {
     return lower + upper;
   });
 }
@@ -519,7 +518,6 @@ function http(url, config) {
       request.withCredentials = true;
     }
 
-    // request.setRequestHeader( 'X-AJS-Version', apzVersion );
     for (var key in config.headers) {
       request.setRequestHeader(headerToTitleSlug(key), config.headers[key]);
     }
@@ -586,7 +584,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"../../.tmp/aplazame-version":1,"./q":9}],7:[function(require,module,exports){
+},{"./q":8}],6:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -618,7 +616,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -641,7 +639,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (global){
 
 var P = (function () {
@@ -730,7 +728,7 @@ module.exports = (function (Promise) {
 })(global.Promise || P);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -754,7 +752,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./basic-tools":4,"./http":6,"./live-dom":7,"./message-listener":8}],11:[function(require,module,exports){
+},{"./basic-tools":3,"./http":5,"./live-dom":6,"./message-listener":7}],10:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     choices = [];
@@ -908,4 +906,4 @@ parent.window.postMessage({
   event: 'require:choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-info.js":2,"../../.tmp/simulator/templates/modal-instalments.js":3,"../../src/tools/tools":10}]},{},[11]);
+},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":9}]},{},[10]);

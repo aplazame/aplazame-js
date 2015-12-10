@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.138';
+module.exports = '0.0.139';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -512,7 +512,8 @@ module.exports = simulator;
 
 var acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
     _ = require('../tools/tools'),
-    api = require('./api');
+    api = require('./api'),
+    apzVersion = require('../../.tmp/aplazame-version');
 
 // aplazame methods
 
@@ -526,6 +527,7 @@ function apiOptions(options) {
 
   options = _.merge({}, {
     headers: {
+      xAjsVersion: apzVersion,
       authorization: 'Bearer ' + publicKey
     }
   }, options);
@@ -561,7 +563,7 @@ module.exports = {
   }
 };
 
-},{"../tools/tools":21,"./api":9}],9:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":21,"./api":9}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -919,17 +921,21 @@ module.exports = function (aplazame) {
             child = simulator.firstChild;
           }
 
-          _.http(api.baseUrl + 'widgets/simulator/simulator.html?' + now).then(function (response) {
-            iframe = _.getIFrame({
-              width: '100%'
-            });
-
-            iframes.push(iframe);
-            iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
-            simulator.appendChild(iframe);
-          }, function () {
-            simulator.innerHTML = '';
+          // _.http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
+          iframe = _.getIFrame({
+            width: '100%'
           });
+
+          iframes.push(iframe);
+          iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
+          simulator.appendChild(iframe);
+          iframe.onerror = function () {
+            simulator.innerHTML = '';
+          };
+
+          // }, function () {
+          //   simulator.innerHTML = '';
+          // });
         }, function () {
           simulator.innerHTML = '';
           widgetForbidden = true;
@@ -1439,19 +1445,21 @@ if (!Array.prototype.find) {
 },{}],17:[function(require,module,exports){
 // factory http
 
-var $q = require('./q'),
-    apzVersion = require('../../.tmp/aplazame-version');
+var $q = require('./q');
 
 function headerToTitleSlug(text) {
-  var key = text[0].toUpperCase() + text.substr(1);
-  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+  console.log('headerToTitleSlug', text);
+  var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
     return lower + '-' + upper;
   });
+  key[0] = key[0].toUpperCase();
+
+  return key;
 }
 
 function headerToCamelCase(text) {
   var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+  return key.replace(/([a-z])-([A-Z])/g, function (match, lower, upper) {
     return lower + upper;
   });
 }
@@ -1510,7 +1518,6 @@ function http(url, config) {
       request.withCredentials = true;
     }
 
-    // request.setRequestHeader( 'X-AJS-Version', apzVersion );
     for (var key in config.headers) {
       request.setRequestHeader(headerToTitleSlug(key), config.headers[key]);
     }
@@ -1577,7 +1584,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"../../.tmp/aplazame-version":1,"./q":20}],18:[function(require,module,exports){
+},{"./q":20}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {

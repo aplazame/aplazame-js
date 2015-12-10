@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.136';
+module.exports = '0.0.137';
 
 },{}],2:[function(require,module,exports){
 module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar ahora<br/>y pagar después.</h2></div><div class="card-content content-padding">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul class="styled">    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a <%= creditThreshold %> €.</li>    <li>¿Tienes alguna duda? Llámanos al 91 290 89 23 o escríbenos un email a <a class="link" href="mailto:hola@aplazame.com">hola@aplazame.com</a>.</li>  </ul></div><div class="cta">  <button type="submit" class="button" modal-resolve="ok">    <span class="cta-title">Entendido</span>  </button></div>';
@@ -448,7 +448,7 @@ if (!Array.prototype.find) {
 },{}],6:[function(require,module,exports){
 // factory http
 
-var $q = require('./promise-polyfill'),
+var $q = require('./q'),
     apzVersion = require('../../.tmp/aplazame-version');
 
 function headerToTitleSlug(text) {
@@ -586,7 +586,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"../../.tmp/aplazame-version":1,"./promise-polyfill":9}],7:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"./q":9}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -646,20 +646,28 @@ module.exports = function (_) {
 
 var P = (function () {
 
-  function processListeners(listeners, err, result) {
-    var step = listeners.shift(),
+  function processQueue(queue, err, result) {
+    var step = queue.shift(),
         type = err ? 'catch' : 'then',
         value;
 
     while (step && !step[type]) {
-      step = listeners.shift();
+      step = queue.shift();
     }
 
     if (step && step[type]) {
       try {
-        processListeners(listeners, false, step[type](result));
+        processQueue(queue, false, step[type](result));
       } catch (err) {
-        processListeners(listeners, true, err);
+        processQueue(queue, true, err);
+      }
+    } else if (err) {
+      throw new Error('promise catch lost');
+    } else {
+      step = queue.finally.shift();
+      while (step) {
+        step(result);
+        step = queue.finally.shift();
       }
     }
   }
@@ -669,22 +677,23 @@ var P = (function () {
       throw new Error('promise argument should be a function');
     }
 
-    var listeners = [];
+    var queue = [];
+    queue.finally = [];
 
     setTimeout(function () {
       behavior(function (result) {
-        processListeners(listeners, false, result);
+        processQueue(queue, false, result);
       }, function (reason) {
-        processListeners(listeners, true, reason);
+        processQueue(queue, true, reason);
       });
     }, 0);
 
     this.then = function (onResolve, onReject) {
-      listeners.push({ then: onResolve, catch: onReject });
+      queue.push({ then: onResolve, catch: onReject });
       return this;
     };
     this.catch = function (onReject) {
-      listeners.push({ catch: onReject });
+      queue.push({ catch: onReject });
       return this;
     };
   }

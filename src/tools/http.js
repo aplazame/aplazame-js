@@ -63,7 +63,7 @@ function http (url, config) {
       request.withCredentials = true;
     }
 
-    request.setRequestHeader( 'X-AJS-Version', apzVersion );
+    // request.setRequestHeader( 'X-AJS-Version', apzVersion );
     for( var key in config.headers ) {
         request.setRequestHeader( headerToTitleSlug(key), config.headers[key] );
     }

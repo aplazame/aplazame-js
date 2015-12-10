@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.131';
+module.exports = '0.0.132';
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -725,7 +725,8 @@ module.exports = function (aplazame) {
   var _ = aplazame._,
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
-      widgetForbidden = false;
+      widgetForbidden = false,
+      watchInterval;
 
   function parsePrice(price) {
     var priceParts = ('' + price).match(/(\d+)([,.](\d+))?/);
@@ -774,16 +775,20 @@ module.exports = function (aplazame) {
   }
 
   function readPrice(element) {
-    var addDot,
-        price = element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
-      var value = elem.textContent.replace(/[^0-9.]/g, '');
+    var price = element.textContent.replace(/[^0-9,.]/g, ''),
+        addDot;
+
+    if (/\.,/.test(price)) {
+      return price;
+    }
+
+    return element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
+      var value = elem.textContent.replace(/[^0-9,.]/g, '');
       if (addDot === undefined && prev && !/\./.test(prev)) {
         addDot = true;
       }
       return prev + (addDot ? '.' : '') + value;
-    }, '') : element.textContent;
-
-    return price;
+    }, '') : element.textContent.replace(/[^0-9,.]/g, '');
   }
 
   function amountGetter(widgetElement) {
@@ -928,8 +933,9 @@ module.exports = function (aplazame) {
         }, function () {
           simulator.innerHTML = '';
         }, function (response) {
-          if (response.status === 403) {
-            widgetForbidden = true;
+          widgetForbidden = true;
+          if (watchInterval) {
+            clearInterval(watchInterval);
           }
         });
 
@@ -943,10 +949,11 @@ module.exports = function (aplazame) {
               mobile: isMobile.matches
             }, '*');
           },
-              onPriceChange = function (e) {
-            var requestForAmount = currentAmount;
-            if (choicesCache[requestForAmount]) {
-              updateWidgetChoices(choicesCache[requestForAmount]);
+              onPriceChange = function (amount) {
+            currentAmount = amount;
+
+            if (choicesCache[amount]) {
+              updateWidgetChoices(choicesCache[amount]);
             } else {
               if (iframe) {
                 iframe.contentWindow.postMessage({
@@ -954,9 +961,9 @@ module.exports = function (aplazame) {
                   event: 'loading'
                 }, '*');
               }
-              aplazame.simulator(requestForAmount, function (_choices) {
-                choicesCache[requestForAmount] = _choices;
-                if (requestForAmount === currentAmount) {
+              aplazame.simulator(amount, function (_choices) {
+                choicesCache[amount] = _choices;
+                if (amount === currentAmount) {
                   choices = _choices;
                   updateWidgetChoices(_choices);
                 }
@@ -966,7 +973,7 @@ module.exports = function (aplazame) {
 
           var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-          setInterval(function () {
+          watchInterval = setInterval(function () {
             if (widgetForbidden) {
               return;
             }
@@ -974,9 +981,8 @@ module.exports = function (aplazame) {
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
             if (amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty) {
-              currentAmount = amount;
               previousQty = qty;
-              onPriceChange();
+              onPriceChange(amount);
             }
           }, 200);
         }

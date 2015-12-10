@@ -15,8 +15,6 @@ function apiOptions (options) {
     throw new Error('public key needs to be specified');
   }
 
-  request.setRequestHeader( 'X-AJS-Version', apzVersion );
-
   options = _.merge({}, {
     headers: {
       xAjsVersion: apzVersion,

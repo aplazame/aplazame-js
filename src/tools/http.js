@@ -1,7 +1,6 @@
 // factory http
 
-var $q = require('./q'),
-    apzVersion = require('../../.tmp/aplazame-version');
+var $q = require('./q');
 
 function headerToTitleSlug(text) {
   var key = text[0].toUpperCase() + text.substr(1);
@@ -63,7 +62,6 @@ function http (url, config) {
       request.withCredentials = true;
     }
 
-    request.setRequestHeader( 'X-AJS-Version', apzVersion );
     for( var key in config.headers ) {
         request.setRequestHeader( headerToTitleSlug(key), config.headers[key] );
     }

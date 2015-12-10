@@ -202,7 +202,7 @@ module.exports = function (aplazame) {
             child = simulator.firstChild;
           }
 
-          _.http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
+          // _.http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
             iframe = _.getIFrame({
               width: '100%'
             });
@@ -210,9 +210,14 @@ module.exports = function (aplazame) {
             iframes.push(iframe);
             iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
             simulator.appendChild(iframe);
-          }, function () {
-            simulator.innerHTML = '';
-          });
+            iframe.onerror = function () {
+              simulator.innerHTML = '';
+            };
+
+          // }, function () {
+          //   simulator.innerHTML = '';
+          // });
+
         }, function () {
           simulator.innerHTML = '';
           widgetForbidden = true;

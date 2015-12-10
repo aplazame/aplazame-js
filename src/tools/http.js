@@ -1,6 +1,6 @@
 // factory http
 
-var $q = require('./promise-polyfill'),
+var $q = require('./q'),
     apzVersion = require('../../.tmp/aplazame-version');
 
 function headerToTitleSlug(text) {

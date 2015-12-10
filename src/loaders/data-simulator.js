@@ -251,6 +251,8 @@ module.exports = function (aplazame) {
                       choices = _choices;
                       updateWidgetChoices(_choices);
                     }
+                  }, function (reason) {
+                    console.log('error retrieving simulator choices', reason);
                   });
                 }
               };

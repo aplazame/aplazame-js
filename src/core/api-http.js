@@ -2,7 +2,8 @@
 
 var acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
     _ = require('../tools/tools'),
-    api = require('./api');
+    api = require('./api'),
+    apzVersion = require('../../.tmp/aplazame-version');
 
 // aplazame methods
 
@@ -16,6 +17,7 @@ function apiOptions (options) {
 
   options = _.merge({}, {
     headers: {
+      xAjsVersion: apzVersion,
       authorization: 'Bearer ' + publicKey
     }
   }, options);

@@ -1,18 +1,20 @@
 // factory http
 
-var $q = require('./q'),
-    apzVersion = require('../../.tmp/aplazame-version');
+var $q = require('./q');
 
 function headerToTitleSlug(text) {
-  var key = text[0].toUpperCase() + text.substr(1);
-  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+  console.log('headerToTitleSlug', text);
+  var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
       return lower + '-' + upper;
   });
+  key[0] = key[0].toUpperCase();
+
+  return key;
 }
 
 function headerToCamelCase(text) {
   var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+  return key.replace(/([a-z])-([A-Z])/g, function (match, lower, upper) {
     return lower + upper;
   });
 }
@@ -63,7 +65,6 @@ function http (url, config) {
       request.withCredentials = true;
     }
 
-    // request.setRequestHeader( 'X-AJS-Version', apzVersion );
     for( var key in config.headers ) {
         request.setRequestHeader( headerToTitleSlug(key), config.headers[key] );
     }

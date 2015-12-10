@@ -59,7 +59,7 @@ module.exports = function (aplazame) {
   function readPrice (element) {
     var price = element.textContent.replace(/[^0-9,.]/g,''), addDot;
 
-    if( /\.,/.test(price) ) {
+    if( /[.,]/.test(price) ) {
       return price;
     }
 

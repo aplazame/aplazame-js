@@ -4,14 +4,14 @@ var $q = require('./q');
 
 function headerToTitleSlug(text) {
   var key = text[0].toUpperCase() + text.substr(1);
-  return key.replace(/([a-z])([A-Z])/, function (match, lower, upper) {
+  return key.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
       return lower + '-' + upper;
   });
 }
 
 function headerToCamelCase(text) {
   var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([A-Z])/, function (match, lower, upper) {
+  return key.replace(/([a-z])-([A-Z])/g, function (match, lower, upper) {
     return lower + upper;
   });
 }

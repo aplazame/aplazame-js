@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.140",
+	"version": "0.0.141",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {
@@ -30,5 +30,8 @@
 		"karma-firefox-launcher": "^0.1.6",
 		"karma-jasmine": "^0.3.6",
 		"karma-story-reporter": "^0.3.1"
+	},
+	"dependencies": {
+		"promise-q": "^0.1.16"
 	}
 }

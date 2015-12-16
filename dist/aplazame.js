@@ -1,7 +1,171 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.140';
+module.exports = '0.0.141';
 
 },{}],2:[function(require,module,exports){
+
+function stepResult (step, value, type) {
+  if( value && value.then ) {
+    value.then(function (result) {
+      step.deferred.resolve(result);
+    }, function (reason) {
+      step.deferred.reject(reason);
+    });
+  } else {
+    step.deferred[type](value);
+  }
+}
+
+function processQueue(queue, err, result) {
+  var len = queue.length,
+      step = queue.shift(),
+      type = err ? 'reject' : 'resolve',
+      value, failed, processed;
+
+  while( step ) {
+
+    if( step[type] ) {
+      value = result;
+      processed = true;
+
+      try {
+        value = step[type](result);
+        failed = false;
+      } catch (reason) {
+        value = reason;
+        failed = true;
+      }
+
+      stepResult(step, value, failed ? 'reject' : 'resolve');
+
+    } else {
+      stepResult(step, result, err ? 'reject' : 'resolve');
+    }
+
+    step = queue.shift();
+  }
+
+  if( err && len && !processed ) {
+    setTimeout(function () {
+      throw new Error('Uncaught (in promise)');
+    }, 0);
+  }
+}
+
+function Promise (executor) {
+  if( !( executor instanceof Function ) ) {
+    throw new TypeError('Promise resolver undefined is not a function');
+  }
+
+  var p = this;
+  this.$$queue = [];
+
+  executor(function (result) {
+    p.$$fulfilled = true;
+    p.$$value = result;
+    processQueue(p.$$queue, false, result);
+  }, function (reason) {
+    p.$$fulfilled = false;
+    p.$$value = reason;
+    processQueue(p.$$queue, true, reason);
+  });
+}
+
+Promise.prototype.then = function (onFulfilled, onRejected) {
+  var _this = this,
+      _promise = new Promise(function (resolve, reject) {
+        _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
+      });
+
+  if( this.$$fulfilled !== undefined ) {
+    processQueue(_this.$$queue, !this.$$fulfilled, this.$$value);
+  }
+
+  return _promise;
+};
+
+Promise.prototype.catch = function (onRejected) {
+  return this.then(undefined, onRejected);
+};
+
+Promise.all = function (iterable) {
+  return new Promise(function (resolve, reject) {
+    var pending = iterable.length,
+        results = [];
+    iterable.forEach(function (_promise, i) {
+
+      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+        results[i] = result;
+        if( --pending === 0 ) {
+          resolve(results);
+        }
+      }, function (reason) {
+        if( pending !== -1 ) {
+          pending === -1;
+          reject(reason);
+        }
+      });
+    });
+  });
+};
+
+Promise.race = function (iterable) {
+  return new Promise(function (resolve, reject) {
+    var done = false;
+
+    iterable.forEach(function (_promise, i) {
+      if( done ) {
+        return;
+      }
+      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+        if( !done ) {
+          done = true;
+          resolve(result);
+        }
+      }, function (reason) {
+        if( !done ) {
+          done = true;
+          reject(reason);
+        }
+      });
+    });
+  });
+};
+
+Promise.resolve = function (result) {
+  return new Promise(function (resolve, reject) { resolve(result); });
+};
+
+Promise.reject = function (reason) {
+  return new Promise(function (resolve, reject) { reject(reason); });
+};
+
+module.exports = Promise;
+
+},{}],3:[function(require,module,exports){
+(function (global){
+
+module.exports = require('./promise-qizer')( global.Promise || require('./promise-polyfill') );
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./promise-polyfill":2,"./promise-qizer":4}],4:[function(require,module,exports){
+
+module.exports = function (Promise) {
+
+  function q (executor) {
+    return new Promise(executor);
+  }
+
+  ['resolve', 'reject', 'all', 'race'].forEach(function (fName) {
+    q[fName] = Promise[fName];
+  });
+
+  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
+
+  return q;
+
+};
+
+},{}],5:[function(require,module,exports){
 (function (global){
 
 global.aplazame = require('./core/core');
@@ -18,7 +182,7 @@ require('./loaders/data-button')(global.aplazame);
 require('./loaders/data-simulator')(global.aplazame);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./apps/button":3,"./apps/checkout":4,"./apps/http-service":5,"./apps/modal":6,"./apps/simulator":7,"./core/core":10,"./loaders/data-aplazame":12,"./loaders/data-button":13,"./loaders/data-simulator":14}],3:[function(require,module,exports){
+},{"./apps/button":6,"./apps/checkout":7,"./apps/http-service":8,"./apps/modal":9,"./apps/simulator":10,"./core/core":13,"./loaders/data-aplazame":15,"./loaders/data-button":16,"./loaders/data-simulator":17}],6:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -161,7 +325,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":8,"../tools/tools":21}],4:[function(require,module,exports){
+},{"../core/api-http":11,"../tools/tools":23}],7:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -334,7 +498,7 @@ function checkout(options) {
 
 module.exports = checkout;
 
-},{"../core/api":9,"../tools/tools":21}],5:[function(require,module,exports){
+},{"../core/api":12,"../tools/tools":23}],8:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools');
@@ -362,7 +526,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":21}],6:[function(require,module,exports){
+},{"../tools/tools":23}],9:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -473,7 +637,7 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":9,"../tools/tools":21}],7:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":12,"../tools/tools":23}],10:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -507,7 +671,7 @@ function simulator(amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":8,"../tools/tools":21}],8:[function(require,module,exports){
+},{"../core/api-http":11,"../tools/tools":23}],11:[function(require,module,exports){
 'use strict';
 
 var acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
@@ -563,7 +727,7 @@ module.exports = {
   }
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":21,"./api":9}],9:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":23,"./api":12}],12:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -574,7 +738,7 @@ module.exports = {
   sandbox: false
 };
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -585,7 +749,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":21,"./api-http":8,"./init":11}],11:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":23,"./api-http":11,"./init":14}],14:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -623,7 +787,7 @@ function init(options) {
 
 module.exports = init;
 
-},{"../tools/tools":21,"./api":9}],12:[function(require,module,exports){
+},{"../tools/tools":23,"./api":12}],15:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -681,7 +845,7 @@ module.exports = function (aplazame) {
   aplazame.init(options);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -719,7 +883,7 @@ module.exports = function (aplazame) {
   });
 };
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -1004,7 +1168,7 @@ module.exports = function (aplazame) {
   });
 };
 
-},{"../core/api":9}],15:[function(require,module,exports){
+},{"../core/api":12}],18:[function(require,module,exports){
 
 require('./browser-polyfills');
 
@@ -1380,7 +1544,7 @@ var tools = {
 
 module.exports = tools;
 
-},{"./browser-polyfills":16}],16:[function(require,module,exports){
+},{"./browser-polyfills":19}],19:[function(require,module,exports){
 
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
@@ -1442,10 +1606,10 @@ if (!Array.prototype.find) {
   };
 }
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // factory http
 
-var $q = require('./q');
+var $q = require('promise-q');
 
 function headerToTitleSlug(text) {
   console.log('headerToTitleSlug', text);
@@ -1584,7 +1748,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"./q":20}],18:[function(require,module,exports){
+},{"promise-q":3}],21:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -1616,7 +1780,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -1639,96 +1803,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],20:[function(require,module,exports){
-(function (global){
-
-var P = (function () {
-
-  function processQueue(queue, err, result) {
-    var step = queue.shift(),
-        type = err ? 'catch' : 'then',
-        value;
-
-    while (step && !step[type]) {
-      step = queue.shift();
-    }
-
-    if (step && step[type]) {
-      try {
-        processQueue(queue, false, step[type](result));
-      } catch (err) {
-        processQueue(queue, true, err);
-      }
-    } else if (err) {
-      throw new Error('promise catch lost');
-    } else {
-      step = queue.finally.shift();
-      while (step) {
-        step(result);
-        step = queue.finally.shift();
-      }
-    }
-  }
-
-  function P(behavior) {
-    if (!(behavior instanceof Function)) {
-      throw new Error('promise argument should be a function');
-    }
-
-    var queue = [];
-    queue.finally = [];
-
-    setTimeout(function () {
-      behavior(function (result) {
-        processQueue(queue, false, result);
-      }, function (reason) {
-        processQueue(queue, true, reason);
-      });
-    }, 0);
-
-    this.then = function (onResolve, onReject) {
-      queue.push({ then: onResolve, catch: onReject });
-      return this;
-    };
-    this.catch = function (onReject) {
-      queue.push({ catch: onReject });
-      return this;
-    };
-  }
-
-  P.resolve = function (result) {
-    return new P(function (resolve, reject) {
-      resolve(result);
-    });
-  };
-
-  P.reject = function (reason) {
-    return new P(function (resolve, reject) {
-      reject(reason);
-    });
-  };
-
-  return P;
-})();
-
-module.exports = (function (Promise) {
-
-  function q(fn) {
-    return new Promise(fn);
-  }
-
-  ['resolve', 'reject'].forEach(function (fnName) {
-    q[fnName] = Promise[fnName];
-  });
-  q.when = function (p) {
-    return p && p.then ? p : P.resolve(p);
-  };
-
-  return q;
-})(global.Promise || P);
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -1752,4 +1827,4 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./basic-tools":15,"./http":17,"./live-dom":18,"./message-listener":19}]},{},[2]);
+},{"./basic-tools":18,"./http":20,"./live-dom":21,"./message-listener":22}]},{},[5]);

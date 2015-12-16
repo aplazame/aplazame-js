@@ -6,6 +6,170 @@ module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instal
 
 },{}],3:[function(require,module,exports){
 
+function stepResult (step, value, type) {
+  if( value && value.then ) {
+    value.then(function (result) {
+      step.deferred.resolve(result);
+    }, function (reason) {
+      step.deferred.reject(reason);
+    });
+  } else {
+    step.deferred[type](value);
+  }
+}
+
+function processQueue(queue, err, result) {
+  var len = queue.length,
+      step = queue.shift(),
+      type = err ? 'reject' : 'resolve',
+      value, failed, processed;
+
+  while( step ) {
+
+    if( step[type] ) {
+      value = result;
+      processed = true;
+
+      try {
+        value = step[type](result);
+        failed = false;
+      } catch (reason) {
+        value = reason;
+        failed = true;
+      }
+
+      stepResult(step, value, failed ? 'reject' : 'resolve');
+
+    } else {
+      stepResult(step, result, err ? 'reject' : 'resolve');
+    }
+
+    step = queue.shift();
+  }
+
+  if( err && len && !processed ) {
+    setTimeout(function () {
+      throw new Error('Uncaught (in promise)');
+    }, 0);
+  }
+}
+
+function Promise (executor) {
+  if( !( executor instanceof Function ) ) {
+    throw new TypeError('Promise resolver undefined is not a function');
+  }
+
+  var p = this;
+  this.$$queue = [];
+
+  executor(function (result) {
+    p.$$fulfilled = true;
+    p.$$value = result;
+    processQueue(p.$$queue, false, result);
+  }, function (reason) {
+    p.$$fulfilled = false;
+    p.$$value = reason;
+    processQueue(p.$$queue, true, reason);
+  });
+}
+
+Promise.prototype.then = function (onFulfilled, onRejected) {
+  var _this = this,
+      _promise = new Promise(function (resolve, reject) {
+        _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
+      });
+
+  if( this.$$fulfilled !== undefined ) {
+    processQueue(_this.$$queue, !this.$$fulfilled, this.$$value);
+  }
+
+  return _promise;
+};
+
+Promise.prototype.catch = function (onRejected) {
+  return this.then(undefined, onRejected);
+};
+
+Promise.all = function (iterable) {
+  return new Promise(function (resolve, reject) {
+    var pending = iterable.length,
+        results = [];
+    iterable.forEach(function (_promise, i) {
+
+      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+        results[i] = result;
+        if( --pending === 0 ) {
+          resolve(results);
+        }
+      }, function (reason) {
+        if( pending !== -1 ) {
+          pending === -1;
+          reject(reason);
+        }
+      });
+    });
+  });
+};
+
+Promise.race = function (iterable) {
+  return new Promise(function (resolve, reject) {
+    var done = false;
+
+    iterable.forEach(function (_promise, i) {
+      if( done ) {
+        return;
+      }
+      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+        if( !done ) {
+          done = true;
+          resolve(result);
+        }
+      }, function (reason) {
+        if( !done ) {
+          done = true;
+          reject(reason);
+        }
+      });
+    });
+  });
+};
+
+Promise.resolve = function (result) {
+  return new Promise(function (resolve, reject) { resolve(result); });
+};
+
+Promise.reject = function (reason) {
+  return new Promise(function (resolve, reject) { reject(reason); });
+};
+
+module.exports = Promise;
+
+},{}],4:[function(require,module,exports){
+(function (global){
+
+module.exports = require('./promise-qizer')( global.Promise || require('./promise-polyfill') );
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./promise-polyfill":3,"./promise-qizer":5}],5:[function(require,module,exports){
+
+module.exports = function (Promise) {
+
+  function q (executor) {
+    return new Promise(executor);
+  }
+
+  ['resolve', 'reject', 'all', 'race'].forEach(function (fName) {
+    q[fName] = Promise[fName];
+  });
+
+  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
+
+  return q;
+
+};
+
+},{}],6:[function(require,module,exports){
+
 require('./browser-polyfills');
 
 function _isType(type) {
@@ -380,7 +544,7 @@ var tools = {
 
 module.exports = tools;
 
-},{"./browser-polyfills":4}],4:[function(require,module,exports){
+},{"./browser-polyfills":7}],7:[function(require,module,exports){
 
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
@@ -442,10 +606,10 @@ if (!Array.prototype.find) {
   };
 }
 
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // factory http
 
-var $q = require('./q');
+var $q = require('promise-q');
 
 function headerToTitleSlug(text) {
   console.log('headerToTitleSlug', text);
@@ -584,7 +748,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"./q":8}],6:[function(require,module,exports){
+},{"promise-q":4}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -616,7 +780,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],7:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -639,96 +803,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],8:[function(require,module,exports){
-(function (global){
-
-var P = (function () {
-
-  function processQueue(queue, err, result) {
-    var step = queue.shift(),
-        type = err ? 'catch' : 'then',
-        value;
-
-    while (step && !step[type]) {
-      step = queue.shift();
-    }
-
-    if (step && step[type]) {
-      try {
-        processQueue(queue, false, step[type](result));
-      } catch (err) {
-        processQueue(queue, true, err);
-      }
-    } else if (err) {
-      throw new Error('promise catch lost');
-    } else {
-      step = queue.finally.shift();
-      while (step) {
-        step(result);
-        step = queue.finally.shift();
-      }
-    }
-  }
-
-  function P(behavior) {
-    if (!(behavior instanceof Function)) {
-      throw new Error('promise argument should be a function');
-    }
-
-    var queue = [];
-    queue.finally = [];
-
-    setTimeout(function () {
-      behavior(function (result) {
-        processQueue(queue, false, result);
-      }, function (reason) {
-        processQueue(queue, true, reason);
-      });
-    }, 0);
-
-    this.then = function (onResolve, onReject) {
-      queue.push({ then: onResolve, catch: onReject });
-      return this;
-    };
-    this.catch = function (onReject) {
-      queue.push({ catch: onReject });
-      return this;
-    };
-  }
-
-  P.resolve = function (result) {
-    return new P(function (resolve, reject) {
-      resolve(result);
-    });
-  };
-
-  P.reject = function (reason) {
-    return new P(function (resolve, reject) {
-      reject(reason);
-    });
-  };
-
-  return P;
-})();
-
-module.exports = (function (Promise) {
-
-  function q(fn) {
-    return new Promise(fn);
-  }
-
-  ['resolve', 'reject'].forEach(function (fnName) {
-    q[fnName] = Promise[fnName];
-  });
-  q.when = function (p) {
-    return p && p.then ? p : P.resolve(p);
-  };
-
-  return q;
-})(global.Promise || P);
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -752,7 +827,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./basic-tools":3,"./http":5,"./live-dom":6,"./message-listener":7}],10:[function(require,module,exports){
+},{"./basic-tools":6,"./http":8,"./live-dom":9,"./message-listener":10}],12:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     choices = [];
@@ -906,4 +981,4 @@ parent.window.postMessage({
   event: 'require:choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":9}]},{},[10]);
+},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":11}]},{},[12]);

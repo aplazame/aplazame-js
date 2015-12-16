@@ -151,11 +151,13 @@
 
       $if{result}{:}
         <div class="pay-with-aplazame">
-          <button data-aplazame-button-info="default" onclick="loadCheckout();">
+
+          <button data-aplazame-button="default" data-amount="13014" onclick="loadCheckout();">
             <span>Pagar con&nbsp;</span><!--
             --><img src="/dist/widgets/assets/images/logo-white.svg"/><!--
             --><span>&nbsp;aplazame</span>
           </button>
+
         </div>
       {/}
 
@@ -171,7 +173,7 @@
     </footer>
 
     <script type="text/javascript"
-            src="dist/aplazame.js?sandbox=true"
+            src="$if{dotcom}https://aplazame.com/static/aplazame.js{:}dist/aplazame.js{/}"
             data-aplazame="f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"
             data-version="v1.2"
             data-sandbox="true">

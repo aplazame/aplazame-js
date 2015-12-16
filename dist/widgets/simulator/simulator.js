@@ -18,38 +18,39 @@ function stepResult (step, value, type) {
   }
 }
 
-function processQueue(queue, err, result) {
-  var len = queue.length,
-      step = queue.shift(),
-      type = err ? 'reject' : 'resolve',
-      value, failed, processed;
+function processQueue(promise) {
+  if( promise.$$fulfilled === undefined ) {
+    return;
+  }
+
+  var len = promise.$$queue.length,
+      step = promise.$$queue.shift(),
+      type = promise.$$fulfilled ? 'resolve' : 'reject',
+      uncough = !promise.$$fulfilled && promise.$$uncought++;
 
   while( step ) {
 
     if( step[type] ) {
-      value = result;
-      processed = true;
+      uncough = false;
 
       try {
-        value = step[type](result);
-        failed = false;
+        stepResult(step, step[type](promise.$$value), 'resolve');
       } catch (reason) {
-        value = reason;
-        failed = true;
+        stepResult(step, reason, 'reject');
       }
 
-      stepResult(step, value, failed ? 'reject' : 'resolve');
-
     } else {
-      stepResult(step, result, err ? 'reject' : 'resolve');
+      stepResult(step, promise.$$value, type);
     }
 
-    step = queue.shift();
+    step = promise.$$queue.shift();
   }
 
-  if( err && len && !processed ) {
+  if( uncough ) {
     setTimeout(function () {
-      throw new Error('Uncaught (in promise)');
+      if( promise.$$uncough === uncough ) {
+        throw new Error('Uncaught (in promise)');
+      }
     }, 0);
   }
 }
@@ -61,15 +62,16 @@ function Promise (executor) {
 
   var p = this;
   this.$$queue = [];
+  this.$$uncough = 0;
 
   executor(function (result) {
     p.$$fulfilled = true;
     p.$$value = result;
-    processQueue(p.$$queue, false, result);
+    processQueue(p);
   }, function (reason) {
     p.$$fulfilled = false;
     p.$$value = reason;
-    processQueue(p.$$queue, true, reason);
+    processQueue(p);
   });
 }
 
@@ -79,9 +81,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
         _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
       });
 
-  if( this.$$fulfilled !== undefined ) {
-    processQueue(_this.$$queue, !this.$$fulfilled, this.$$value);
-  }
+  processQueue(this);
 
   return _promise;
 };

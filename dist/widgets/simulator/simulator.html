@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="simulator.css?v=0.0.141" />
+    <link rel="stylesheet" href="simulator.css?v=0.0.142" />
 
     <link rel="stylesheet" type="text/css" href="../assets/fonts/font-gotham.css" />
   </head>
@@ -13,7 +13,7 @@
     </div>
 
     <script type="application/x-template" data-template="widget">
-        <div class="widget-item-instalments <%= isMobile ? 'mobile ' : '' %>default">
+        <div class="widget-item-instalments <%= isMobile ? 'mobile ' : '' %>light">
           <div class="wrapper">
             <button class="button" data-action="changeInstalments" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€\nPago inicial: <%= getAmount(choice.downpayment_amount) %>€">
               <div class="logo"></div>
@@ -33,6 +33,6 @@
           </div>
         </div>
     </script>
-    <script type="text/javascript" src="simulator.js?v=0.0.141"></script>
+    <script type="text/javascript" src="simulator.js?v=0.0.142"></script>
   </body>
 </html>

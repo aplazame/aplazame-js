@@ -1,6 +1,6 @@
 // factory http
 
-var $q = require('./q');
+var $q = require('promise-q');
 
 function headerToTitleSlug(text) {
   console.log('headerToTitleSlug', text);

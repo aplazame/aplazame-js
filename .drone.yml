@@ -5,8 +5,8 @@ branches:
 build:
   image: aplazame/nodejs-karma:0.3.2
   commands:
-    - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
-    - 'make test'
+    - scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa
+    - make test
 
 deploy:
   rsync:

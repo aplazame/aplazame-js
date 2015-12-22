@@ -5,6 +5,7 @@ branches:
 build:
   image: aplazame/nodejs-karma:0.3.2
   commands:
+    - 'mkdir $HOME/.ssh'
     - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
     - 'make test'
 

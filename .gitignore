@@ -9,4 +9,5 @@
 /aplazame.min.js
 /dist/*
 /public/*
+/secrets.yml
 .DS_Store

@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.146",
+	"version": "0.0.148",
 	"homepage": "https://github.com/aplazame/aplazame-js",
 	"authors": [
 		"Jesús Germade <jesus@aplazame.com>"
@@ -22,7 +22,7 @@
 		"tests"
 	],
 	"devDependencies": {
-		"ng-aplazame": "ssh://git@github.com/aplazame/ng-aplazame.git#~0.0.70"
+		"ng-aplazame": "git@github.com:aplazame/ng-aplazame.git#0.0.79"
 	},
 	"dependencies": {
 		"fastclick": "~1.0.6"

@@ -4,10 +4,11 @@ branches:
 
 build:
   image: aplazame/nodejs-karma:0.3.2
+  environment:
+    - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:
-    - sed -i 's/git@github.com:/http:\/\/$$GITHUB_TOKEN:x-oauth-basic@github.com\//' bower.json
+    - sed -i 's/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//' bower.json
     - 'make test'
-    # - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
 
 deploy:
   rsync:

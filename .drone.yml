@@ -8,36 +8,36 @@ build:
     - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
     - 'make test'
 
-# deploy:
-#   rsync:
-#     user: $$DEPLOY_USER
-#     host: demo.debug.aplazame.com
-#     target: $$DEBUG_PATH
-#     delete: true
-#     recursive: true
-#     commands:
-#       - 'cd $$DEBUG_PATH'
-#       - 'make build'
-#     when:
-#       branch: master
-#
-#   rsync:
-#     user: $$DEPLOY_USER
-#     host: demo.aplazame.com
-#     target: $$RELEASE_PATH
-#     delete: true
-#     recursive: true
-#     when:
-#       branch: release
-#
-#   rsync:
-#     user: $$DEPLOY_USER
-#     host: aplazame.com
-#     target: $$RELEASE_PATH
-#     delete: true
-#     recursive: true
-#     when:
-#       branch: release
+deploy:
+  rsync:
+    user: $$DEPLOY_USER
+    host: demo.debug.aplazame.com
+    target: $$DEBUG_PATH
+    delete: true
+    recursive: true
+    commands:
+      - 'cd $$DEBUG_PATH'
+      - 'make build'
+    when:
+      branch: master
+
+  rsync:
+    user: $$DEPLOY_USER
+    host: demo.aplazame.com
+    target: $$RELEASE_PATH
+    delete: true
+    recursive: true
+    when:
+      branch: release
+
+  rsync:
+    user: $$DEPLOY_USER
+    host: aplazame.com
+    target: $$RELEASE_PATH
+    delete: true
+    recursive: true
+    when:
+      branch: release
 
 notify:
   slack:

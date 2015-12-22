@@ -14,13 +14,13 @@ install.npm:
 auto.install: git.hooks
 	@node auto-install
 
-test:
+test: auto.install
 	@node make test.jshint
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
 
 build: auto.install
-	bower install
+	bower install --allow-root
 	@node make build
 
 dev: auto.install

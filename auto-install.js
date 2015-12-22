@@ -78,5 +78,5 @@ function needsInstall () {
 
 needsInstall().forEach(function (libname) {
   console.log('\nrequired', libname + ' install\n');
-  require('child_process').execSync(libname + ' install');
+  require('child_process').execSync(libname + ' install' + ( libname === 'bower' ? ' --allow-root' : '' ) );
 });

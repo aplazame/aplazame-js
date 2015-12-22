@@ -1,10 +1,10 @@
 [![Image](https://aplazame.com/static/img/banners/banner-728-white-js.png "Aplazame") ](https://aplazame.com "Aplazame")
 
-Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8dd982354e686ed/s/master "wercker status")](https://app.wercker.com/project/bykey/e3cdbafb5813b255e8dd982354e686ed) [![Build Status](http://drone.aplazame.com/api/badges/aplazame/aplazame-js/status.svg)](http://drone.aplazame.com/aplazame/aplazame-js)
+Aplazame.js [![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8dd982354e686ed/s/master "wercker status")](https://app.wercker.com/project/bykey/e3cdbafb5813b255e8dd982354e686ed) [![drone.io Status](http://drone.aplazame.com/api/badge/github.com/aplazame/aplazame-js/status.svg?branch=master)](http://drone.aplazame.com/github.com/aplazame/aplazame-js)
 ===========
 
-Main File
----------
+Archivo principal
+-----------------
 ``` html
 <script type="text/javascript" src="https://aplazame.com/static/aplazame.js"
         data-aplazame="publicKey: f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"></script>
@@ -12,16 +12,16 @@ Main File
 <!-- the recommended place for this line is at the end of <body> tag -->
 ```
 
-Instalments Simulator Widget
-----------------------------
+Simulador de cuotas
+-------------------
 ![image](https://cloud.githubusercontent.com/assets/2305833/11635252/cc93ac0e-9d15-11e5-930d-89a27f2882f1.png)
-
 
 ``` html
 <div data-aplazame-simulator data-amount="10050"></div>
 <!-- place this line where you want to show the simulator widget -->
 ```
-you can specify selectors to watch price and quantity, and those values will be watched for changes
+puedes especificar selectores personalizados donde se muestre el precio y la cantidad, y se vigilarán los cambios dináminamente
+
 ``` html
 <div data-aplazame-simulator
      data-price="form#article .regular-price .price"
@@ -29,8 +29,8 @@ you can specify selectors to watch price and quantity, and those values will be 
 <!-- place this line where you want to show the simulator widget -->
 ```
 
-Aplazame button
----------------
+Botón Aplazame
+--------------
 ![image](https://cloud.githubusercontent.com/assets/2305833/11635328/4417726a-9d16-11e5-9f8c-91205319aaa5.png)
 
 ``` html
@@ -42,10 +42,10 @@ Aplazame button
 <!-- place this line where you want to show the simulator widget -->
 ```
 
-Checkout
+Pasarela de pago (checkout)
 ---------------
 
-[see demo](http://demo.aplazame.com)
+[ver demo](http://demo.aplazame.com)
 
 ![image](https://cloud.githubusercontent.com/assets/2305833/11635342/5cd3cc90-9d16-11e5-80b4-4e72824ba4ed.png)
 

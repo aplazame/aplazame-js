@@ -1,0 +1,190 @@
+
+$height-header: 4rem
+$footer-height: 3rem
+
+@import 'ng-aplazame/styles/core'
+@import 'ng-aplazame/styles/components/alert'
+@import 'ng-aplazame/styles/components/input'
+@import 'ng-aplazame/styles/drafts/merchants/table'
+
+html, body
+  margin: 0
+  padding: 0
+
+html
+  height: 100%
+  background-color: #333A3E
+
+body
+  background: $grey-light
+  // font-size: 1.4rem // back to 14px
+  min-height: 100%
+  position: relative
+  padding-bottom: $footer-height
+  // -webkit-overflow-scrolling: touch
+
+a
+  text-decoration: none
+  color: darken($color-brand, 15)
+  &:hover
+    text-decoration: underline
+  &:active
+    color: darken($color-brand, 20)
+
+hr
+  border: 1px solid lighten($grey-medium, 20)
+
+h2.demo
+  font-size: 1.4rem
+  font-weight: $font-medium
+  margin: 1rem 0
+
+.demo-input-wrapper
+  font-size: 1rem
+  position: relative
+
+.demo-input
+  background: transparent
+  display: block
+  width: 100%
+  line-height: 3rem
+  padding: 0 units(2)
+  outline: 0
+  border-bottom: 1px solid $grey-medium
+  font-size: 1.4rem
+  color: $color-brand
+
+  &:focus
+    border-color: $color-brand
+
+  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button
+      /* display: none; <- Crashes Chrome on hover */
+      -webkit-appearance: none
+      margin: 0 // <-- Apparently some margin are still there even though it's hidden
+
+.demo-input-currency
+  @include absolute(right)
+  margin: auto
+  font-size: 2em
+  height: 1em
+  color: $color-brand
+
+  & + .demo-input
+    text-align: right
+    padding-right: 1.5em
+
+
+.demo-btn
+  border: 0
+  line-height: 3rem
+  @include background-active($color-brand)
+  width: 100%
+  font-size: 1.4rem
+  color: white
+  cursor: pointer
+
+.inline-block
+  display: inline-block
+
+.demo-simulator-results
+
+  .loading
+    font-size: 1.4em
+    text-align: center
+
+.no-wrap
+  white-space: nowrap
+
+.hidden
+  display: none
+
+table.table
+  &.demo-table
+    th, td
+      font-size: 1.2rem
+
+    @media #{$screen-sm-down}
+      table-layout: auto
+
+      th, td
+        font-size: 1rem
+
+  th, td
+    &.demo-column-instalments, &.demo-column-tae, &.demo-column-amount
+      text-align: center
+
+  td.demo-column-tae
+    font-size: 0.9em
+    color: $grey-dark
+
+  td.demo-column-instalments
+    .months
+      color: $grey-dark
+
+  td.demo-column-amount
+    .amount
+      font-weight: $font-medium
+
+    .currency, .downpayment-amount
+      color: $grey-dark
+
+    .downpayment-amount
+      font-size: 0.9em
+      margin-top: units(1)
+      .label
+        color: $grey-medium
+        font-size: 0.8em
+
+    .per-month
+      vertical-align: bottom
+      font-size: 0.8em
+      color: $grey-medium
+
+.sections
+  margin-top: -5rem
+  margin-bottom: $footer-height
+
+  .section-box
+    background: white
+    box-shadow: 0 0 0.25rem 0 rgba(black, 0.1)
+    // padding: units(1)
+    margin-bottom: units(4)
+
+    .section-title
+        h3
+          font-size: 1.4rem
+          font-weight: $font-regular
+          line-height: 1
+          color: darken($grey-dark, 30)
+
+        padding: units(2)
+        background-color: #F7F9FA
+        border-bottom: 1px solid darken(#F7F9FA, 5)
+
+    > article
+      padding: units(1)
+
+@import header
+
+footer.footer
+  @include absolute(bottom)
+  color: $grey-dark
+  background-color: #F7F9FA
+  box-shadow: 0 0 0.25rem 0 rgba(black, 0.1)
+  line-height: $footer-height
+  font-size: 1.1rem
+  height: $footer-height
+
+  .demo-footer-link
+    color: $grey-dark
+    border-bottom: 1px dotted $grey-dark
+    &:hover
+      color: black
+      text-decoration: none
+      border-bottom-style: solid
+
+@import cart-list
+@import article-sample
+@import pay-with-aplazame
+@import article-type-choices
+@import article-qty-ctrl

@@ -1,0 +1,39 @@
+
+.article-sample
+
+  // margin: units(2) 0
+  margin: 0
+  // background: $grey-light
+  padding: units(1)
+
+  .img-wrapper
+    padding: units(1)
+    text-align: center
+
+    img
+      max-width: 100%
+      max-height: 100%
+
+  .details
+    padding: units(1)
+
+    .label
+      font-size: 1.4em
+      margin-bottom: 0.5em
+
+      @media #{$screen-xs}
+        font-size: 1.2em
+
+    .description
+      color: $grey-dark
+      line-height: 1.5
+      font-weight: $font-regular
+      margin-bottom: 1em
+
+      @media #{$screen-xs}
+        font-size: 0.9em
+
+    .price
+      text-align: right
+      color: $grey-dark
+      font-size: 2rem

@@ -19,7 +19,8 @@ test:
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
 
-build: test
+build: auto.install
+	bower install
 	@node make build
 
 dev: auto.install
@@ -28,11 +29,12 @@ dev: auto.install
 live: auto.install
 	@node make live
 
-
-git.increaseVersion:
+master.increaseVersion:
 	git checkout master
 	@git pull origin master
 	@node make pkg:increaseVersion
+
+git.increaseVersion: master.increaseVersion
 	git commit -a -n -m "increased version [$(shell node make pkg:version)]"
 	@git push origin master
 
@@ -46,9 +48,10 @@ release: auto.install test git.increaseVersion git.updateRelease build
 	@git add aplazame.min.js -f
 	@git add dist -f --all
 	@git add public -f --all
-	git commit -n -m "updating built versions"
+	-git commit -n -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node make pkg:version)\n"
+	@git checkout master
 
 echo:
 	@echo "make options: test build dev live"

@@ -1,0 +1,86 @@
+
+// @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700')
+
+$path-fonts: '../assets/fonts'
+$path-images: '../assets/images'
+
+@import 'ng-aplazame/styles/core'
+
+@import 'ng-aplazame/styles/components/widget-item-instalments'
+
+html
+  font-size: $rem-size
+
+body
+  // font-size: 1.2rem
+  overflow: hidden
+//
+// .text-left
+//   text-align: left
+//
+// .text-center
+//   text-align: center
+//
+// .text-right
+//   text-align: right
+
+$brand-primary: #3e8bc2
+
+$brand-primary-hover: darken($brand-primary, 10)
+$brand-primary-active: darken($brand-primary, 20)
+
+$brand-gray: #D0D7DB
+
+$btn-size: 1.6rem
+$btn-font: 1rem
+$btn-border-size: 2px
+
+$logo-size: 2rem
+
+.logo
+  float: left
+  margin-right: 0.5rem
+
+  > img
+    width: $logo-size
+    height: $logo-size
+
+#main
+  min-height: 5rem
+  display: inline-block
+  // margin-left: $logo-size + 0.5rem
+  text-align: left
+
+  &.loading
+    opacity: 0.5
+    
+a
+  color: $brand-primary
+  text-decoration: none
+  cursor: pointer
+
+  &:hover
+    color: $brand-primary-hover
+    text-decoration: underline
+
+  &:active
+    color: $brand-primary-active
+
+.no-wrap
+  white-space: nowrap
+
+[data-action="selectChoice"]
+  font-size: $btn-font
+  width: $btn-size
+  height: $btn-size
+  line-height: calc(#{$btn-size} - #{2*$btn-border-size})
+  text-align: center
+  background: white
+  border: $btn-border-size solid $brand-gray
+  color: black
+  cursor: pointer
+  margin: 0.1rem
+  padding: 0
+
+  &:hover, &.active
+    border-color: $brand-primary

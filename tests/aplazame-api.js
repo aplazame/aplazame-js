@@ -1,3 +1,4 @@
+/* globals aplazame, describe, it, expect */
 
 describe('apiGet', function () {
 

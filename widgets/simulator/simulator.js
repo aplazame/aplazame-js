@@ -1,28 +1,15 @@
 
-var _ = require('../../src/utils');
+var _ = require('../../src/tools/tools'),
+    choices = [];
 
 _.template.lookup();
 
+_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments.js') );
+_.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') );
+
 var main = document.getElementById('main'),
-    selectedChoice, choices = window.choices;
-
-function getAmount (amount) {
-  var prefix = '';
-
-  if( amount < 0 ) {
-    prefix = '-';
-    amount = 0 - amount;
-  }
-
-  if( !amount ) {
-    return '0,00';
-  } else if( amount < 10 ) {
-    return '0,0' + amount;
-  } else if( amount < 100 ) {
-    return '0,' + amount;
-  }
-  return prefix + ('' + amount).replace(/..$/, ',$&');
-}
+    selectedChoice, choices = window.choices,
+    currentAmount;
 
 function emitSize () {
   setTimeout(function () {
@@ -40,14 +27,6 @@ function emitSize () {
 _.listen(window, 'load', emitSize);
 _.listen(window, 'resize', emitSize);
 
-function showText () {
-  main.innerHTML = _.template('info', {
-    getAmount: getAmount,
-    choice: selectedChoice
-  });
-  emitSize();
-}
-
 function showChoices () {
   main.innerHTML = _.template('choices', { selectedChoice: selectedChoice, choices: choices });
   emitSize();
@@ -58,6 +37,48 @@ function setChoice (choice) {
   return choice;
 }
 
+function setAmount (amount) {
+  currentAmount = amount;
+  return currentAmount;
+}
+
+function runAction (action, data) {
+  switch( action ) {
+    case 'showChoices':
+      showChoices();
+      break;
+    case 'showInfo':
+      parent.window.postMessage({
+        aplazame: 'modal',
+        event: 'open',
+        name: 'info',
+        data: {
+          cardClass: 'hola-adios',
+          card: _.template('modal-info', { creditThreshold: 100 })
+        }
+      }, '*');
+      break;
+    case 'changeInstalments':
+      parent.window.postMessage({
+        aplazame: 'modal',
+        event: 'open',
+        name: 'instalments',
+        data: {
+          cardClass: 'hola-adios',
+          card: _.template('modal-instalments', {
+            selectedChoice: selectedChoice,
+            choices: choices,
+            getAmount: _.getAmount,
+            months: function (m) {
+              return m > 1 ? 'meses' : 'mes';
+            }
+          })
+        }
+      }, '*');
+      break;
+  }
+}
+
 function maxInstalments (prev, choice) {
   if( prev === null ) {
     return choice;
@@ -66,32 +87,66 @@ function maxInstalments (prev, choice) {
   }
 }
 
-setChoice( choices.reduce(maxInstalments, null) );
+var isMobile,
+    renderWidget = function (mobile) {
+      isMobile = mobile === undefined || mobile;
 
-_.listen(main, 'click', function (e) {
-  var action = e.target.getAttribute('data-action');
-  if( action !== undefined ) {
-    e.preventDefault();
-  }
+      _.removeClass(main, 'loading');
+      main.innerHTML = _.template('widget', {
+        getAmount: _.getAmount,
+        choice: selectedChoice,
+        currentAmount: currentAmount,
+        isMobile: isMobile
+      });
+      emitSize();
 
-  switch( action ) {
-    case 'showChoices':
-      showChoices();
-      break;
-    case 'selectChoice':
-      setChoice( choices[ Number(e.target.getAttribute('data-choice')) ] );
-      showText();
-      break;
-    case 'showInfo':
-      parent.window.postMessage({
-        aplazame: 'modal',
-        event: 'open',
-        data: {
-          box: require('../../.tmp/simulator/modal-box.js')
+      [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
+
+        _.listen(element, 'click', function (e) {
+          var action = element.getAttribute('data-action');
+
+          if( action !== undefined ) {
+            e.preventDefault();
+          }
+
+          runAction(action);
+        });
+
+      } );
+    },
+    setMobile = function (mobile) {
+      if( isMobile === undefined || isMobile !== mobile ) {
+        isMobile = mobile;
+
+        if( isMobile ) {
+          _.addClass( document.querySelector('.widget-item-instalments'), 'mobile' );
+        } else {
+          _.removeClass( document.querySelector('.widget-item-instalments'), 'mobile' );
         }
-      }, '*');
-      break;
+      }
+    },
+    messageSimulator = {
+      choices: function (message) {
+        choices = message.choices;
+        setChoice( choices.reduce(maxInstalments, null) );
+        setAmount( message.amount );
+        renderWidget(message.mobile);
+      },
+      mobile: function (message) {
+        setMobile(message.mobile);
+      },
+      loading: function (message) {
+        _.addClass(main, 'loading');
+      }
+    };
+
+_.onMessage('simulator', function (e, message) {
+  if( messageSimulator[message.event] ) {
+    messageSimulator[message.event](message);
   }
 });
 
-showText();
+parent.window.postMessage({
+  aplazame: 'simulator',
+  event: 'require:choices'
+}, '*');

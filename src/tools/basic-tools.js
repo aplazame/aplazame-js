@@ -1,11 +1,5 @@
-if( !Element.prototype.matchesSelector ) {
-  Element.prototype.matchesSelector = (
-    Element.prototype.webkitMatchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector
-  );
-}
+
+require('./browser-polyfills');
 
 function _isType (type) {
     return function (o) {
@@ -30,13 +24,22 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
-var listen = window.addEventListener ? function (element, eventName, listener) {
+function listen (element, eventName, listener) {
+  if( element instanceof Array ) {
+    for( var i = 0, n = element.length ; i < n ; i++ ) {
+      element[i].addEventListener(eventName, listener, false);
+    }
+    return;
+  }
   element.addEventListener(eventName, listener, false);
-} : ( window.attachEvent && function (element, eventName, listener) {
-  element.attachEvent('on' + eventName, listener);
-} );
-if( !listen ) {
-  throw new Error('Your Browser does not support events');
+}
+
+function _ready (callback) {
+  if (/loaded|complete/.test(document.readyState)) {
+    callback();
+  } else {
+    window.addEventListener('load', callback);
+  }
 }
 
 function once (fn) {
@@ -49,7 +52,9 @@ function once (fn) {
   };
 }
 
-function docReady (callback) {
+function docReady (_callback, delay) {
+  var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
+
   if( document.readyState === 'complete' ) {
     callback();
   } else {
@@ -127,7 +132,7 @@ function joinPath () {
 
 function writeIframe (iframe, content) {
   var iframeDoc = iframe.contentWindow.document;
-  iframeDoc.charset = 'UTF-8';
+  try { iframeDoc.charset = 'UTF-8'; } catch(err) {}
   iframeDoc.open();
   iframeDoc.write(content);
   iframeDoc.close();
@@ -142,7 +147,7 @@ function getIFrame (iframeStyles) {
 }
 
 function template (name, data){
-  return template.cache[name](data);
+  return template.cache[name](data || {});
 }
 
 template.cache = {};
@@ -248,7 +253,102 @@ function cssQuery (_selector, rootElement) {
   }, []);
 }
 
-module.exports = {
+function getAmount (amount) {
+  var prefix = '';
+
+  if( amount < 0 ) {
+    prefix = '-';
+    amount = 0 - amount;
+  }
+
+  if( !amount ) {
+    return '0,00';
+  } else if( amount < 10 ) {
+    return '0,0' + amount;
+  } else if( amount < 100 ) {
+    return '0,' + amount;
+  }
+  return prefix + ('' + amount).replace(/..$/, ',$&');
+}
+
+var cssHack = (function () {
+  var cache = {},
+      hacks = {
+        overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
+        blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.25s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
+        // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
+        modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' +
+               '@media (max-width: 600px) { html { background-color: #333A3E; } html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' +
+               '@media (min-width: 601px) { .aplazame-modal { position: fixed; } }'
+        // overflow: '/* html { height: 100%; } body { overflow: hidden; } */',
+        // inputFocus: 'html, body { height: 100vh; overflow: hidden; }'
+      };
+
+  return function hack (hackName) {
+    if( !cache[hackName] ) {
+      var style = document.createElement('style');
+      style.setAttribute('rel', 'stylesheet');
+      style.textContent = hacks[hackName].replace(/;/g, ' !important;');
+
+      var enabled = false;
+
+      style.hack = function (enable) {
+        enable = enable === undefined || enable;
+
+        if( enable ) {
+          if( enabled ) { return; }
+          enabled = true;
+          document.head.appendChild(style);
+        } else {
+          if( !enabled ) { return; }
+          enabled = false;
+          document.head.removeChild(style);
+        }
+      };
+
+      cache[hackName] = style;
+    }
+    return cache[hackName];
+  };
+})();
+
+function scrollTop (value) {
+  if( value !== undefined ) {
+    document.documentElement.scrollTop = value;
+    document.body.scrollTop = value;
+  }
+  return document.documentElement.scrollTop || document.body.scrollTop;
+}
+
+var _classActions = {
+  add: document.documentElement.classList ? function (element, className) {
+    element.classList.add(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    _classActions.remove(element, className);
+    element.className += ' ' + className;
+  },
+  remove: document.documentElement.classList ? function (element, className) {
+    element.classList.remove(className);
+  } : function (element, className) {
+    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+    element.className = element.className.replace(RE_CLEANCLASS,'');
+  },
+  action: function (action, tools) {
+    return function (element, className) {
+      if( className.indexOf(' ') >= 0 ) {
+        className.split(' ').forEach(function (cn) {
+          _classActions[action](element, cn);
+        });
+      } else {
+        _classActions[action](element, className);
+      }
+      return tools;
+    };
+  }
+};
+
+var tools = {
   isObject: _isObject,
   isFunction: _isFunction,
   isString: _isString,
@@ -268,15 +368,11 @@ module.exports = {
   getIFrame: getIFrame,
   template: template,
   cssQuery: cssQuery,
-  elementData: document.createElement('div').dataset ? function (el, key, value) {
-    if( value !== undefined ) {
-      el.dataset[key] = value;
-    }
-    return el.dataset[key];
-  } : function (el, key, value) {
-    if( value !== undefined ) {
-      el.setAttribute('data-' + key, value);
-    }
-    return el.getAttribute('data-' + key);
-  }
+  getAmount: getAmount,
+  cssHack: cssHack,
+  scrollTop: scrollTop,
+  addClass: _classActions.action('add', tools),
+  removeClass: _classActions.action('remove', tools)
 };
+
+module.exports = tools;

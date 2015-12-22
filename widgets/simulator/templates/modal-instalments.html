@@ -1,0 +1,47 @@
+<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">
+
+  <div class="card-wrapper">
+    <div class="card">
+      <div class="card-content">
+
+        <header class="aplazame"></header>
+
+        <section class="info">
+          <h1>Elige el número de meses y la cuota que más te convengan</h1>
+          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/" target="_blank">Más información</a></p>
+        </section>
+
+        <div data-widget="active-group" class="choices-wrapper">
+
+        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {
+        %><div class="choice">
+            <button type="button" class="button" data-widget="active-toggle">
+              <div class="wrapper">
+                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>
+                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>
+              </div>
+            </button>
+          </div><%
+        } %>
+
+        </div>
+
+        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>
+
+      </div>
+
+      <div class="cta">
+        <section class="invite">
+          <div class="text-up">Si te interesa,</div>
+          <div class="text-down">selecciona Aplazame al pagar</div>
+        </section>
+        <div class="button-wrapper">
+          <button class="button" type="submit" modal-resolve="return">
+            <span class="cta-title">Volver a la tienda</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

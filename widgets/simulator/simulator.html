@@ -3,34 +3,36 @@
   <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="widgets/simulator/simulator.css" />
+    <link rel="stylesheet" href="simulator.css?v=${pkg.version}" />
+
+    <link rel="stylesheet" type="text/css" href="../assets/fonts/font-gotham.css" />
   </head>
   <body>
-    <script type="text/javascript">
-      var choices = [];
-
-      // choices = []; // this is replaced with real data
-    </script>
-    <div class="logo">
-      <img src="widgets/assets/img/favicon.png"/>
+    <div class="text-center">
+      <div id="main"></div>
     </div>
-    <div id="main"></div>
 
-    <script type="application/x-template" data-template="info-old">
-        <div>Financia con Aplazame<br/>en <a href="#" class="no-wrap" data-action="showChoices"><%= choice.num_instalments %> cuotas</a> de <%= getAmount(choice.amount) %> €.</div>
+    <script type="application/x-template" data-template="widget">
+        <div class="widget-item-instalments <%= isMobile ? 'mobile ' : '' %>light">
+          <div class="wrapper">
+            <button class="button" data-action="changeInstalments" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€\nPago inicial: <%= getAmount(choice.downpayment_amount) %>€">
+              <div class="logo"></div>
+              <div class="text-wrapper">
+                <div class="text-get">Consíguelo desde</div>
+                <div class="text-amount">
+                  <span class="amount"><%= getAmount(choice.amount) %></span><!--
+                  --><span class="currency">&nbsp;€</span><!--
+                  --><span class="per-month">/mes</div>
+                <div class="text-instalments">en 12 mensualidades</div>
+              </div>
+            </button>
+            <div class="signature">
+              <a data-action="changeInstalments">Más información</a><!--
+              --><span>&nbsp;sobre Aplazame.</span>
+            </div>
+          </div>
+        </div>
     </script>
-    <script type="application/x-template" data-template="info">
-        <div>Consíguelo a partir de <%= getAmount(choice.amount) %>€ al mes.</div>
-        <div>Aplazado en <a href="#" class="no-wrap" data-action="showChoices"><%= choice.num_instalments %> <%= choice.num_instalments > 1 ? 'cuotas' : 'cuota' %></a><%= choice.num_instalments > 1 ? ' mensuales.' : 'mensual.' %></div>
-        <div>TAE del <%= getAmount(choice.annual_equivalent) %>%.</div>
-        <div class="text-right"><a class="cursor-pointer" data-action="showInfo">Más información</a></div>
-    </script>
-    <script type="application/x-template" data-template="choices">
-        <div>Elige el número de cuotas</div>
-        <% for( var i = 0, len = choices.length ; i < len ; i++ ) { %>
-          <button type="button" data-action="selectChoice" data-choice="<%= i %>" class="<%= (choices[i] === selectedChoice ? 'active' : '') %>"><%= choices[i].num_instalments %></button>
-        <% } %>
-    </script>
-    <script type="text/javascript" src="widgets/simulator/simulator.js"></script>
+    <script type="text/javascript" src="simulator.js?v=${version}"></script>
   </body>
 </html>

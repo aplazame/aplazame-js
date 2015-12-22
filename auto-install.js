@@ -49,7 +49,7 @@ function nitroVersionOK () {
   var currentVersion = readJSONFile('package.json').devDependencies.nitro.replace(/^[\^~]/, ''),
       installedVersion;
   try {
-    installedVersion = readJSONFile('node_modules/nitro/package.json').version;
+    installedVersion = readJSONFile('node_modules/nitro/package.json').version.replace(/^[\^~]/, '');
   } catch(err) {
     return false;
   }

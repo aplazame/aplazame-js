@@ -1,11 +1,13 @@
 branches:
-  # - master
+  - master
   - release
 
 build:
   image: aplazame/nodejs-karma:0.3.2
   commands:
+    - sed -i 's/git@github.com:/http:\/\/$$GITHUB_TOKEN:x-oauth-basic@github.com\//' bower.json
     - 'make test'
+    # - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
 
 deploy:
   rsync:

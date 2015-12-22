@@ -17,9 +17,6 @@ deploy:
     target: $$DEBUG_PATH
     delete: true
     recursive: true
-    commands:
-      - 'cd $$DEBUG_PATH'
-      - 'make build'
     when:
       branch: master
 

@@ -15,24 +15,6 @@ deploy:
     when:
       branch: master
 
-  rsync:
-    user: $$DEPLOY_USER
-    host: demo.aplazame.com
-    target: $$RELEASE_PATH
-    delete: true
-    recursive: true
-    when:
-      branch: release
-
-  rsync:
-    user: $$DEPLOY_USER
-    host: aplazame.com
-    target: $$RELEASE_PATH
-    delete: true
-    recursive: true
-    when:
-      branch: release
-
 notify:
   slack:
     webhook_url: $$SLACK_WEBHOOK_URL

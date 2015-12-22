@@ -1,27 +1,61 @@
-image: node
-
 branches:
-  - master
+  # - master
   - release
 
-script:
-  - chmod +x ./.drone/*.sh
-  - ./.drone/build.sh
+build:
+  image: aplazame/nodejs-karma
+  commands:
+    - 'make test'
 
 deploy:
-  bash:
-    script:
-      - ./.drone/deploy.sh
+  rsync:
+    user: $$DEPLOY_USER
+    host: demo.debug.aplazame.com
+    target: $$DEBUG_PATH
+    delete: true
+    recursive: true
+    commands:
+      - 'cd $$DEBUG_PATH'
+      - 'make build'
+    when:
+      branch: master
+
+  rsync:
+    user: $$DEPLOY_USER
+    host: demo.aplazame.com
+    target: $$RELEASE_PATH
+    delete: true
+    recursive: true
+    when:
+      branch: release
+
+  rsync:
+    user: $$DEPLOY_USER
+    host: aplazame.com
+    target: $$RELEASE_PATH
+    delete: true
+    recursive: true
+    when:
+      branch: release
 
 notify:
   slack:
     webhook_url: $$SLACK_WEBHOOK_URL
-    username: 'aplazame-js'
-    on_success: change
-    on_failure: true
+    username: 'drone'
+    channel: 'developers'
+    when:
+      success: false
+      failure: true
+      change: true
 
   email:
+    from: $$EMAIL_FROM
+    host: $$EMAIL_HOST
+    username: $$EMAIL_USERNAME
+    password: $$EMAIL_PASS
     recipients:
       - dev@aplazame.com
-    on_success: change
-    on_failure: true
+    when:
+      success: false
+      failure: true
+      change: true

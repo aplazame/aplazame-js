@@ -7,6 +7,8 @@ build:
   commands:
     # - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
     - 'make test'
+  environment:
+    - GITHUB_TOKEN=$$GITHUB_TOKEN
 
 deploy:
   rsync:

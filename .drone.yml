@@ -6,7 +6,7 @@ build:
   image: aplazame/nodejs-karma:0.3.2
   commands:
     - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
-    - 'ls -la $HOME/.ssh/id_rsa'
+    - sed -i 's/git@github.com:/http:\/\/$$GITHUB_TOKEN:x-oauth-basic@github.com\//' bower.json
     - 'make test'
 
 deploy:

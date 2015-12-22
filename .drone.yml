@@ -2,6 +2,12 @@ branches:
   - master
   - release
 
+build:
+  image: aplazame/nodejs-karma:0.3.2
+  commands:
+    - 'scp $$GITHUB_SSH_KEY $HOME/.ssh/id_rsa'
+    - 'make test'
+
 deploy:
   rsync:
     user: $$DEPLOY_USER
@@ -18,6 +24,15 @@ deploy:
   rsync:
     user: $$DEPLOY_USER
     host: demo.aplazame.com
+    target: $$RELEASE_PATH
+    delete: true
+    recursive: true
+    when:
+      branch: release
+
+  rsync:
+    user: $$DEPLOY_USER
+    host: aplazame.com
     target: $$RELEASE_PATH
     delete: true
     recursive: true

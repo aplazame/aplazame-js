@@ -7,7 +7,7 @@ build:
   environment:
     - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:
-    - sed -i 's/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//' bower.json
+    - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//" bower.json'
     - 'make test'
 
 deploy:

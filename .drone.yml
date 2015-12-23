@@ -18,9 +18,9 @@ deploy:
     target: $$DEBUG_PATH
     delete: true
     recursive: true
-    include:
-      - "dist"
-      - "public"
+    exclude:
+      - "node_modules/*"
+      - ".bower_components/*"
     when:
       branch: master
 

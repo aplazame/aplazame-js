@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.148';
+module.exports = '0.0.149';
 
 },{}],2:[function(require,module,exports){
 
@@ -15,39 +15,38 @@ function stepResult (step, value, type) {
   }
 }
 
-function processQueue(promise) {
-  if( promise.$$fulfilled === undefined ) {
-    return;
-  }
-
-  var len = promise.$$queue.length,
-      step = promise.$$queue.shift(),
-      type = promise.$$fulfilled ? 'resolve' : 'reject',
-      uncough = !promise.$$fulfilled && promise.$$uncought++;
+function processQueue(queue, err, result) {
+  var len = queue.length,
+      step = queue.shift(),
+      type = err ? 'reject' : 'resolve',
+      value, failed, processed;
 
   while( step ) {
 
     if( step[type] ) {
-      uncough = false;
+      value = result;
+      processed = true;
 
       try {
-        stepResult(step, step[type](promise.$$value), 'resolve');
+        value = step[type](result);
+        failed = false;
       } catch (reason) {
-        stepResult(step, reason, 'reject');
+        value = reason;
+        failed = true;
       }
+
+      stepResult(step, value, failed ? 'reject' : 'resolve');
 
     } else {
-      stepResult(step, promise.$$value, type);
+      stepResult(step, result, err ? 'reject' : 'resolve');
     }
 
-    step = promise.$$queue.shift();
+    step = queue.shift();
   }
 
-  if( uncough ) {
+  if( err && len && !processed ) {
     setTimeout(function () {
-      if( promise.$$uncough === uncough ) {
-        throw new Error('Uncaught (in promise)');
-      }
+      throw new Error('Uncaught (in promise)');
     }, 0);
   }
 }
@@ -59,16 +58,15 @@ function Promise (executor) {
 
   var p = this;
   this.$$queue = [];
-  this.$$uncough = 0;
 
   executor(function (result) {
     p.$$fulfilled = true;
     p.$$value = result;
-    processQueue(p);
+    processQueue(p.$$queue, false, result);
   }, function (reason) {
     p.$$fulfilled = false;
     p.$$value = reason;
-    processQueue(p);
+    processQueue(p.$$queue, true, reason);
   });
 }
 
@@ -78,7 +76,9 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
         _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
       });
 
-  processQueue(this);
+  if( this.$$fulfilled !== undefined ) {
+    processQueue(_this.$$queue, !this.$$fulfilled, this.$$value);
+  }
 
   return _promise;
 };

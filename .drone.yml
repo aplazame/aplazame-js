@@ -12,7 +12,7 @@ build:
     - 'make build'
 
 deploy:
-  rsync:
+  rsync_1:
     user: $$DEPLOY_USER
     host: demo.debug.aplazame.com
     target: $$DEBUG_PATH
@@ -25,7 +25,7 @@ deploy:
     when:
       branch: master
 
-  rsync:
+  rsync_2:
     user: $$DEPLOY_USER
     host: demo.aplazame.com
     target: $$RELEASE_PATH
@@ -34,7 +34,7 @@ deploy:
     when:
       branch: release
 
-  rsync:
+  rsync_3:
     user: $$DEPLOY_USER
     host: aplazame.com
     target: $$RELEASE_PATH

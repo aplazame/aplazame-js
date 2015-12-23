@@ -9,6 +9,7 @@ build:
   commands:
     - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//" bower.json'
     - 'make test'
+    - 'make build'
 
 deploy:
   rsync:

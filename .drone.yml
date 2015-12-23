@@ -12,17 +12,17 @@ build:
     - 'make build'
 
 deploy:
-  - rsync:
-      user: $$DEPLOY_USER
-      host: demo.debug.aplazame.com
-      target: $$DEBUG_PATH
-      delete: true
-      recursive: true
-      exclude:
-        - "node_modules/*"
-        - ".bower_components/*"
-      when:
-        branch: master
+  rsync:
+    user: $$DEPLOY_USER
+    host: demo.debug.aplazame.com
+    target: $$DEBUG_PATH
+    delete: true
+    recursive: true
+    include:
+      - "dist"
+      - "public"
+    when:
+      branch: master
 
   # rsync:
   #   user: $$DEPLOY_USER

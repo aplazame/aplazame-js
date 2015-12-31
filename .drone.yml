@@ -9,6 +9,7 @@ build:
   commands:
     - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//" bower.json'
     - 'make test'
+    - 'make build'
 
 deploy:
   rsync:
@@ -17,6 +18,10 @@ deploy:
     target: $$DEBUG_PATH
     delete: true
     recursive: true
+    exclude:
+      - ".git/*"
+      - "node_modules/*"
+      - ".bower_components/*"
     when:
       branch: master
 

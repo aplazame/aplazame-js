@@ -1,8 +1,12 @@
-box: aplazame/nodejs-karma:0.3.2
+box: aplazame/nodejs-karma:0.3.3
 # Build definition
 build:
   # The steps that will be executed on build
   steps:
+    - script:
+        name: bower.json using GITHUB_TOKEN
+        code: |
+          sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//" bower.json
     # A step that executes `npm install` command
     - npm-install
 

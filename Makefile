@@ -58,4 +58,4 @@ echo:
 
 # DEFAULT TASKS
 
-.DEFAULT_GOAL := echo
+.DEFAULT_GOAL := build

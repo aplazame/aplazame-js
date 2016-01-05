@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '<div class="card-header">  <h2>Con Aplazame puedes comprar ahora<br/>y pagar después.</h2></div><div class="card-content content-padding">  <p>Elige los meses y la cuota que mejor que convenga.<br/>Aplazame es muy fácil de usar.</p>  <ul class="styled">    <li>Ofrecemos la financiación al consumo más barata de España.</li>    <li>Sin costes ocultos ni letra pequeña.</li>    <li>Tomamos la decisión de manera instantánea, sin papeleos ni esperas.</li>    <li>Disponible para compras superiores a <%= creditThreshold %> €.</li>    <li>¿Tienes alguna duda? Llámanos al 91 290 89 23 o escríbenos un email a <a class="link" href="mailto:hola@aplazame.com">hola@aplazame.com</a>.</li>  </ul></div><div class="cta">  <button type="submit" class="button" modal-resolve="ok">    <span class="cta-title">Entendido</span>  </button></div>';
+module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/how/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
 
 },{}],2:[function(require,module,exports){
-module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
+module.exports = '<div class="widget-item-instalments <%= isMobile ? \'mobile \' : \'\' %>light">  <div class="wrapper">    <button class="button" data-action="showInfo" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€\nPago inicial: <%= getAmount(choice.downpayment_amount) %>€">      <div class="logo"></div>      <div class="text-wrapper">        <div class="text-get">Consíguelo desde</div>        <div class="text-amount">          <span class="amount"><%= getAmount(choice.amount) %></span><!--          --><span class="currency">&nbsp;€</span><!--          --><span class="per-month">/mes</div>        <div class="text-instalments">en 12 mensualidades</div>      </div>    </button>    <div class="signature">      <a data-action="showInfo">Más información</a><!--      --><span>&nbsp;sobre Aplazame.</span>    </div>  </div></div>';
 
 },{}],3:[function(require,module,exports){
 
@@ -834,8 +834,8 @@ var _ = require('../../src/tools/tools'),
 
 _.template.lookup();
 
-_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments.js'));
-_.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js'));
+_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments'));
+_.template.put('widget', require('../../.tmp/simulator/templates/widget'));
 
 var main = document.getElementById('main'),
     selectedChoice,
@@ -882,20 +882,8 @@ function runAction(action, data) {
       parent.window.postMessage({
         aplazame: 'modal',
         event: 'open',
-        name: 'info',
-        data: {
-          cardClass: 'hola-adios',
-          card: _.template('modal-info', { creditThreshold: 100 })
-        }
-      }, '*');
-      break;
-    case 'changeInstalments':
-      parent.window.postMessage({
-        aplazame: 'modal',
-        event: 'open',
         name: 'instalments',
         data: {
-          cardClass: 'hola-adios',
           card: _.template('modal-instalments', {
             selectedChoice: selectedChoice,
             choices: choices,
@@ -981,4 +969,4 @@ parent.window.postMessage({
   event: 'require:choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-info.js":1,"../../.tmp/simulator/templates/modal-instalments.js":2,"../../src/tools/tools":11}]},{},[12]);
+},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget":2,"../../src/tools/tools":11}]},{},[12]);

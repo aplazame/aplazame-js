@@ -4,8 +4,8 @@ var _ = require('../../src/tools/tools'),
 
 _.template.lookup();
 
-_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments.js') );
-_.template.put('modal-info', require('../../.tmp/simulator/templates/modal-info.js') );
+_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments') );
+_.template.put('widget', require('../../.tmp/simulator/templates/widget') );
 
 var main = document.getElementById('main'),
     selectedChoice, choices = window.choices,
@@ -51,20 +51,8 @@ function runAction (action, data) {
       parent.window.postMessage({
         aplazame: 'modal',
         event: 'open',
-        name: 'info',
-        data: {
-          cardClass: 'hola-adios',
-          card: _.template('modal-info', { creditThreshold: 100 })
-        }
-      }, '*');
-      break;
-    case 'changeInstalments':
-      parent.window.postMessage({
-        aplazame: 'modal',
-        event: 'open',
         name: 'instalments',
         data: {
-          cardClass: 'hola-adios',
           card: _.template('modal-instalments', {
             selectedChoice: selectedChoice,
             choices: choices,

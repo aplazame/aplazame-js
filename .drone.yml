@@ -3,7 +3,7 @@ branches:
   - release
 
 build:
-  image: aplazame/nodejs-karma:0.3.2
+  image: aplazame/nodejs-karma:0.3.3
   environment:
     - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:

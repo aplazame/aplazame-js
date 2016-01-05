@@ -11,28 +11,6 @@
     <div class="text-center">
       <div id="main"></div>
     </div>
-
-    <script type="application/x-template" data-template="widget">
-        <div class="widget-item-instalments <%= isMobile ? 'mobile ' : '' %>light">
-          <div class="wrapper">
-            <button class="button" data-action="changeInstalments" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€\nPago inicial: <%= getAmount(choice.downpayment_amount) %>€">
-              <div class="logo"></div>
-              <div class="text-wrapper">
-                <div class="text-get">Consíguelo desde</div>
-                <div class="text-amount">
-                  <span class="amount"><%= getAmount(choice.amount) %></span><!--
-                  --><span class="currency">&nbsp;€</span><!--
-                  --><span class="per-month">/mes</div>
-                <div class="text-instalments">en 12 mensualidades</div>
-              </div>
-            </button>
-            <div class="signature">
-              <a data-action="changeInstalments">Más información</a><!--
-              --><span>&nbsp;sobre Aplazame.</span>
-            </div>
-          </div>
-        </div>
-    </script>
     <script type="text/javascript" src="simulator.js?v=${version}"></script>
   </body>
 </html>

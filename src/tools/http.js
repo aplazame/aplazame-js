@@ -3,7 +3,6 @@
 var $q = require('promise-q');
 
 function headerToTitleSlug(text) {
-  console.log('headerToTitleSlug', text);
   var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
       return lower + '-' + upper;
   });

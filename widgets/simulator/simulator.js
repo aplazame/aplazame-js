@@ -1,6 +1,7 @@
 
 var _ = require('../../src/tools/tools'),
-    choices = [];
+    choices = [],
+    options = {};
 
 _.template.lookup();
 
@@ -83,6 +84,7 @@ var isMobile,
       main.innerHTML = _.template('widget', {
         getAmount: _.getAmount,
         choice: selectedChoice,
+        options: options,
         currentAmount: currentAmount,
         isMobile: isMobile
       });
@@ -116,6 +118,9 @@ var isMobile,
     messageSimulator = {
       choices: function (message) {
         choices = message.choices;
+        options = message.options || {};
+        options.styles = options.styles || { align: 'center' };
+
         setChoice( choices.reduce(maxInstalments, null) );
         setAmount( message.amount );
         renderWidget(message.mobile);

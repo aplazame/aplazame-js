@@ -47,13 +47,13 @@ $logo-size: 2rem
 
 #main
   min-height: 5rem
-  display: inline-block
+  // display: inline-block
   // margin-left: $logo-size + 0.5rem
   text-align: left
 
   &.loading
     opacity: 0.5
-    
+
 a
   color: $brand-primary
   text-decoration: none
@@ -84,3 +84,15 @@ a
 
   &:hover, &.active
     border-color: $brand-primary
+
+.widget-item-instalments.align-fill > .wrapper
+  display: block
+
+.widget-item-instalments.align-left
+  text-align: left
+
+.widget-item-instalments.align-center
+  text-align: center
+
+.widget-item-instalments.align-right
+  text-align: right

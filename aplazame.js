@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.154';
+module.exports = '0.0.155';
 
 },{}],2:[function(require,module,exports){
 
@@ -1010,6 +1010,7 @@ module.exports = function (aplazame) {
 
       var iframes = [],
           choices = [],
+          options = {},
           currentAmount;
 
       _.listen(window, 'message', function (e) {
@@ -1072,11 +1073,13 @@ module.exports = function (aplazame) {
 
         simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
 
-        aplazame.simulator(simulatorParams.amount, function (_choices) {
+        aplazame.simulator(simulatorParams.amount, function (_choices, _options) {
           var child = simulator.firstChild,
               now = new Date().getTime();
 
           choices = _choices;
+          options = _options;
+
           _choices.$amount = simulatorParams.amount;
           choicesCache[simulatorParams.amount] = _choices;
 
@@ -1114,6 +1117,7 @@ module.exports = function (aplazame) {
               aplazame: 'simulator',
               event: 'choices',
               choices: choices,
+              options: options,
               amount: currentAmount,
               mobile: isMobile.matches
             }, '*');
@@ -1436,7 +1440,7 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = (function () {
+var cssHack = function () {
   var cache = {},
       hacks = {
     overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
@@ -1477,7 +1481,7 @@ var cssHack = (function () {
     }
     return cache[hackName];
   };
-})();
+}();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -1691,7 +1695,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: (function () {
+          headers: function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -1699,7 +1703,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          })(),
+          }(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {

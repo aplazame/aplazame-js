@@ -2,7 +2,7 @@
 module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/how/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
 
 },{}],2:[function(require,module,exports){
-module.exports = '<div class="widget-item-instalments <%= isMobile ? \'mobile \' : \'\' %>light">  <div class="wrapper">    <button class="button" data-action="showInfo" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€\nPago inicial: <%= getAmount(choice.downpayment_amount) %>€">      <div class="logo"></div>      <div class="text-wrapper">        <div class="text-get">Consíguelo desde</div>        <div class="text-amount">          <span class="amount"><%= getAmount(choice.amount) %></span><!--          --><span class="currency">&nbsp;€</span><!--          --><span class="per-month">/mes</div>        <div class="text-instalments">en 12 mensualidades</div>      </div>    </button>    <div class="signature">      <a data-action="showInfo">Más información</a><!--      --><span>&nbsp;sobre Aplazame.</span>    </div>  </div></div>';
+module.exports = '<div class="widget-item-instalments <%= isMobile ? \'mobile \' : \'\' %>light align-<%= options.styles.align %>">  <div class="wrapper">    <button class="button" data-action="showInfo" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€\nPago inicial: <%= getAmount(choice.downpayment_amount) %>€">      <div class="logo"></div>      <div class="text-wrapper">        <div class="text-get">Consíguelo desde</div>        <div class="text-amount">          <span class="amount"><%= getAmount(choice.amount) %></span><!--          --><span class="currency">&nbsp;€</span><!--          --><span class="per-month">/mes</div>        <div class="text-instalments">en 12 mensualidades</div>      </div>    </button>    <div class="signature">      <a data-action="showInfo">Más información</a><!--      --><span>&nbsp;sobre Aplazame.</span>    </div>  </div></div>';
 
 },{}],3:[function(require,module,exports){
 
@@ -436,7 +436,7 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = (function () {
+var cssHack = function () {
   var cache = {},
       hacks = {
     overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
@@ -477,7 +477,7 @@ var cssHack = (function () {
     }
     return cache[hackName];
   };
-})();
+}();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -691,7 +691,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: (function () {
+          headers: function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -699,7 +699,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          })(),
+          }(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {
@@ -829,7 +829,8 @@ module.exports = _;
 },{"./basic-tools":6,"./http":8,"./live-dom":9,"./message-listener":10}],12:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
-    choices = [];
+    choices = [],
+    options = {};
 
 _.template.lookup();
 
@@ -913,6 +914,7 @@ var isMobile,
   main.innerHTML = _.template('widget', {
     getAmount: _.getAmount,
     choice: selectedChoice,
+    options: options,
     currentAmount: currentAmount,
     isMobile: isMobile
   });
@@ -945,6 +947,9 @@ var isMobile,
     messageSimulator = {
   choices: function (message) {
     choices = message.choices;
+    options = message.options || {};
+    options.styles = options.styles || { align: 'center' };
+
     setChoice(choices.reduce(maxInstalments, null));
     setAmount(message.amount);
     renderWidget(message.mobile);

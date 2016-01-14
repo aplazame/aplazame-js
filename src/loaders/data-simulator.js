@@ -125,6 +125,7 @@ module.exports = function (aplazame) {
 
       var iframes = [],
           choices = [],
+          options = {},
           currentAmount;
 
       _.listen(window, 'message', function (e) {
@@ -189,11 +190,13 @@ module.exports = function (aplazame) {
 
         simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
 
-        aplazame.simulator(simulatorParams.amount, function (_choices) {
+        aplazame.simulator(simulatorParams.amount, function (_choices, _options) {
           var child = simulator.firstChild,
               now = new Date().getTime();
 
           choices = _choices;
+          options = _options;
+
           _choices.$amount = simulatorParams.amount;
           choicesCache[simulatorParams.amount] = _choices;
 
@@ -232,6 +235,7 @@ module.exports = function (aplazame) {
                   aplazame: 'simulator',
                   event: 'choices',
                   choices: choices,
+                  options: options,
                   amount: currentAmount,
                   mobile: isMobile.matches
                 }, '*');

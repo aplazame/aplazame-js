@@ -18,7 +18,7 @@ Simulador de cuotas
 ![image](https://cloud.githubusercontent.com/assets/2305833/11635252/cc93ac0e-9d15-11e5-930d-89a27f2882f1.png)
 
 ``` html
-<div data-aplazame-simulator data-amount="10050"></div>
+<div data-aplazame-simulator data-amount="10050" data-currency="EUR" data-country="ES"></div>
 <!-- place this line where you want to show the simulator widget -->
 ```
 puedes especificar selectores personalizados donde se muestre el precio y la cantidad, y se vigilarán los cambios dináminamente

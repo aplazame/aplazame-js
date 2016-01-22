@@ -19,7 +19,7 @@ Instalments Simulator Widget
 
 
 ``` html
-<div data-aplazame-simulator data-amount="10050"></div>
+<div data-aplazame-simulator data-amount="10050" data-currency="EUR" data-country="ES"></div>
 <!-- place this line where you want to show the simulator widget -->
 ```
 you can specify selectors to watch price and quantity, and those values will be watched for changes

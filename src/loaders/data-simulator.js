@@ -147,6 +147,7 @@ module.exports = function (aplazame) {
                 aplazame: 'simulator',
                 event: 'choices',
                 choices: choices,
+                options: options,
                 amount: currentAmount,
                 mobile: isMobile.matches
               }, '*');

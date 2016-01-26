@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.156';
+module.exports = '0.0.157';
 
 },{}],2:[function(require,module,exports){
 
@@ -15,39 +15,38 @@ function stepResult (step, value, type) {
   }
 }
 
-function processQueue(promise) {
-  if( promise.$$fulfilled === undefined ) {
-    return;
-  }
-
-  var len = promise.$$queue.length,
-      step = promise.$$queue.shift(),
-      type = promise.$$fulfilled ? 'resolve' : 'reject',
-      uncough = !promise.$$fulfilled && promise.$$uncought++;
+function processQueue(queue, err, result) {
+  var len = queue.length,
+      step = queue.shift(),
+      type = err ? 'reject' : 'resolve',
+      value, failed, processed;
 
   while( step ) {
 
     if( step[type] ) {
-      uncough = false;
+      value = result;
+      processed = true;
 
       try {
-        stepResult(step, step[type](promise.$$value), 'resolve');
+        value = step[type](result);
+        failed = false;
       } catch (reason) {
-        stepResult(step, reason, 'reject');
+        value = reason;
+        failed = true;
       }
+
+      stepResult(step, value, failed ? 'reject' : 'resolve');
 
     } else {
-      stepResult(step, promise.$$value, type);
+      stepResult(step, result, err ? 'reject' : 'resolve');
     }
 
-    step = promise.$$queue.shift();
+    step = queue.shift();
   }
 
-  if( uncough ) {
+  if( err && len && !processed ) {
     setTimeout(function () {
-      if( promise.$$uncough === uncough ) {
-        throw new Error('Uncaught (in promise)');
-      }
+      throw new Error('Uncaught (in promise)');
     }, 0);
   }
 }
@@ -59,16 +58,15 @@ function Promise (executor) {
 
   var p = this;
   this.$$queue = [];
-  this.$$uncough = 0;
 
   executor(function (result) {
     p.$$fulfilled = true;
     p.$$value = result;
-    processQueue(p);
+    processQueue(p.$$queue, false, result);
   }, function (reason) {
     p.$$fulfilled = false;
     p.$$value = reason;
-    processQueue(p);
+    processQueue(p.$$queue, true, reason);
   });
 }
 
@@ -78,7 +76,9 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
         _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
       });
 
-  processQueue(this);
+  if( this.$$fulfilled !== undefined ) {
+    processQueue(_this.$$queue, !this.$$fulfilled, this.$$value);
+  }
 
   return _promise;
 };
@@ -1032,6 +1032,7 @@ module.exports = function (aplazame) {
                 aplazame: 'simulator',
                 event: 'choices',
                 choices: choices,
+                options: options,
                 amount: currentAmount,
                 mobile: isMobile.matches
               }, '*');
@@ -1440,7 +1441,7 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = function () {
+var cssHack = (function () {
   var cache = {},
       hacks = {
     overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
@@ -1481,7 +1482,7 @@ var cssHack = function () {
     }
     return cache[hackName];
   };
-}();
+})();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -1695,7 +1696,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: function () {
+          headers: (function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -1703,7 +1704,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          }(),
+          })(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {

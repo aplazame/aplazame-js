@@ -179,7 +179,7 @@ module.exports = function (aplazame) {
         _.elementData(simulator, 'checked', true);
 
         var getAmount = amountGetter(simulator);
-        currentAmount = Number( simulator.getAttribute('data-amount') ) || getAmount();
+        currentAmount = currentAmount || Number( simulator.getAttribute('data-amount') ) || getAmount();
 
         var simulatorParams = {
               simulator: '[data-aplazame-simulator]',

@@ -114,6 +114,10 @@ module.exports = function (aplazame) {
     return getter;
   }
 
+  var choices = [],
+      options = {},
+      currentAmount;
+
   function widgetsLookup (element) {
     if( !element.querySelectorAll ) {
       return;
@@ -123,10 +127,7 @@ module.exports = function (aplazame) {
 
     if( simulators.length ) {
 
-      var iframes = [],
-          choices = [],
-          options = {},
-          currentAmount;
+      var iframes = [];
 
       _.listen(window, 'message', function (e) {
         var message = e.data;
@@ -199,7 +200,7 @@ module.exports = function (aplazame) {
           options = _options;
 
           _choices.$amount = simulatorParams.amount;
-          choicesCache[simulatorParams.amount] = _choices;
+          choicesCache[simulatorParams.amount] = { choices: _choices, options: _options };
 
           while( child ) {
             simulator.removeChild(child);
@@ -237,7 +238,7 @@ module.exports = function (aplazame) {
         if( getAmount.priceSelector ) {
           var updateWidgetChoices = function () {
                 console.log('updateWidgetChoices', choices, options);
-                if( iframe.$$loaded && iframe.contentWindow ) {
+                if( iframe.contentWindow ) {
                   console.log('updateWidgetChoices', choices, options, 'ok');
                   iframe.contentWindow.postMessage({
                     aplazame: 'simulator',
@@ -247,7 +248,7 @@ module.exports = function (aplazame) {
                     amount: currentAmount,
                     mobile: isMobile.matches
                   }, '*');
-                } else {
+                } else if( !iframe.$$loaded ) {
                   iframe.$$listeners.push(updateWidgetChoices);
                 }
               },
@@ -257,7 +258,9 @@ module.exports = function (aplazame) {
                 console.log('priceChanged', amount, previousAmount);
 
                 if( choicesCache[amount] ) {
-                  updateWidgetChoices( choicesCache[amount] );
+                  choices = choicesCache[amount].choices;
+                  options = choicesCache[amount].options;
+                  updateWidgetChoices();
                 } else {
                   if( iframe && iframe.contentWindow ) {
                     iframe.contentWindow.postMessage({
@@ -265,10 +268,11 @@ module.exports = function (aplazame) {
                       event: 'loading'
                     }, '*');
                   }
-                  aplazame.simulator( amount, function (_choices) {
-                    choicesCache[amount] = _choices;
+                  aplazame.simulator( amount, function (_choices, _options) {
+                    choicesCache[amount] = { choices: _choices, options: _options };
                     if( amount === currentAmount ) {
                       choices = _choices;
+                      options = _options;
                       updateWidgetChoices(_choices);
                     }
                   }, function (reason) {

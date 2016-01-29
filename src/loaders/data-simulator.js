@@ -255,7 +255,7 @@ module.exports = function (aplazame) {
                 if( choicesCache[amount] ) {
                   updateWidgetChoices( choicesCache[amount] );
                 } else {
-                  if(iframe) {
+                  if( iframe && iframe.contentWindow ) {
                     iframe.contentWindow.postMessage({
                       aplazame: 'simulator',
                       event: 'loading'

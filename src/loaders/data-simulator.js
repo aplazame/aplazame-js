@@ -218,9 +218,13 @@ module.exports = function (aplazame) {
               simulator.innerHTML = '';
             };
 
-          // }, function () {
-          //   simulator.innerHTML = '';
-          // });
+            iframe.$$listeners = [];
+            iframe.onload = function () {
+              iframe.$$loaded = true;
+              iframe.$$listeners.forEach(function (listener) {
+                listener();
+              });
+            };
 
         }, function () {
           simulator.innerHTML = '';
@@ -231,15 +235,19 @@ module.exports = function (aplazame) {
         });
 
         if( getAmount.priceSelector ) {
-          var updateWidgetChoices = function (choices) {
-                iframe.contentWindow.postMessage({
-                  aplazame: 'simulator',
-                  event: 'choices',
-                  choices: choices,
-                  options: options,
-                  amount: currentAmount,
-                  mobile: isMobile.matches
-                }, '*');
+          var updateWidgetChoices = function () {
+                if( iframe.$$loaded ) {
+                  iframe.contentWindow.postMessage({
+                    aplazame: 'simulator',
+                    event: 'choices',
+                    choices: choices,
+                    options: options,
+                    amount: currentAmount,
+                    mobile: isMobile.matches
+                  }, '*');
+                } else {
+                  iframe.$$listeners.push(updateWidgetChoices);
+                }
               },
               onPriceChange = function (amount) {
                 currentAmount = amount;

@@ -236,7 +236,7 @@ module.exports = function (aplazame) {
 
         if( getAmount.priceSelector ) {
           var updateWidgetChoices = function () {
-                if( iframe.$$loaded ) {
+                if( iframe.$$loaded && iframe.contentWindow ) {
                   iframe.contentWindow.postMessage({
                     aplazame: 'simulator',
                     event: 'choices',

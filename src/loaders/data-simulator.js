@@ -221,7 +221,7 @@ module.exports = function (aplazame) {
             iframe.$$listeners = [];
             iframe.onload = function () {
               iframe.$$loaded = true;
-              iframe.$$listeners.forEach(function () {
+              iframe.$$listeners.forEach(function (listener) {
                 listener();
               });
             };

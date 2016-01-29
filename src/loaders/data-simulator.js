@@ -236,7 +236,9 @@ module.exports = function (aplazame) {
 
         if( getAmount.priceSelector ) {
           var updateWidgetChoices = function () {
+                console.log('updateWidgetChoices', choices, options);
                 if( iframe.$$loaded && iframe.contentWindow ) {
+                  console.log('updateWidgetChoices', choices, options, 'ok');
                   iframe.contentWindow.postMessage({
                     aplazame: 'simulator',
                     event: 'choices',
@@ -249,8 +251,10 @@ module.exports = function (aplazame) {
                   iframe.$$listeners.push(updateWidgetChoices);
                 }
               },
-              onPriceChange = function (amount) {
+              onPriceChange = function (amount, previousAmount) {
                 currentAmount = amount;
+
+                console.log('priceChanged', amount, previousAmount);
 
                 if( choicesCache[amount] ) {
                   updateWidgetChoices( choicesCache[amount] );
@@ -284,7 +288,7 @@ module.exports = function (aplazame) {
 
             if( amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
               previousQty = qty;
-              onPriceChange(amount);
+              onPriceChange(amount, currentAmount);
             }
           }, 200);
         }

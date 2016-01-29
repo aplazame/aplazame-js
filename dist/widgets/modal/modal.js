@@ -12,38 +12,39 @@ function stepResult (step, value, type) {
   }
 }
 
-function processQueue(queue, err, result) {
-  var len = queue.length,
-      step = queue.shift(),
-      type = err ? 'reject' : 'resolve',
-      value, failed, processed;
+function processQueue(promise) {
+  if( promise.$$fulfilled === undefined ) {
+    return;
+  }
+
+  var len = promise.$$queue.length,
+      step = promise.$$queue.shift(),
+      type = promise.$$fulfilled ? 'resolve' : 'reject',
+      uncough = !promise.$$fulfilled && promise.$$uncought++;
 
   while( step ) {
 
     if( step[type] ) {
-      value = result;
-      processed = true;
+      uncough = false;
 
       try {
-        value = step[type](result);
-        failed = false;
+        stepResult(step, step[type](promise.$$value), 'resolve');
       } catch (reason) {
-        value = reason;
-        failed = true;
+        stepResult(step, reason, 'reject');
       }
 
-      stepResult(step, value, failed ? 'reject' : 'resolve');
-
     } else {
-      stepResult(step, result, err ? 'reject' : 'resolve');
+      stepResult(step, promise.$$value, type);
     }
 
-    step = queue.shift();
+    step = promise.$$queue.shift();
   }
 
-  if( err && len && !processed ) {
+  if( uncough ) {
     setTimeout(function () {
-      throw new Error('Uncaught (in promise)');
+      if( promise.$$uncough === uncough ) {
+        throw new Error('Uncaught (in promise)');
+      }
     }, 0);
   }
 }
@@ -55,15 +56,16 @@ function Promise (executor) {
 
   var p = this;
   this.$$queue = [];
+  this.$$uncough = 0;
 
   executor(function (result) {
     p.$$fulfilled = true;
     p.$$value = result;
-    processQueue(p.$$queue, false, result);
+    processQueue(p);
   }, function (reason) {
     p.$$fulfilled = false;
     p.$$value = reason;
-    processQueue(p.$$queue, true, reason);
+    processQueue(p);
   });
 }
 
@@ -73,9 +75,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
         _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
       });
 
-  if( this.$$fulfilled !== undefined ) {
-    processQueue(_this.$$queue, !this.$$fulfilled, this.$$value);
-  }
+  processQueue(this);
 
   return _promise;
 };
@@ -430,7 +430,7 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = (function () {
+var cssHack = function () {
   var cache = {},
       hacks = {
     overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
@@ -471,7 +471,7 @@ var cssHack = (function () {
     }
     return cache[hackName];
   };
-})();
+}();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -685,7 +685,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: (function () {
+          headers: function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -693,7 +693,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          })(),
+          }(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {

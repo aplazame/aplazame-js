@@ -190,7 +190,8 @@ module.exports = function (aplazame) {
             iframe,
             choicesCache = {};
 
-        simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
+        // simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
+        simulator.innerHTML = '';
 
         aplazame.simulator(simulatorParams.amount, function (_choices, _options) {
           var child = simulator.firstChild,

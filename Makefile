@@ -8,8 +8,9 @@ whoami = $(shell whoami)
 git.hooks:
 	@./bin/git-hooks
 
-install.npm:
+install:
 	npm install
+	bower install --allow-root
 
 auto.install: git.hooks
 	@node auto-install
@@ -19,14 +20,13 @@ test: auto.install
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
 
-build: auto.install
-	bower install --allow-root
+build: install
 	@node make build
 
-dev: auto.install
+dev: install
 	@node make dev
 
-live: auto.install
+live: install
 	@node make live
 
 master.increaseVersion:

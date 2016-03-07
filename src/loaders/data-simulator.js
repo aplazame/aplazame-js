@@ -263,6 +263,8 @@ module.exports = function (aplazame) {
         });
 
         if( getAmount.priceSelector ) {
+          var _currentAmount = getAmount();
+
           var updateWidgetChoices = function () {
                 if( iframe.contentWindow ) {
                   iframe.contentWindow.postMessage({
@@ -270,7 +272,7 @@ module.exports = function (aplazame) {
                     event: 'choices',
                     choices: choices,
                     options: options,
-                    amount: currentAmount,
+                    amount: _currentAmount,
                     mobile: isMobile.matches
                   }, '*');
                 } else if( !iframe.$$loaded ) {
@@ -279,6 +281,7 @@ module.exports = function (aplazame) {
               },
               onPriceChange = function (amount, previousAmount) {
                 currentAmount = amount;
+                _currentAmount = amount;
 
                 console.log('priceChanged', amount, previousAmount);
 
@@ -295,7 +298,7 @@ module.exports = function (aplazame) {
                   }
                   aplazame.simulator( amount, function (_choices, _options) {
                     choicesCache[amount] = { choices: _choices, options: _options };
-                    if( amount === currentAmount ) {
+                    if( amount === _currentAmount ) {
                       choices = _choices;
                       options = _options;
                       updateWidgetChoices(_choices);
@@ -315,9 +318,9 @@ module.exports = function (aplazame) {
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-            if( amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
+            if( amount && _.isNumber(amount) && amount !== _currentAmount || qty !== previousQty ) {
               previousQty = qty;
-              onPriceChange(amount, currentAmount);
+              onPriceChange(amount, _currentAmount);
             }
           }, 200);
         }

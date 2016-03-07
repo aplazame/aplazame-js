@@ -35,6 +35,12 @@ if( !Element.prototype.addEventListener ) {
   }
 }
 
+if (!Date.now) {
+  Date.now = function now() {
+    return new Date().getTime();
+  };
+}
+
 (function (root) {
   'use strict';
 

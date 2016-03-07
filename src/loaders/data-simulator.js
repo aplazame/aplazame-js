@@ -96,6 +96,8 @@ module.exports = function (aplazame) {
 
       if( priceSelector ) {
         qtySelector = cmsQtySelector.find(matchSelector);
+
+        console.log('automatically found price selector', priceSelector, qtySelector);
       }
     }
 
@@ -195,7 +197,7 @@ module.exports = function (aplazame) {
 
         aplazame.simulator(simulatorParams.amount, function (_choices, _options) {
           var child = simulator.firstChild,
-              now = new Date().getTime();
+              now = Date.now();
 
           choices = _choices;
           options = _options;
@@ -238,9 +240,7 @@ module.exports = function (aplazame) {
 
         if( getAmount.priceSelector ) {
           var updateWidgetChoices = function () {
-                console.log('updateWidgetChoices', choices, options);
                 if( iframe.contentWindow ) {
-                  console.log('updateWidgetChoices', choices, options, 'ok');
                   iframe.contentWindow.postMessage({
                     aplazame: 'simulator',
                     event: 'choices',

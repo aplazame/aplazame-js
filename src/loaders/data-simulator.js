@@ -21,6 +21,10 @@ module.exports = function (aplazame) {
         amount = Number(priceParts.shift()),
         piece = priceParts.shift(), i, n;
 
+    if( !piece ) {
+      return amount*100;
+    }
+
     while( piece ) {
       for( i = 0, n = piece.length ; i < n ; i++ ) {
         amount*=10;

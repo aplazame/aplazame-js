@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.177';
+module.exports = '0.0.178';
 
 },{}],2:[function(require,module,exports){
 
@@ -1147,6 +1147,8 @@ module.exports = function (aplazame) {
         });
 
         if (getAmount.priceSelector) {
+          var _currentAmount = getAmount();
+
           var updateWidgetChoices = function () {
             if (iframe.contentWindow) {
               iframe.contentWindow.postMessage({
@@ -1154,7 +1156,7 @@ module.exports = function (aplazame) {
                 event: 'choices',
                 choices: choices,
                 options: options,
-                amount: currentAmount,
+                amount: _currentAmount,
                 mobile: isMobile.matches
               }, '*');
             } else if (!iframe.$$loaded) {
@@ -1163,6 +1165,7 @@ module.exports = function (aplazame) {
           },
               onPriceChange = function (amount, previousAmount) {
             currentAmount = amount;
+            _currentAmount = amount;
 
             console.log('priceChanged', amount, previousAmount);
 
@@ -1179,7 +1182,7 @@ module.exports = function (aplazame) {
               }
               aplazame.simulator(amount, function (_choices, _options) {
                 choicesCache[amount] = { choices: _choices, options: _options };
-                if (amount === currentAmount) {
+                if (amount === _currentAmount) {
                   choices = _choices;
                   options = _options;
                   updateWidgetChoices(_choices);
@@ -1199,9 +1202,9 @@ module.exports = function (aplazame) {
             var amount = getAmount(),
                 qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-            if (amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty) {
+            if (amount && _.isNumber(amount) && amount !== _currentAmount || qty !== previousQty) {
               previousQty = qty;
-              onPriceChange(amount, currentAmount);
+              onPriceChange(amount, _currentAmount);
             }
           }, 200);
         }

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.168';
+module.exports = '0.0.169';
 
 },{}],2:[function(require,module,exports){
 
@@ -981,6 +981,8 @@ module.exports = function (aplazame) {
 
       if (priceSelector) {
         qtySelector = cmsQtySelector.find(matchSelector);
+
+        console.log('automatically found price selector', priceSelector, qtySelector);
       }
     }
 
@@ -1078,7 +1080,7 @@ module.exports = function (aplazame) {
 
         aplazame.simulator(simulatorParams.amount, function (_choices, _options) {
           var child = simulator.firstChild,
-              now = new Date().getTime();
+              now = Date.now();
 
           choices = _choices;
           options = _options;
@@ -1120,9 +1122,7 @@ module.exports = function (aplazame) {
 
         if (getAmount.priceSelector) {
           var updateWidgetChoices = function () {
-            console.log('updateWidgetChoices', choices, options);
             if (iframe.contentWindow) {
-              console.log('updateWidgetChoices', choices, options, 'ok');
               iframe.contentWindow.postMessage({
                 aplazame: 'simulator',
                 event: 'choices',
@@ -1458,7 +1458,7 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = function () {
+var cssHack = (function () {
   var cache = {},
       hacks = {
     overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
@@ -1499,7 +1499,7 @@ var cssHack = function () {
     }
     return cache[hackName];
   };
-}();
+})();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -1597,6 +1597,12 @@ if (!Element.prototype.addEventListener) {
   } else {
     throw 'Browser not compatible with element events';
   }
+}
+
+if (!Date.now) {
+  Date.now = function now() {
+    return new Date().getTime();
+  };
 }
 
 (function (root) {
@@ -1713,7 +1719,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: function () {
+          headers: (function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -1721,7 +1727,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          }(),
+          })(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {

@@ -436,7 +436,7 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = function () {
+var cssHack = (function () {
   var cache = {},
       hacks = {
     overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
@@ -477,7 +477,7 @@ var cssHack = function () {
     }
     return cache[hackName];
   };
-}();
+})();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -575,6 +575,12 @@ if (!Element.prototype.addEventListener) {
   } else {
     throw 'Browser not compatible with element events';
   }
+}
+
+if (!Date.now) {
+  Date.now = function now() {
+    return new Date().getTime();
+  };
 }
 
 (function (root) {
@@ -691,7 +697,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: function () {
+          headers: (function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -699,7 +705,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          }(),
+          })(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {

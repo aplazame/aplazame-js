@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.173';
+module.exports = '0.0.174';
 
 },{}],2:[function(require,module,exports){
 
@@ -894,34 +894,32 @@ module.exports = function (aplazame) {
       widgetForbidden = false,
       watchInterval;
 
-  // function parsePrice (price) {
-  //    var priceParts = ( '' + price ).match(/(\d+)([,.](\d+))?/);
-  //    var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
-  //    return amount;
-  // }
-
   function parsePrice(price) {
-    price = price.match(/[\d,.]+/);
-    price = price && price[0] || '';
-    var priceParts = ('' + price).replace(/[^0-9.,]/g, '').split(/[,.]/),
-        amount = Number(priceParts.shift()),
-        piece = priceParts.shift(),
-        i,
-        n;
-
-    if (!piece) {
-      return amount * 100;
-    }
-
-    while (piece) {
-      for (i = 0, n = piece.length; i < n; i++) {
-        amount *= 10;
-      }
-      amount += Number(piece);
-      piece = priceParts.shift();
-    }
+    var priceParts = ('' + price).match(/(\d+)([,.](\d+))?/);
+    var amount = Number(priceParts[1]) * 100 + Number(priceParts[3]);
     return amount;
   }
+
+  // function parsePrice (price) {
+  //   price = price.match(/[\d,.]+/);
+  //   price = price && price[0] || '';
+  //   var priceParts = ( '' + price ).replace(/[^0-9.,]/g, '').split(/[,.]/),
+  //       amount = Number(priceParts.shift()),
+  //       piece = priceParts.shift(), i, n;
+  //
+  //   if( !piece ) {
+  //     return amount*100;
+  //   }
+  //
+  //   while( piece ) {
+  //     for( i = 0, n = piece.length ; i < n ; i++ ) {
+  //       amount*=10;
+  //     }
+  //     amount += Number(piece);
+  //     piece = priceParts.shift();
+  //   }
+  //   return amount;
+  // }
 
   function getQty(qtySelector) {
     if (!_.isString(qtySelector)) {

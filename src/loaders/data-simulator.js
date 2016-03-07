@@ -15,6 +15,7 @@ module.exports = function (aplazame) {
   // }
 
   function parsePrice (price) {
+    var _price = price;
     price = price.match(/[\d,.]+/);
     price = price && price[0] || '';
     var priceParts = ( '' + price ).replace(/[^0-9.,]/g, '').split(/[,.]/),
@@ -32,6 +33,7 @@ module.exports = function (aplazame) {
       amount += Number(piece);
       piece = priceParts.shift();
     }
+    console.log('parsePrice', _price, amount);
     return amount;
   }
 

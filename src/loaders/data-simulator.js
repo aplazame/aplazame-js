@@ -105,7 +105,7 @@ module.exports = function (aplazame) {
       var qty = qtySelector ? getQty( qtySelector ) : 1,
           priceElement = document.querySelector( priceSelector );
 
-      console.log('parsed price', priceElement, qty, qty * parsePrice( priceElement.value !== undefined ? priceElement.value : readPrice(priceElement) ) );
+      // console.log('parsed price', priceElement, qty, qty * parsePrice( priceElement.value !== undefined ? priceElement.value : readPrice(priceElement) ) );
 
       return qty * parsePrice( priceElement.value !== undefined ? priceElement.value : readPrice(priceElement) );
     } : function () {

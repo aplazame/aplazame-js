@@ -8,32 +8,32 @@ module.exports = function (aplazame) {
       widgetForbidden = false,
       watchInterval;
 
-  // function parsePrice (price) {
-  //    var priceParts = ( '' + price ).match(/(\d+)([,.](\d+))?/);
-  //    var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
-  //    return amount;
-  // }
-
   function parsePrice (price) {
-    price = price.match(/[\d,.]+/);
-    price = price && price[0] || '';
-    var priceParts = ( '' + price ).replace(/[^0-9.,]/g, '').split(/[,.]/),
-        amount = Number(priceParts.shift()),
-        piece = priceParts.shift(), i, n;
-
-    if( !piece ) {
-      return amount*100;
-    }
-
-    while( piece ) {
-      for( i = 0, n = piece.length ; i < n ; i++ ) {
-        amount*=10;
-      }
-      amount += Number(piece);
-      piece = priceParts.shift();
-    }
-    return amount;
+     var priceParts = ( '' + price ).match(/(\d+)([,.](\d+))?/);
+     var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
+     return amount;
   }
+
+  // function parsePrice (price) {
+  //   price = price.match(/[\d,.]+/);
+  //   price = price && price[0] || '';
+  //   var priceParts = ( '' + price ).replace(/[^0-9.,]/g, '').split(/[,.]/),
+  //       amount = Number(priceParts.shift()),
+  //       piece = priceParts.shift(), i, n;
+  //
+  //   if( !piece ) {
+  //     return amount*100;
+  //   }
+  //
+  //   while( piece ) {
+  //     for( i = 0, n = piece.length ; i < n ; i++ ) {
+  //       amount*=10;
+  //     }
+  //     amount += Number(piece);
+  //     piece = priceParts.shift();
+  //   }
+  //   return amount;
+  // }
 
   function getQty (qtySelector) {
     if( !_.isString(qtySelector) ) {

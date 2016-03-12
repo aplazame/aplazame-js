@@ -430,10 +430,10 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = function () {
+var cssHack = (function () {
   var cache = {},
       hacks = {
-    overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
+    overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1} @-webkit-keyframes a{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%,90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes a{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%,90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes b{0%,30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes b{0%,30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes c{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@keyframes c{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:200px;height:200px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:rgb(75, 92, 103)}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{-webkit-animation-timing-function:cubic-beizer(0,.35,.65,1);animation-timing-function:cubic-beizer(0,.35,.65,1);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.logo-aplazame.animate .smile{-webkit-animation-name:c;animation-name:c;-webkit-animation-duration:1.5s;animation-duration:1.5s}.logo-aplazame.animate .line-large{-webkit-animation-name:a;animation-name:a;-webkit-animation-duration:1.5s;animation-duration:1.5s}.logo-aplazame.animate .line-short{-webkit-animation-name:b;animation-name:b;-webkit-animation-duration:1.5s;animation-duration:1.5s}',
     blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.25s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
     // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
     modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' + '@media (max-width: 600px) { html { background-color: #333A3E; } html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 601px) { .aplazame-modal { position: fixed; } }'
@@ -471,7 +471,7 @@ var cssHack = function () {
     }
     return cache[hackName];
   };
-}();
+})();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -691,7 +691,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: function () {
+          headers: (function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -699,7 +699,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          }(),
+          })(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {

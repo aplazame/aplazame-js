@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.179';
+module.exports = '0.0.180';
 
 },{}],2:[function(require,module,exports){
 
@@ -342,16 +342,34 @@ function checkout(options) {
 
   var iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
       tmpOverlay = document.createElement('div'),
-      cssOverlay = _.cssHack('overlay');
+      cssOverlay = _.cssHack('overlay'),
+      cssBlur = _.cssHack('blur'),
+      cssModal = _.cssHack('modal');
 
   tmpOverlay.className = 'aplazame-overlay';
 
-  // tmpOverlay.innerHTML = '<svg class="logo-aplazame" xmlns="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" height="200" width="200" version="1.1" viewBox="0 0 100 100">        <path class="line-short" d="M36.788,81.008,49.92,49.514" stroke-linecap="round" stroke-width="6" fill="none"></path>        <g class="smile">          <g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)">           <path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"></path>           <path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"></path>          </g>        </g>        <path class="line-large" stroke-linejoin="round" d="M49.92,49.514,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"></path>      </svg>';
-
   cssOverlay.hack(true);
 
-  // document.head.appendChild(cssOverlay);
+  if (checkout.animatedLogo) {
+    cssBlur.hack(true);
+
+    setTimeout(function () {
+      _.addClass(document.body, 'aplazame-blur');
+    }, 0);
+
+    tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' + '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' + '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' + '</svg>' + '<svg class="smile" version="1.1" viewBox="0 0 100 100">' + '<g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)">' + '<path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '<path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '</g>' + '</svg>' + '<svg class="line-large" version="1.1" viewBox="0 0 100 100">' + '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' + '</svg>' + '</div>' + '<div class="aplazame-checkout-loading-text">cargando pasarela de pago...</div></div>';
+  }
+
   document.body.appendChild(tmpOverlay);
+
+  if (checkout.animatedLogo) {
+    var loadingText = tmpOverlay.querySelector('.aplazame-checkout-loading-text'),
+        logo = tmpOverlay.querySelector('.logo-aplazame');
+
+    setTimeout(function () {
+      logo.className += ' animate';
+    }, 200);
+  }
 
   options.api = api;
 
@@ -367,13 +385,11 @@ function checkout(options) {
       height: '0',
       background: 'transparent',
       'z-index': 2147483647
-    }),
-        cssBlur = _.cssHack('blur'),
-        cssModal = _.cssHack('modal');
+    });
 
     iframe.className = 'aplazame-modal';
 
-    cssBlur.hack(true);
+    // cssBlur.hack(true);
 
     // blur.setAttribute('rel', 'stylesheet');
     // blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
@@ -410,12 +426,18 @@ function checkout(options) {
 
       switch (message.event) {
         case 'merchant':
-          cssModal.hack(true);
-          cssBlur.hack(true);
-          cssOverlay.hack(false);
           e.source.postMessage({
             checkout: options
           }, '*');
+          break;
+        case 'show-iframe':
+          cssModal.hack(true);
+          cssBlur.hack(false);
+          cssOverlay.hack(false);
+          document.body.removeChild(tmpOverlay);
+          break;
+        case 'loading-text':
+          loadingText.textContent = message.text;
           break;
         case 'drop-blur':
           document.head.removeChild(cssBlur);
@@ -470,6 +492,7 @@ function checkout(options) {
         cssModal.hack(true);
         _.addClass(document.body, 'aplazame-blur');
         cssOverlay.hack(false);
+        document.body.removeChild(tmpOverlay);
         e.source.postMessage({
           checkout: options
         }, '*');
@@ -1487,10 +1510,10 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = function () {
+var cssHack = (function () {
   var cache = {},
       hacks = {
-    overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); }',
+    overlay: '.aplazame-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1} @-webkit-keyframes a{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%,90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes a{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%,90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes b{0%,30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes b{0%,30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes c{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@keyframes c{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:200px;height:200px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:rgb(75, 92, 103)}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{-webkit-animation-timing-function:cubic-beizer(0,.35,.65,1);animation-timing-function:cubic-beizer(0,.35,.65,1);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.logo-aplazame.animate .smile{-webkit-animation-name:c;animation-name:c;-webkit-animation-duration:1.5s;animation-duration:1.5s}.logo-aplazame.animate .line-large{-webkit-animation-name:a;animation-name:a;-webkit-animation-duration:1.5s;animation-duration:1.5s}.logo-aplazame.animate .line-short{-webkit-animation-name:b;animation-name:b;-webkit-animation-duration:1.5s;animation-duration:1.5s}',
     blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.25s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
     // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
     modal: '.aplazame-modal { height: 100%; } body { overflow: hidden; }' + '@media (max-width: 600px) { html { background-color: #333A3E; } html, body { height: 100%; margin: 0; padding: 0; } body > *:not(.aplazame-modal) { display: none; } iframe.aplazame-modal { position: absolute; } }' + '@media (min-width: 601px) { .aplazame-modal { position: fixed; } }'
@@ -1528,7 +1551,7 @@ var cssHack = function () {
     }
     return cache[hackName];
   };
-}();
+})();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -1748,7 +1771,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: function () {
+          headers: (function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -1756,7 +1779,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          }(),
+          })(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {

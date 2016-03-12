@@ -113,7 +113,6 @@ function checkout (options) {
           break;
         case 'show-iframe':
           cssModal.hack(true);
-          cssBlur.hack(false);
           cssOverlay.hack(false);
           document.body.removeChild(tmpOverlay);
           break;

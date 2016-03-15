@@ -50,7 +50,7 @@ function checkout (options) {
 
   setTimeout(function () {
     tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
-  }, 250);
+  }, 0);
 
   options.api = api;
 
@@ -112,10 +112,10 @@ function checkout (options) {
           }, '*');
           break;
         case 'show-iframe':
-          _.removeClass(iframe, 'hide');
-          cssModal.hack(true);
-          cssOverlay.hack(false);
-          document.body.removeChild(tmpOverlay);
+          // _.removeClass(iframe, 'hide');
+          // cssModal.hack(true);
+          // cssOverlay.hack(false);
+          // document.body.removeChild(tmpOverlay);
           break;
         case 'loading-text':
           loadingText.textContent = message.text;

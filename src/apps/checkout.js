@@ -50,7 +50,7 @@ function checkout (options) {
 
   setTimeout(function () {
     tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
-  }, 400);
+  }, 250);
 
   options.api = api;
 
@@ -121,7 +121,11 @@ function checkout (options) {
           loadingText.textContent = message.text;
           break;
         case 'drop-blur':
-          document.head.removeChild(cssBlur);
+          _.removeClass(document.body, 'aplazame-blur');
+          _.addClass(document.body, 'aplazame-unblur');
+          setTimeout(function () {
+            document.head.removeChild(cssBlur);
+          }, 400);
           break;
         case 'success':
           console.log('aplazame.checkout:success', message);

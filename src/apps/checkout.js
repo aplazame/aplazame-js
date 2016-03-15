@@ -112,10 +112,10 @@ function checkout (options) {
           }, '*');
           break;
         case 'show-iframe':
-          // _.removeClass(iframe, 'hide');
-          // cssModal.hack(true);
-          // cssOverlay.hack(false);
-          // document.body.removeChild(tmpOverlay);
+          _.removeClass(iframe, 'hide');
+          cssModal.hack(true);
+          cssOverlay.hack(false);
+          document.body.removeChild(tmpOverlay);
           break;
         case 'loading-text':
           loadingText.textContent = message.text;

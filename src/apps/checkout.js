@@ -50,7 +50,7 @@ function checkout (options) {
 
   setTimeout(function () {
     tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
-  }, 200);
+  }, 400);
 
   options.api = api;
 
@@ -68,7 +68,7 @@ function checkout (options) {
           'z-index': 2147483647
         });
 
-    iframe.className = 'aplazame-modal';
+    iframe.className = 'aplazame-modal hide';
 
     // cssBlur.hack(true);
 
@@ -112,6 +112,7 @@ function checkout (options) {
           }, '*');
           break;
         case 'show-iframe':
+          _.removeClass(iframe, 'hide');
           cssModal.hack(true);
           cssOverlay.hack(false);
           document.body.removeChild(tmpOverlay);

@@ -50,7 +50,7 @@ function checkout (options) {
 
   setTimeout(function () {
     tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
-  }, 0);
+  }, 200);
 
   options.api = api;
 

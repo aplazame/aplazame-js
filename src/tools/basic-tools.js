@@ -24,6 +24,28 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
+function iterateeFn (iteratee) {
+	if( _isFunction(iteratee) ) {
+		return iteratee;
+	}
+
+	return function (item) {
+		return item === iteratee;
+	};
+}
+
+function find (list, iteratee, thisArg, fallback) {
+	thisArg = thisArg === undefined ? this : thisArg;
+	iteratee = iterateeFn(iteratee);
+
+	for( var i = 0, len = list.length ; i < len ; i++ ) {
+      if( iteratee.call(thisArg, list[i]) ) {
+          return list[i];
+      }
+  }
+	return fallback || null;
+}
+
 function listen (element, eventName, listener) {
   if( element instanceof Array ) {
     for( var i = 0, n = element.length ; i < n ; i++ ) {
@@ -322,6 +344,15 @@ function scrollTop (value) {
   return document.documentElement.scrollTop || document.body.scrollTop;
 }
 
+function clearElement (el) {
+  var child = el.firstChild;
+
+  while( child ) {
+    el.removeChild(child);
+    child = el.firstChild;
+  }
+}
+
 var _classActions = {
   add: document.documentElement.classList ? function (element, className) {
     element.classList.add(className);
@@ -359,6 +390,7 @@ var tools = {
   isDate: _isDate,
   isRegExp: _isRegExp,
   isElement: _isElement,
+  find: find,
   listen: listen,
   once: once,
   ready: docReady,
@@ -373,6 +405,7 @@ var tools = {
   getAmount: getAmount,
   cssHack: cssHack,
   scrollTop: scrollTop,
+  clearElement: clearElement,
   addClass: _classActions.action('add', tools),
   removeClass: _classActions.action('remove', tools)
 };

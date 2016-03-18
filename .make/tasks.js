@@ -21,9 +21,9 @@ module.exports = function (nitro) {
 
   nitro.task('build', ['clear:build', 'js', 'widgets', 'demo']);
 
-  nitro.task('dev', ['clear:build', 'js:dev', 'widgets-dev', 'demo-dev'], function () {
+  nitro.task('dev', ['test.jshint', 'clear:build', 'js:dev', 'widgets-dev', 'demo-dev'], function () {
 
-    nitro.watch('src', ['js']);
+    nitro.watch('src', ['test.jshint', 'js']);
 
     nitro.watch('widgets')
       .when('{,**/}*.js', 'widgets.js:dev')

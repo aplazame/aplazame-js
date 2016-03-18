@@ -7,13 +7,6 @@ var api = require('../core/api'),
 
 function modal (content, options) {
 
-  // if( !modal.cached ) {
-  //   return _.http.noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
-  //     modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
-  //     modal(data, options);
-  //   });
-  // }
-
   if( modal.iframe ) {
     document.body.removeChild(modal.iframe);
   }
@@ -30,28 +23,13 @@ function modal (content, options) {
       });
 
   modal.iframe.className = 'aplazame-modal';
-
   modal.iframe.content = content;
-
-  // lastScrollTop = _.scrollTop();
-  // console.log('scrollTop', lastScrollTop );
-  // _.cssHack('modal').hack(true);
-
-  // var cssBlur = _.cssHack('blur'),
-  //     cssModal = _.cssHack('modal');
-
-  // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
   modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
-  // _.writeIframe(modal.iframe, modal.cached(content || {}) );
-
-  // document.body.style.overflow = 'hidden';
 }
 
 _.onMessage('modal', function (e, message) {
-
-  // console.log('message', 'modal', message);
 
   switch( message.event ) {
     case 'open':

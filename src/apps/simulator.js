@@ -1,7 +1,9 @@
 'use strict';
 
 var apiHttp = require('../core/api-http'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    $q = require('q-promise'),
+    cache = [];
 
 function simulator (amount, _options, callback, onError) {
   if( _.isFunction(_options) ) {
@@ -22,11 +24,29 @@ function simulator (amount, _options, callback, onError) {
   if( _options.publicKey ) {
     options.publicKey = _options.publicKey;
   }
-  return apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
-    if( _.isFunction(callback) ) {
-      callback(response.data.choices[0].instalments, response.data.options, response.data);
-    }
+
+  var foundCached = _.find(cache, function (item) {
+    return item.amount === amount;
+  });
+
+  var promise = foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
+    var result = {
+      amount: amount,
+      choices: response.data.choices[0].instalments,
+      options: response.data.options,
+      response: response
+    };
+    cache.push(result);
+    return result;
   }, onError);
+
+  if( _.isFunction(callback) ) {
+    promise.then(function (result) {
+      callback( result.choices, result.options );
+    });
+  }
+
+  return promise;
 }
 
 module.exports = simulator;

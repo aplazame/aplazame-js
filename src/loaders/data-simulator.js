@@ -153,6 +153,14 @@ module.exports = function (aplazame) {
     this.el.contentWindow.postMessage(_data, '*');
   };
 
+  function maxInstalments (prev, choice) {
+    if( prev === null ) {
+      return choice;
+    } else {
+      return choice.num_instalments > prev.num_instalments ? choice : prev;
+    }
+  }
+
   function widgetsLookup (element) {
     if( !element.querySelectorAll ) {
       return;
@@ -169,7 +177,7 @@ module.exports = function (aplazame) {
 
       simulator.$$aplazame = true;
 
-      var choices, options, iframe,
+      var choice, choices, options, iframe,
           getAmount = amountGetter(simulator),
           dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
           currentAmount = simulator.getAttribute('data-price') ? getAmount() : ( Number( simulator.getAttribute('data-amount') ) || getAmount() );
@@ -179,6 +187,9 @@ module.exports = function (aplazame) {
         choices = _choices;
         options = _options;
 
+        choice = choices.reduce(maxInstalments, null);
+
+
         var widgetOptions = options.widget, widget;
 
         _.clearElement(simulator);
@@ -186,11 +197,12 @@ module.exports = function (aplazame) {
         if( widgetOptions.type === 'button' ) {
           widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() );
 
-          widget.on('message:require.choices', function () {
+          widget.on('message:require.choices choices.update', function () {
             widget.message('choices', {
               amount: currentAmount,
-              choices: _choices,
-              options: _options
+              choice: choice,
+              choices: choices,
+              options: options
             });
           });
 
@@ -198,13 +210,18 @@ module.exports = function (aplazame) {
             widget.message('loading');
           });
 
-          widget.on('choices.update', function (e, _a, _c, _o) {
-            widget.message('choices', { amount: _a, choices: _c, options: _o });
-          });
-
         } else {
+          _.template.put('widget-raw', require('../../.tmp/simulator/templates/widget-raw') );
           widget = { el: document.createElement('div') };
+          new Events(widget);
 
+          widget.el.innerHTML = _.template('widget-raw', {
+            getAmount: _.getAmount,
+            amount: currentAmount,
+            choice: choice,
+            choices: choices,
+            options: options
+          });
         }
 
         simulator.appendChild(widget.el);
@@ -227,6 +244,7 @@ module.exports = function (aplazame) {
                   currentAmount = amount;
                   choices = _choices;
                   options = _options;
+                  choice = choices.reduce(maxInstalments, null);
                   widget.trigger('choices.update', [amount, _choices, _options]);
                   updating = false;
                 }, function () {

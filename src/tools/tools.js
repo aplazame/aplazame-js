@@ -17,6 +17,6 @@ _.extend(_, {
     return el.getAttribute('data-' + key);
   },
   onMessage: require('./message-listener')(_)
-});
+}, require('./colors') );
 
 module.exports = _;

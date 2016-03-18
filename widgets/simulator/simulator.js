@@ -4,7 +4,7 @@ var _ = require('../../src/tools/tools'),
     each = Array.prototype.forEach;
 
 template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments') );
-template.put('widget', require('../../.tmp/simulator/templates/widget') );
+template.put('widget-button', require('../../.tmp/simulator/templates/widget-button') );
 
 function emitSize () {
   setTimeout(function () {
@@ -50,8 +50,9 @@ var main = document.getElementById('main'), currentMessage,
     },
     renderWidget = function () {
       _.removeClass(main, 'loading');
-      main.innerHTML = _.template('widget', {
+      main.innerHTML = _.template('widget-button', {
         getAmount: _.getAmount,
+        brightness: _.brightness,
         choice: currentMessage.$$choice,
         options: currentMessage.options,
         amount: currentMessage.amount,

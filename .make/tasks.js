@@ -19,9 +19,9 @@ module.exports = function (nitro) {
 
   // main tasks
 
-  nitro.task('build', ['clear:build', 'js', 'widgets', 'demo']);
+  nitro.task('build', ['clear:build', 'widgets', 'js', 'demo']);
 
-  nitro.task('dev', ['test.jshint', 'clear:build', 'js:dev', 'widgets-dev', 'demo-dev'], function () {
+  nitro.task('dev', ['test.jshint', 'clear:build', 'widgets-dev', 'js:dev', 'demo-dev'], function () {
 
     nitro.watch('src', ['test.jshint', 'js']);
 

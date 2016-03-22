@@ -409,7 +409,13 @@ var tools = {
   scrollTop: scrollTop,
   clearElement: clearElement,
   addClass: _classActions.action('add', tools),
-  removeClass: _classActions.action('remove', tools)
+  removeClass: _classActions.action('remove', tools),
+  tmpClass: function (element, className, delay) {
+    tools.addClass(element, className);
+    setTimeout(function () {
+      tools.removeClass(element, className);
+    }, delay);
+  }
 };
 
 module.exports = tools;

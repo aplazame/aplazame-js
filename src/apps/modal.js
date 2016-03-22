@@ -5,6 +5,11 @@ var api = require('../core/api'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
     lastScrollTop;
 
+var tmpOverlay = document.createElement('div'),
+    cssOverlay = _.cssHack('overlay'),
+    cssBlur = _.cssHack('blur'),
+    cssModal = _.cssHack('modal');
+
 function modal (content, options) {
 
   if( modal.iframe ) {
@@ -12,6 +17,16 @@ function modal (content, options) {
   }
 
   options = options || {};
+
+  cssOverlay.hack(true);
+  cssBlur.hack(true);
+
+  tmpOverlay.className = 'aplazame-overlay';
+  document.body.appendChild(tmpOverlay);
+
+  setTimeout(function () {
+    _.addClass(document.body, 'aplazame-blur');
+  }, 0);
 
   modal.iframe = _.getIFrame({
         top: 0,
@@ -57,9 +72,16 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'closing':
       document.body.style.overflow = modal.iframe.overflow;
+      _.removeClass(document.body, 'aplazame-blur');
+      _.addClass(document.body, 'aplazame-unblur');
+      setTimeout(function () {
+        cssBlur.hack(false);
+        _.removeClass(document.body, 'aplazame-unblur');
+      }, 400);
       break;
     case 'close':
       _.cssHack('modal').hack(false);
+      document.body.removeChild(tmpOverlay);
       setTimeout(function () {
         _.scrollTop(lastScrollTop);
       }, 0);

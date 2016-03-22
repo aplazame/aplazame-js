@@ -75,15 +75,19 @@ function initListeners () {
 
 _.onMessage('modal', function (e, message) {
   if( message.event === 'content' ) {
-    document.body.innerHTML = message.content.card;
+    var container = document.querySelector('.modals-container');
+    _.tmpClass(container, 'opening-wrapper', isMobile.matches ? 0 : 600 );
+    container.innerHTML = message.content.card;
+
     modal = document.querySelector('.modal');
     card = document.querySelector('.card');
-    modal.className += ' is-opening';
-    // if( message.modalClass ) {
-    //   modal.className = modal.className + ' ' + message.modalClass;
-    // }
+
+    _.addClass(modal, 'is-opening');
+
     initListeners();
   }
 });
 
-parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
+_.ready(function () {
+  parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
+});

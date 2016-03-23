@@ -3,16 +3,11 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
+      $q = require('q-promise'),
+      Events = require('events-wrapper'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
-      widgetForbidden = false,
-      watchInterval;
-
-  // function parsePrice (price) {
-  //    var priceParts = ( '' + price ).match(/(\d+)([,.](\d+))?/);
-  //    var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
-  //    return amount;
-  // }
+      each = Array.prototype.forEach;
 
   function parsePrice (price) {
     price = price.match(/[\d,.]+/);
@@ -60,38 +55,22 @@ module.exports = function (aplazame) {
   }
 
   var cmsPriceSelector = [
-        'form#product_addtocart_form .special-price .price', // magento
-        'form#product_addtocart_form .regular-price .price', // magento
-        '#product-info .special-price .price', // magento
-        '#product-info .regular-price .price', // magento
-        'form#buy_block #our_price_display', // prestashop
-        '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount' // woocommerce
-      ],
-      cmsQtySelector = [
-        'form#product_addtocart_form input[name="qty"]', // magento
-        'form#buy_block input[name="qty"]', // prestashop
-        'form#product-options-form button[data-id=qty]', // custom
-        '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]' // woocommerce
-      ];
+    'form#product_addtocart_form .special-price .price', // magento
+    'form#product_addtocart_form .regular-price .price', // magento
+    '#product-info .special-price .price', // magento
+    '#product-info .regular-price .price', // magento
+    'form#buy_block #our_price_display', // prestashop
+    '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount' // woocommerce
+  ],
+  cmsQtySelector = [
+    'form#product_addtocart_form input[name="qty"]', // magento
+    'form#buy_block input[name="qty"]', // prestashop
+    'form#product-options-form button[data-id=qty]', // custom
+    '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]' // woocommerce
+  ];
 
   function matchSelector (selector) {
     return document.querySelector(selector);
-  }
-
-  function readPrice (element) {
-    var price = element.textContent.replace(/[^0-9,.]/g,''), addDot;
-
-    if( /[.,]/.test(price) ) {
-      return price;
-    }
-
-    return element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
-      var value = elem.textContent.replace(/[^0-9,.]/g,'');
-      if( addDot === undefined && prev && !/\./.test(prev) ) {
-        addDot = true;
-      }
-      return prev + ( addDot ? '.' : '' ) + value;
-    }, '') : element.textContent.replace(/[^0-9,.]/g,'');
   }
 
   function amountGetter (widgetElement) {
@@ -140,9 +119,47 @@ module.exports = function (aplazame) {
     return getter;
   }
 
-  var choices = [],
-      options = {},
-      currentAmount;
+  function Iframe (url) {
+    var el = _.getIFrame({ width: '100%' }),
+        iframe = this;
+    this.el = el;
+    this.el.src = url;
+
+    new Events (this);
+
+    this.onload = function () {
+      this.trigger('load', null, this);
+    };
+
+    _.onMessage('simulator', function (e, message) {
+      // console.log('message', e, message);
+      if( e.source === el.contentWindow ) {
+        iframe.trigger('message:' + message.event, [message], this);
+      }
+    });
+
+    this.on('message:resize', function (e, message) {
+      el.style.height = message.height + 'px';
+    });
+  }
+
+  Iframe.prototype.message = function (eventName, data) {
+    var _data = _.extend({
+      aplazame: 'simulator',
+      event: eventName,
+      mobile: isMobile.matches
+    }, data || {});
+    // console.log('message to iframe', _data );
+    this.el.contentWindow.postMessage(_data, '*');
+  };
+
+  function maxInstalments (prev, choice) {
+    if( prev === null ) {
+      return choice;
+    } else {
+      return choice.num_instalments > prev.num_instalments ? choice : prev;
+    }
+  }
 
   function widgetsLookup (element) {
     if( !element.querySelectorAll ) {
@@ -150,183 +167,97 @@ module.exports = function (aplazame) {
     }
 
     var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+    // console.log('simulators', simulators);
 
-    if( simulators.length ) {
+    each.call(simulators, function (simulator) {
 
-      var iframes = [];
+      if( simulator.$$aplazame ) {
+        return;
+      }
 
-      _.listen(window, 'message', function (e) {
-        var message = e.data;
+      simulator.$$aplazame = true;
 
-        if( !e.used && message.aplazame === 'simulator' ) {
-          e.used = true;
+      var choice, choices, options, iframe,
+          getAmount = amountGetter(simulator),
+          dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
+          currentAmount = simulator.getAttribute('data-price') ? getAmount() : ( Number( simulator.getAttribute('data-amount') ) || getAmount() );
 
-          switch (message.event) {
-            case 'resize':
-              iframes.forEach(function (iframe) {
-                if( iframe.contentWindow === e.source ) {
-                  iframe.style.height = message.data.height + 'px';
-                }
-              });
-              break;
-            case 'require:choices':
-              e.source.postMessage({
-                aplazame: 'simulator',
-                event: 'choices',
-                choices: choices,
-                options: options,
-                amount: currentAmount,
-                mobile: isMobile.matches
-              }, '*');
-              break;
-          }
-        }
-      });
+      aplazame.simulator(currentAmount, function (_choices, _options) {
 
-      _.listen(window, 'resize', function (e) {
+        choices = _choices;
+        options = _options;
 
-        iframes.forEach(function (iframe) {
+        choice = choices.reduce(maxInstalments, null);
 
-          iframe.contentWindow.postMessage({
-            aplazame: 'simulator',
-            event: 'mobile',
-            mobile: isMobile.matches
-          }, '*');
 
-        });
+        var widgetOptions = options.widget, widget;
 
-      });
+        _.clearElement(simulator);
 
-      [].forEach.call(simulators, function (simulator) {
+        if( widgetOptions.type === 'button' ) {
+          widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() );
 
-        if( _.elementData(simulator, 'checked') ) {
-          return;
-        }
-
-        _.elementData(simulator, 'checked', true);
-
-        var getAmount = amountGetter(simulator);
-        currentAmount = simulator.getAttribute('data-price') ? getAmount() : ( Number( simulator.getAttribute('data-amount') ) || getAmount() );
-
-        var simulatorParams = {
-              simulator: '[data-aplazame-simulator]',
+          widget.on('message:require.choices choices.update', function () {
+            widget.message('choices', {
               amount: currentAmount,
-              publicKey: simulator.getAttribute('data-public-key')
-            },
-            iframe,
-            choicesCache = {};
-
-        // simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
-        simulator.innerHTML = '';
-
-        aplazame.simulator(simulatorParams.amount, function (_choices, _options) {
-          var child = simulator.firstChild,
-              now = Date.now();
-
-          choices = _choices;
-          options = _options;
-
-          _choices.$amount = simulatorParams.amount;
-          choicesCache[simulatorParams.amount] = { choices: _choices, options: _options };
-
-          while( child ) {
-            simulator.removeChild(child);
-            child = simulator.firstChild;
-          }
-
-          // _.http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
-            iframe = _.getIFrame({
-              width: '100%'
+              choice: choice,
+              choices: choices,
+              options: options
             });
+          });
 
-            iframes.push(iframe);
-            iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
-            simulator.appendChild(iframe);
-            iframe.onerror = function () {
-              simulator.innerHTML = '';
-            };
+          widget.on('choices.updating', function (e) {
+            widget.message('loading');
+          });
 
-            iframe.$$listeners = [];
-            iframe.onload = function () {
-              iframe.$$loaded = true;
-              iframe.$$listeners.forEach(function (listener) {
-                listener();
-              });
-            };
+        } else {
+          _.template.put('widget-raw', require('../../.tmp/simulator/templates/widget-raw') );
+          widget = { el: document.createElement('div') };
+          new Events(widget);
 
-        }, function () {
-          simulator.innerHTML = '';
-          widgetForbidden = true;
-          if( watchInterval ) {
-            clearInterval(watchInterval);
-          }
-        });
-
-        if( getAmount.priceSelector ) {
-          var _currentAmount = getAmount();
-
-          var updateWidgetChoices = function () {
-                if( iframe.contentWindow ) {
-                  iframe.contentWindow.postMessage({
-                    aplazame: 'simulator',
-                    event: 'choices',
-                    choices: choices,
-                    options: options,
-                    amount: _currentAmount,
-                    mobile: isMobile.matches
-                  }, '*');
-                } else if( !iframe.$$loaded ) {
-                  iframe.$$listeners.push(updateWidgetChoices);
-                }
-              },
-              onPriceChange = function (amount, previousAmount) {
-                currentAmount = amount;
-                _currentAmount = amount;
-
-                console.log('priceChanged', amount, previousAmount);
-
-                if( choicesCache[amount] ) {
-                  choices = choicesCache[amount].choices;
-                  options = choicesCache[amount].options;
-                  updateWidgetChoices();
-                } else {
-                  if( iframe && iframe.contentWindow ) {
-                    iframe.contentWindow.postMessage({
-                      aplazame: 'simulator',
-                      event: 'loading'
-                    }, '*');
-                  }
-                  aplazame.simulator( amount, function (_choices, _options) {
-                    choicesCache[amount] = { choices: _choices, options: _options };
-                    if( amount === _currentAmount ) {
-                      choices = _choices;
-                      options = _options;
-                      updateWidgetChoices(_choices);
-                    }
-                  }, function (reason) {
-                    console.log('error retrieving simulator choices', reason);
-                  });
-                }
-              };
-
-          var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
-
-          watchInterval = setInterval(function () {
-            if( widgetForbidden ) {
-              return;
-            }
-            var amount = getAmount(),
-                qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
-
-            if( amount && _.isNumber(amount) && amount !== _currentAmount || qty !== previousQty ) {
-              previousQty = qty;
-              onPriceChange(amount, _currentAmount);
-            }
-          }, 200);
+          widget.el.innerHTML = _.template('widget-raw', {
+            getAmount: _.getAmount,
+            amount: currentAmount,
+            choice: choice,
+            choices: choices,
+            options: options
+          });
         }
 
+        simulator.appendChild(widget.el);
+
+        var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1,
+            updating = false,
+            amountInterval = setInterval(function () {
+              if( updating ) {
+                return;
+              }
+              var amount = getAmount(),
+                  qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
+
+              if( amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
+                previousQty = qty;
+
+                updating = true;
+                widget.trigger('choices.updating', [amount, _choices, _options]);
+                aplazame.simulator(amount, function (_choices, _options) {
+                  currentAmount = amount;
+                  choices = _choices;
+                  options = _options;
+                  choice = choices.reduce(maxInstalments, null);
+                  widget.trigger('choices.update', [amount, _choices, _options]);
+                  updating = false;
+                }, function () {
+                  updating = false;
+                });
+                // onPriceChange(amount, currentAmount);
+              }
+            }, 200);
+
       });
-    }
+
+    });
+
   }
 
   _.liveDOM.subscribe(widgetsLookup);
@@ -334,5 +265,12 @@ module.exports = function (aplazame) {
   _.ready(function () {
     widgetsLookup(document);
   });
+
+  // *****************************************************************************
+  // *****************************************************************************
+  // *****************************************************************************
+  // *****************************************************************************
+
+
 
 };

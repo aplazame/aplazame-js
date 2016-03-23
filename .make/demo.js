@@ -51,7 +51,7 @@ module.exports = function (nitro) {
         checkout = nitro.file.readJSON('./demo/checkout.json'),
         indexData = nitro.tools.scope({
           dev: dev, pkg: pkg,
-          dotcom: !dev,
+          dotcom: require('git-rev-sync').branch() === 'release',
           version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
           checkout: checkout,
           shippingAmount: function () {

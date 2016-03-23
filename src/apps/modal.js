@@ -1,24 +1,38 @@
 'use strict';
 
+window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
+
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
+    isMobile = window.matchMedia('( max-width: 767px )'),
     lastScrollTop;
 
-function modal (content, options) {
+var tmpOverlay = document.createElement('div'),
+    cssOverlay = _.cssHack('overlay'),
+    cssBlur = _.cssHack('blur'),
+    cssModal = _.cssHack('modal');
 
-  // if( !modal.cached ) {
-  //   return _.http.noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
-  //     modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
-  //     modal(data, options);
-  //   });
-  // }
+function modal (content, options) {
 
   if( modal.iframe ) {
     document.body.removeChild(modal.iframe);
   }
 
   options = options || {};
+
+  cssOverlay.hack(true);
+  cssBlur.hack(true);
+
+  tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
+  document.body.appendChild(tmpOverlay);
+
+  setTimeout(function () {
+    _.addClass(document.body, 'aplazame-blur');
+  }, 0);
+  setTimeout(function () {
+    _.removeClass(tmpOverlay, 'aplazame-overlay-show');
+  }, isMobile.matches ? 0 : 400 );
 
   modal.iframe = _.getIFrame({
         top: 0,
@@ -30,34 +44,23 @@ function modal (content, options) {
       });
 
   modal.iframe.className = 'aplazame-modal';
-
+  modal.iframe.style.display = 'none';
   modal.iframe.content = content;
-
-  // lastScrollTop = _.scrollTop();
-  // console.log('scrollTop', lastScrollTop );
-  // _.cssHack('modal').hack(true);
-
-  // var cssBlur = _.cssHack('blur'),
-  //     cssModal = _.cssHack('modal');
-
-  // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
   modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
-  // _.writeIframe(modal.iframe, modal.cached(content || {}) );
-
-  // document.body.style.overflow = 'hidden';
 }
 
 _.onMessage('modal', function (e, message) {
-
-  // console.log('message', 'modal', message);
 
   switch( message.event ) {
     case 'open':
       modal.referrer = e.source;
       modal.message = message;
       modal(message.data);
+      break;
+    case 'opening':
+      modal.iframe.style.display = null;
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();
@@ -79,9 +82,18 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'closing':
       document.body.style.overflow = modal.iframe.overflow;
+      _.removeClass(document.body, 'aplazame-blur');
+      _.addClass(document.body, 'aplazame-unblur');
+      _.addClass(tmpOverlay, 'aplazame-overlay-hide');
+      setTimeout(function () {
+        cssBlur.hack(false);
+        _.removeClass(document.body, 'aplazame-unblur');
+      }, isMobile.matches ? 0 : 400 );
       break;
     case 'close':
       _.cssHack('modal').hack(false);
+      document.body.removeChild(tmpOverlay);
+      _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
       setTimeout(function () {
         _.scrollTop(lastScrollTop);
       }, 0);

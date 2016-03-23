@@ -19,9 +19,9 @@ deploy:
     delete: true
     recursive: true
     exclude:
-      - ".git/*"
-      - "node_modules/*"
-      - ".bower_components/*"
+      - ".git"
+      - "node_modules"
+      - ".bower_components"
     when:
       branch: master
 

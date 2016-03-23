@@ -1,72 +1,24 @@
 
 var _ = require('../../src/tools/tools'),
-    choices = [],
-    options = {};
+    template = _.template,
+    each = Array.prototype.forEach;
 
-_.template.lookup();
-
-_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments') );
-_.template.put('widget', require('../../.tmp/simulator/templates/widget') );
-
-var main = document.getElementById('main'),
-    selectedChoice, choices = window.choices,
-    currentAmount;
+template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments') );
+template.put('widget-button', require('../../.tmp/simulator/templates/widget-button') );
 
 function emitSize () {
   setTimeout(function () {
     parent.window.postMessage({
       aplazame: 'simulator',
       event: 'resize',
-      data: {
-        width: document.body.clientWidth,
-        height: document.body.clientHeight
-      }
+      width: document.body.clientWidth,
+      height: document.body.clientHeight
     }, '*');
   },1);
 }
 
 _.listen(window, 'load', emitSize);
 _.listen(window, 'resize', emitSize);
-
-function showChoices () {
-  main.innerHTML = _.template('choices', { selectedChoice: selectedChoice, choices: choices });
-  emitSize();
-}
-
-function setChoice (choice) {
-  selectedChoice = choice;
-  return choice;
-}
-
-function setAmount (amount) {
-  currentAmount = amount;
-  return currentAmount;
-}
-
-function runAction (action, data) {
-  switch( action ) {
-    case 'showChoices':
-      showChoices();
-      break;
-    case 'showInfo':
-      parent.window.postMessage({
-        aplazame: 'modal',
-        event: 'open',
-        name: 'instalments',
-        data: {
-          card: _.template('modal-instalments', {
-            selectedChoice: selectedChoice,
-            choices: choices,
-            getAmount: _.getAmount,
-            months: function (m) {
-              return m > 1 ? 'meses' : 'mes';
-            }
-          })
-        }
-      }, '*');
-      break;
-  }
-}
 
 function maxInstalments (prev, choice) {
   if( prev === null ) {
@@ -76,21 +28,40 @@ function maxInstalments (prev, choice) {
   }
 }
 
-var isMobile,
-    renderWidget = function (mobile) {
-      isMobile = mobile === undefined || mobile;
-
+var main = document.getElementById('main'), currentMessage,
+    widgetActions = {
+      showInfo: function () {
+        parent.window.postMessage({
+          aplazame: 'modal',
+          event: 'open',
+          name: 'instalments',
+          data: {
+            card: _.template('modal-instalments', {
+              selectedChoice: currentMessage.$$choice,
+              choices: currentMessage.choices,
+              getAmount: _.getAmount,
+              months: function (m) {
+                return m > 1 ? 'meses' : 'mes';
+              }
+            })
+          }
+        }, '*');
+      }
+    },
+    renderWidget = function () {
       _.removeClass(main, 'loading');
-      main.innerHTML = _.template('widget', {
+      main.innerHTML = _.template('widget-button', {
         getAmount: _.getAmount,
-        choice: selectedChoice,
-        options: options,
-        currentAmount: currentAmount,
-        isMobile: isMobile
+        brightness: _.brightness,
+        choice: currentMessage.$$choice,
+        options: currentMessage.options,
+        amount: currentMessage.amount,
+        preferences: currentMessage.options.widget.preferences,
+        isMobile: currentMessage.isMobile
       });
       emitSize();
 
-      [].forEach.call( main.querySelectorAll('[data-action]'), function (element) {
+      each.call( main.querySelectorAll('[data-action]'), function (element) {
 
         _.listen(element, 'click', function (e) {
           var action = element.getAttribute('data-action');
@@ -99,34 +70,18 @@ var isMobile,
             e.preventDefault();
           }
 
-          runAction(action);
+          if( widgetActions[action] ) {
+            widgetActions[action]();
+          }
         });
 
       } );
     },
-    setMobile = function (mobile) {
-      if( isMobile === undefined || isMobile !== mobile ) {
-        isMobile = mobile;
-
-        if( isMobile ) {
-          _.addClass( document.querySelector('.widget-item-instalments'), 'mobile' );
-        } else {
-          _.removeClass( document.querySelector('.widget-item-instalments'), 'mobile' );
-        }
-      }
-    },
-    messageSimulator = {
+    onMessage = {
       choices: function (message) {
-        choices = message.choices;
-        options = message.options || {};
-        options.styles = options.styles || { align: 'center' };
-
-        setChoice( choices.reduce(maxInstalments, null) );
-        setAmount( message.amount );
-        renderWidget(message.mobile);
-      },
-      mobile: function (message) {
-        setMobile(message.mobile);
+        currentMessage = message;
+        currentMessage.$$choice = currentMessage.choices.reduce(maxInstalments, null);
+        renderWidget();
       },
       loading: function (message) {
         _.addClass(main, 'loading');
@@ -134,12 +89,12 @@ var isMobile,
     };
 
 _.onMessage('simulator', function (e, message) {
-  if( messageSimulator[message.event] ) {
-    messageSimulator[message.event](message);
+  if( onMessage[message.event] ) {
+    onMessage[message.event](message);
   }
 });
 
 parent.window.postMessage({
   aplazame: 'simulator',
-  event: 'require:choices'
+  event: 'require.choices'
 }, '*');

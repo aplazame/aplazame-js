@@ -1,0 +1,25 @@
+<div class="aplazame-widget-button align-<%= preferences.align %>">
+  <button type="button" data-action="showInfo"
+          class="<%= brightness(preferences.bg_color) %>"
+          style=" background: <%= preferences.bg_color %>; color: <%= preferences.text_color %>; fill: <%= preferences.text_color %>">
+    <% if( preferences.branding ) { %>
+      <div class="logo">
+        <svg><use xlink:href="../assets/symbols.svg#svg-aplazame"></use><svg>
+      </div>
+    <% } %>
+
+    <div class="text-wrapper">
+
+      <span class="from">Desde&nbsp;</span><!--
+
+      --><strong class="amount"><!--
+        --><span class="price"><%= getAmount(choice.amount) %></span><!--
+        --><span class="currency">€</span><!--
+      --></strong><!--
+
+      --><sub class="per-month">/mes</sub>
+
+    </div>
+
+  </button>
+</div>

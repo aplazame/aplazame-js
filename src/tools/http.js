@@ -1,6 +1,6 @@
 // factory http
 
-var $q = require('promise-q');
+var $q = require('q-promise');
 
 function headerToTitleSlug(text) {
   var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {

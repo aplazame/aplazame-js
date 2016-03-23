@@ -35,22 +35,22 @@ function closeModal (resolved, value) {
 }
 
 function initListeners () {
-  _.listen( card, 'click', function (e) {
+  card.addEventListener('click', function (e) {
     e.stopPropagation();
   });
 
-  _.listen(document.body, 'click', function () {
+  document.body.addEventListener('click', function () {
     closeModal(false);
   });
 
   [].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {
-    _.listen( element, 'click', function (e) {
+    element.addEventListener('click', function (e) {
       closeModal(true, element.getAttribute('modal-resolve') );
     });
   });
 
   [].forEach.call( document.querySelectorAll('[modal-reject]'), function (element) {
-    _.listen( element, 'click', function (e) {
+    element.addEventListener( 'click', function (e) {
       // e.stopPropagation();
       closeModal(false, element.getAttribute('modal-reject') );
     });
@@ -61,7 +61,7 @@ function initListeners () {
     var currentChoice;
 
     [].forEach.call( document.querySelectorAll('[data-widget="active-toggle"]'), function (toggle) {
-      _.listen( toggle, 'click', function (e) {
+      toggle.addEventListener('click', function (e) {
         if( currentChoice ) {
           _.removeClass(currentChoice, 'active');
         }
@@ -78,7 +78,7 @@ _.onMessage('modal', function (e, message) {
     var container = document.querySelector('.modals-container');
     _.tmpClass(container, 'opening-wrapper', isMobile.matches ? 0 : 600 );
     container.innerHTML = message.content.card;
-    
+
     parent.window.postMessage({ aplazame: 'modal', event: 'opening' }, '*');
 
     modal = document.querySelector('.modal');

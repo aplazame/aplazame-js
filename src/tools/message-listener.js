@@ -3,7 +3,7 @@ module.exports = function (_) {
 
   var messageTarget = {};
 
-  _.listen(window, 'message', function (e) {
+  window.addEventListener('message', function (e) {
     var message = e.data,
         listener = messageTarget[message.aplazame];
 

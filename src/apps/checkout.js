@@ -1,7 +1,8 @@
 'use strict';
 
 var api = require('../core/api'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    cssHack = require('../tools/css-hack');
 
 function checkout (options) {
 
@@ -14,9 +15,9 @@ function checkout (options) {
 
   var iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
       tmpOverlay = document.createElement('div'),
-      cssOverlay = _.cssHack('overlay'),
-      cssBlur = _.cssHack('blur'),
-      cssModal = _.cssHack('modal');
+      cssOverlay = cssHack('overlay'),
+      cssBlur = cssHack('blur'),
+      cssModal = cssHack('modal');
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 

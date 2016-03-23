@@ -18,7 +18,7 @@ module.exports = function (nitro) {
   });
 
   nitro.task('git.branch', function () {
-    console.log('[[ current branch ]]', require('git-rev-sync').branch() );
+    console.log('[[ current branch ]]', process.env.GIT_BRANCH || require('git-rev-sync').branch() );
   });
 
   // main tasks

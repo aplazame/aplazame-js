@@ -2,6 +2,8 @@
 
 module.exports = function (nitro) {
 
+  console.log('[[ current branch ]]', require('git-rev-sync').branch() );
+
   var canClear = ['dist', '.tmp', 'public'];
 
   nitro.task('clear', function (target) {

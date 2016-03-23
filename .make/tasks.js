@@ -2,8 +2,6 @@
 
 module.exports = function (nitro) {
 
-  console.log('[[ current branch ]]', require('git-rev-sync').branch() );
-
   var canClear = ['dist', '.tmp', 'public'];
 
   nitro.task('clear', function (target) {
@@ -19,11 +17,15 @@ module.exports = function (nitro) {
     }
   });
 
+  nitro.task('git.branch', function () {
+    console.log('[[ current branch ]]', require('git-rev-sync').branch() );
+  });
+
   // main tasks
 
-  nitro.task('build', ['clear:build', 'widgets', 'js', 'demo']);
+  nitro.task('build', ['git.branch', 'clear:build', 'widgets', 'js', 'demo']);
 
-  nitro.task('dev', ['test.jshint', 'clear:build', 'widgets-dev', 'js:dev', 'demo-dev'], function () {
+  nitro.task('dev', ['git.branch', 'test.jshint', 'clear:build', 'widgets-dev', 'js:dev', 'demo-dev'], function () {
 
     nitro.watch('src', ['test.jshint', 'js']);
 

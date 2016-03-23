@@ -23,6 +23,7 @@
   "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
   "devDependencies": {
     "bower": "^1.5.3",
+    "git-rev-sync": "^1.4.0",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.15",
     "karma-chrome-launcher": "^0.2.0",

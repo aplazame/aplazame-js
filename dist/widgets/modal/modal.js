@@ -141,10 +141,10 @@ module.exports = Promise;
 },{}],2:[function(require,module,exports){
 (function (global){
 
-module.exports = require('./promise-qizer')( global.Promise || require('./promise-polyfill') );
+module.exports = require('./qizer')( global.Promise || require('./promise-polyfill') );
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-polyfill":1,"./promise-qizer":3}],3:[function(require,module,exports){
+},{"./promise-polyfill":1,"./qizer":3}],3:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
@@ -188,6 +188,28 @@ var _isObject = _isType('object'),
     _isElement = function (o) {
   return o && o.nodeType === 1;
 };
+
+function iterateeFn(iteratee) {
+  if (_isFunction(iteratee)) {
+    return iteratee;
+  }
+
+  return function (item) {
+    return item === iteratee;
+  };
+}
+
+function find(list, iteratee, thisArg, fallback) {
+  thisArg = thisArg === undefined ? this : thisArg;
+  iteratee = iterateeFn(iteratee);
+
+  for (var i = 0, len = list.length; i < len; i++) {
+    if (iteratee.call(thisArg, list[i])) {
+      return list[i];
+    }
+  }
+  return fallback || null;
+}
 
 function listen(element, eventName, listener) {
   if (element instanceof Array) {
@@ -430,10 +452,10 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = (function () {
+var cssHack = function () {
   var cache = {},
       hacks = {
-    overlay: '.aplazame-overlay { font-family: \'Montserrat\', sans-serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1;margin-top:14px;font-size:14px;}' + '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}' + '@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%,90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{transform:rotate(0deg)}90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-smile{0%{transform:rotate(0deg)}90%,to{transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}',
+    overlay: '.aplazame-overlay { font-family: \'Montserrat\', sans-serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1;margin-top:14px;font-size:14px;}' + '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-show{opacity:1}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse;opacity:0}' + '@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%,90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{transform:rotate(0deg)}90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-smile{0%{transform:rotate(0deg)}90%,to{transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}',
     // blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.4s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
     blur: '@-webkit-keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@media (max-width:600px){body{-webkit-transition:all .4s linear;transition:all .4s linear}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}',
     // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
@@ -473,7 +495,7 @@ var cssHack = (function () {
     }
     return cache[hackName];
   };
-})();
+}();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -481,6 +503,15 @@ function scrollTop(value) {
     document.body.scrollTop = value;
   }
   return document.documentElement.scrollTop || document.body.scrollTop;
+}
+
+function clearElement(el) {
+  var child = el.firstChild;
+
+  while (child) {
+    el.removeChild(child);
+    child = el.firstChild;
+  }
 }
 
 var _classActions = {
@@ -520,6 +551,7 @@ var tools = {
   isDate: _isDate,
   isRegExp: _isRegExp,
   isElement: _isElement,
+  find: find,
   listen: listen,
   once: once,
   ready: docReady,
@@ -534,8 +566,15 @@ var tools = {
   getAmount: getAmount,
   cssHack: cssHack,
   scrollTop: scrollTop,
+  clearElement: clearElement,
   addClass: _classActions.action('add', tools),
-  removeClass: _classActions.action('remove', tools)
+  removeClass: _classActions.action('remove', tools),
+  tmpClass: function (element, className, delay) {
+    tools.addClass(element, className);
+    setTimeout(function () {
+      tools.removeClass(element, className);
+    }, delay);
+  }
 };
 
 module.exports = tools;
@@ -609,9 +648,28 @@ if (!Array.prototype.find) {
 }
 
 },{}],6:[function(require,module,exports){
+
+
+function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
+}
+
+function brightness(color) {
+  var rgb = hexToRgb(color);
+  var o = Math.round((parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000);
+  return o < 100 ? 'dark' : o > 230 ? 'light' : 'medium';
+}
+
+module.exports = {
+  hexToRgb: hexToRgb,
+  brightness: brightness
+};
+
+},{}],7:[function(require,module,exports){
 // factory http
 
-var $q = require('promise-q');
+var $q = require('q-promise');
 
 function headerToTitleSlug(text) {
   var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
@@ -693,7 +751,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: (function () {
+          headers: function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -701,7 +759,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          })(),
+          }(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {
@@ -749,7 +807,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"promise-q":2}],7:[function(require,module,exports){
+},{"q-promise":2}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -781,7 +839,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -804,7 +862,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -824,11 +882,11 @@ _.extend(_, {
     return el.getAttribute('data-' + key);
   },
   onMessage: require('./message-listener')(_)
-});
+}, require('./colors'));
 
 module.exports = _;
 
-},{"./basic-tools":4,"./http":6,"./live-dom":7,"./message-listener":8}],10:[function(require,module,exports){
+},{"./basic-tools":4,"./colors":6,"./http":7,"./live-dom":8,"./message-listener":9}],11:[function(require,module,exports){
 var _ = require('../../src/tools/tools');
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
@@ -906,17 +964,23 @@ function initListeners() {
 
 _.onMessage('modal', function (e, message) {
   if (message.event === 'content') {
-    document.body.innerHTML = message.content.card;
+    var container = document.querySelector('.modals-container');
+    _.tmpClass(container, 'opening-wrapper', isMobile.matches ? 0 : 600);
+    container.innerHTML = message.content.card;
+
+    parent.window.postMessage({ aplazame: 'modal', event: 'opening' }, '*');
+
     modal = document.querySelector('.modal');
     card = document.querySelector('.card');
-    modal.className += ' is-opening';
-    // if( message.modalClass ) {
-    //   modal.className = modal.className + ' ' + message.modalClass;
-    // }
+
+    _.addClass(modal, 'is-opening');
+
     initListeners();
   }
 });
 
-parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
+_.ready(function () {
+  parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
+});
 
-},{"../../src/tools/tools":9}]},{},[10]);
+},{"../../src/tools/tools":10}]},{},[11]);

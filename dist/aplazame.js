@@ -1,7 +1,187 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.194';
+module.exports = '0.0.195';
 
 },{}],2:[function(require,module,exports){
+module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num">12</em>    <span>&nbsp;cuotas</span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
+
+},{}],3:[function(require,module,exports){
+/*
+ * events.js - Single library to handle generic events
+
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Jesús Manuel Germade Castiñeiras <jesus@germade.es>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+(function (root, factory) {
+
+  if ( typeof module !== 'undefined' ) {
+    module.exports = factory();
+  } else if( root ) {
+    if( root.define ) {
+      root.define('Events', function () { return factory(); } );
+    } else if( root.angular ) {
+      root.angular.module('eventsWrapper', []).factory('Events', function () { return factory(true); });
+    } else if( !root.Events ) {
+      root.Events = factory();
+    }
+  }
+
+})(this, function (ng) {
+	'use strict';
+
+  var methods = {
+    std: { on: 'on', once: 'once', off: 'off', trigger: 'trigger' },
+    safe: { on: '$$on', once: '$$once', off: '$$off', trigger: '$$trigger' }
+  };
+
+  function Event (name, args, caller) {
+    this.name = name;
+    this.args = args;
+    this.$$args = [this].concat(args);
+    this.caller = caller;
+  }
+
+  Event.prototype.preventDefault = function () {
+    this.defaultPrevented = true;
+  };
+
+  function getMethods (ngSafe) {
+    return ngSafe ? methods.safe : methods.std;
+  }
+
+	function _addListener (handlers, handler, context) {
+    if( ! handler instanceof Function ) {
+        return false;
+    }
+    handlers.push({ handler: handler, context: context });
+  }
+
+  function _triggerEvent (e, handlers) {
+    if( handlers ) {
+      for( var i = 0, len = handlers.length; i < len; i++ ) {
+        handlers[i].handler.apply(e.caller, e.$$args);
+        if( e.defaultPrevented ) {
+          return i + 1;
+        }
+      }
+      return len;
+    }
+  }
+
+  function _emptyListener (handlers) {
+    if( handlers ) {
+      handlers.splice(0, handlers.length);
+    }
+  }
+
+  function _removeListener (handlers, handler) {
+    if( handlers ) {
+      for( var i = 0, len = handlers.length; i < len; ) {
+        if( handlers[i].handler === handler ) {
+          handlers.splice(i, 1);
+          len--;
+        } else {
+          i++;
+        }
+      }
+    }
+  }
+
+  function Events (target, ngSafe) {
+    target = target || this;
+
+    var listeners = {},
+        listenersOnce = {},
+        method = getMethods(ngSafe);
+
+    function checkEach (_method, eventName, arg1, arg2, arg3) {
+      if( eventName instanceof Array ) {
+        eventName.forEach(function (_eventName) { target[_method](_eventName, arg1, arg2, arg3); });
+        return true;
+      }
+      if( typeof eventName !== 'string' ) {
+        throw new Error('event name should be a string');
+      }
+      if( / /.test(eventName) ) {
+        target[_method](eventName.split(/ +/), arg1, arg2, arg3);
+        return true;
+      }
+    }
+
+    target[method.on] = function (eventName, handler, context) {
+      if( checkEach(method.on, eventName, handler, context) ) {
+        return target;
+      }
+      listeners[eventName] = listeners[eventName] || [];
+      _addListener(listeners[eventName], handler, context);
+      return target;
+    };
+
+    target[method.once] = function (eventName, handler, context) {
+      if( checkEach(method.once, eventName, handler, context) ) {
+        return target;
+      }
+      listenersOnce[eventName] = listenersOnce[eventName] || [];
+      _addListener(listenersOnce[eventName], handler, context);
+      return target;
+    };
+
+    target[method.trigger] = function (eventName, attrs, caller) {
+      if( checkEach(method.trigger, eventName, attrs, caller) ) {
+        return target;
+      }
+      var e = new Event(eventName, attrs, caller);
+
+      _triggerEvent(e, listeners[eventName]);
+
+      if( !e.defaultPrevented ) {
+        var len = _triggerEvent(e, listenersOnce[eventName]);
+        if( len ) {
+          listenersOnce[eventName].splice(0, len);
+        }
+      }
+      return target;
+    };
+
+    target[method.off] = function (eventName, handler) {
+      if( checkEach(method.off, eventName, handler) ) {
+        return target;
+      }
+      if( handler === undefined ) {
+        _emptyListener(listeners[eventName]);
+        _emptyListener(listenersOnce[eventName]);
+      } else {
+        _removeListener(listeners[eventName], handler);
+        _removeListener(listenersOnce[eventName], handler);
+      }
+      return target;
+    };
+  }
+
+  return Events;
+});
+
+},{}],4:[function(require,module,exports){
 
 function stepResult (step, value, type) {
   if( value && value.then ) {
@@ -141,13 +321,13 @@ Promise.reject = function (reason) {
 
 module.exports = Promise;
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){
 
-module.exports = require('./promise-qizer')( global.Promise || require('./promise-polyfill') );
+module.exports = require('./qizer')( global.Promise || require('./promise-polyfill') );
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-polyfill":2,"./promise-qizer":4}],4:[function(require,module,exports){
+},{"./promise-polyfill":4,"./qizer":6}],6:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
@@ -165,7 +345,7 @@ module.exports = function (Promise) {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (global){
 
 global.aplazame = require('./core/core');
@@ -182,7 +362,7 @@ require('./loaders/data-button')(global.aplazame);
 require('./loaders/data-simulator')(global.aplazame);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./apps/button":6,"./apps/checkout":7,"./apps/http-service":8,"./apps/modal":9,"./apps/simulator":10,"./core/core":13,"./loaders/data-aplazame":15,"./loaders/data-button":16,"./loaders/data-simulator":17}],6:[function(require,module,exports){
+},{"./apps/button":8,"./apps/checkout":9,"./apps/http-service":10,"./apps/modal":12,"./apps/simulator":13,"./core/core":16,"./loaders/data-aplazame":18,"./loaders/data-button":19,"./loaders/data-simulator":20}],8:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -325,7 +505,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":11,"../tools/tools":23}],7:[function(require,module,exports){
+},{"../core/api-http":14,"../tools/tools":27}],9:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -346,7 +526,7 @@ function checkout(options) {
       cssBlur = _.cssHack('blur'),
       cssModal = _.cssHack('modal');
 
-  tmpOverlay.className = 'aplazame-overlay';
+  tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
   cssOverlay.hack(true);
 
@@ -356,7 +536,7 @@ function checkout(options) {
     _.addClass(document.body, 'aplazame-blur');
   }, 0);
 
-  tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' + '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' + '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' + '</svg>' + '<svg class="smile" version="1.1" viewBox="0 0 100 100">' + '<g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)">' + '<path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '<path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '</g>' + '</svg>' + '<svg class="line-large" version="1.1" viewBox="0 0 100 100">' + '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' + '</svg>' + '</div>' + '<div class="aplazame-checkout-loading-text">cargando pasarela de pago...</div></div>';
+  tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' + require('./loading-svg') + '</div><div class="aplazame-checkout-loading-text">cargando pasarela de pago...</div></div>';
 
   document.body.appendChild(tmpOverlay);
 
@@ -383,6 +563,7 @@ function checkout(options) {
     });
 
     iframe.className = 'aplazame-modal hide';
+    iframe.style.display = 'none';
 
     // cssBlur.hack(true);
 
@@ -421,6 +602,7 @@ function checkout(options) {
 
       switch (message.event) {
         case 'merchant':
+          iframe.style.display = null;
           e.source.postMessage({
             checkout: options
           }, '*');
@@ -520,7 +702,7 @@ function checkout(options) {
 
 module.exports = checkout;
 
-},{"../core/api":12,"../tools/tools":23}],8:[function(require,module,exports){
+},{"../core/api":15,"../tools/tools":27,"./loading-svg":11}],10:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools');
@@ -548,28 +730,46 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":23}],9:[function(require,module,exports){
+},{"../tools/tools":27}],11:[function(require,module,exports){
+
+module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' + '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' + '</svg>' + '<svg class="smile" version="1.1" viewBox="0 0 100 100">' + '<g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)">' + '<path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '<path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '</g>' + '</svg>' + '<svg class="line-large" version="1.1" viewBox="0 0 100 100">' + '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' + '</svg>';
+
+},{}],12:[function(require,module,exports){
 'use strict';
+
+window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
+    isMobile = window.matchMedia('( max-width: 767px )'),
     lastScrollTop;
 
-function modal(content, options) {
+var tmpOverlay = document.createElement('div'),
+    cssOverlay = _.cssHack('overlay'),
+    cssBlur = _.cssHack('blur'),
+    cssModal = _.cssHack('modal');
 
-  // if( !modal.cached ) {
-  //   return _.http.noCache( api.baseUrl + 'widgets/modal/modal.html' ).then(function (response) {
-  //     modal.cached = _.template.compile( response.data.replace(/\n/g, '').replace(/<head\>/, '<head><base href="' + api.baseUrl + '" />') );
-  //     modal(data, options);
-  //   });
-  // }
+function modal(content, options) {
 
   if (modal.iframe) {
     document.body.removeChild(modal.iframe);
   }
 
   options = options || {};
+
+  cssOverlay.hack(true);
+  cssBlur.hack(true);
+
+  tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
+  document.body.appendChild(tmpOverlay);
+
+  setTimeout(function () {
+    _.addClass(document.body, 'aplazame-blur');
+  }, 0);
+  setTimeout(function () {
+    _.removeClass(tmpOverlay, 'aplazame-overlay-show');
+  }, isMobile.matches ? 0 : 400);
 
   modal.iframe = _.getIFrame({
     top: 0,
@@ -581,34 +781,23 @@ function modal(content, options) {
   });
 
   modal.iframe.className = 'aplazame-modal';
-
+  modal.iframe.style.display = 'none';
   modal.iframe.content = content;
-
-  // lastScrollTop = _.scrollTop();
-  // console.log('scrollTop', lastScrollTop );
-  // _.cssHack('modal').hack(true);
-
-  // var cssBlur = _.cssHack('blur'),
-  //     cssModal = _.cssHack('modal');
-
-  // modal.iframe.overflow = document.body.style.overflow;
 
   document.body.appendChild(modal.iframe);
   modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
-  // _.writeIframe(modal.iframe, modal.cached(content || {}) );
-
-  // document.body.style.overflow = 'hidden';
 }
 
 _.onMessage('modal', function (e, message) {
-
-  // console.log('message', 'modal', message);
 
   switch (message.event) {
     case 'open':
       modal.referrer = e.source;
       modal.message = message;
       modal(message.data);
+      break;
+    case 'opening':
+      modal.iframe.style.display = null;
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();
@@ -630,9 +819,18 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'closing':
       document.body.style.overflow = modal.iframe.overflow;
+      _.removeClass(document.body, 'aplazame-blur');
+      _.addClass(document.body, 'aplazame-unblur');
+      _.addClass(tmpOverlay, 'aplazame-overlay-hide');
+      setTimeout(function () {
+        cssBlur.hack(false);
+        _.removeClass(document.body, 'aplazame-unblur');
+      }, isMobile.matches ? 0 : 400);
       break;
     case 'close':
       _.cssHack('modal').hack(false);
+      document.body.removeChild(tmpOverlay);
+      _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
       setTimeout(function () {
         _.scrollTop(lastScrollTop);
       }, 0);
@@ -659,11 +857,13 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":12,"../tools/tools":23}],10:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":15,"../tools/tools":27}],13:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    $q = require('q-promise'),
+    cache = [];
 
 function simulator(amount, _options, callback, onError) {
   if (_.isFunction(_options)) {
@@ -684,16 +884,34 @@ function simulator(amount, _options, callback, onError) {
   if (_options.publicKey) {
     options.publicKey = _options.publicKey;
   }
-  return apiHttp.get('instalment-plan-simulator', options).then(function (response) {
-    if (_.isFunction(callback)) {
-      callback(response.data.choices[0].instalments, response.data.options, response.data);
-    }
+
+  var foundCached = _.find(cache, function (item) {
+    return item.amount === amount;
+  });
+
+  var promise = foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options).then(function (response) {
+    var result = {
+      amount: amount,
+      choices: response.data.choices[0].instalments,
+      options: response.data.options,
+      response: response
+    };
+    cache.push(result);
+    return result;
   }, onError);
+
+  if (_.isFunction(callback)) {
+    promise.then(function (result) {
+      callback(result.choices, result.options);
+    });
+  }
+
+  return promise;
 }
 
 module.exports = simulator;
 
-},{"../core/api-http":11,"../tools/tools":23}],11:[function(require,module,exports){
+},{"../core/api-http":14,"../tools/tools":27,"q-promise":5}],14:[function(require,module,exports){
 'use strict';
 
 var acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
@@ -749,18 +967,18 @@ module.exports = {
   }
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":23,"./api":12}],12:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":27,"./api":15}],15:[function(require,module,exports){
 'use strict';
 
 module.exports = {
-  host: 'https://api.aplazame.com/',
+  host: /^js\.aplazame\.[a-z]+$/.test(location.host) || location.host === 'demo.debug.aplazame.com' ? 'https://api.dev.aplazame.com/' : 'https://api.aplazame.com/',
   baseUrl: 'https://aplazame.com/static/',
   version: 1,
   checkoutVersion: 1,
   sandbox: false
 };
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -771,7 +989,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":23,"./api-http":11,"./init":14}],14:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":27,"./api-http":14,"./init":17}],17:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -809,7 +1027,7 @@ function init(options) {
 
 module.exports = init;
 
-},{"../tools/tools":23,"./api":12}],15:[function(require,module,exports){
+},{"../tools/tools":27,"./api":15}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -867,7 +1085,7 @@ module.exports = function (aplazame) {
   aplazame.init(options);
 };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -905,22 +1123,17 @@ module.exports = function (aplazame) {
   });
 };
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
+      $q = require('q-promise'),
+      Events = require('events-wrapper'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
-      widgetForbidden = false,
-      watchInterval;
-
-  // function parsePrice (price) {
-  //    var priceParts = ( '' + price ).match(/(\d+)([,.](\d+))?/);
-  //    var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
-  //    return amount;
-  // }
+      each = Array.prototype.forEach;
 
   function parsePrice(price) {
     price = price.match(/[\d,.]+/);
@@ -986,23 +1199,6 @@ module.exports = function (aplazame) {
     return document.querySelector(selector);
   }
 
-  function readPrice(element) {
-    var price = element.textContent.replace(/[^0-9,.]/g, ''),
-        addDot;
-
-    if (/[.,]/.test(price)) {
-      return price;
-    }
-
-    return element.firstElementChild ? [].reduce.call(element.querySelectorAll('*'), function (prev, elem) {
-      var value = elem.textContent.replace(/[^0-9,.]/g, '');
-      if (addDot === undefined && prev && !/\./.test(prev)) {
-        addDot = true;
-      }
-      return prev + (addDot ? '.' : '') + value;
-    }, '') : element.textContent.replace(/[^0-9,.]/g, '');
-  }
-
   function amountGetter(widgetElement) {
     var priceSelector = widgetElement.getAttribute('data-price'),
         qtySelector = widgetElement.getAttribute('data-qty');
@@ -1049,9 +1245,47 @@ module.exports = function (aplazame) {
     return getter;
   }
 
-  var choices = [],
-      options = {},
-      currentAmount;
+  function Iframe(url) {
+    var el = _.getIFrame({ width: '100%' }),
+        iframe = this;
+    this.el = el;
+    this.el.src = url;
+
+    new Events(this);
+
+    this.onload = function () {
+      this.trigger('load', null, this);
+    };
+
+    _.onMessage('simulator', function (e, message) {
+      // console.log('message', e, message);
+      if (e.source === el.contentWindow) {
+        iframe.trigger('message:' + message.event, [message], this);
+      }
+    });
+
+    this.on('message:resize', function (e, message) {
+      el.style.height = message.height + 'px';
+    });
+  }
+
+  Iframe.prototype.message = function (eventName, data) {
+    var _data = _.extend({
+      aplazame: 'simulator',
+      event: eventName,
+      mobile: isMobile.matches
+    }, data || {});
+    // console.log('message to iframe', _data );
+    this.el.contentWindow.postMessage(_data, '*');
+  };
+
+  function maxInstalments(prev, choice) {
+    if (prev === null) {
+      return choice;
+    } else {
+      return choice.num_instalments > prev.num_instalments ? choice : prev;
+    }
+  }
 
   function widgetsLookup(element) {
     if (!element.querySelectorAll) {
@@ -1059,179 +1293,96 @@ module.exports = function (aplazame) {
     }
 
     var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+    // console.log('simulators', simulators);
 
-    if (simulators.length) {
+    each.call(simulators, function (simulator) {
 
-      var iframes = [];
+      if (simulator.$$aplazame) {
+        return;
+      }
 
-      _.listen(window, 'message', function (e) {
-        var message = e.data;
+      simulator.$$aplazame = true;
 
-        if (!e.used && message.aplazame === 'simulator') {
-          e.used = true;
+      var choice,
+          choices,
+          options,
+          iframe,
+          getAmount = amountGetter(simulator),
+          dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
+          currentAmount = simulator.getAttribute('data-price') ? getAmount() : Number(simulator.getAttribute('data-amount')) || getAmount();
 
-          switch (message.event) {
-            case 'resize':
-              iframes.forEach(function (iframe) {
-                if (iframe.contentWindow === e.source) {
-                  iframe.style.height = message.data.height + 'px';
-                }
-              });
-              break;
-            case 'require:choices':
-              e.source.postMessage({
-                aplazame: 'simulator',
-                event: 'choices',
-                choices: choices,
-                options: options,
-                amount: currentAmount,
-                mobile: isMobile.matches
-              }, '*');
-              break;
-          }
-        }
-      });
+      aplazame.simulator(currentAmount, function (_choices, _options) {
 
-      _.listen(window, 'resize', function (e) {
+        choices = _choices;
+        options = _options;
 
-        iframes.forEach(function (iframe) {
+        choice = choices.reduce(maxInstalments, null);
 
-          iframe.contentWindow.postMessage({
-            aplazame: 'simulator',
-            event: 'mobile',
-            mobile: isMobile.matches
-          }, '*');
-        });
-      });
+        var widgetOptions = options.widget,
+            widget;
 
-      [].forEach.call(simulators, function (simulator) {
+        _.clearElement(simulator);
 
-        if (_.elementData(simulator, 'checked')) {
-          return;
-        }
+        if (widgetOptions.type === 'button') {
+          widget = new Iframe(api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now());
 
-        _.elementData(simulator, 'checked', true);
-
-        var getAmount = amountGetter(simulator);
-        currentAmount = simulator.getAttribute('data-price') ? getAmount() : Number(simulator.getAttribute('data-amount')) || getAmount();
-
-        var simulatorParams = {
-          simulator: '[data-aplazame-simulator]',
-          amount: currentAmount,
-          publicKey: simulator.getAttribute('data-public-key')
-        },
-            iframe,
-            choicesCache = {};
-
-        // simulator.innerHTML = '<div style="padding: 10px; text-align: center;">comprobando financiación...</div>';
-        simulator.innerHTML = '';
-
-        aplazame.simulator(simulatorParams.amount, function (_choices, _options) {
-          var child = simulator.firstChild,
-              now = Date.now();
-
-          choices = _choices;
-          options = _options;
-
-          _choices.$amount = simulatorParams.amount;
-          choicesCache[simulatorParams.amount] = { choices: _choices, options: _options };
-
-          while (child) {
-            simulator.removeChild(child);
-            child = simulator.firstChild;
-          }
-
-          // _.http( api.baseUrl + 'widgets/simulator/simulator.html?' + now ).then(function (response) {
-          iframe = _.getIFrame({
-            width: '100%'
+          widget.on('message:require.choices choices.update', function () {
+            widget.message('choices', {
+              amount: currentAmount,
+              choice: choice,
+              choices: choices,
+              options: options
+            });
           });
 
-          iframes.push(iframe);
-          iframe.src = api.baseUrl + 'widgets/simulator/simulator.html?' + now;
-          simulator.appendChild(iframe);
-          iframe.onerror = function () {
-            simulator.innerHTML = '';
-          };
+          widget.on('choices.updating', function (e) {
+            widget.message('loading');
+          });
+        } else {
+          _.template.put('widget-raw', require('../../.tmp/simulator/templates/widget-raw'));
+          widget = { el: document.createElement('div') };
+          new Events(widget);
 
-          iframe.$$listeners = [];
-          iframe.onload = function () {
-            iframe.$$loaded = true;
-            iframe.$$listeners.forEach(function (listener) {
-              listener();
-            });
-          };
-        }, function () {
-          simulator.innerHTML = '';
-          widgetForbidden = true;
-          if (watchInterval) {
-            clearInterval(watchInterval);
-          }
-        });
-
-        if (getAmount.priceSelector) {
-          var _currentAmount = getAmount();
-
-          var updateWidgetChoices = function () {
-            if (iframe.contentWindow) {
-              iframe.contentWindow.postMessage({
-                aplazame: 'simulator',
-                event: 'choices',
-                choices: choices,
-                options: options,
-                amount: _currentAmount,
-                mobile: isMobile.matches
-              }, '*');
-            } else if (!iframe.$$loaded) {
-              iframe.$$listeners.push(updateWidgetChoices);
-            }
-          },
-              onPriceChange = function (amount, previousAmount) {
-            currentAmount = amount;
-            _currentAmount = amount;
-
-            console.log('priceChanged', amount, previousAmount);
-
-            if (choicesCache[amount]) {
-              choices = choicesCache[amount].choices;
-              options = choicesCache[amount].options;
-              updateWidgetChoices();
-            } else {
-              if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage({
-                  aplazame: 'simulator',
-                  event: 'loading'
-                }, '*');
-              }
-              aplazame.simulator(amount, function (_choices, _options) {
-                choicesCache[amount] = { choices: _choices, options: _options };
-                if (amount === _currentAmount) {
-                  choices = _choices;
-                  options = _options;
-                  updateWidgetChoices(_choices);
-                }
-              }, function (reason) {
-                console.log('error retrieving simulator choices', reason);
-              });
-            }
-          };
-
-          var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
-
-          watchInterval = setInterval(function () {
-            if (widgetForbidden) {
-              return;
-            }
-            var amount = getAmount(),
-                qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
-
-            if (amount && _.isNumber(amount) && amount !== _currentAmount || qty !== previousQty) {
-              previousQty = qty;
-              onPriceChange(amount, _currentAmount);
-            }
-          }, 200);
+          widget.el.innerHTML = _.template('widget-raw', {
+            getAmount: _.getAmount,
+            amount: currentAmount,
+            choice: choice,
+            choices: choices,
+            options: options
+          });
         }
+
+        simulator.appendChild(widget.el);
+
+        var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1,
+            updating = false,
+            amountInterval = setInterval(function () {
+          if (updating) {
+            return;
+          }
+          var amount = getAmount(),
+              qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
+
+          if (amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty) {
+            previousQty = qty;
+
+            updating = true;
+            widget.trigger('choices.updating', [amount, _choices, _options]);
+            aplazame.simulator(amount, function (_choices, _options) {
+              currentAmount = amount;
+              choices = _choices;
+              options = _options;
+              choice = choices.reduce(maxInstalments, null);
+              widget.trigger('choices.update', [amount, _choices, _options]);
+              updating = false;
+            }, function () {
+              updating = false;
+            });
+            // onPriceChange(amount, currentAmount);
+          }
+        }, 200);
       });
-    }
+    });
   }
 
   _.liveDOM.subscribe(widgetsLookup);
@@ -1239,9 +1390,14 @@ module.exports = function (aplazame) {
   _.ready(function () {
     widgetsLookup(document);
   });
+
+  // *****************************************************************************
+  // *****************************************************************************
+  // *****************************************************************************
+  // *****************************************************************************
 };
 
-},{"../core/api":12}],18:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/widget-raw":2,"../core/api":15,"events-wrapper":3,"q-promise":5}],21:[function(require,module,exports){
 
 require('./browser-polyfills');
 
@@ -1267,6 +1423,28 @@ var _isObject = _isType('object'),
     _isElement = function (o) {
   return o && o.nodeType === 1;
 };
+
+function iterateeFn(iteratee) {
+  if (_isFunction(iteratee)) {
+    return iteratee;
+  }
+
+  return function (item) {
+    return item === iteratee;
+  };
+}
+
+function find(list, iteratee, thisArg, fallback) {
+  thisArg = thisArg === undefined ? this : thisArg;
+  iteratee = iterateeFn(iteratee);
+
+  for (var i = 0, len = list.length; i < len; i++) {
+    if (iteratee.call(thisArg, list[i])) {
+      return list[i];
+    }
+  }
+  return fallback || null;
+}
 
 function listen(element, eventName, listener) {
   if (element instanceof Array) {
@@ -1509,10 +1687,10 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = (function () {
+var cssHack = function () {
   var cache = {},
       hacks = {
-    overlay: '.aplazame-overlay { font-family: \'Montserrat\', sans-serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1;margin-top:14px;font-size:14px;}' + '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}' + '@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%,90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{transform:rotate(0deg)}90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-smile{0%{transform:rotate(0deg)}90%,to{transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}',
+    overlay: '.aplazame-overlay { font-family: \'Montserrat\', sans-serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1;margin-top:14px;font-size:14px;}' + '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-show{opacity:1}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse;opacity:0}' + '@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%,90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{transform:rotate(0deg)}90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-smile{0%{transform:rotate(0deg)}90%,to{transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}',
     // blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.4s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
     blur: '@-webkit-keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@media (max-width:600px){body{-webkit-transition:all .4s linear;transition:all .4s linear}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}',
     // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
@@ -1552,7 +1730,7 @@ var cssHack = (function () {
     }
     return cache[hackName];
   };
-})();
+}();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -1560,6 +1738,15 @@ function scrollTop(value) {
     document.body.scrollTop = value;
   }
   return document.documentElement.scrollTop || document.body.scrollTop;
+}
+
+function clearElement(el) {
+  var child = el.firstChild;
+
+  while (child) {
+    el.removeChild(child);
+    child = el.firstChild;
+  }
 }
 
 var _classActions = {
@@ -1599,6 +1786,7 @@ var tools = {
   isDate: _isDate,
   isRegExp: _isRegExp,
   isElement: _isElement,
+  find: find,
   listen: listen,
   once: once,
   ready: docReady,
@@ -1613,13 +1801,20 @@ var tools = {
   getAmount: getAmount,
   cssHack: cssHack,
   scrollTop: scrollTop,
+  clearElement: clearElement,
   addClass: _classActions.action('add', tools),
-  removeClass: _classActions.action('remove', tools)
+  removeClass: _classActions.action('remove', tools),
+  tmpClass: function (element, className, delay) {
+    tools.addClass(element, className);
+    setTimeout(function () {
+      tools.removeClass(element, className);
+    }, delay);
+  }
 };
 
 module.exports = tools;
 
-},{"./browser-polyfills":19}],19:[function(require,module,exports){
+},{"./browser-polyfills":22}],22:[function(require,module,exports){
 
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
@@ -1687,10 +1882,29 @@ if (!Array.prototype.find) {
   };
 }
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
+
+
+function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
+}
+
+function brightness(color) {
+  var rgb = hexToRgb(color);
+  var o = Math.round((parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000);
+  return o < 100 ? 'dark' : o > 230 ? 'light' : 'medium';
+}
+
+module.exports = {
+  hexToRgb: hexToRgb,
+  brightness: brightness
+};
+
+},{}],24:[function(require,module,exports){
 // factory http
 
-var $q = require('promise-q');
+var $q = require('q-promise');
 
 function headerToTitleSlug(text) {
   var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
@@ -1772,7 +1986,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: (function () {
+          headers: function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -1780,7 +1994,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          })(),
+          }(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {
@@ -1828,7 +2042,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"promise-q":3}],21:[function(require,module,exports){
+},{"q-promise":5}],25:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -1860,7 +2074,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],22:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -1883,7 +2097,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],23:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -1903,8 +2117,8 @@ _.extend(_, {
     return el.getAttribute('data-' + key);
   },
   onMessage: require('./message-listener')(_)
-});
+}, require('./colors'));
 
 module.exports = _;
 
-},{"./basic-tools":18,"./http":20,"./live-dom":21,"./message-listener":22}]},{},[5]);
+},{"./basic-tools":21,"./colors":23,"./http":24,"./live-dom":25,"./message-listener":26}]},{},[7]);

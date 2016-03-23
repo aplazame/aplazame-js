@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">  <div class="card-wrapper">    <div class="card">      <div class="card-content">        <header class="aplazame"></header>        <section class="info">          <h1>Elige el número de meses y la cuota que más te convengan</h1>          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/how/" target="_blank">Más información</a></p>        </section>        <div data-widget="active-group" class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {        %><div class="choice">            <button type="button" class="button" data-widget="active-toggle">              <div class="wrapper">                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>              </div>            </button>          </div><%        } %>        </div>        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>      </div>      <div class="cta">        <section class="invite">          <div class="text-up">Si te interesa,</div>          <div class="text-down">selecciona Aplazame al pagar</div>        </section>        <div class="button-wrapper">          <button class="button" type="submit" modal-resolve="return">            <span class="cta-title">Volver a la tienda</span>          </button>        </div>      </div>    </div>  </div></div>';
+module.exports = '<div class="modal"><div class="card size-lg has-cta modal-instalments-info">  <div class="card-content">    <header class="aplazame"></header>    <section class="info">      Elige el número de meses y la cuota que más te convengan    </section>    <div class="choices-wrapper">      <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>      <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">        <div class="wrapper">          <div class="num-instalments">            <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>          </div>          <div class="amount">            <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--            --><span class="amount-currency">€</span><!--            --><span class="amount-per-month">/mes</span></div>        </div>      </button>      <% } %>    </div>    <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>    <section class="how-it-works">      <header>¿Cómo funciona?</header>      <div class="info-wrapper">        <div class="info">          <h3>Elige Aplazame</h3>          <p>en la tienda, cuando vayas a pagar el pedido.<br/>Puedes financiar compras de 99€ hasta 1.000€.</p>        </div>        <div class="info">          <h3>Decide cómo quieres pagar</h3>          <p>Hasta en 12 cuotas, con tarjeta de crédito o domiciliación bancaria.</p>        </div>        <div class="info">          <h3>Disfruta de tu compra</h3>          <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>        </div>      </div>    </section>  </div>  <div class="cta btn-double size-xs">    <div class="button-wrapper">      <button class="button btn-white" type="submit" modal-reject="back">        <span class="cta-title">Volver a Tienda</span>      </button>    </div>    <div class="button-wrapper">      <a class="button" href="http://aplazame.com/how/" target="_blank">        <span class="cta-title">¿Quieres saber más?</span>      </a>    </div>  </div></div></div>';
 
 },{}],2:[function(require,module,exports){
-module.exports = '<div class="widget-item-instalments <%= isMobile ? \'mobile \' : \'\' %>light align-<%= options.styles.align %>">  <div class="wrapper">    <button class="button" data-action="showInfo" title="Cantidad a financiar: <%= getAmount(currentAmount) %>€\nPago inicial: <%= getAmount(choice.downpayment_amount) %>€">      <div class="logo"></div>      <div class="text-wrapper">        <div class="text-get">Consíguelo desde</div>        <div class="text-amount">          <span class="amount"><%= getAmount(choice.amount) %></span><!--          --><span class="currency">&nbsp;€</span><!--          --><span class="per-month">/mes</div>        <div class="text-instalments">en 12 mensualidades</div>      </div>    </button>    <div class="signature">      <a data-action="showInfo">Más información</a><!--      --><span>&nbsp;sobre Aplazame.</span>    </div>  </div></div>';
+module.exports = '<div class="aplazame-widget-button align-<%= preferences.align %>">  <button type="button" data-action="showInfo"          class="<%= brightness(preferences.bg_color) %>"          style=" background: <%= preferences.bg_color %>; color: <%= preferences.text_color %>; fill: <%= preferences.text_color %>">    <% if( preferences.branding ) { %>      <div class="logo">        <svg><use xlink:href="../assets/symbols.svg#svg-aplazame"></use><svg>      </div>    <% } %>    <div class="text-wrapper">      <span class="from">Desde&nbsp;</span><!--      --><strong class="amount"><!--        --><span class="price"><%= getAmount(choice.amount) %></span><!--        --><span class="currency">€</span><!--      --></strong><!--      --><sub class="per-month">/mes</sub>    </div>  </button></div>';
 
 },{}],3:[function(require,module,exports){
 
@@ -147,10 +147,10 @@ module.exports = Promise;
 },{}],4:[function(require,module,exports){
 (function (global){
 
-module.exports = require('./promise-qizer')( global.Promise || require('./promise-polyfill') );
+module.exports = require('./qizer')( global.Promise || require('./promise-polyfill') );
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-polyfill":3,"./promise-qizer":5}],5:[function(require,module,exports){
+},{"./promise-polyfill":3,"./qizer":5}],5:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
@@ -194,6 +194,28 @@ var _isObject = _isType('object'),
     _isElement = function (o) {
   return o && o.nodeType === 1;
 };
+
+function iterateeFn(iteratee) {
+  if (_isFunction(iteratee)) {
+    return iteratee;
+  }
+
+  return function (item) {
+    return item === iteratee;
+  };
+}
+
+function find(list, iteratee, thisArg, fallback) {
+  thisArg = thisArg === undefined ? this : thisArg;
+  iteratee = iterateeFn(iteratee);
+
+  for (var i = 0, len = list.length; i < len; i++) {
+    if (iteratee.call(thisArg, list[i])) {
+      return list[i];
+    }
+  }
+  return fallback || null;
+}
 
 function listen(element, eventName, listener) {
   if (element instanceof Array) {
@@ -436,10 +458,10 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
-var cssHack = (function () {
+var cssHack = function () {
   var cache = {},
       hacks = {
-    overlay: '.aplazame-overlay { font-family: \'Montserrat\', sans-serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1;margin-top:14px;font-size:14px;}' + '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}' + '@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%,90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{transform:rotate(0deg)}90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-smile{0%{transform:rotate(0deg)}90%,to{transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}',
+    overlay: '.aplazame-overlay { font-family: \'Montserrat\', sans-serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1;margin-top:14px;font-size:14px;}' + '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-show{opacity:1}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse;opacity:0}' + '@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%,90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{transform:rotate(0deg)}90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-smile{0%{transform:rotate(0deg)}90%,to{transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}',
     // blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.4s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
     blur: '@-webkit-keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@media (max-width:600px){body{-webkit-transition:all .4s linear;transition:all .4s linear}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}',
     // modal: '.aplazame-modal { height: 100%; } html, body { margin: 0; padding: 0; } @media (max-width: 767px) { body > *:not(.aplazame-modal) { display: none; } }'
@@ -479,7 +501,7 @@ var cssHack = (function () {
     }
     return cache[hackName];
   };
-})();
+}();
 
 function scrollTop(value) {
   if (value !== undefined) {
@@ -487,6 +509,15 @@ function scrollTop(value) {
     document.body.scrollTop = value;
   }
   return document.documentElement.scrollTop || document.body.scrollTop;
+}
+
+function clearElement(el) {
+  var child = el.firstChild;
+
+  while (child) {
+    el.removeChild(child);
+    child = el.firstChild;
+  }
 }
 
 var _classActions = {
@@ -526,6 +557,7 @@ var tools = {
   isDate: _isDate,
   isRegExp: _isRegExp,
   isElement: _isElement,
+  find: find,
   listen: listen,
   once: once,
   ready: docReady,
@@ -540,8 +572,15 @@ var tools = {
   getAmount: getAmount,
   cssHack: cssHack,
   scrollTop: scrollTop,
+  clearElement: clearElement,
   addClass: _classActions.action('add', tools),
-  removeClass: _classActions.action('remove', tools)
+  removeClass: _classActions.action('remove', tools),
+  tmpClass: function (element, className, delay) {
+    tools.addClass(element, className);
+    setTimeout(function () {
+      tools.removeClass(element, className);
+    }, delay);
+  }
 };
 
 module.exports = tools;
@@ -615,9 +654,28 @@ if (!Array.prototype.find) {
 }
 
 },{}],8:[function(require,module,exports){
+
+
+function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
+}
+
+function brightness(color) {
+  var rgb = hexToRgb(color);
+  var o = Math.round((parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000);
+  return o < 100 ? 'dark' : o > 230 ? 'light' : 'medium';
+}
+
+module.exports = {
+  hexToRgb: hexToRgb,
+  brightness: brightness
+};
+
+},{}],9:[function(require,module,exports){
 // factory http
 
-var $q = require('promise-q');
+var $q = require('q-promise');
 
 function headerToTitleSlug(text) {
   var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
@@ -699,7 +757,7 @@ function http(url, config) {
           config: request.config,
           data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
           status: request.status,
-          headers: (function () {
+          headers: function () {
             var headersCache;
             return function () {
               if (!headersCache) {
@@ -707,7 +765,7 @@ function http(url, config) {
               }
               return headersCache;
             };
-          })(),
+          }(),
           xhr: request
         };
         if (request.status >= 200 && request.status < 300) {
@@ -755,7 +813,7 @@ http.plainResponse = function (response) {
 
 module.exports = http;
 
-},{"promise-q":4}],9:[function(require,module,exports){
+},{"q-promise":4}],10:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -787,7 +845,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -810,7 +868,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // 'use strict';
 
 var _ = require('./basic-tools');
@@ -830,81 +888,32 @@ _.extend(_, {
     return el.getAttribute('data-' + key);
   },
   onMessage: require('./message-listener')(_)
-});
+}, require('./colors'));
 
 module.exports = _;
 
-},{"./basic-tools":6,"./http":8,"./live-dom":9,"./message-listener":10}],12:[function(require,module,exports){
+},{"./basic-tools":6,"./colors":8,"./http":9,"./live-dom":10,"./message-listener":11}],13:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
-    choices = [],
-    options = {};
+    template = _.template,
+    each = Array.prototype.forEach;
 
-_.template.lookup();
-
-_.template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments'));
-_.template.put('widget', require('../../.tmp/simulator/templates/widget'));
-
-var main = document.getElementById('main'),
-    selectedChoice,
-    choices = window.choices,
-    currentAmount;
+template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments'));
+template.put('widget-button', require('../../.tmp/simulator/templates/widget-button'));
 
 function emitSize() {
   setTimeout(function () {
     parent.window.postMessage({
       aplazame: 'simulator',
       event: 'resize',
-      data: {
-        width: document.body.clientWidth,
-        height: document.body.clientHeight
-      }
+      width: document.body.clientWidth,
+      height: document.body.clientHeight
     }, '*');
   }, 1);
 }
 
 _.listen(window, 'load', emitSize);
 _.listen(window, 'resize', emitSize);
-
-function showChoices() {
-  main.innerHTML = _.template('choices', { selectedChoice: selectedChoice, choices: choices });
-  emitSize();
-}
-
-function setChoice(choice) {
-  selectedChoice = choice;
-  return choice;
-}
-
-function setAmount(amount) {
-  currentAmount = amount;
-  return currentAmount;
-}
-
-function runAction(action, data) {
-  switch (action) {
-    case 'showChoices':
-      showChoices();
-      break;
-    case 'showInfo':
-      parent.window.postMessage({
-        aplazame: 'modal',
-        event: 'open',
-        name: 'instalments',
-        data: {
-          card: _.template('modal-instalments', {
-            selectedChoice: selectedChoice,
-            choices: choices,
-            getAmount: _.getAmount,
-            months: function (m) {
-              return m > 1 ? 'meses' : 'mes';
-            }
-          })
-        }
-      }, '*');
-      break;
-  }
-}
 
 function maxInstalments(prev, choice) {
   if (prev === null) {
@@ -914,21 +923,41 @@ function maxInstalments(prev, choice) {
   }
 }
 
-var isMobile,
-    renderWidget = function (mobile) {
-  isMobile = mobile === undefined || mobile;
-
+var main = document.getElementById('main'),
+    currentMessage,
+    widgetActions = {
+  showInfo: function () {
+    parent.window.postMessage({
+      aplazame: 'modal',
+      event: 'open',
+      name: 'instalments',
+      data: {
+        card: _.template('modal-instalments', {
+          selectedChoice: currentMessage.$$choice,
+          choices: currentMessage.choices,
+          getAmount: _.getAmount,
+          months: function (m) {
+            return m > 1 ? 'meses' : 'mes';
+          }
+        })
+      }
+    }, '*');
+  }
+},
+    renderWidget = function () {
   _.removeClass(main, 'loading');
-  main.innerHTML = _.template('widget', {
+  main.innerHTML = _.template('widget-button', {
     getAmount: _.getAmount,
-    choice: selectedChoice,
-    options: options,
-    currentAmount: currentAmount,
-    isMobile: isMobile
+    brightness: _.brightness,
+    choice: currentMessage.$$choice,
+    options: currentMessage.options,
+    amount: currentMessage.amount,
+    preferences: currentMessage.options.widget.preferences,
+    isMobile: currentMessage.isMobile
   });
   emitSize();
 
-  [].forEach.call(main.querySelectorAll('[data-action]'), function (element) {
+  each.call(main.querySelectorAll('[data-action]'), function (element) {
 
     _.listen(element, 'click', function (e) {
       var action = element.getAttribute('data-action');
@@ -937,33 +966,17 @@ var isMobile,
         e.preventDefault();
       }
 
-      runAction(action);
+      if (widgetActions[action]) {
+        widgetActions[action]();
+      }
     });
   });
 },
-    setMobile = function (mobile) {
-  if (isMobile === undefined || isMobile !== mobile) {
-    isMobile = mobile;
-
-    if (isMobile) {
-      _.addClass(document.querySelector('.widget-item-instalments'), 'mobile');
-    } else {
-      _.removeClass(document.querySelector('.widget-item-instalments'), 'mobile');
-    }
-  }
-},
-    messageSimulator = {
+    onMessage = {
   choices: function (message) {
-    choices = message.choices;
-    options = message.options || {};
-    options.styles = options.styles || { align: 'center' };
-
-    setChoice(choices.reduce(maxInstalments, null));
-    setAmount(message.amount);
-    renderWidget(message.mobile);
-  },
-  mobile: function (message) {
-    setMobile(message.mobile);
+    currentMessage = message;
+    currentMessage.$$choice = currentMessage.choices.reduce(maxInstalments, null);
+    renderWidget();
   },
   loading: function (message) {
     _.addClass(main, 'loading');
@@ -971,14 +984,14 @@ var isMobile,
 };
 
 _.onMessage('simulator', function (e, message) {
-  if (messageSimulator[message.event]) {
-    messageSimulator[message.event](message);
+  if (onMessage[message.event]) {
+    onMessage[message.event](message);
   }
 });
 
 parent.window.postMessage({
   aplazame: 'simulator',
-  event: 'require:choices'
+  event: 'require.choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget":2,"../../src/tools/tools":11}]},{},[12]);
+},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget-button":2,"../../src/tools/tools":12}]},{},[13]);

@@ -78,6 +78,8 @@ _.onMessage('modal', function (e, message) {
     var container = document.querySelector('.modals-container');
     _.tmpClass(container, 'opening-wrapper', isMobile.matches ? 0 : 600 );
     container.innerHTML = message.content.card;
+    
+    parent.window.postMessage({ aplazame: 'modal', event: 'opening' }, '*');
 
     modal = document.querySelector('.modal');
     card = document.querySelector('.card');

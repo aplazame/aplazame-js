@@ -29,9 +29,7 @@
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.6",
     "karma-story-reporter": "^0.3.1",
-    "ng-aplazame": "git+ssh://github.com/aplazame/ng-aplazame.git#v0.1.62",
-    "nitro": "1.5.53",
-    "sasslets-animate": "0.0.4"
+    "nitro": "1.5.53"
   },
   "dependencies": {
     "events-wrapper": "^0.2.2",

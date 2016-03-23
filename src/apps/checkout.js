@@ -18,7 +18,7 @@ function checkout (options) {
       cssBlur = _.cssHack('blur'),
       cssModal = _.cssHack('modal');
 
-  tmpOverlay.className = 'aplazame-overlay';
+  tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
   cssOverlay.hack(true);
 
@@ -56,6 +56,7 @@ function checkout (options) {
         });
 
     iframe.className = 'aplazame-modal hide';
+    iframe.style.display = 'none';
 
     // cssBlur.hack(true);
 
@@ -94,6 +95,7 @@ function checkout (options) {
 
       switch( message.event ) {
         case 'merchant':
+          iframe.style.display = null;
           e.source.postMessage({
             checkout: options
           }, '*');

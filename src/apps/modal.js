@@ -1,8 +1,11 @@
 'use strict';
 
+window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
+
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
+    isMobile = window.matchMedia('( max-width: 767px )'),
     lastScrollTop;
 
 var tmpOverlay = document.createElement('div'),
@@ -21,12 +24,15 @@ function modal (content, options) {
   cssOverlay.hack(true);
   cssBlur.hack(true);
 
-  tmpOverlay.className = 'aplazame-overlay';
+  tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
   document.body.appendChild(tmpOverlay);
 
   setTimeout(function () {
     _.addClass(document.body, 'aplazame-blur');
   }, 0);
+  setTimeout(function () {
+    _.removeClass(tmpOverlay, 'aplazame-overlay-show');
+  }, isMobile.matches ? 0 : 400 );
 
   modal.iframe = _.getIFrame({
         top: 0,
@@ -38,6 +44,7 @@ function modal (content, options) {
       });
 
   modal.iframe.className = 'aplazame-modal';
+  modal.iframe.style.display = 'none';
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);
@@ -51,6 +58,9 @@ _.onMessage('modal', function (e, message) {
       modal.referrer = e.source;
       modal.message = message;
       modal(message.data);
+      break;
+    case 'opening':
+      modal.iframe.style.display = null;
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();
@@ -74,14 +84,16 @@ _.onMessage('modal', function (e, message) {
       document.body.style.overflow = modal.iframe.overflow;
       _.removeClass(document.body, 'aplazame-blur');
       _.addClass(document.body, 'aplazame-unblur');
+      _.addClass(tmpOverlay, 'aplazame-overlay-hide');
       setTimeout(function () {
         cssBlur.hack(false);
         _.removeClass(document.body, 'aplazame-unblur');
-      }, 400);
+      }, isMobile.matches ? 0 : 400 );
       break;
     case 'close':
       _.cssHack('modal').hack(false);
       document.body.removeChild(tmpOverlay);
+      _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
       setTimeout(function () {
         _.scrollTop(lastScrollTop);
       }, 0);

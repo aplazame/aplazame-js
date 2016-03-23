@@ -24,6 +24,28 @@ var _isObject = _isType('object'),
       return o && o.nodeType === 1;
     };
 
+function iterateeFn (iteratee) {
+	if( _isFunction(iteratee) ) {
+		return iteratee;
+	}
+
+	return function (item) {
+		return item === iteratee;
+	};
+}
+
+function find (list, iteratee, thisArg, fallback) {
+	thisArg = thisArg === undefined ? this : thisArg;
+	iteratee = iterateeFn(iteratee);
+
+	for( var i = 0, len = list.length ; i < len ; i++ ) {
+      if( iteratee.call(thisArg, list[i]) ) {
+          return list[i];
+      }
+  }
+	return fallback || null;
+}
+
 function listen (element, eventName, listener) {
   if( element instanceof Array ) {
     for( var i = 0, n = element.length ; i < n ; i++ ) {
@@ -275,7 +297,7 @@ var cssHack = (function () {
   var cache = {},
       hacks = {
         overlay: '.aplazame-overlay { font-family: \'Montserrat\', sans-serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; width: 100vw; height: 100vh; background: rgba(53, 64, 71, 0.9); text-align:center;} .aplazame-overlay::before{content:\'\';display:block;height:50vh;}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%;} .aplazame-checkout-loading-text{color:#95A6B1;margin-top:14px;font-size:14px;}' +
-                '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}' +
+                '@-webkit-keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-show{opacity:1}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse;opacity:0}' +
                   '@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%,90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{transform:rotate(0deg)}90%,to{transform:rotate(1turn)}}@keyframes aplazame-logo-smile{0%{transform:rotate(0deg)}90%,to{transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}',
         // blur: 'body > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(0px); filter: blur(0px); transition: all 0.4s linear; } body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay) { -webkit-filter: blur(3px); filter: blur(3px); }',
         blur: '@-webkit-keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{opacity:0;-webkit-filter:blur(0);filter:blur(0)}to{opacity:1;-webkit-filter:blur(3px);filter:blur(3px)}}@media (max-width:600px){body{-webkit-transition:all .4s linear;transition:all .4s linear}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}',
@@ -324,6 +346,15 @@ function scrollTop (value) {
   return document.documentElement.scrollTop || document.body.scrollTop;
 }
 
+function clearElement (el) {
+  var child = el.firstChild;
+
+  while( child ) {
+    el.removeChild(child);
+    child = el.firstChild;
+  }
+}
+
 var _classActions = {
   add: document.documentElement.classList ? function (element, className) {
     element.classList.add(className);
@@ -361,6 +392,7 @@ var tools = {
   isDate: _isDate,
   isRegExp: _isRegExp,
   isElement: _isElement,
+  find: find,
   listen: listen,
   once: once,
   ready: docReady,
@@ -375,8 +407,15 @@ var tools = {
   getAmount: getAmount,
   cssHack: cssHack,
   scrollTop: scrollTop,
+  clearElement: clearElement,
   addClass: _classActions.action('add', tools),
-  removeClass: _classActions.action('remove', tools)
+  removeClass: _classActions.action('remove', tools),
+  tmpClass: function (element, className, delay) {
+    tools.addClass(element, className);
+    setTimeout(function () {
+      tools.removeClass(element, className);
+    }, delay);
+  }
 };
 
 module.exports = tools;

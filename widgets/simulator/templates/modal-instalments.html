@@ -1,47 +1,65 @@
-<div class="modal modal-grey modal-narrow has-cta modal-instalments-list">
+<div class="modal">
 
-  <div class="card-wrapper">
-    <div class="card">
-      <div class="card-content">
+<div class="card size-lg has-cta modal-instalments-info">
+  <div class="card-content">
 
-        <header class="aplazame"></header>
+    <header class="aplazame"></header>
 
-        <section class="info">
-          <h1>Elige el número de meses y la cuota que más te convengan</h1>
-          <p>Aplazame te ayuda a pagar tus compras cuándo y como quieras.<span class="desktop"><br/>No hay letra pequeña ni sorpresas de última hora, todo está claro y fácilmente entendible, de tú a tú.</span>&nbsp;<a href="https://aplazame.com/how/" target="_blank">Más información</a></p>
-        </section>
+    <section class="info">
+      Elige el número de meses y la cuota que más te convengan
+    </section>
 
-        <div data-widget="active-group" class="choices-wrapper">
-
-        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) {
-        %><div class="choice">
-            <button type="button" class="button" data-widget="active-toggle">
-              <div class="wrapper">
-                <div class="num-instalments"><%= choices[i].num_instalments %> <%= months(choices[i].num_instalments) %></div>
-                <div class="amount"><%= getAmount(choices[i].amount) %> €<sub style="vertical-align: bottom; font-size: 0.8em">/mes<span></div>
-              </div>
-            </button>
-          </div><%
-        } %>
-
+    <div class="choices-wrapper">
+      <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>
+      <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">
+        <div class="wrapper">
+          <div class="num-instalments">
+            <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>
+          </div>
+          <div class="amount">
+            <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--
+            --><span class="amount-currency">€</span><!--
+            --><span class="amount-per-month">/mes</span></div>
         </div>
+      </button>
+      <% } %>
+    </div>
 
-        <section class="tae">El TAE será del <%= getAmount(choices[0].annual_equivalent) %>%</section>
+    <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>
 
-      </div>
-
-      <div class="cta">
-        <section class="invite">
-          <div class="text-up">Si te interesa,</div>
-          <div class="text-down">selecciona Aplazame al pagar</div>
-        </section>
-        <div class="button-wrapper">
-          <button class="button" type="submit" modal-resolve="return">
-            <span class="cta-title">Volver a la tienda</span>
-          </button>
+    <section class="how-it-works">
+      <header>¿Cómo funciona?</header>
+      <div class="info-wrapper">
+        <div class="info">
+          <h3>Elige Aplazame</h3>
+          <p>en la tienda, cuando vayas a pagar el pedido.<br/>Puedes financiar compras de 99€ hasta 1.000€.</p>
+        </div>
+        <div class="info">
+          <h3>Decide cómo quieres pagar</h3>
+          <p>Hasta en 12 cuotas, con tarjeta de crédito o domiciliación bancaria.</p>
+        </div>
+        <div class="info">
+          <h3>Disfruta de tu compra</h3>
+          <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>
         </div>
       </div>
+    </section>
 
+  </div>
+
+  <div class="cta btn-double size-xs">
+    <div class="button-wrapper">
+      <button class="button btn-white" type="submit" modal-reject="back">
+        <span class="cta-title">Volver a Tienda</span>
+      </button>
+    </div>
+    <div class="button-wrapper">
+      <a class="button" href="http://aplazame.com/how/" target="_blank">
+        <span class="cta-title">¿Quieres saber más?</span>
+      </a>
     </div>
   </div>
+
+</div>
+
 </div>

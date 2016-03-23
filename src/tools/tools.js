@@ -35,17 +35,6 @@ _.extend(_,
     liveDOM: require('./live-dom')(_),
     template: require('./template'),
     getAmount: getAmount,
-    elementData: document.createElement('div').dataset ? function (el, key, value) {
-      if( value !== undefined ) {
-        el.dataset[key] = value;
-      }
-      return el.dataset[key];
-    } : function (el, key, value) {
-      if( value !== undefined ) {
-        el.setAttribute('data-' + key, value);
-      }
-      return el.getAttribute('data-' + key);
-    },
     onMessage: require('./message-listener')(_)
   }
 );

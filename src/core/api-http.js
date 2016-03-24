@@ -1,54 +1,26 @@
 'use strict';
 
-var acceptTmpl = 'application/vnd.aplazame{{sandbox}}.v{{version}}+json',
+var apzVersion = require('../../.tmp/aplazame-version'),
     _ = require('../tools/tools'),
     api = require('./api'),
-    apzVersion = require('../../.tmp/aplazame-version');
+    http = require('http-browser'),
+    renderAccept = _.template.compile('application/vnd.aplazame<% if(sandbox){ %>.sandbox<% } %>.v<%= version %>+json');
 
-// aplazame methods
-
-function apiOptions (options) {
-  options = options || {};
-  var publicKey = options.publicKey || api.publicKey;
-
-  if( !publicKey ) {
-    throw new Error('public key needs to be specified');
-  }
-
-  options = _.merge({}, {
-    headers: {
-      xAjsVersion: apzVersion,
-      authorization: 'Bearer ' + publicKey
+module.exports = http.base(api.host, {
+  headers: {
+    xAjsVersion: apzVersion,
+    accept: function (config) {
+      var _api = _.copy(api);
+      if( 'version' in config || 'apiVersion' in config ) {
+        _api.version = 'version' in config ? config.version : config.apiVersion;
+      }
+      if( 'sandbox' in config ) {
+        _api.sandbox = config.sandbox;
+      }
+      return renderAccept(_api);
+    },
+    authorization: function (config) {
+      return 'Bearer ' + ( config.publicKey || api.publicKey );
     }
-  }, options);
-
-  options.version = options.version || api.version;
-  options.sandbox = ( options.sandbox === undefined ? api.sandbox : options.sandbox ) ? '.sandbox' : '';
-  // options.paramsStr = '';
-  // if( options.params ) {
-  //   for( var key in options.params ) {
-  //     options.paramsStr += ( options.paramsStr ? '&' : '?' ) + key + '=' + encodeURIComponent(options.params[key]);
-  //   }
-  // }
-
-  return _.merge(options, {
-    headers: {
-      accept: _.replaceKeys(acceptTmpl, options)
-    }
-  });
-}
-
-module.exports = {
-  get: function (path, options) {
-    options = apiOptions(options);
-    var url = path ? _.joinPath(api.host, path) : api.host;
-
-    return _.http( url, options );
-  },
-  post: function (path, data, options) {
-    options = apiOptions(options);
-    var url = path ? _.joinPath(api.host, path) : api.host;
-
-    return _.http( url, _.merge(options, { method: 'post', data: data }) );
   }
-};
+});

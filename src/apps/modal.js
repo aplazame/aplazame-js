@@ -4,14 +4,15 @@ window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMa
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
+    cssHack = require('../tools/css-hack'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
     isMobile = window.matchMedia('( max-width: 767px )'),
     lastScrollTop;
 
 var tmpOverlay = document.createElement('div'),
-    cssOverlay = _.cssHack('overlay'),
-    cssBlur = _.cssHack('blur'),
-    cssModal = _.cssHack('modal');
+    cssOverlay = cssHack('overlay'),
+    cssBlur = cssHack('blur'),
+    cssModal = cssHack('modal');
 
 function modal (content, options) {
 
@@ -32,7 +33,7 @@ function modal (content, options) {
   }, 0);
   setTimeout(function () {
     _.removeClass(tmpOverlay, 'aplazame-overlay-show');
-  }, isMobile.matches ? 0 : 400 );
+  }, isMobile.matches ? 0 : 600 );
 
   modal.iframe = _.getIFrame({
         top: 0,
@@ -64,7 +65,7 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();
-      _.cssHack('modal').hack(true);
+      cssModal.hack(true);
       e.source.postMessage({
         aplazame: 'modal',
         event: 'content',
@@ -88,10 +89,10 @@ _.onMessage('modal', function (e, message) {
       setTimeout(function () {
         cssBlur.hack(false);
         _.removeClass(document.body, 'aplazame-unblur');
-      }, isMobile.matches ? 0 : 400 );
+      }, isMobile.matches ? 0 : 600 );
       break;
     case 'close':
-      _.cssHack('modal').hack(false);
+      cssModal.hack(false);
       document.body.removeChild(tmpOverlay);
       _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
       setTimeout(function () {

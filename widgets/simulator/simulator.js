@@ -17,8 +17,8 @@ function emitSize () {
   },1);
 }
 
-_.listen(window, 'load', emitSize);
-_.listen(window, 'resize', emitSize);
+window.addEventListener('load', emitSize);
+window.addEventListener('resize', emitSize);
 
 function maxInstalments (prev, choice) {
   if( prev === null ) {
@@ -63,7 +63,7 @@ var main = document.getElementById('main'), currentMessage,
 
       each.call( main.querySelectorAll('[data-action]'), function (element) {
 
-        _.listen(element, 'click', function (e) {
+        element.addEventListener('click', function (e) {
           var action = element.getAttribute('data-action');
 
           if( action !== undefined ) {

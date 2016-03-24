@@ -40,8 +40,7 @@ function modal (content, options) {
         left: 0,
         width: '100%',
         height: '0',
-        background: 'transparent',
-        'z-index': 2147483647
+        background: 'transparent'
       });
 
   modal.iframe.className = 'aplazame-modal';

@@ -12,7 +12,8 @@ module.exports = function (nitro) {
         minify: {
           autoprefixer: false,
           mergeIdents: false,
-          reduceIdents: false
+          reduceIdents: false,
+          zindex: false
         }
       })
       .each(function (f) {

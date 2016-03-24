@@ -51,11 +51,10 @@ function checkout (options) {
           left: 0,
           width: '100%',
           height: '0',
-          background: 'transparent',
-          'z-index': 2147483647
+          background: 'transparent'
         });
 
-    iframe.className = 'aplazame-modal hide';
+    iframe.className = 'aplazame-modal';
     iframe.style.display = 'none';
 
     document.body.appendChild(iframe);

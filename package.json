@@ -1,41 +1,41 @@
 {
-  "name": "aplazame",
-  "version": "0.0.200",
-  "description": "javascript sdk for aplazame.com api",
-  "main": "aplazame.min.js",
-  "scripts": {
-    "build": "make build",
-    "start": "make live",
-    "test": "make test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/aplazame/aplazame-js.git"
-  },
-  "keywords": [
-    "aplazame",
-    "sdk",
-    "js",
-    "javascript"
-  ],
-  "author": "Jesús Germade <jesus@aplazame.com>",
-  "license": "GPL-3.0",
-  "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
-  "devDependencies": {
-    "bower": "^1.5.3",
-    "jasmine-core": "^2.3.4",
-    "karma": "^0.13.15",
-    "karma-chrome-launcher": "^0.2.0",
-    "karma-firefox-launcher": "^0.1.6",
-    "karma-jasmine": "^0.3.6",
-    "karma-story-reporter": "^0.3.1",
-    "git-rev-sync": "^1.4.0",
-    "nitro": "1.5.53"
-  },
-  "dependencies": {
-    "events-wrapper": "0.2.2",
-    "http-browser": "0.1.4",
-    "nitro-tools": "0.1.10",
-    "q-promise": "0.2.1"
-  }
+	"name": "aplazame",
+	"version": "0.0.201",
+	"description": "javascript sdk for aplazame.com api",
+	"main": "aplazame.min.js",
+	"scripts": {
+		"build": "make build",
+		"start": "make live",
+		"test": "make test"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/aplazame/aplazame-js.git"
+	},
+	"keywords": [
+		"aplazame",
+		"sdk",
+		"js",
+		"javascript"
+	],
+	"author": "Jesús Germade <jesus@aplazame.com>",
+	"license": "GPL-3.0",
+	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
+	"devDependencies": {
+		"bower": "^1.5.3",
+		"jasmine-core": "^2.3.4",
+		"karma": "^0.13.15",
+		"karma-chrome-launcher": "^0.2.0",
+		"karma-firefox-launcher": "^0.1.6",
+		"karma-jasmine": "^0.3.6",
+		"karma-story-reporter": "^0.3.1",
+		"git-rev-sync": "^1.4.0",
+		"nitro": "1.5.53"
+	},
+	"dependencies": {
+		"events-wrapper": "0.2.2",
+		"http-browser": "0.1.4",
+		"nitro-tools": "0.1.10",
+		"q-promise": "0.2.1"
+	}
 }

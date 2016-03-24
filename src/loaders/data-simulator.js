@@ -120,7 +120,7 @@ module.exports = function (aplazame) {
   }
 
   function Iframe (url) {
-    var el = _.getIFrame({ width: '100%' }),
+    var el = _.getIFrame({ width: '100%', height: '40px' }),
         iframe = this;
     this.el = el;
     this.el.src = url;

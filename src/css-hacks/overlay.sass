@@ -1,0 +1,50 @@
+
+@keyframes aplazame-overlay
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+.aplazame-overlay
+  font-family: 'Montserrat', sans-serif
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  width: 100%
+  height: 100%
+  width: 100vw
+  height: 100vh
+  background: rgba(53, 64, 71, 0.9)
+  text-align:center
+
+.aplazame-overlay::before
+  content: ''
+  display: block
+  height: 50vh
+
+.aplazame-logo-wrapper
+  display: inline-block
+  margin-top: -50%
+
+.aplazame-overlay-loading-text
+  color: #95A6B1
+  margin-top: 14px
+  font-size: 14px
+
+.aplazame-overlay
+  animation-fill-mode: both
+
+  &.aplazame-overlay-show
+    transform: translate3d(0,0,0)
+    animation-duration: 0.6s
+    animation-name: aplazame-overlay
+    opacity: 0
+
+  &.aplazame-overlay-hide
+    transform: translate3d(0,0,0)
+    animation-duration: 0.6s
+    animation-name: aplazame-overlay
+    animation-direction: reverse
+    opacity: 0

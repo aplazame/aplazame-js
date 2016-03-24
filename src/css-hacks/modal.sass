@@ -1,0 +1,22 @@
+
+.aplazame-modal
+  height: 100% !important
+
+body
+  overflow: hidden
+
+@media (max-width: 600px)
+  html
+    background-color: #333A3E
+  html, body
+    height: 100%
+    margin: 0
+    padding: 0
+  body > *:not(.aplazame-modal)
+    display: none
+  iframe.aplazame-modal
+    position: absolute
+
+@media (min-width: 601px)
+  .aplazame-modal
+    position: fixed

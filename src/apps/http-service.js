@@ -1,6 +1,7 @@
 'use strict';
 
-var _ = require('../tools/tools');
+var _ = require('../tools/tools'),
+    http = require('http-browser');
 
 _.onMessage('http', function (e, message) {
 
@@ -8,7 +9,7 @@ _.onMessage('http', function (e, message) {
 
     return function (response) {
 
-      var responsep = _.http.plainResponse(response);
+      var responsep = http.plainResponse(response);
       responsep.config = message;
 
       e.source.postMessage({
@@ -20,7 +21,7 @@ _.onMessage('http', function (e, message) {
     };
   }
 
-  _.http( message.url, message ).then(processResponse('success'), processResponse('error'));
+  http( message.url, message ).then(processResponse('success'), processResponse('error'));
 
 });
 

@@ -1,7 +1,9 @@
 'use strict';
 
 var api = require('../core/api'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    http = require('http-browser'),
+    cssHack = require('../tools/css-hack');
 
 function checkout (options) {
 
@@ -14,14 +16,15 @@ function checkout (options) {
 
   var iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
       tmpOverlay = document.createElement('div'),
-      cssOverlay = _.cssHack('overlay'),
-      cssBlur = _.cssHack('blur'),
-      cssModal = _.cssHack('modal');
+      cssOverlay = cssHack('overlay'),
+      cssBlur = cssHack('blur'),
+      cssLogo = cssHack('logo'),
+      cssModal = cssHack('modal');
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
   cssOverlay.hack(true);
-
+  cssLogo.hack(true);
   cssBlur.hack(true);
 
   setTimeout(function () {
@@ -29,7 +32,7 @@ function checkout (options) {
   }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
-  require('./loading-svg') + '</div><div class="aplazame-checkout-loading-text">cargando pasarela de pago...</div></div>';
+  require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">cargando pasarela de pago...</div></div>';
 
   document.body.appendChild(tmpOverlay);
 
@@ -41,12 +44,9 @@ function checkout (options) {
 
   options.api = api;
 
-  _.http( iframeSrc ).then(function (response) {
-    // document.body.style.overflow = 'hidden';
-    // var iframeHtml = response.data.replace(/(src|href)\s*=\s*\"(?!http|\/\/)/g, '$1=\"' + baseUrl);
+  http( iframeSrc ).then(function (response) {
     var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
         iframe = _.getIFrame({
-          // position: 'fixed',
           top: 0,
           left: 0,
           width: '100%',
@@ -58,19 +58,8 @@ function checkout (options) {
     iframe.className = 'aplazame-modal hide';
     iframe.style.display = 'none';
 
-    // cssBlur.hack(true);
-
-    // blur.setAttribute('rel', 'stylesheet');
-    // blur.textContent = 'body > *:not(.aplazame-checkout-iframe) { -webkit-filter: blur(3px); filter: blur(3px); }';
-
-    // iframe.setAttribute('allowtransparency', 'true');
-    // iframe.setAttribute('allowfullscreen', 'true');
-    // iframe.setAttribute('sandbox', 'allow-scripts allow-pointer-lock allow-same-origin allow-popups allow-forms');
-
     document.body.appendChild(iframe);
     iframe.src = iframeSrc;
-    // iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeHtml);
-    // _.writeIframe(iframe, iframeHtml);
 
     if( !options.merchant ) {
       throw new Error('missing merchant parameters');
@@ -114,12 +103,12 @@ function checkout (options) {
           _.addClass(document.body, 'aplazame-unblur');
           setTimeout(function () {
             document.head.removeChild(cssBlur);
-          }, 400);
+          }, 600);
           break;
         case 'success':
           console.log('aplazame.checkout:success', message);
 
-          _.http( options.merchant.confirmation_url, {
+          http( options.merchant.confirmation_url, {
             method: 'post',
             contentType: 'application/json',
             data: message.data,
@@ -129,14 +118,14 @@ function checkout (options) {
               aplazame: 'checkout',
               event: 'confirmation',
               result: 'success',
-              response: _.http.plainResponse(response)
+              response: http.plainResponse(response)
             }, '*');
           }, function () {
             e.source.postMessage({
               aplazame: 'checkout',
               event: 'confirmation',
               result: 'error',
-              response: _.http.plainResponse(response)
+              response: http.plainResponse(response)
             }, '*');
           });
           // confirmation_url
@@ -161,32 +150,6 @@ function checkout (options) {
           }
           break;
       }
-
-      // if( message.require === 'merchant' ) {
-      //   cssModal.hack(true);
-      //   _.addClass(document.body, 'aplazame-blur');
-      //   cssOverlay.hack(false);
-      //   document.body.removeChild(tmpOverlay);
-      //   e.source.postMessage({
-      //     checkout: options
-      //   }, '*');
-      // } else if( iframe && message.close ) {
-      //   document.body.removeChild(iframe);
-      //   cssModal.hack(false);
-      //   iframe = null;
-      //
-      //   switch( message.close ) {
-      //     case 'dismiss':
-      //       location.replace(options.merchant.checkout_url || '/');
-      //       break;
-      //     case 'success':
-      //       location.replace(options.merchant.success_url);
-      //       break;
-      //     case 'cancel':
-      //       location.replace(options.merchant.cancel_url);
-      //       break;
-      //   }
-      // }
 
     });
 

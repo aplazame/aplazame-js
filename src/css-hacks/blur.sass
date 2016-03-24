@@ -1,0 +1,25 @@
+
+@keyframes aplazame-blur
+  0%
+    filter: blur(0px)
+  100%
+    filter: blur(3px)
+
+// @media (max-width: 600px)
+//   body
+//     transition: all 0.4s linear
+
+body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay)
+  filter: blur(3px)
+  @media (min-width: 601px)
+    transform: translate3d(0,0,0)
+    animation-duration: .4s
+    animation-name: aplazame-blur
+
+body.aplazame-unblur > *:not(.aplazame-modal):not(.aplazame-overlay)
+  filter: blur(0px)
+  @media (min-width: 601px)
+    transform: translate3d(0,0,0)
+    animation-duration: .4s
+    animation-name: aplazame-blur
+    animation-direction: reverse

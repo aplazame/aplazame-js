@@ -18,12 +18,13 @@ function checkout (options) {
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
       cssBlur = cssHack('blur'),
+      cssLogo = cssHack('logo'),
       cssModal = cssHack('modal');
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
   cssOverlay.hack(true);
-
+  cssLogo.hack(true);
   cssBlur.hack(true);
 
   setTimeout(function () {
@@ -31,7 +32,7 @@ function checkout (options) {
   }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
-  require('./loading-svg') + '</div><div class="aplazame-checkout-loading-text">cargando pasarela de pago...</div></div>';
+  require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">cargando pasarela de pago...</div></div>';
 
   document.body.appendChild(tmpOverlay);
 
@@ -102,7 +103,7 @@ function checkout (options) {
           _.addClass(document.body, 'aplazame-unblur');
           setTimeout(function () {
             document.head.removeChild(cssBlur);
-          }, 400);
+          }, 600);
           break;
         case 'success':
           console.log('aplazame.checkout:success', message);

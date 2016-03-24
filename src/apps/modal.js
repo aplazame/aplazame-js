@@ -33,7 +33,7 @@ function modal (content, options) {
   }, 0);
   setTimeout(function () {
     _.removeClass(tmpOverlay, 'aplazame-overlay-show');
-  }, isMobile.matches ? 0 : 400 );
+  }, isMobile.matches ? 0 : 600 );
 
   modal.iframe = _.getIFrame({
         top: 0,
@@ -89,7 +89,7 @@ _.onMessage('modal', function (e, message) {
       setTimeout(function () {
         cssBlur.hack(false);
         _.removeClass(document.body, 'aplazame-unblur');
-      }, isMobile.matches ? 0 : 400 );
+      }, isMobile.matches ? 0 : 600 );
       break;
     case 'close':
       cssModal.hack(false);

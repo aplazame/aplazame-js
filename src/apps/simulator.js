@@ -29,7 +29,7 @@ function simulator (amount, _options, callback, onError) {
     return item.amount === amount;
   });
 
-  var promise = foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
+  var promise = !_options.noCache && foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
     var result = {
       amount: amount,
       choices: response.data.choices[0].instalments,

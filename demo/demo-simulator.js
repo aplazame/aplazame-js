@@ -16,7 +16,7 @@ function getCents(value) {
   return '' + ( Number( values[0] ? 100*values[0] : 0 ) + Number( values[1] || 0 ) );
 }
 
-_.listen(form, 'submit', function (e) {
+form.addEventListener('submit', function (e) {
   e.preventDefault();
 
   localStorage.setItem('demo-simulator-amount', amount.value);
@@ -27,7 +27,7 @@ _.listen(form, 'submit', function (e) {
   _.removeClass(resultsWrapper, 'hidden');
   _.addClass(results, 'hidden');
 
-  aplazame.simulator(currentAmount, function (choices) {
+  aplazame.simulator(currentAmount, { noCache: true }, function (choices) {
     console.log('simulator', currentAmount, choices);
     resultsWrapper.querySelector('.section-title > h3').innerHTML = 'Resultados';
     _.removeClass(results, 'hidden');

@@ -612,6 +612,37 @@ module.exports = function (_) {
 
 },{}],10:[function(require,module,exports){
 
+
+function getErrorObject() {
+  try {
+    throw Error('');
+  } catch (err) {
+    return err;
+  }
+}
+
+function log() {
+  var err = getErrorObject(),
+      caller_line = err.stack.split('\n')[4],
+      index = caller_line.indexOf('at ');
+
+  log.history.push({
+    time: new Date(),
+    args: arguments,
+    track: {
+      caller_line: caller_line,
+      index: index,
+      clean: caller_line.slice(index + 2, caller_line.length)
+    }
+  });
+}
+
+log.history = [];
+
+module.exports = log;
+
+},{}],11:[function(require,module,exports){
+
 module.exports = function (_) {
 
   var messageTarget = {};
@@ -633,7 +664,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 function template(name, data) {
   return template.cache[name](data || {});
@@ -665,7 +696,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // 'use strict';
 
 require('./browser-polyfills');
@@ -673,6 +704,8 @@ require('./browser-polyfills');
 var _ = require('nitro-tools/lib/kit-extend');
 
 _.extend(_, require('nitro-tools/lib/kit-type'), require('nitro-tools/lib/kit-lists'), require('nitro-tools/lib/kit-path'));
+
+_.log = require('./log');
 
 function getAmount(amount) {
   var prefix = '';
@@ -701,7 +734,7 @@ _.extend(_, require('./colors'), require('./browser-tools')(_), {
 
 module.exports = _;
 
-},{"./browser-polyfills":6,"./browser-tools":7,"./colors":8,"./live-dom":9,"./message-listener":10,"./template":11,"nitro-tools/lib/kit-extend":2,"nitro-tools/lib/kit-lists":3,"nitro-tools/lib/kit-path":4,"nitro-tools/lib/kit-type":5}],13:[function(require,module,exports){
+},{"./browser-polyfills":6,"./browser-tools":7,"./colors":8,"./live-dom":9,"./log":10,"./message-listener":11,"./template":12,"nitro-tools/lib/kit-extend":2,"nitro-tools/lib/kit-lists":3,"nitro-tools/lib/kit-path":4,"nitro-tools/lib/kit-type":5}],14:[function(require,module,exports){
 var _ = require('../../src/tools/tools');
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
@@ -798,4 +831,4 @@ _.ready(function () {
   parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
 });
 
-},{"../../src/tools/tools":12}]},{},[13]);
+},{"../../src/tools/tools":13}]},{},[14]);

@@ -618,6 +618,37 @@ module.exports = function (_) {
 
 },{}],12:[function(require,module,exports){
 
+
+function getErrorObject() {
+  try {
+    throw Error('');
+  } catch (err) {
+    return err;
+  }
+}
+
+function log() {
+  var err = getErrorObject(),
+      caller_line = err.stack.split('\n')[4],
+      index = caller_line.indexOf('at ');
+
+  log.history.push({
+    time: new Date(),
+    args: arguments,
+    track: {
+      caller_line: caller_line,
+      index: index,
+      clean: caller_line.slice(index + 2, caller_line.length)
+    }
+  });
+}
+
+log.history = [];
+
+module.exports = log;
+
+},{}],13:[function(require,module,exports){
+
 module.exports = function (_) {
 
   var messageTarget = {};
@@ -639,7 +670,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 function template(name, data) {
   return template.cache[name](data || {});
@@ -671,7 +702,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // 'use strict';
 
 require('./browser-polyfills');
@@ -679,6 +710,8 @@ require('./browser-polyfills');
 var _ = require('nitro-tools/lib/kit-extend');
 
 _.extend(_, require('nitro-tools/lib/kit-type'), require('nitro-tools/lib/kit-lists'), require('nitro-tools/lib/kit-path'));
+
+_.log = require('./log');
 
 function getAmount(amount) {
   var prefix = '';
@@ -707,7 +740,7 @@ _.extend(_, require('./colors'), require('./browser-tools')(_), {
 
 module.exports = _;
 
-},{"./browser-polyfills":8,"./browser-tools":9,"./colors":10,"./live-dom":11,"./message-listener":12,"./template":13,"nitro-tools/lib/kit-extend":4,"nitro-tools/lib/kit-lists":5,"nitro-tools/lib/kit-path":6,"nitro-tools/lib/kit-type":7}],15:[function(require,module,exports){
+},{"./browser-polyfills":8,"./browser-tools":9,"./colors":10,"./live-dom":11,"./log":12,"./message-listener":13,"./template":14,"nitro-tools/lib/kit-extend":4,"nitro-tools/lib/kit-lists":5,"nitro-tools/lib/kit-path":6,"nitro-tools/lib/kit-type":7}],16:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     template = _.template,
@@ -809,4 +842,4 @@ parent.window.postMessage({
   event: 'require.choices'
 }, '*');
 
-},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget-button":2,"../../src/tools/tools":14}]},{},[15]);
+},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget-button":2,"../../src/tools/tools":15}]},{},[16]);

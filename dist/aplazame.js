@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.206';
+module.exports = '0.0.207';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -940,8 +940,16 @@ require('./loaders/data-aplazame')(global.aplazame);
 require('./loaders/data-button')(global.aplazame);
 require('./loaders/data-simulator')(global.aplazame);
 
+global.aplazame.info = function () {
+  return {
+    api: require('./core/api'),
+    log: require('./tools/log').history,
+    version: require('../.tmp/aplazame-version')
+  };
+};
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./apps/button":18,"./apps/checkout":19,"./apps/http-service":20,"./apps/modal":22,"./apps/simulator":23,"./core/core":26,"./loaders/data-aplazame":28,"./loaders/data-button":29,"./loaders/data-simulator":30}],18:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":18,"./apps/checkout":19,"./apps/http-service":20,"./apps/modal":22,"./apps/simulator":23,"./core/api":25,"./core/core":26,"./loaders/data-aplazame":28,"./loaders/data-button":29,"./loaders/data-simulator":30,"./tools/log":36}],18:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -970,10 +978,7 @@ function button(options) {
       button.watching = true;
       options.lastPrice = options.amount;
 
-      // console.debug('total price watching');
-
       setInterval(function () {
-        // console.log('checking price', options.amount, getCartPrice() );
         if (getCartPrice() !== options.lastPrice) {
           options.amount = getCartPrice();
           options.lastPrice = options.amount;
@@ -1084,7 +1089,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":24,"../tools/tools":38}],19:[function(require,module,exports){
+},{"../core/api-http":24,"../tools/tools":39}],19:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -1191,7 +1196,7 @@ function checkout(options) {
           }, 600);
           break;
         case 'success':
-          console.log('aplazame.checkout:success', message);
+          _.log('aplazame.checkout:success', message);
 
           http(options.merchant.confirmation_url, {
             method: 'post',
@@ -1243,7 +1248,7 @@ function checkout(options) {
 
 module.exports = checkout;
 
-},{"../core/api":25,"../tools/css-hack":34,"../tools/tools":38,"./loading-svg":21,"http-browser":8}],20:[function(require,module,exports){
+},{"../core/api":25,"../tools/css-hack":34,"../tools/tools":39,"./loading-svg":21,"http-browser":8}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -1272,7 +1277,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":38,"http-browser":8}],21:[function(require,module,exports){
+},{"../tools/tools":39,"http-browser":8}],21:[function(require,module,exports){
 
 module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' + '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' + '</svg>' + '<svg class="smile" version="1.1" viewBox="0 0 100 100">' + '<g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)">' + '<path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '<path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '</g>' + '</svg>' + '<svg class="line-large" version="1.1" viewBox="0 0 100 100">' + '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' + '</svg>';
 
@@ -1399,7 +1404,7 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":25,"../tools/css-hack":34,"../tools/tools":38}],23:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":25,"../tools/css-hack":34,"../tools/tools":39}],23:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -1453,7 +1458,7 @@ function simulator(amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":24,"../tools/tools":38,"q-promise":15}],24:[function(require,module,exports){
+},{"../core/api-http":24,"../tools/tools":39,"q-promise":15}],24:[function(require,module,exports){
 'use strict';
 
 var apzVersion = require('../../.tmp/aplazame-version'),
@@ -1481,7 +1486,7 @@ module.exports = http.base(api.host, {
   }
 });
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":38,"./api":25,"http-browser":8}],25:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":39,"./api":25,"http-browser":8}],25:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1503,7 +1508,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":38,"./api-http":24,"./init":27}],27:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":39,"./api-http":24,"./init":27}],27:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -1536,12 +1541,12 @@ function init(options) {
 
   _.extend(api, options);
 
-  console.log('aplazame.init', api);
+  _.log('aplazame.init', api);
 }
 
 module.exports = init;
 
-},{"../tools/tools":38,"./api":25}],28:[function(require,module,exports){
+},{"../tools/tools":39,"./api":25}],28:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -1738,7 +1743,7 @@ module.exports = function (aplazame) {
       if (priceSelector) {
         qtySelector = cmsQtySelector.find(matchSelector);
 
-        console.log('automatically found price selector', priceSelector, qtySelector);
+        _.log('automatically found price selector', priceSelector, qtySelector);
       }
     }
 
@@ -2237,6 +2242,37 @@ module.exports = function (_) {
 
 },{}],36:[function(require,module,exports){
 
+
+function getErrorObject() {
+  try {
+    throw Error('');
+  } catch (err) {
+    return err;
+  }
+}
+
+function log() {
+  var err = getErrorObject(),
+      caller_line = err.stack.split('\n')[4],
+      index = caller_line.indexOf('at ');
+
+  log.history.push({
+    time: new Date(),
+    args: arguments,
+    track: {
+      caller_line: caller_line,
+      index: index,
+      clean: caller_line.slice(index + 2, caller_line.length)
+    }
+  });
+}
+
+log.history = [];
+
+module.exports = log;
+
+},{}],37:[function(require,module,exports){
+
 module.exports = function (_) {
 
   var messageTarget = {};
@@ -2258,7 +2294,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 
 function template(name, data) {
   return template.cache[name](data || {});
@@ -2290,7 +2326,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // 'use strict';
 
 require('./browser-polyfills');
@@ -2298,6 +2334,8 @@ require('./browser-polyfills');
 var _ = require('nitro-tools/lib/kit-extend');
 
 _.extend(_, require('nitro-tools/lib/kit-type'), require('nitro-tools/lib/kit-lists'), require('nitro-tools/lib/kit-path'));
+
+_.log = require('./log');
 
 function getAmount(amount) {
   var prefix = '';
@@ -2326,4 +2364,4 @@ _.extend(_, require('./colors'), require('./browser-tools')(_), {
 
 module.exports = _;
 
-},{"./browser-polyfills":31,"./browser-tools":32,"./colors":33,"./live-dom":35,"./message-listener":36,"./template":37,"nitro-tools/lib/kit-extend":10,"nitro-tools/lib/kit-lists":11,"nitro-tools/lib/kit-path":12,"nitro-tools/lib/kit-type":13}]},{},[17]);
+},{"./browser-polyfills":31,"./browser-tools":32,"./colors":33,"./live-dom":35,"./log":36,"./message-listener":37,"./template":38,"nitro-tools/lib/kit-extend":10,"nitro-tools/lib/kit-lists":11,"nitro-tools/lib/kit-path":12,"nitro-tools/lib/kit-type":13}]},{},[17]);

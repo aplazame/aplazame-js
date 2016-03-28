@@ -106,8 +106,6 @@ module.exports = function (aplazame) {
       var qty = qtySelector ? getQty( qtySelector ) : 1,
           priceElement = document.querySelector( priceSelector );
 
-      // console.log('parsed price', priceElement, qty, qty * parsePrice( priceElement.value !== undefined ? priceElement.value : readPrice(priceElement) ) );
-
       return qty * parsePrice( priceElement.value !== undefined ? priceElement.value : priceElement.textContent );
     } : function () {
       return Number( widgetElement.getAttribute('data-amount') );
@@ -132,7 +130,6 @@ module.exports = function (aplazame) {
     };
 
     _.onMessage('simulator', function (e, message) {
-      // console.log('message', e, message);
       if( e.source === el.contentWindow ) {
         iframe.trigger('message:' + message.event, [message], this);
       }
@@ -149,7 +146,6 @@ module.exports = function (aplazame) {
       event: eventName,
       mobile: isMobile.matches
     }, data || {});
-    // console.log('message to iframe', _data );
     this.el.contentWindow.postMessage(_data, '*');
   };
 
@@ -167,7 +163,6 @@ module.exports = function (aplazame) {
     }
 
     var simulators = element.querySelectorAll('[data-aplazame-simulator]');
-    // console.log('simulators', simulators);
 
     each.call(simulators, function (simulator) {
 
@@ -183,6 +178,10 @@ module.exports = function (aplazame) {
           currentAmount = simulator.getAttribute('data-price') ? getAmount() : ( Number( simulator.getAttribute('data-amount') ) || getAmount() );
 
       aplazame.simulator(currentAmount, function (_choices, _options) {
+
+        if( _options.widget && _options.widget.disabled ) {
+          return;
+        }
 
         choices = _choices;
         options = _options;

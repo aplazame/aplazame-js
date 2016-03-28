@@ -105,7 +105,7 @@ function checkout (options) {
           }, 600);
           break;
         case 'success':
-          console.log('aplazame.checkout:success', message);
+          _.log('aplazame.checkout:success', message);
 
           http( options.merchant.confirmation_url, {
             method: 'post',

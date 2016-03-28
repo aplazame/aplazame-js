@@ -98,7 +98,7 @@ module.exports = function (aplazame) {
       if( priceSelector ) {
         qtySelector = cmsQtySelector.find(matchSelector);
 
-        console.log('automatically found price selector', priceSelector, qtySelector);
+        _.log('automatically found price selector', priceSelector, qtySelector);
       }
     }
 

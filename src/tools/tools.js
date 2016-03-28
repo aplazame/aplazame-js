@@ -10,6 +10,8 @@ _.extend(_,
   require('nitro-tools/lib/kit-path')
 );
 
+_.log = require('./log');
+
 function getAmount (amount) {
   var prefix = '';
 

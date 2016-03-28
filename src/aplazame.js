@@ -11,3 +11,11 @@ require('./apps/http-service');
 require('./loaders/data-aplazame')(global.aplazame);
 require('./loaders/data-button')(global.aplazame);
 require('./loaders/data-simulator')(global.aplazame);
+
+global.aplazame.info = function () {
+  return {
+    api: require('./core/api'),
+    log: require('./tools/log').history,
+    version: require('../.tmp/aplazame-version')
+  };
+};

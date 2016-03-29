@@ -32,7 +32,7 @@ function checkout (options) {
   }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
-  require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">cargando pasarela de pago...</div></div>';
+  require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
 
   document.body.appendChild(tmpOverlay);
 

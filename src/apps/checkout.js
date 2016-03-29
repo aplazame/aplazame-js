@@ -36,7 +36,7 @@ function checkout (options) {
 
   document.body.appendChild(tmpOverlay);
 
-  var loadingText = tmpOverlay.querySelector('.aplazame-checkout-loading-text');
+  var loadingText = tmpOverlay.querySelector('.aplazame-overlay-loading-text');
 
   setTimeout(function () {
     tmpOverlay.querySelector('.logo-aplazame').className += ' animate';

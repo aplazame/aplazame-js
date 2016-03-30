@@ -629,7 +629,7 @@ function getErrorObject() {
 
 function log() {
   var err = getErrorObject(),
-      caller_line = err.stack.split('\n')[4],
+      caller_line = err.stack.split('\n')[4] || '',
       index = caller_line.indexOf('at ');
 
   log.history.push({

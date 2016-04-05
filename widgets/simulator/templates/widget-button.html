@@ -1,6 +1,6 @@
 <div class="aplazame-widget-button align-<%= preferences.align %>">
   <button type="button" data-action="showInfo"
-          class="<%= brightness(preferences.bg_color) %>"
+          class="<%= brightness(preferences.bg_color) %> <%= preferences.branding ? '' : 'no-logo' %>"
           style=" background: <%= preferences.bg_color %>; color: <%= preferences.text_color %>; fill: <%= preferences.text_color %>">
     <% if( preferences.branding ) { %>
       <div class="logo">

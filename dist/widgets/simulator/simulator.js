@@ -707,6 +707,8 @@ module.exports = template;
 
 require('./browser-polyfills');
 
+// require('q-promise').usePolyfill();
+
 var _ = require('nitro-tools/lib/kit-extend');
 
 _.extend(_, require('nitro-tools/lib/kit-type'), require('nitro-tools/lib/kit-lists'), require('nitro-tools/lib/kit-path'));

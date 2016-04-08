@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.216';
+module.exports = '0.0.217';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -934,12 +934,15 @@ module.exports = function (Promise) {
   });
 
   q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
+  q.usePolyfill = function () {
+  	Promise = require('./promise-polyfill');
+  };
 
   return q;
 
 };
 
-},{}],17:[function(require,module,exports){
+},{"./promise-polyfill":14}],17:[function(require,module,exports){
 (function (global){
 
 global.aplazame = require('./core/core');
@@ -1126,6 +1129,7 @@ function checkout(options) {
   }
 
   var iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
+      errorLoading = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
       cssBlur = cssHack('blur'),
@@ -1139,7 +1143,9 @@ function checkout(options) {
   cssBlur.hack(true);
 
   setTimeout(function () {
-    _.addClass(document.body, 'aplazame-blur');
+    if (!errorLoading) {
+      _.addClass(document.body, 'aplazame-blur');
+    }
   }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' + require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
@@ -1149,123 +1155,123 @@ function checkout(options) {
   var loadingText = tmpOverlay.querySelector('.aplazame-overlay-loading-text');
 
   setTimeout(function () {
-    tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
+    if (!errorLoading) {
+      tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
+    }
   }, 200);
 
   options.api = api;
 
-  return $q(function (resolve, reject) {
+  return http(iframeSrc).then(function (response) {
+    var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
+        iframe = _.getIFrame({
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '0',
+      background: 'transparent'
+    });
 
-    http(iframeSrc).then(function (response) {
-      var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
-          iframe = _.getIFrame({
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '0',
-        background: 'transparent'
-      });
+    iframe.className = 'aplazame-modal';
+    iframe.style.display = 'none';
 
-      iframe.className = 'aplazame-modal';
-      iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    iframe.src = iframeSrc;
 
-      document.body.appendChild(iframe);
-      iframe.src = iframeSrc;
+    if (!options.merchant) {
+      throw new Error('missing merchant parameters');
+    }
 
-      if (!options.merchant) {
-        throw new Error('missing merchant parameters');
+    if (!options.merchant.public_api_key) {
+      if (api.publicKey) {
+        options.merchant.public_api_key = api.publicKey;
+      } else {
+        throw new Error('missing public key');
       }
+    }
 
-      if (!options.merchant.public_api_key) {
-        if (api.publicKey) {
-          options.merchant.public_api_key = api.publicKey;
-        } else {
-          throw new Error('missing public key');
-        }
-      }
+    options.origin = {
+      href: location.href,
+      host: location.host,
+      protocol: location.protocol,
+      origin: location.origin
+    };
 
-      options.origin = {
-        href: location.href,
-        host: location.host,
-        protocol: location.protocol,
-        origin: location.origin
-      };
+    _.onMessage('checkout', function (e, message) {
 
-      _.onMessage('checkout', function (e, message) {
+      switch (message.event) {
+        case 'merchant':
+          iframe.style.display = null;
+          e.source.postMessage({
+            checkout: options
+          }, '*');
+          break;
+        case 'show-iframe':
+          _.removeClass(iframe, 'hide');
+          cssModal.hack(true);
+          cssOverlay.hack(false);
+          document.body.removeChild(tmpOverlay);
+          break;
+        case 'loading-text':
+          loadingText.textContent = message.text;
+          break;
+        case 'drop-blur':
+          _.removeClass(document.body, 'aplazame-blur');
+          _.addClass(document.body, 'aplazame-unblur');
+          setTimeout(function () {
+            document.head.removeChild(cssBlur);
+          }, 600);
+          break;
+        case 'success':
+          _.log('aplazame.checkout:success', message);
 
-        switch (message.event) {
-          case 'merchant':
-            iframe.style.display = null;
+          http(options.merchant.confirmation_url, {
+            method: 'post',
+            contentType: 'application/json',
+            data: message.data,
+            params: message.params
+          }).then(function (response) {
             e.source.postMessage({
-              checkout: options
+              aplazame: 'checkout',
+              event: 'confirmation',
+              result: 'success',
+              response: http.plainResponse(response)
             }, '*');
-            break;
-          case 'show-iframe':
-            _.removeClass(iframe, 'hide');
-            cssModal.hack(true);
-            cssOverlay.hack(false);
-            document.body.removeChild(tmpOverlay);
-            break;
-          case 'loading-text':
-            loadingText.textContent = message.text;
-            break;
-          case 'drop-blur':
-            _.removeClass(document.body, 'aplazame-blur');
-            _.addClass(document.body, 'aplazame-unblur');
-            setTimeout(function () {
-              document.head.removeChild(cssBlur);
-            }, 600);
-            break;
-          case 'success':
-            _.log('aplazame.checkout:success', message);
+          }, function () {
+            e.source.postMessage({
+              aplazame: 'checkout',
+              event: 'confirmation',
+              result: 'error',
+              response: http.plainResponse(response)
+            }, '*');
+          });
+          // confirmation_url
+          break;
+        case 'close':
+          if (iframe) {
+            document.body.removeChild(iframe);
+            cssModal.hack(false);
+            iframe = null;
 
-            http(options.merchant.confirmation_url, {
-              method: 'post',
-              contentType: 'application/json',
-              data: message.data,
-              params: message.params
-            }).then(function (response) {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
-                result: 'success',
-                response: http.plainResponse(response)
-              }, '*');
-            }, function () {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
-                result: 'error',
-                response: http.plainResponse(response)
-              }, '*');
-            });
-            // confirmation_url
-            break;
-          case 'close':
-            if (iframe) {
-              document.body.removeChild(iframe);
-              cssModal.hack(false);
-              iframe = null;
-
-              switch (message.result) {
-                case 'dismiss':
-                  location.replace(options.merchant.checkout_url || '/');
-                  break;
-                case 'success':
-                  location.replace(options.merchant.success_url);
-                  break;
-                case 'cancel':
-                  location.replace(options.merchant.cancel_url);
-                  break;
-              }
+            switch (message.result) {
+              case 'dismiss':
+                location.replace(options.merchant.checkout_url || '/');
+                break;
+              case 'success':
+                location.replace(options.merchant.success_url);
+                break;
+              case 'cancel':
+                location.replace(options.merchant.cancel_url);
+                break;
             }
-            break;
-        }
-      });
-    }, function () {
-      throw new Error('can not connect to ' + baseUrl);
+          }
+          break;
+      }
     });
   }).catch(function (reason) {
+    // throw new Error('can not connect to ' + baseUrl);
+    errorLoading = true;
+
     console.error('Aplazame ' + reason);
 
     _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
@@ -2366,6 +2372,8 @@ module.exports = template;
 // 'use strict';
 
 require('./browser-polyfills');
+
+// require('q-promise').usePolyfill();
 
 var _ = require('nitro-tools/lib/kit-extend');
 

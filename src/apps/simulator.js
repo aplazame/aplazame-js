@@ -37,14 +37,19 @@ function simulator (amount, _options, callback, onError) {
       response: response
     };
     cache.push(result);
-    return result;
-  }, onError);
+    response.status = 403;
 
-  if( _.isFunction(callback) ) {
-    promise.then(function (result) {
-      callback( result.choices, result.options );
-    });
-  }
+    (callback || _.noop)( result.choices, result.options );
+    return result;
+  }).catch(function (response) {
+    if( response.status === 403 ) {
+      console.error('Aplazame: Permiso denegado usando la clave pública: ' + response.config.publicKey);
+      console.info('Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
+    } else if( response.data.error && response.data.error.message ) {
+      console.error('Aplazame: ' + response.data.error.message);
+    }
+    (onError || _.noop)();
+  });
 
   return promise;
 }

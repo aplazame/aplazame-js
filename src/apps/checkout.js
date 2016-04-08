@@ -16,6 +16,7 @@ function checkout (options) {
   }
 
   var iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
+      errorLoading = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
       cssBlur = cssHack('blur'),
@@ -29,7 +30,9 @@ function checkout (options) {
   cssBlur.hack(true);
 
   setTimeout(function () {
-    _.addClass(document.body, 'aplazame-blur');
+    if( !errorLoading ) {
+      _.addClass(document.body, 'aplazame-blur');
+    }
   }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
@@ -40,14 +43,14 @@ function checkout (options) {
   var loadingText = tmpOverlay.querySelector('.aplazame-overlay-loading-text');
 
   setTimeout(function () {
-    tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
+    if( !errorLoading ) {
+      tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
+    }
   }, 200);
 
   options.api = api;
 
-  return $q(function (resolve, reject) {
-
-    http( iframeSrc ).then(function (response) {
+  return http( iframeSrc ).then(function (response) {
       var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
           iframe = _.getIFrame({
             top: 0,
@@ -155,20 +158,18 @@ function checkout (options) {
 
       });
 
-    }, function () {
-      throw new Error('can not connect to ' + baseUrl);
+    }).catch(function (reason) {
+      // throw new Error('can not connect to ' + baseUrl);
+      errorLoading = true;
+
+      console.error('Aplazame ' + reason);
+
+      _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
+      loadingText.innerHTML = '<div style="color: lightcoral">Error cargando pasarela</div><div>(ver consola)</div>';
+      loadingText.style.lineHeight = '1.5';
+
+      (options.onError || _.noop)(reason);
     });
-
-
-  }).catch(function (reason) {
-    console.error('Aplazame ' + reason);
-
-    _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
-    loadingText.innerHTML = '<div style="color: lightcoral">Error cargando pasarela</div><div>(ver consola)</div>';
-    loadingText.style.lineHeight = '1.5';
-
-    (options.onError || _.noop)(reason);
-  });
 
 }
 

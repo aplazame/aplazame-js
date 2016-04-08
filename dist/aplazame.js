@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.215';
+module.exports = '0.0.216';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -321,7 +321,7 @@ function http (url, config) {
           headers: headersGetter(request),
           xhr: request
         };
-        if( request.status >= 200 && request.status < 300 ) {
+        if( request.status >= 0 && request.status < 400 ) {
           resolve( response );
         } else {
           reject( response );
@@ -775,14 +775,14 @@ function stepResult (step, value, type) {
 }
 
 function processQueue(promise) {
-  if( promise.$$fulfilled === undefined ) {
+  if( promise.$$succeeded === undefined ) {
     return;
   }
 
   var len = promise.$$queue.length,
       step = promise.$$queue.shift(),
-      type = promise.$$fulfilled ? 'resolve' : 'reject',
-      uncough = !promise.$$fulfilled && promise.$$uncought++;
+      type = promise.$$succeeded ? 'resolve' : 'reject',
+      uncough = !promise.$$succeeded && promise.$$uncought++;
 
   while( step ) {
 
@@ -802,12 +802,12 @@ function processQueue(promise) {
     step = promise.$$queue.shift();
   }
 
-  if( uncough ) {
-    setTimeout(function () {
-      if( promise.$$uncough === uncough ) {
-        throw new Error('Uncaught (in promise)');
-      }
-    }, 0);
+  if( !promise.$$succeeded && uncough ) {
+    // setTimeout(function () {
+    if( promise.$$uncough === uncough ) {
+      throw new Error('Uncaught (in promise)');
+    }
+    // }, 0);
   }
 }
 
@@ -820,21 +820,27 @@ function Promise (executor) {
   this.$$queue = [];
   this.$$uncough = 0;
 
-  executor(function (result) {
-    p.$$fulfilled = true;
-    p.$$value = result;
+  try {
+    executor(function (result) {
+      p.$$succeeded = true;
+      p.$$value = result;
+      processQueue(p);
+    }, function (reason) {
+      p.$$succeeded = false;
+      p.$$value = reason;
+      processQueue(p);
+    });
+  } catch (err) {
+    p.$$succeeded = false;
+    p.$$value = err;
     processQueue(p);
-  }, function (reason) {
-    p.$$fulfilled = false;
-    p.$$value = reason;
-    processQueue(p);
-  });
+  }
 }
 
-Promise.prototype.then = function (onFulfilled, onRejected) {
+Promise.prototype.then = function (onsucceeded, onRejected) {
   var _this = this,
       _promise = new Promise(function (resolve, reject) {
-        _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
+        _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
       });
 
   processQueue(this);
@@ -844,6 +850,15 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 
 Promise.prototype.catch = function (onRejected) {
   return this.then(undefined, onRejected);
+};
+
+Promise.defer = function () {
+  var deferred = {};
+  deferred.promise = new Promise(function (resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
 };
 
 Promise.all = function (iterable) {
@@ -914,7 +929,7 @@ module.exports = function (Promise) {
     return new Promise(executor);
   }
 
-  ['resolve', 'reject', 'all', 'race'].forEach(function (fName) {
+  ['defer', 'resolve', 'reject', 'all', 'race'].forEach(function (fName) {
     q[fName] = Promise[fName];
   });
 
@@ -948,8 +963,11 @@ global.aplazame.info = function () {
   };
 };
 
+global.$q = require('q-promise');
+global.$http = require('http-browser');
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":18,"./apps/checkout":19,"./apps/http-service":20,"./apps/modal":22,"./apps/simulator":23,"./core/api":25,"./core/core":26,"./loaders/data-aplazame":28,"./loaders/data-button":29,"./loaders/data-simulator":30,"./tools/log":36}],18:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":18,"./apps/checkout":19,"./apps/http-service":20,"./apps/modal":22,"./apps/simulator":23,"./core/api":25,"./core/core":26,"./loaders/data-aplazame":28,"./loaders/data-button":29,"./loaders/data-simulator":30,"./tools/log":36,"http-browser":8,"q-promise":15}],18:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -1095,6 +1113,7 @@ module.exports = button;
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     http = require('http-browser'),
+    $q = require('q-promise'),
     cssHack = require('../tools/css-hack');
 
 function checkout(options) {
@@ -1135,120 +1154,131 @@ function checkout(options) {
 
   options.api = api;
 
-  http(iframeSrc).then(function (response) {
-    var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
-        iframe = _.getIFrame({
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '0',
-      background: 'transparent'
-    });
+  return $q(function (resolve, reject) {
 
-    iframe.className = 'aplazame-modal';
-    iframe.style.display = 'none';
+    http(iframeSrc).then(function (response) {
+      var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
+          iframe = _.getIFrame({
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '0',
+        background: 'transparent'
+      });
 
-    document.body.appendChild(iframe);
-    iframe.src = iframeSrc;
+      iframe.className = 'aplazame-modal';
+      iframe.style.display = 'none';
 
-    if (!options.merchant) {
-      throw new Error('missing merchant parameters');
-    }
+      document.body.appendChild(iframe);
+      iframe.src = iframeSrc;
 
-    if (!options.merchant.public_api_key) {
-      if (api.publicKey) {
-        options.merchant.public_api_key = api.publicKey;
-      } else {
-        throw new Error('missing public key');
+      if (!options.merchant) {
+        throw new Error('missing merchant parameters');
       }
-    }
 
-    options.origin = {
-      href: location.href,
-      host: location.host,
-      protocol: location.protocol,
-      origin: location.origin
-    };
+      if (!options.merchant.public_api_key) {
+        if (api.publicKey) {
+          options.merchant.public_api_key = api.publicKey;
+        } else {
+          throw new Error('missing public key');
+        }
+      }
 
-    _.onMessage('checkout', function (e, message) {
+      options.origin = {
+        href: location.href,
+        host: location.host,
+        protocol: location.protocol,
+        origin: location.origin
+      };
 
-      switch (message.event) {
-        case 'merchant':
-          iframe.style.display = null;
-          e.source.postMessage({
-            checkout: options
-          }, '*');
-          break;
-        case 'show-iframe':
-          _.removeClass(iframe, 'hide');
-          cssModal.hack(true);
-          cssOverlay.hack(false);
-          document.body.removeChild(tmpOverlay);
-          break;
-        case 'loading-text':
-          loadingText.textContent = message.text;
-          break;
-        case 'drop-blur':
-          _.removeClass(document.body, 'aplazame-blur');
-          _.addClass(document.body, 'aplazame-unblur');
-          setTimeout(function () {
-            document.head.removeChild(cssBlur);
-          }, 600);
-          break;
-        case 'success':
-          _.log('aplazame.checkout:success', message);
+      _.onMessage('checkout', function (e, message) {
 
-          http(options.merchant.confirmation_url, {
-            method: 'post',
-            contentType: 'application/json',
-            data: message.data,
-            params: message.params
-          }).then(function (response) {
+        switch (message.event) {
+          case 'merchant':
+            iframe.style.display = null;
             e.source.postMessage({
-              aplazame: 'checkout',
-              event: 'confirmation',
-              result: 'success',
-              response: http.plainResponse(response)
+              checkout: options
             }, '*');
-          }, function () {
-            e.source.postMessage({
-              aplazame: 'checkout',
-              event: 'confirmation',
-              result: 'error',
-              response: http.plainResponse(response)
-            }, '*');
-          });
-          // confirmation_url
-          break;
-        case 'close':
-          if (iframe) {
-            document.body.removeChild(iframe);
-            cssModal.hack(false);
-            iframe = null;
+            break;
+          case 'show-iframe':
+            _.removeClass(iframe, 'hide');
+            cssModal.hack(true);
+            cssOverlay.hack(false);
+            document.body.removeChild(tmpOverlay);
+            break;
+          case 'loading-text':
+            loadingText.textContent = message.text;
+            break;
+          case 'drop-blur':
+            _.removeClass(document.body, 'aplazame-blur');
+            _.addClass(document.body, 'aplazame-unblur');
+            setTimeout(function () {
+              document.head.removeChild(cssBlur);
+            }, 600);
+            break;
+          case 'success':
+            _.log('aplazame.checkout:success', message);
 
-            switch (message.result) {
-              case 'dismiss':
-                location.replace(options.merchant.checkout_url || '/');
-                break;
-              case 'success':
-                location.replace(options.merchant.success_url);
-                break;
-              case 'cancel':
-                location.replace(options.merchant.cancel_url);
-                break;
+            http(options.merchant.confirmation_url, {
+              method: 'post',
+              contentType: 'application/json',
+              data: message.data,
+              params: message.params
+            }).then(function (response) {
+              e.source.postMessage({
+                aplazame: 'checkout',
+                event: 'confirmation',
+                result: 'success',
+                response: http.plainResponse(response)
+              }, '*');
+            }, function () {
+              e.source.postMessage({
+                aplazame: 'checkout',
+                event: 'confirmation',
+                result: 'error',
+                response: http.plainResponse(response)
+              }, '*');
+            });
+            // confirmation_url
+            break;
+          case 'close':
+            if (iframe) {
+              document.body.removeChild(iframe);
+              cssModal.hack(false);
+              iframe = null;
+
+              switch (message.result) {
+                case 'dismiss':
+                  location.replace(options.merchant.checkout_url || '/');
+                  break;
+                case 'success':
+                  location.replace(options.merchant.success_url);
+                  break;
+                case 'cancel':
+                  location.replace(options.merchant.cancel_url);
+                  break;
+              }
             }
-          }
-          break;
-      }
+            break;
+        }
+      });
+    }, function () {
+      throw new Error('can not connect to ' + baseUrl);
     });
-  }, function () {
-    throw new Error('can not connect to ' + baseUrl);
+  }).catch(function (reason) {
+    console.error('Aplazame ' + reason);
+
+    _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
+    loadingText.innerHTML = '<div style="color: lightcoral">Error cargando pasarela</div><div>(ver consola)</div>';
+    loadingText.style.lineHeight = '1.5';
+
+    (options.onError || _.noop)(reason);
   });
 }
 
 module.exports = checkout;
 
-},{"../core/api":25,"../tools/css-hack":34,"../tools/tools":39,"./loading-svg":21,"http-browser":8}],20:[function(require,module,exports){
+},{"../core/api":25,"../tools/css-hack":34,"../tools/tools":39,"./loading-svg":21,"http-browser":8,"q-promise":15}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -1444,14 +1474,19 @@ function simulator(amount, _options, callback, onError) {
       response: response
     };
     cache.push(result);
-    return result;
-  }, onError);
+    response.status = 403;
 
-  if (_.isFunction(callback)) {
-    promise.then(function (result) {
-      callback(result.choices, result.options);
-    });
-  }
+    (callback || _.noop)(result.choices, result.options);
+    return result;
+  }).catch(function (response) {
+    if (response.status === 403) {
+      console.error('Aplazame: Permiso denegado usando la clave pública: ' + response.config.publicKey);
+      console.info('Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
+    } else if (response.data.error && response.data.error.message) {
+      console.error('Aplazame: ' + response.data.error.message);
+    }
+    (onError || _.noop)();
+  });
 
   return promise;
 }
@@ -1481,7 +1516,8 @@ module.exports = http.base(api.host, {
       return renderAccept(_api);
     },
     authorization: function (config) {
-      return 'Bearer ' + (config.publicKey || api.publicKey);
+      config.publicKey = config.publicKey || api.publicKey;
+      return 'Bearer ' + config.publicKey;
     }
   }
 });
@@ -2336,6 +2372,9 @@ var _ = require('nitro-tools/lib/kit-extend');
 _.extend(_, require('nitro-tools/lib/kit-type'), require('nitro-tools/lib/kit-lists'), require('nitro-tools/lib/kit-path'));
 
 _.log = require('./log');
+_.noop = function (value) {
+  return value;
+};
 
 function getAmount(amount) {
   var prefix = '';

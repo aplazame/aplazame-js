@@ -2,6 +2,8 @@
 
 require('./browser-polyfills');
 
+// require('q-promise').usePolyfill();
+
 var _ = require('nitro-tools/lib/kit-extend');
 
 _.extend(_,

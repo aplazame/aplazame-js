@@ -34,8 +34,8 @@
 	},
 	"dependencies": {
 		"events-wrapper": "0.2.2",
-		"http-browser": "0.1.10",
+		"http-browser": "0.1.11",
 		"nitro-tools": "0.1.11",
-		"q-promise": "0.2.5"
+		"q-promise": "0.2.6"
 	}
 }

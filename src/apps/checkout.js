@@ -165,7 +165,7 @@ function checkout (options) {
       console.error('Aplazame ' + reason);
 
       _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
-      loadingText.innerHTML = '<div style="color: lightcoral">Error cargando pasarela</div><div>(ver consola)</div>';
+      loadingText.innerHTML = '<div class="text-error">Error cargando pasarela</div><br/><div>soporte: <a href="mailto:hola@aplazame.com?subject=' + encodeURI('Checkout error: ' + reason) + '">hola@aplazame.com</a></div>';
       loadingText.style.lineHeight = '1.5';
 
       (options.onError || _.noop)(reason);

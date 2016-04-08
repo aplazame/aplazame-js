@@ -66,7 +66,7 @@ function checkout (options) {
       document.body.appendChild(iframe);
       iframe.src = iframeSrc;
 
-      if( true || !options.merchant ) {
+      if( !options.merchant ) {
         throw new Error('missing merchant parameters');
       }
 

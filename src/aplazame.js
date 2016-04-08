@@ -19,3 +19,7 @@ global.aplazame.info = function () {
     version: require('../.tmp/aplazame-version')
   };
 };
+
+
+global.$q = require('q-promise');
+global.$http = require('http-browser');

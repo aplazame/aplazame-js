@@ -11,6 +11,7 @@ _.extend(_,
 );
 
 _.log = require('./log');
+_.noop = function (value) { return value; };
 
 function getAmount (amount) {
   var prefix = '';

@@ -20,7 +20,8 @@ module.exports = http.base(api.host, {
       return renderAccept(_api);
     },
     authorization: function (config) {
-      return 'Bearer ' + ( config.publicKey || api.publicKey );
+      config.publicKey = config.publicKey || api.publicKey;
+      return 'Bearer ' + config.publicKey;
     }
   }
 });

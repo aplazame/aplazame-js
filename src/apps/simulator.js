@@ -45,10 +45,12 @@ function simulator (amount, _options, callback, onError) {
     if( response.status === 403 ) {
       console.error('Aplazame: Permiso denegado usando la clave pública: ' + response.config.publicKey);
       console.info('Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
-    } else if( response.data.error && response.data.error.message ) {
+    } else if( _.key(response, 'data.error.fields.amount.0') ) {
+      console.error('Aplazame: ' + response.data.error.fields.amount[0]);
+    } else if( _.key(response, 'data.error.message') ) {
       console.error('Aplazame: ' + response.data.error.message);
     }
-    (onError || _.noop)();
+    (onError || _.noop)(response);
   });
 
   return promise;

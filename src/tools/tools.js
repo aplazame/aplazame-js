@@ -7,7 +7,7 @@ require('./browser-polyfills');
 var _ = require('nitro-tools/lib/kit-extend');
 
 _.extend(_,
-  require('nitro-tools/lib/kit-keys'),
+  require('nitro-tools/lib/kit-key'),
   require('nitro-tools/lib/kit-type'),
   require('nitro-tools/lib/kit-lists'),
   require('nitro-tools/lib/kit-path')

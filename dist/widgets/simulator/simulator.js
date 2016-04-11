@@ -878,7 +878,14 @@ var main = document.getElementById('main'),
   choices: function (message) {
     currentMessage = message;
     currentMessage.$$choice = currentMessage.choices.reduce(maxInstalments, null);
-    renderWidget();
+
+    var price = document.getElementById('.aplazame-widget-button .amount .price');
+
+    if (price) {
+      price.textContent = _.getAmount(currentMessage.$$choice.amount);
+    } else {
+      renderWidget();
+    }
   },
   loading: function (message) {
     _.addClass(main, 'loading');

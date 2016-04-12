@@ -20,6 +20,13 @@ global.aplazame.info = function () {
   };
 };
 
+global.aplazame.log = function () {
+  require('./tools/log').history.forEach(function (l) {
+    console.log(l.time);
+    console.log.apply(console, l.args);
+  });
+};
+
 
 global.$q = require('q-promise');
 global.$http = require('http-browser');

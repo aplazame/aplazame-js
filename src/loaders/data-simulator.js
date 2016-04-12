@@ -118,7 +118,7 @@ module.exports = function (aplazame) {
               var matched = el.textContent.match(/[\d,.]+/);
 
               if( matched ) {
-                amount += matched[0];
+                amount += (amount ? '.' : '') + matched[0];
               }
             });
         } else {

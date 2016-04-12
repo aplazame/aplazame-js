@@ -112,7 +112,7 @@ module.exports = function (aplazame) {
         if( priceElement.children && priceElement.children.length ) {
           amount = '';
           [].forEach.call( priceElement.children, function (el) {
-              if( amount.text(/[,.]/) ) {
+              if( amount.test(/[,.]/) ) {
                 return;
               }
               var matched = el.textContent.match(/[\d,.]+/);

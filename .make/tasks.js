@@ -25,10 +25,10 @@ module.exports = function (nitro) {
 
   nitro.task('build', ['git.branch', 'clear:build', 'css-hacks', 'widgets', 'js', 'demo']);
 
-  nitro.task('dev', ['git.branch', 'test.jshint', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev'], function () {
+  nitro.task('dev', ['git.branch', 'lintjs', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev'], function () {
 
     nitro.watch('src')
-      .when('{,**/}*.js', ['test.jshint', 'js'])
+      .when('{,**/}*.js', ['lintjs', 'js'])
       .when('{,**/}*.sass', ['css-hacks', 'js']);
 
     nitro.watch('widgets')

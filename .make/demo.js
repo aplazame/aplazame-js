@@ -36,14 +36,18 @@ module.exports = function (nitro) {
 
   nitro.task('demo-templates', function (target) {
 
-    nitro.template.cmd('with', function (scope, expression) {
+    nitro.template.cmd('with', function (scope, expression, content, otherwise) {
       var parts = expression.split('as'),
           o = {};
 
-      o[parts[1].trim()] = scope.$eval( parts[0] );
+      o[parts[1].trim()] = scope.eval( parts[0] );
 
-      return this.content( scope.$new(o) );
+      return content( scope.new(o) );
     });
+
+    nitro.template.cmd('json', function (scope, expression, content, otherwise) {
+      return JSON.stringify( scope.eval(expression), null, '\t' );
+    }, true);
 
     var pkg = require('../package'),
         dev = target === 'dev',
@@ -92,8 +96,8 @@ module.exports = function (nitro) {
         });
 
     nitro.file.write('public/index.html', renderIndex( indexData ) );
-    nitro.file.write('public/demo-success.html', renderIndex( indexData.$$new({ result: { closed: true, success: true } }) ) );
-    nitro.file.write('public/demo-cancel.html', renderIndex( indexData.$$new({ result: { closed: true, success: false } }) ) );
+    nitro.file.write('public/demo-success.html', renderIndex( indexData.new({ result: { closed: true, success: true } }) ) );
+    nitro.file.write('public/demo-cancel.html', renderIndex( indexData.new({ result: { closed: true, success: false } }) ) );
 
     nitro.file.write('public/playground.html', nitro.template( nitro.file.read('demo/playground.html') )( indexData ) );
 

@@ -104,9 +104,29 @@ module.exports = function (aplazame) {
 
     var getter = priceSelector ? function () {
       var qty = qtySelector ? getQty( qtySelector ) : 1,
-          priceElement = document.querySelector( priceSelector );
+          priceElement = document.querySelector( priceSelector ),
+          amount = priceElement.value;
 
-      return qty * parsePrice( priceElement.value !== undefined ? priceElement.value : priceElement.textContent );
+      if( typeof amount === 'undefined' ) {
+        // console.log('priceElement.children', priceElement.children);
+        if( priceElement.children && priceElement.children.length ) {
+          amount = '';
+          [].forEach.call( priceElement.children, function (el) {
+              if( amount.text(/[,.]/) ) {
+                return;
+              }
+              var matched = el.textContent.match(/[\d,.]+/);
+
+              if( matched ) {
+                amount += matched[0];
+              }
+            });
+        } else {
+          amount = priceElement.textContent;
+        }
+      }
+
+      return qty * parsePrice( amount );
     } : function () {
       return Number( widgetElement.getAttribute('data-amount') );
     };

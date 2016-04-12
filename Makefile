@@ -16,7 +16,7 @@ auto.install: git.hooks
 	@node auto-install
 
 test: auto.install
-	@node make test.jshint
+	@node make lintjs
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
 

@@ -98,7 +98,7 @@ module.exports = function (aplazame) {
       if( priceSelector ) {
         qtySelector = cmsQtySelector.find(matchSelector);
 
-        _.log('automatically found price selector', priceSelector, qtySelector);
+        _.log('auto-discovered price selector', priceSelector, qtySelector);
       }
     }
 
@@ -111,24 +111,30 @@ module.exports = function (aplazame) {
         // console.log('priceElement.children', priceElement.children);
         if( !/\d+[,.]\d+/.test(priceElement.textContent) && priceElement.children && priceElement.children.length ) {
           amount = '';
-          [].forEach.call( priceElement.children, function (el) {
-              if( /[,.]/.test(amount) ) {
-                return;
-              }
-              var matched = el.textContent.match(/[\d,.]+/);
 
-              if( matched ) {
-                amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
-              }
-            });
+          var part = priceElement.firstChild, matched;
+
+          while( part ) {
+            if( /[,.]/.test(amount) ) {
+              return;
+            }
+            matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).match(/[\d,.]+/);
+
+            if( matched ) {
+              amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
+            }
+
+            part = part.nextSibling;
+          }
         } else {
           amount = priceElement.textContent;
         }
       }
 
-      return qty * parsePrice( amount );
+      return parsePrice( amount );
     } : function () {
-      return Number( widgetElement.getAttribute('data-amount') );
+      // return Number( widgetElement.getAttribute('data-amount') );
+      return;
     };
 
     getter.priceSelector = priceSelector;
@@ -195,9 +201,9 @@ module.exports = function (aplazame) {
       var choice, choices, options, iframe,
           getAmount = amountGetter(simulator),
           dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
-          currentAmount = simulator.getAttribute('data-price') ? getAmount() : ( Number( simulator.getAttribute('data-amount') ) || getAmount() );
+          currentAmount = getAmount.priceSelector && getAmount();
 
-      aplazame.simulator(currentAmount, function (_choices, _options) {
+      aplazame.simulator( (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount) , function (_choices, _options) {
 
         if( _options.widget && _options.widget.disabled ) {
           return;
@@ -207,7 +213,6 @@ module.exports = function (aplazame) {
         options = _options;
 
         choice = choices.reduce(maxInstalments, null);
-
 
         var widgetOptions = options.widget, widget;
 
@@ -246,32 +251,39 @@ module.exports = function (aplazame) {
         simulator.appendChild(widget.el);
 
         var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1,
+            liveAmount = false,
             updating = false,
             amountInterval = setInterval(function () {
-              if( updating ) {
-                return;
-              }
-              var amount = getAmount(),
+              var amount = getAmount.priceSelector && getAmount(),
                   qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-              if( amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty ) {
+              if( amount !== currentAmount || qty !== previousQty ) {
                 previousQty = qty;
 
-                updating = true;
-                widget.trigger('choices.updating', [amount, _choices, _options]);
-                aplazame.simulator(amount, function (_choices, _options) {
+                if( amount && amount !== currentAmount ) {
+                  liveAmount = true;
                   currentAmount = amount;
-                  choices = _choices;
-                  options = _options;
-                  choice = choices.reduce(maxInstalments, null);
-                  widget.trigger('choices.update', [amount, _choices, _options]);
-                  updating = false;
-                }, function () {
-                  updating = false;
+                }
+
+                amount = qty * ( liveAmount ? amount : dataAmount);
+
+                if( amount === updating ) {
+                  return;
+                }
+
+                updating = amount;
+
+                widget.trigger('choices.updating', [amount, _choices, _options]);
+                aplazame.simulator( amount, function (_choices, _options) {
+                  if( amount === updating ) {
+                    choices = _choices;
+                    options = _options;
+                    choice = choices.reduce(maxInstalments, null);
+                    widget.trigger('choices.update', [amount, _choices, _options]);
+                  }
                 });
-                // onPriceChange(amount, currentAmount);
               }
-            }, 200);
+            }, 400);
 
       });
 
@@ -279,10 +291,9 @@ module.exports = function (aplazame) {
 
   }
 
-  _.liveDOM.subscribe(widgetsLookup);
-
   _.ready(function () {
     widgetsLookup(document);
+    _.liveDOM.subscribe(widgetsLookup);
   });
 
   // *****************************************************************************

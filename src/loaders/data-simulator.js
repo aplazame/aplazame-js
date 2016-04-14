@@ -109,7 +109,7 @@ module.exports = function (aplazame) {
 
       if( typeof amount === 'undefined' ) {
         // console.log('priceElement.children', priceElement.children);
-        if( priceElement.children && priceElement.children.length ) {
+        if( !/\d+[,.]\d+/.test(priceElement.textContent) && priceElement.children && priceElement.children.length ) {
           amount = '';
           [].forEach.call( priceElement.children, function (el) {
               if( /[,.]/.test(amount) ) {
@@ -118,7 +118,7 @@ module.exports = function (aplazame) {
               var matched = el.textContent.match(/[\d,.]+/);
 
               if( matched ) {
-                amount += (amount ? '.' : '') + matched[0];
+                amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
               }
             });
         } else {

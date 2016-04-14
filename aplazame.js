@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.232';
+module.exports = '0.0.233';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -1843,7 +1843,7 @@ module.exports = function (aplazame) {
       if (priceSelector) {
         qtySelector = cmsQtySelector.find(matchSelector);
 
-        _.log('automatically found price selector', priceSelector, qtySelector);
+        _.log('auto-discovered price selector', priceSelector, qtySelector);
       }
     }
 
@@ -1856,24 +1856,31 @@ module.exports = function (aplazame) {
         // console.log('priceElement.children', priceElement.children);
         if (!/\d+[,.]\d+/.test(priceElement.textContent) && priceElement.children && priceElement.children.length) {
           amount = '';
-          [].forEach.call(priceElement.children, function (el) {
+
+          var part = priceElement.firstChild,
+              matched;
+
+          while (part) {
             if (/[,.]/.test(amount)) {
               return;
             }
-            var matched = el.textContent.match(/[\d,.]+/);
+            matched = (part.toString() === '[object Text]' ? part.data : part.textContent).match(/[\d,.]+/);
 
             if (matched) {
               amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
             }
-          });
+
+            part = part.nextSibling;
+          }
         } else {
           amount = priceElement.textContent;
         }
       }
 
-      return qty * parsePrice(amount);
+      return parsePrice(amount);
     } : function () {
-      return Number(widgetElement.getAttribute('data-amount'));
+      // return Number( widgetElement.getAttribute('data-amount') );
+      return;
     };
 
     getter.priceSelector = priceSelector;
@@ -1943,9 +1950,9 @@ module.exports = function (aplazame) {
           iframe,
           getAmount = amountGetter(simulator),
           dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
-          currentAmount = simulator.getAttribute('data-price') ? getAmount() : Number(simulator.getAttribute('data-amount')) || getAmount();
+          currentAmount = getAmount.priceSelector && getAmount();
 
-      aplazame.simulator(currentAmount, function (_choices, _options) {
+      aplazame.simulator((getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount), function (_choices, _options) {
 
         if (_options.widget && _options.widget.disabled) {
           return;
@@ -1993,40 +2000,46 @@ module.exports = function (aplazame) {
         simulator.appendChild(widget.el);
 
         var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1,
+            liveAmount = false,
             updating = false,
             amountInterval = setInterval(function () {
-          if (updating) {
-            return;
-          }
-          var amount = getAmount(),
+          var amount = getAmount.priceSelector && getAmount(),
               qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
 
-          if (amount && _.isNumber(amount) && amount !== currentAmount || qty !== previousQty) {
+          if (amount !== currentAmount || qty !== previousQty) {
             previousQty = qty;
 
-            updating = true;
+            if (amount && amount !== currentAmount) {
+              liveAmount = true;
+              currentAmount = amount;
+            }
+
+            amount = qty * (liveAmount ? amount : dataAmount);
+
+            if (amount === updating) {
+              return;
+            }
+
+            updating = amount;
+
             widget.trigger('choices.updating', [amount, _choices, _options]);
             aplazame.simulator(amount, function (_choices, _options) {
-              currentAmount = amount;
-              choices = _choices;
-              options = _options;
-              choice = choices.reduce(maxInstalments, null);
-              widget.trigger('choices.update', [amount, _choices, _options]);
-              updating = false;
-            }, function () {
-              updating = false;
+              if (amount === updating) {
+                choices = _choices;
+                options = _options;
+                choice = choices.reduce(maxInstalments, null);
+                widget.trigger('choices.update', [amount, _choices, _options]);
+              }
             });
-            // onPriceChange(amount, currentAmount);
           }
-        }, 200);
+        }, 400);
       });
     });
   }
 
-  _.liveDOM.subscribe(widgetsLookup);
-
   _.ready(function () {
     widgetsLookup(document);
+    _.liveDOM.subscribe(widgetsLookup);
   });
 
   // *****************************************************************************
@@ -2284,7 +2297,7 @@ module.exports = {
 },{}],35:[function(require,module,exports){
 
 
-var cssHack = function () {
+var cssHack = (function () {
   var cache = {},
       hacks = {
     overlay: require('../../.tmp/css-hacks/overlay'),
@@ -2324,7 +2337,7 @@ var cssHack = function () {
     }
     return cache[hackName];
   };
-}();
+})();
 
 module.exports = cssHack;
 

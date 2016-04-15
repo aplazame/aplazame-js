@@ -201,9 +201,14 @@ module.exports = function (aplazame) {
       var choice, choices, options, iframe,
           getAmount = amountGetter(simulator),
           dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
-          currentAmount = getAmount.priceSelector && getAmount();
+          currentAmount = getAmount.priceSelector && getAmount(),
+          simulatorOptions = {};
 
-      aplazame.simulator( (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount) , function (_choices, _options) {
+      if( simulator.getAttribute('data-view') ) {
+        simulatorOptions.view = simulator.getAttribute('data-view');
+      }
+
+      aplazame.simulator( (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
 
         if( _options.widget && _options.widget.disabled ) {
           return;

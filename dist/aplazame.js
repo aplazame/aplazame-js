@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.233';
+module.exports = '0.0.234';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -1517,6 +1517,9 @@ function simulator(amount, _options, callback, onError) {
       amount: amount
     }
   };
+  if (_options.view) {
+    options.params.view = _options.view;
+  }
   if (_options.payday) {
     options.params.payday = _options.payday;
   }
@@ -1950,9 +1953,14 @@ module.exports = function (aplazame) {
           iframe,
           getAmount = amountGetter(simulator),
           dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
-          currentAmount = getAmount.priceSelector && getAmount();
+          currentAmount = getAmount.priceSelector && getAmount(),
+          simulatorOptions = {};
 
-      aplazame.simulator((getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount), function (_choices, _options) {
+      if (simulator.getAttribute('data-view')) {
+        simulatorOptions.view = simulator.getAttribute('data-view');
+      }
+
+      aplazame.simulator((getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
 
         if (_options.widget && _options.widget.disabled) {
           return;

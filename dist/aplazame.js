@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.237';
+module.exports = '0.0.238';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0);-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -1954,7 +1954,8 @@ module.exports = function (aplazame) {
           getAmount = amountGetter(simulator),
           dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
           currentAmount = getAmount.priceSelector && getAmount(),
-          simulatorOptions = {};
+          simulatorOptions = {},
+          currentQty = (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) || 1;
 
       if (simulator.getAttribute('data-view')) {
         simulatorOptions.view = simulator.getAttribute('data-view');
@@ -1962,7 +1963,7 @@ module.exports = function (aplazame) {
 
       _.log('simulator', getAmount, dataAmount, currentAmount, simulatorOptions);
 
-      aplazame.simulator((getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
+      aplazame.simulator(currentQty * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
 
         if (_options.widget && _options.widget.disabled) {
           return;
@@ -2009,15 +2010,14 @@ module.exports = function (aplazame) {
 
         simulator.appendChild(widget.el);
 
-        var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1,
-            liveAmount = false,
+        var liveAmount = false,
             updating = false,
             amountInterval = setInterval(function () {
           var amount = getAmount.priceSelector && getAmount(),
-              qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
+              qty = (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) || 1;
 
-          if (amount !== currentAmount || qty !== previousQty) {
-            previousQty = qty;
+          if (amount !== currentAmount || qty !== currentQty) {
+            currentQty = qty;
 
             if (amount && amount !== currentAmount) {
               liveAmount = true;

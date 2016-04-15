@@ -202,7 +202,8 @@ module.exports = function (aplazame) {
           getAmount = amountGetter(simulator),
           dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
           currentAmount = getAmount.priceSelector && getAmount(),
-          simulatorOptions = {};
+          simulatorOptions = {},
+          currentQty = (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) || 1;
 
       if( simulator.getAttribute('data-view') ) {
         simulatorOptions.view = simulator.getAttribute('data-view');
@@ -210,7 +211,7 @@ module.exports = function (aplazame) {
 
       _.log('simulator', getAmount, dataAmount, currentAmount, simulatorOptions );
 
-      aplazame.simulator( (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
+      aplazame.simulator( currentQty * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
 
         if( _options.widget && _options.widget.disabled ) {
           return;
@@ -257,15 +258,14 @@ module.exports = function (aplazame) {
 
         simulator.appendChild(widget.el);
 
-        var previousQty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1,
-            liveAmount = false,
+        var liveAmount = false,
             updating = false,
             amountInterval = setInterval(function () {
               var amount = getAmount.priceSelector && getAmount(),
-                  qty = getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1;
+                  qty = (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) || 1;
 
-              if( amount !== currentAmount || qty !== previousQty ) {
-                previousQty = qty;
+              if( amount !== currentAmount || qty !== currentQty ) {
+                currentQty = qty;
 
                 if( amount && amount !== currentAmount ) {
                   liveAmount = true;

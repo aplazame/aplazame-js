@@ -5,19 +5,15 @@
   100%
     filter: blur(3px)
 
-// @media (max-width: 600px)
-//   body
-//     transition: all 0.4s linear
-
-@media (min-width: 601px)
-
-  body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay)
-    filter: blur(3px)
+body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay)
+  filter: blur(3px)
+  @media (min-width: 601px)
     animation-duration: .4s
     animation-name: aplazame-blur
 
-  body.aplazame-unblur > *:not(.aplazame-modal):not(.aplazame-overlay)
-    filter: blur(0px)
+body.aplazame-unblur > *:not(.aplazame-modal):not(.aplazame-overlay)
+  filter: blur(0px)
+  @media (min-width: 601px)
     animation-duration: .4s
     animation-name: aplazame-blur
     animation-direction: reverse

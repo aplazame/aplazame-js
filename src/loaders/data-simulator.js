@@ -290,7 +290,7 @@ module.exports = function (aplazame) {
                   }
                 });
               }
-            }, 400);
+            }, 200);
 
       });
 

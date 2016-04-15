@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Aplazame - DEMO</title>
-    <link rel="stylesheet" href="demo.css"/>
+    <link rel="stylesheet" href="demo.css?v=${version}"/>
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#688298" />
 
@@ -177,7 +177,7 @@
     </footer>
 
     <script type="text/javascript"
-            src="$if{dotcom}https://aplazame.com/static/aplazame.js{:}dist/aplazame.js{/}"
+            src="$if{dotcom}https://aplazame.com/static/aplazame.js{:}dist/aplazame.js?v=${version}{/}"
             data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
             data-version="v1.2"
             data-sandbox="true">

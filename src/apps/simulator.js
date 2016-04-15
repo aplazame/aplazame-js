@@ -18,6 +18,9 @@ function simulator (amount, _options, callback, onError) {
       amount: amount
     }
   };
+  if( _options.view ) {
+    options.params.view = _options.view;
+  }
   if( _options.payday ) {
     options.params.payday = _options.payday;
   }

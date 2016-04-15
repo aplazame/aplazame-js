@@ -208,6 +208,8 @@ module.exports = function (aplazame) {
         simulatorOptions.view = simulator.getAttribute('data-view');
       }
 
+      _.log('simulator', getAmount, dataAmount, currentAmount, simulatorOptions );
+
       aplazame.simulator( (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
 
         if( _options.widget && _options.widget.disabled ) {

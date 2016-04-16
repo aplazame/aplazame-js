@@ -38,9 +38,25 @@ function initListeners () {
   card.addEventListener('click', function (e) {
     e.stopPropagation();
   });
+  card.addEventListener('touchstart', function (e) {
+    e.stopPropagation();
+  });
+  card.addEventListener('touchend', function (e) {
+    e.stopPropagation();
+  });
 
   document.body.addEventListener('click', function () {
     closeModal(false);
+  });
+
+  var touched;
+  document.body.addEventListener('touchstart', function (e) {
+    touched = { x: e.pageX, y: e.pageY };
+  });
+  document.body.addEventListener('touchend', function (e) {
+    if( e.pageX === touched.x && e.pageY === touched.y ) {
+      closeModal(false);
+    }
   });
 
   [].forEach.call( document.querySelectorAll('[modal-resolve]'), function (element) {

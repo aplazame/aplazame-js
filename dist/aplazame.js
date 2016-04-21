@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.245';
+module.exports = '0.0.246';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -8,15 +8,18 @@ module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);fil
 module.exports = '@-webkit-keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}60%,90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%,90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes aplazame-logo-short{0%,30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%,30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%,to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:1.5s;animation-duration:1.5s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.logo-aplazame.animate .smile{-webkit-animation-name:aplazame-logo-smile;animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{-webkit-animation-name:aplazame-logo-large;animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{-webkit-animation-name:aplazame-logo-short;animation-name:aplazame-logo-short}';
 
 },{}],4:[function(require,module,exports){
-module.exports = '.aplazame-modal{width:100vw!important;height:100vh!important;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
+module.exports = '.aplazame-modal{height:100%!important;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
 
 },{}],5:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.9);text-align:center;z-index:2147483646}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay;opacity:0}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
+module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.9);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay;opacity:0}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
 
 },{}],6:[function(require,module,exports){
-module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num">12</em>    <span>&nbsp;cuotas</span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
+module.exports = '<div class="modal"><div class="card size-lg has-cta modal-instalments-info">  <div class="card-content">    <header class="aplazame"></header>    <section class="info">      Elige el número de meses y la cuota que más te convengan    </section>    <div class="choices-wrapper">      <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>      <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">        <div class="wrapper">          <div class="num-instalments">            <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>          </div>          <div class="amount">            <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--            --><span class="amount-currency">€</span><!--            --><span class="amount-per-month">/mes</span></div>        </div>      </button>      <% } %>    </div>    <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>    <section class="how-it-works">      <header>¿Cómo funciona?</header>      <div class="info-wrapper">        <div class="info">          <h3>Elige Aplazame</h3>          <p>en la tienda, cuando vayas a pagar el pedido.</p>        </div>        <div class="info">          <h3>Decide cómo quieres pagar</h3>          <p>Hasta en 12 cuotas, pagando con tarjeta.</p>        </div>        <div class="info">          <h3>Disfruta de tu compra</h3>          <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>        </div>      </div>    </section>  </div>  <div class="cta btn-double size-sm">    <div class="button-wrapper">      <button class="button btn-white" type="submit" modal-reject="back">        <span class="cta-title">Volver a Tienda</span>      </button>    </div>    <div class="button-wrapper">      <a class="button" href="http://aplazame.com/how/" target="_blank">        <span class="cta-title">¿Quieres saber más?</span>      </a>    </div>  </div></div></div>';
 
 },{}],7:[function(require,module,exports){
+module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num">12</em>    <span>&nbsp;cuotas</span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
+
+},{}],8:[function(require,module,exports){
 /*
  * events.js - Single library to handle generic events
 
@@ -193,7 +196,7 @@ module.exports = '<div class="aplazame-widget-instalments">  <span class="aplaza
   return Events;
 });
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 // factory http
 
@@ -426,7 +429,7 @@ http.base = function (url, baseConfig) {
 
 module.exports = http;
 
-},{"nitro-tools/lib/kit-extend":10,"q-promise":16}],9:[function(require,module,exports){
+},{"nitro-tools/lib/kit-extend":11,"q-promise":17}],10:[function(require,module,exports){
 
 var arrayShift = [].shift;
 
@@ -445,7 +448,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 var RE_$$ = /^\$\$/,
     arrayShift = [].shift,
@@ -492,7 +495,7 @@ module.exports = {
   }
 };
 
-},{"./extend":9,"./kit-type":14}],11:[function(require,module,exports){
+},{"./extend":10,"./kit-type":15}],12:[function(require,module,exports){
 
 var _ = require('./kit-type');
 
@@ -541,7 +544,7 @@ module.exports = {
   keys: Object.keys
 };
 
-},{"./kit-type":14}],12:[function(require,module,exports){
+},{"./kit-type":15}],13:[function(require,module,exports){
 
 var _ = require('./kit-type');
 
@@ -745,7 +748,7 @@ module.exports = {
   remove: remove
 };
 
-},{"./kit-type":14}],13:[function(require,module,exports){
+},{"./kit-type":15}],14:[function(require,module,exports){
 
 function _joinPath () {
     var path = (arguments[0] || '').replace(/\/$/, '');
@@ -764,7 +767,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 function _isType (type) {
@@ -809,7 +812,7 @@ module.exports = {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 
 function stepResult (step, value, type) {
   if( value && value.then ) {
@@ -964,13 +967,13 @@ Promise.reject = function (reason) {
 
 module.exports = Promise;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function (global){
 
 module.exports = require('./qizer')( global.Promise || require('./promise-polyfill') );
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-polyfill":15,"./qizer":17}],17:[function(require,module,exports){
+},{"./promise-polyfill":16,"./qizer":18}],18:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
@@ -991,7 +994,7 @@ module.exports = function (Promise) {
 
 };
 
-},{"./promise-polyfill":15}],18:[function(require,module,exports){
+},{"./promise-polyfill":16}],19:[function(require,module,exports){
 (function (global){
 
 global.aplazame = require('./core/core');
@@ -1026,7 +1029,7 @@ global.$q = require('q-promise');
 global.$http = require('http-browser');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":19,"./apps/checkout":20,"./apps/http-service":21,"./apps/modal":23,"./apps/simulator":24,"./core/api":26,"./core/core":27,"./loaders/data-aplazame":29,"./loaders/data-button":30,"./loaders/data-simulator":31,"./tools/log":37,"http-browser":8,"q-promise":16}],19:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":20,"./apps/checkout":21,"./apps/http-service":22,"./apps/modal":24,"./apps/simulator":25,"./core/api":27,"./core/core":28,"./loaders/data-aplazame":30,"./loaders/data-button":31,"./loaders/data-simulator":32,"./tools/log":38,"http-browser":9,"q-promise":17}],20:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -1166,7 +1169,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":25,"../tools/tools":40}],20:[function(require,module,exports){
+},{"../core/api-http":26,"../tools/tools":41}],21:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -1340,7 +1343,7 @@ function checkout(options) {
 
 module.exports = checkout;
 
-},{"../core/api":26,"../tools/css-hack":35,"../tools/tools":40,"./loading-svg":22,"http-browser":8,"q-promise":16}],21:[function(require,module,exports){
+},{"../core/api":27,"../tools/css-hack":36,"../tools/tools":41,"./loading-svg":23,"http-browser":9,"q-promise":17}],22:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -1369,11 +1372,11 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":40,"http-browser":8}],22:[function(require,module,exports){
+},{"../tools/tools":41,"http-browser":9}],23:[function(require,module,exports){
 
 module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' + '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' + '</svg>' + '<svg class="smile" version="1.1" viewBox="0 0 100 100">' + '<g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)">' + '<path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '<path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"/>' + '</g>' + '</svg>' + '<svg class="line-large" version="1.1" viewBox="0 0 100 100">' + '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' + '</svg>';
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
@@ -1496,7 +1499,7 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":26,"../tools/css-hack":35,"../tools/tools":40}],24:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":27,"../tools/css-hack":36,"../tools/tools":41}],25:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -1560,7 +1563,7 @@ function simulator(amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":25,"../tools/tools":40,"q-promise":16}],25:[function(require,module,exports){
+},{"../core/api-http":26,"../tools/tools":41,"q-promise":17}],26:[function(require,module,exports){
 'use strict';
 
 var apzVersion = require('../../.tmp/aplazame-version'),
@@ -1589,18 +1592,19 @@ module.exports = http.base(api.host, {
   }
 });
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":40,"./api":26,"http-browser":8}],26:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":41,"./api":27,"http-browser":9}],27:[function(require,module,exports){
 'use strict';
 
 module.exports = {
   host: /^js\.aplazame\.[a-z]+$/.test(location.host) || location.host === 'demo.debug.aplazame.com' ? 'https://api.dev.aplazame.com/' : 'https://api.aplazame.com/',
+  // host: 'https://api.aplazame.com/',
   baseUrl: 'https://aplazame.com/static/',
   version: 1,
   checkoutVersion: 1,
   sandbox: false
 };
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1611,7 +1615,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":40,"./api-http":25,"./init":28}],28:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":41,"./api-http":26,"./init":29}],29:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -1649,7 +1653,7 @@ function init(options) {
 
 module.exports = init;
 
-},{"../tools/tools":40,"./api":26}],29:[function(require,module,exports){
+},{"../tools/tools":41,"./api":27}],30:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -1707,7 +1711,7 @@ module.exports = function (aplazame) {
   aplazame.init(options);
 };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -1745,7 +1749,7 @@ module.exports = function (aplazame) {
   });
 };
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -2006,6 +2010,24 @@ module.exports = function (aplazame) {
             choices: choices,
             options: options
           });
+
+          widget.el.addEventListener('click', function () {
+            window.postMessage({
+              aplazame: 'modal',
+              event: 'open',
+              name: 'instalments',
+              data: {
+                card: _.template.compile(require('../../.tmp/simulator/templates/modal-instalments'))({
+                  selectedChoice: choice,
+                  choices: choices,
+                  getAmount: _.getAmount,
+                  months: function (m) {
+                    return m > 1 ? 'meses' : 'mes';
+                  }
+                })
+              }
+            }, '*');
+          });
         }
 
         simulator.appendChild(widget.el);
@@ -2058,7 +2080,7 @@ module.exports = function (aplazame) {
   // *****************************************************************************
 };
 
-},{"../../.tmp/simulator/templates/widget-raw":6,"../core/api":26,"events-wrapper":7,"q-promise":16}],32:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/modal-instalments":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":27,"events-wrapper":8,"q-promise":17}],33:[function(require,module,exports){
 
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
@@ -2103,7 +2125,7 @@ if (!Date.now) {
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 
 function _ready(_callback, delay) {
   var callback = delay ? function () {
@@ -2285,7 +2307,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -2304,10 +2326,10 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 
 
-var cssHack = (function () {
+var cssHack = function () {
   var cache = {},
       hacks = {
     overlay: require('../../.tmp/css-hacks/overlay'),
@@ -2347,11 +2369,11 @@ var cssHack = (function () {
     }
     return cache[hackName];
   };
-})();
+}();
 
 module.exports = cssHack;
 
-},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],36:[function(require,module,exports){
+},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],37:[function(require,module,exports){
 'use strict';
 
 module.exports = function (_) {
@@ -2383,7 +2405,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 
 
 function getErrorObject() {
@@ -2414,7 +2436,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 module.exports = function (_) {
 
@@ -2437,7 +2459,7 @@ module.exports = function (_) {
   };
 };
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 
 function template(name, data) {
   return template.cache[name](data || {});
@@ -2469,7 +2491,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 // 'use strict';
 
 require('./browser-polyfills');
@@ -2512,4 +2534,4 @@ _.extend(_, require('./colors'), require('./browser-tools')(_), {
 
 module.exports = _;
 
-},{"./browser-polyfills":32,"./browser-tools":33,"./colors":34,"./live-dom":36,"./log":37,"./message-listener":38,"./template":39,"nitro-tools/lib/kit-extend":10,"nitro-tools/lib/kit-key":11,"nitro-tools/lib/kit-lists":12,"nitro-tools/lib/kit-path":13,"nitro-tools/lib/kit-type":14}]},{},[18]);
+},{"./browser-polyfills":33,"./browser-tools":34,"./colors":35,"./live-dom":37,"./log":38,"./message-listener":39,"./template":40,"nitro-tools/lib/kit-extend":11,"nitro-tools/lib/kit-key":12,"nitro-tools/lib/kit-lists":13,"nitro-tools/lib/kit-path":14,"nitro-tools/lib/kit-type":15}]},{},[19]);

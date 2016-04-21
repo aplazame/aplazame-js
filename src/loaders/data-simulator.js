@@ -254,6 +254,25 @@ module.exports = function (aplazame) {
             choices: choices,
             options: options
           });
+
+          widget.el.addEventListener('click', function () {
+            window.postMessage({
+              aplazame: 'modal',
+              event: 'open',
+              name: 'instalments',
+              data: {
+                card: _.template.compile( require('../../.tmp/simulator/templates/modal-instalments') )({
+                  selectedChoice: choice,
+                  choices: choices,
+                  getAmount: _.getAmount,
+                  months: function (m) {
+                    return m > 1 ? 'meses' : 'mes';
+                  }
+                })
+              }
+            }, '*');
+
+          });
         }
 
         simulator.appendChild(widget.el);

@@ -48,7 +48,7 @@ function checkout (options) {
     }
   }, 200);
 
-  options.api = api;
+  options.api = _.copy(api);
 
   return http( iframeSrc ).then(function (response) {
       var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
@@ -68,6 +68,10 @@ function checkout (options) {
 
       if( !options.merchant ) {
         throw new Error('missing merchant parameters');
+      }
+
+      if( 'sandbox' in options.merchant ) {
+        api.sandbox = options.merchant.sandbox;
       }
 
       if( !options.merchant.public_api_key ) {

@@ -2,7 +2,7 @@
 
 module.exports = function (aplazame) {
 
-  var aplazameScript = document.querySelector('script[src*="aplazame.js"]') || document.querySelector('script[src*="aplazame.min.js"]'),
+  var aplazameScript = document.currentScript,
       options = {};
 
   if( aplazameScript ) {

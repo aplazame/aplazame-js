@@ -383,6 +383,11 @@ module.exports = {
 
 },{}],7:[function(require,module,exports){
 
+document.currentScript = document.currentScript || (function () {
+  var scripts = document.getElementsByTagName('script');
+  return scripts[scripts.length - 1];
+})();
+
 if (!Element.prototype.matchesSelector) {
   Element.prototype.matchesSelector = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
 }

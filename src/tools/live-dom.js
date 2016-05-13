@@ -3,16 +3,22 @@
 module.exports = function (_) {
   var suscriptors = [],
       running = false;
+      // nUpdates = 0;
 
   function initLiveDOM () {
 
     _.ready(function () {
-      document.body.addEventListener('DOMSubtreeModified', function(event){
-        // console.debug( 'DOM Changed at ', new Date(), event.target );
-        for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
-          suscriptors[i](event.target);
-        }
-      }, false);
+      // var nUpdate = ++nUpdates;
+      // setTimeout(function () {
+      //   if( nUpdate !== nUpdates ) {
+      //     return;
+      //   }
+        document.body.addEventListener('DOMSubtreeModified', function(event){
+          for( var i = 0, n = suscriptors.length; i < n ; i++ ) {
+            suscriptors[i](event.target);
+          }
+        }, false);
+      // }, 50);
     });
 
   }

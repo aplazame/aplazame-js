@@ -34,6 +34,29 @@ function getAmount (amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
+function parsePrice (price) {
+  price = price.replace(' ', '');
+  price = price.match(/[\d,.]+/);
+  price = price && price[0] || '';
+  price = price.replace(/([,.])0$/, '$100');
+  var priceParts = ( '' + price ).replace(/[^0-9.,]/g, '').split(/[,.]/),
+      amount = Number(priceParts.shift()),
+      piece = priceParts.shift(), i, n;
+
+  if( !piece ) {
+    return amount*100;
+  }
+
+  while( piece ) {
+    for( i = 0, n = piece.length ; i < n ; i++ ) {
+      amount*=10;
+    }
+    amount += Number(piece);
+    piece = priceParts.shift();
+  }
+  return amount;
+}
+
 _.extend(_,
   require('./colors'),
   require('./browser-tools')(_),
@@ -41,6 +64,7 @@ _.extend(_,
     liveDOM: require('./live-dom')(_),
     template: require('./template'),
     getAmount: getAmount,
+    parsePrice: parsePrice,
     onMessage: require('./message-listener')(_)
   }
 );

@@ -9,28 +9,6 @@ module.exports = function (aplazame) {
       isMobile = window.matchMedia('( max-width: 767px )'),
       each = Array.prototype.forEach;
 
-  function parsePrice (price) {
-    price = price.match(/[\d,.]+/);
-    price = price && price[0] || '';
-    price = price.replace(/([,.])0$/, '$100');
-    var priceParts = ( '' + price ).replace(/[^0-9.,]/g, '').split(/[,.]/),
-        amount = Number(priceParts.shift()),
-        piece = priceParts.shift(), i, n;
-
-    if( !piece ) {
-      return amount*100;
-    }
-
-    while( piece ) {
-      for( i = 0, n = piece.length ; i < n ; i++ ) {
-        amount*=10;
-      }
-      amount += Number(piece);
-      piece = priceParts.shift();
-    }
-    return amount;
-  }
-
   function getQty (qtySelector) {
     if( !_.isString(qtySelector) ) {
       console.warn('warning: data-qty should be an string. pe: form#article .final-price ');
@@ -131,7 +109,7 @@ module.exports = function (aplazame) {
         }
       }
 
-      return parsePrice( amount );
+      return _.parsePrice( amount );
     } : function () {
       // return Number( widgetElement.getAttribute('data-amount') );
       return;

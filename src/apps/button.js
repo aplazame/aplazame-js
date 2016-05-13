@@ -110,16 +110,9 @@ function button (options) {
   });
 }
 
-var checksCache = {};
 button.check = function (options, callback) {
-  // checksCache = {};
-
   if( _.isString(options) || _.isNumber(options) ) {
     options = { amount: Number(options) };
-  }
-
-  if( checksCache[options.amount] ) {
-    return checksCache[options.amount];
   }
 
   var params = {
@@ -131,13 +124,13 @@ button.check = function (options, callback) {
     params.country = options.country;
   }
 
-  checksCache[options.amount] = apiHttp.get('checkout/button', { params: params });
+  var checkPromise = apiHttp.get('checkout/button', { params: params });
 
   if( _.isFunction(callback) ) {
-    checksCache[options.amount].then(function (response) { callback(response.data.allowed, response); }, function (response) { callback(false, response); });
+    checkPromise.then(function (response) { callback(response.data.allowed, response); }, function (response) { callback(false, response); });
   }
 
-  return checksCache[options.amount];
+  return checkPromise;
 };
 
 module.exports = button;

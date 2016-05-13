@@ -112,8 +112,8 @@ function button (options) {
 
 var checksCache = {};
 button.check = function (options, callback) {
-  checksCache = {};
-  
+  // checksCache = {};
+
   if( _.isString(options) || _.isNumber(options) ) {
     options = { amount: Number(options) };
   }

@@ -4,9 +4,10 @@ var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools');
 
 function getCartPrice () {
-   var priceParts = document.querySelector('#total_price').textContent.match(/(\d+)([,.](\d+))?/);
-   var amount = Number(priceParts[1])*100 + Number(priceParts[3]);
-   return amount;
+  //  var priceParts = document.querySelector('#total_price').textContent.match(/(\d+)([,.](\d+))?/);
+  //  var amount = Number(priceParts[1])*100 + ( priceParts[3] ? Number(priceParts[3]) : 0);
+  //  return amount;
+  return _.parsePrice( document.querySelector('#total_price').textContent );
 }
 
 function button (options) {
@@ -27,8 +28,9 @@ function button (options) {
       options.lastPrice = options.amount;
 
       setInterval(function () {
-        if( getCartPrice() !== options.lastPrice ) {
-          options.amount = getCartPrice();
+        var amount = getCartPrice();
+        if( amount && amount !== options.lastPrice ) {
+          options.amount = amount;
           options.lastPrice = options.amount;
           options.forceUpdate = true;
           button(options);

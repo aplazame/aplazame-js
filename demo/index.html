@@ -137,15 +137,22 @@
       </section>
 
       $if{result}{:}
-        <div class="pay-with-aplazame">
+        <!-- <div class="pay-with-aplazame"> -->
+        <div class="row"></div>
+          <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 
-          <button data-aplazame-button data-amount="13014" onclick="loadCheckout();">
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="13014" onclick="loadCheckout();">
             <span>Pagar con&nbsp;</span><!--
             --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
           </button>
 
+          </div>
+
         </div>
       {/}
+
+      <br/>
+      <br/>
 
     </div>
 

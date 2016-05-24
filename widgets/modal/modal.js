@@ -107,5 +107,9 @@ _.onMessage('modal', function (e, message) {
 });
 
 _.ready(function () {
+  _.scrollTop(0);
+  // setTimeout(function () {
+  //   _.scrollTop(0);
+  // }, 10);
   parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
 });

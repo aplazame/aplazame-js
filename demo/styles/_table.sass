@@ -1,0 +1,90 @@
+/***** TABLE *****/
+
+table.table
+  width: 100%
+  table-layout: fixed
+
+  &, table
+    width: 100%
+    table-layout: fixed
+
+  th
+    @extend .font-md-bold
+    @extend .font-upper
+    border-bottom: 1px solid $grey-light
+    color: $black
+    padding: units(1) 0
+    text-align: center
+    // &:first-child
+    //   text-align: left
+
+  td
+    border-bottom: 1px solid $grey-light
+    padding: units(2) 0
+    text-align: center
+
+  .open td
+    font-weight: $font-medium
+    &.column-date
+      color: $black
+
+  .column-date
+    @extend .font-lg-regular
+    color: $grey-dark
+
+  .column-amount
+    @extend .font-lg-regular
+    text-align: right
+
+  .collapsible .icon
+    margin-left: units(1)
+    position: relative
+    top: units(0.25)
+
+  .column-operations,
+  .column-details
+    @extend .font-lg-regular
+    color: $color-brand
+    text-align: right
+
+  .date-details,
+  .amount-details
+    @extend .font-sm-regular
+    color: $grey-dark
+    display: block
+    line-height: units(2)
+    padding-top: units(0.5)
+
+  .date-details
+    @extend .font-upper
+
+  .nested-table
+    > td
+      border-left: units(0.5) solid $grey-light
+      padding: 0 0 0 units(1.5)
+
+    .column-amount
+      color: $black
+
+  .table-payments
+    .column-amount
+      color: $color-brand
+
+    .open td
+      font-weight: $font-medium
+
+  .table-operations
+    .open td
+      font-weight: $font-medium
+      &.column-amount
+        color: $black
+
+  .load-more
+    background-color: $grey-light
+    border-left: units(0.5) solid $grey-light
+    padding: units(2)
+    a
+      @extend .font-lg-regular
+      color: $color-brand
+      display: block
+      text-decoration: none

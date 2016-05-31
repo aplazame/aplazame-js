@@ -114,8 +114,9 @@ function checkout (options) {
               document.head.removeChild(cssBlur);
             }, 600);
             break;
+          case 'confirm':
           case 'success':
-            _.log('aplazame.checkout:success', message);
+            _.log('aplazame.checkout:confirm', message);
 
             http( options.merchant.confirmation_url, {
               method: 'post',

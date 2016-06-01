@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.263';
+module.exports = '0.0.264';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -1231,7 +1231,29 @@ function checkout(options) {
       width: '100%',
       height: '0',
       background: 'transparent'
-    });
+    }),
+        httpCheckout = function (httpPromise) {
+      var started = Date.now();
+      return http.apply(this, arguments).then(function (response) {
+        iframe.contentWindow.postMessage({
+          aplazame: 'checkout',
+          event: 'http-success',
+          started: started,
+          elapsed: Date.now() - started,
+          response: http.plainResponse(response)
+        }, '*');
+        return response;
+      }, function (response) {
+        iframe.contentWindow.postMessage({
+          aplazame: 'checkout',
+          event: 'http-error',
+          started: started,
+          elapsed: Date.now() - started,
+          response: http.plainResponse(response)
+        }, '*');
+        throw response;
+      });
+    };
 
     iframe.className = 'aplazame-modal';
     iframe.style.display = 'none';
@@ -1291,7 +1313,7 @@ function checkout(options) {
         case 'success':
           _.log('aplazame.checkout:confirm', message);
 
-          http(options.merchant.confirmation_url, {
+          httpCheckout(options.merchant.confirmation_url, {
             method: 'post',
             contentType: 'application/json',
             data: message.data,
@@ -1356,25 +1378,29 @@ module.exports = checkout;
 var _ = require('../tools/tools'),
     http = require('http-browser');
 
+function processResponse(result, messageSrc, started) {
+
+  return function (response) {
+
+    var responsep = http.plainResponse(response);
+    responsep.config = message;
+
+    messageSrc.postMessage({
+      aplazame: 'http',
+      event: 'response',
+      started: started,
+      elapsed: Date.now() - started,
+      result: result,
+      response: responsep
+    }, '*');
+  };
+}
+
 _.onMessage('http', function (e, message) {
 
-  function processResponse(result) {
+  var started = Date.now();
 
-    return function (response) {
-
-      var responsep = http.plainResponse(response);
-      responsep.config = message;
-
-      e.source.postMessage({
-        aplazame: 'http',
-        event: 'response',
-        result: result,
-        response: responsep
-      }, '*');
-    };
-  }
-
-  http(message.url, message).then(processResponse('success'), processResponse('error'));
+  http(message.url, message).then(processResponse('success', e.source, started), processResponse('error', e.source, started));
 });
 
 module.exports = { ready: true };

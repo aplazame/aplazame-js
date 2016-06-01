@@ -638,16 +638,22 @@ module.exports = {
 module.exports = function (_) {
   var suscriptors = [],
       running = false;
+  // nUpdates = 0;
 
   function initLiveDOM() {
 
     _.ready(function () {
+      // var nUpdate = ++nUpdates;
+      // setTimeout(function () {
+      //   if( nUpdate !== nUpdates ) {
+      //     return;
+      //   }
       document.body.addEventListener('DOMSubtreeModified', function (event) {
-        // console.debug( 'DOM Changed at ', new Date(), event.target );
         for (var i = 0, n = suscriptors.length; i < n; i++) {
           suscriptors[i](event.target);
         }
       }, false);
+      // }, 50);
     });
   }
 
@@ -784,10 +790,36 @@ function getAmount(amount) {
   return prefix + ('' + amount).replace(/..$/, ',$&');
 }
 
+function parsePrice(price) {
+  price = price.replace(' ', '');
+  price = price.match(/[\d,.]+/);
+  price = price && price[0] || '';
+  price = price.replace(/([,.])0$/, '$100');
+  var priceParts = ('' + price).replace(/[^0-9.,]/g, '').split(/[,.]/),
+      amount = Number(priceParts.shift()),
+      piece = priceParts.shift(),
+      i,
+      n;
+
+  if (!piece) {
+    return amount * 100;
+  }
+
+  while (piece) {
+    for (i = 0, n = piece.length; i < n; i++) {
+      amount *= 10;
+    }
+    amount += Number(piece);
+    piece = priceParts.shift();
+  }
+  return amount;
+}
+
 _.extend(_, require('./colors'), require('./browser-tools')(_), {
   liveDOM: require('./live-dom')(_),
   template: require('./template'),
   getAmount: getAmount,
+  parsePrice: parsePrice,
   onMessage: require('./message-listener')(_)
 });
 
@@ -903,6 +935,10 @@ _.onMessage('modal', function (e, message) {
 });
 
 _.ready(function () {
+  _.scrollTop(0);
+  // setTimeout(function () {
+  //   _.scrollTop(0);
+  // }, 10);
   parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
 });
 

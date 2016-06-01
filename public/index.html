@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/favicon-72.png" />
 <link rel="apple-touch-icon" sizes="57x57" href="/assets/images/favicon-57.png" />
 
-<link rel="stylesheet" href="/demo.css?v=0.0.250"/>
+<link rel="stylesheet" href="/demo.css?v=0.0.263"/>
 
 <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />
 
@@ -182,15 +182,22 @@
       </section>
 
       
-        <div class="pay-with-aplazame">
+        <!-- <div class="pay-with-aplazame"> -->
+        <div class="row"></div>
+          <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 
-          <button data-aplazame-button data-amount="13014" onclick="loadCheckout();">
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="13014" onclick="loadCheckout();">
             <span>Pagar con&nbsp;</span><!--
             --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
           </button>
 
+          </div>
+
         </div>
       
+
+      <br/>
+      <br/>
 
     </div>
 
@@ -209,7 +216,7 @@
             data-sandbox="true">
     </script>
 
-    <script type="text/javascript" src="/demo-article.js?v=0.0.250"></script>
+    <script type="text/javascript" src="/demo-article.js?v=0.0.263"></script>
     <script type="text/javascript">
       var loadCheckout = (function () {
 

@@ -144,7 +144,7 @@ function checkout (options) {
               method: 'post',
               contentType: 'application/json',
               data: message.data,
-              params: message.params
+              params: _.extend(message.params || {}, { checkout_token: message.data.checkout_token })
             }).then(function (response) {
               e.source.postMessage({
                 aplazame: 'checkout',

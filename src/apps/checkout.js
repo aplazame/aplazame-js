@@ -58,7 +58,29 @@ function checkout (options) {
             width: '100%',
             height: '0',
             background: 'transparent'
-          });
+          }),
+          httpCheckout = function (httpPromise) {
+            var started = Date.now();
+            return http.apply(this, arguments).then(function (response) {
+              iframe.contentWindow.postMessage({
+                aplazame: 'checkout',
+                event: 'http-success',
+                started: started,
+                elapsed: Date.now() - started,
+                response: http.plainResponse(response)
+              }, '*');
+              return response;
+            }, function (response) {
+              iframe.contentWindow.postMessage({
+                aplazame: 'checkout',
+                event: 'http-error',
+                started: started,
+                elapsed: Date.now() - started,
+                response: http.plainResponse(response)
+              }, '*');
+              throw response;
+            });
+          };
 
       iframe.className = 'aplazame-modal';
       iframe.style.display = 'none';
@@ -118,12 +140,12 @@ function checkout (options) {
           case 'success':
             _.log('aplazame.checkout:confirm', message);
 
-            http( options.merchant.confirmation_url, {
+            httpCheckout( options.merchant.confirmation_url, {
               method: 'post',
               contentType: 'application/json',
               data: message.data,
               params: message.params
-            } ).then(function (response) {
+            }).then(function (response) {
               e.source.postMessage({
                 aplazame: 'checkout',
                 event: 'confirmation',

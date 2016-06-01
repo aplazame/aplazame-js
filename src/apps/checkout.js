@@ -140,7 +140,7 @@ function checkout (options) {
           case 'success':
             _.log('aplazame.checkout:confirm', message);
 
-            httpCheckout( options.merchant.confirmation_url, {
+            http( options.merchant.confirmation_url, {
               method: 'post',
               contentType: 'application/json',
               data: message.data,

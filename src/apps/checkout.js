@@ -59,7 +59,7 @@ function checkout (options) {
             height: '0',
             background: 'transparent'
           }),
-          httpCheckout = function (httpPromise) {
+          httpCheckout = function () {
             var started = Date.now();
             return http.apply(this, arguments).then(function (response) {
               iframe.contentWindow.postMessage({

@@ -3,7 +3,7 @@
 var _ = require('../tools/tools'),
     http = require('http-browser');
 
-function processResponse(result, messageSrc, started) {
+function processResponse(result, message, messageSrc, started) {
 
   return function (response) {
 
@@ -27,8 +27,8 @@ _.onMessage('http', function (e, message) {
 
   http( message.url, message )
     .then(
-      processResponse('success', e.source, started),
-      processResponse('error', e.source, started)
+      processResponse('success', message, e.source, started),
+      processResponse('error', message, e.source, started)
     );
 
 });

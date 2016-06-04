@@ -177,6 +177,10 @@
 
         var checkoutdata = $json{checkout};
 
+        if( aplazame.info().api.host === 'https://api.dev.aplazame.com/' ) {
+          checkoutdata.merchant.confirmation_url = checkoutdata.merchant.confirmation_url.replace('http://demo.aplazame.com', 'http://demo.debug.aplazame.com/');
+        }
+
         function randOrderId (timeout) {
           return 'test-' + new Date().getTime();
         }

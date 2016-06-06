@@ -37,8 +37,15 @@
                   <input type="text" name="qty" value="1"></input>
                   <button type="button" class="plus">+</button>
                 </div>
-                <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>
+                <div class=price-wrapper></div>
+                <!-- <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div> -->
               </div>
+
+              <script>
+                setTimeout(function () {
+                  document.querySelector('.price-wrapper').innerHTML = '<div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>';
+                }, 2000);
+              </script>
 
               <br/>
 
@@ -62,10 +69,10 @@
 
               <div class="text-right">
                 <div data-aplazame-simulator=""
-                     data-view="product"
-                     data-amount="${article.price}"
-                     data-price="form.details [itemprop='price']"
-                     data-qty="form.details input[name='qty']"></div>
+                      data-view="product"
+                      data-amount="${article.price}"
+                      data-price="form.details [itemprop='price']"
+                      data-qty="form.details input[name='qty']"></div>
               </div>
 
             </form>

@@ -53,7 +53,8 @@ module.exports = function (aplazame) {
 
   function amountGetter (widgetElement) {
     var priceSelector = widgetElement.getAttribute('data-price'),
-        qtySelector = widgetElement.getAttribute('data-qty');
+        qtySelector = widgetElement.getAttribute('data-qty'),
+        autoDiscovered = false;
 
     if( priceSelector ) {
       try{
@@ -75,12 +76,13 @@ module.exports = function (aplazame) {
 
       if( priceSelector ) {
         qtySelector = cmsQtySelector.find(matchSelector);
+        autoDiscovered = true;
 
         _.log('auto-discovered price selector', priceSelector, qtySelector);
       }
     }
 
-    var getter = priceSelector ? function () {
+    var getter = ( priceSelector && document.querySelector( priceSelector ) ) ? function () {
       var qty = qtySelector ? getQty( qtySelector ) : 1,
           priceElement = document.querySelector( priceSelector ),
           amount = priceElement.value;
@@ -117,6 +119,7 @@ module.exports = function (aplazame) {
 
     getter.priceSelector = priceSelector;
     getter.qtySelector = qtySelector;
+    getter.autoDiscovered = autoDiscovered;
 
     return getter;
   }

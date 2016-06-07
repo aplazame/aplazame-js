@@ -38,7 +38,7 @@ module.exports = function (aplazame) {
     '#product-info .special-price .price', // magento
     '#product-info .regular-price .price', // magento
     'form#buy_block #our_price_display', // prestashop
-    '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount' // woocommerce
+    '#main [itemtype="http://schema.org/Product"] .price .amount' // woocommerce
   ],
   cmsQtySelector = [
     'form#product_addtocart_form input[name="qty"]', // magento

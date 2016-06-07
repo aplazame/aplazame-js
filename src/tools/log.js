@@ -18,6 +18,8 @@ function log () {
       clean: caller_line.slice(index + 2, caller_line.length)
     }
   });
+
+  // console.log.apply(console, arguments);
 }
 
 log.history = [];

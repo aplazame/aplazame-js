@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.274';
+module.exports = '0.0.275';
 
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
@@ -471,8 +471,8 @@ function _merge () {
         for( key in src ) {
           if( src[key] === undefined ) {
             dest[key] = undefined;
-          } else if( typeof dest[key] !== typeof src[key] ) {
-            dest[key] = _merge(undefined, src[key]);
+          // } else if( typeof dest[key] !== typeof src[key] ) {
+          //   dest[key] = _merge(undefined, src[key]);
           } else if( _.isArray(dest[key]) ) {
             [].push.apply(dest[key], src[key]);
           } else if( _.isObject(dest[key]) ) {
@@ -706,7 +706,7 @@ function iterateeFn (iteratee) {
 	};
 }
 
-function find (list, iteratee, thisArg) {
+function first (list, iteratee, thisArg) {
 		thisArg = thisArg === undefined ? this : thisArg;
 		iteratee = iterateeFn(iteratee);
 
@@ -715,7 +715,17 @@ function find (list, iteratee, thisArg) {
             return list[i];
         }
     }
-		return null;
+}
+
+function last (list, iteratee, thisArg) {
+		thisArg = thisArg === undefined ? this : thisArg;
+		iteratee = iterateeFn(iteratee);
+
+		for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+        if( iteratee.call(thisArg, list[i]) ) {
+            return list[i];
+        }
+    }
 }
 
 function filter (list, iteratee, thisArg) {
@@ -736,7 +746,9 @@ function filter (list, iteratee, thisArg) {
 module.exports = {
   matchAll: matchAll,
   matchAny: matchAny,
-  find: find,
+  find: first,
+  first: first,
+  last: last,
   filter: filter,
   each: each,
   some: some,
@@ -746,7 +758,12 @@ module.exports = {
   indexOf: indexOf,
   indexBy: indexBy,
   pluck: pluck,
-  remove: remove
+  remove: remove,
+  if: function (result, fn) {
+    if( result !== undefined && fn instanceof Function ) {
+      return fn(result);
+    }
+  }
 };
 
 },{"./kit-type":15}],14:[function(require,module,exports){
@@ -1840,15 +1857,16 @@ module.exports = function (aplazame) {
 
   function amountGetter(widgetElement) {
     var priceSelector = widgetElement.getAttribute('data-price'),
-        qtySelector = widgetElement.getAttribute('data-qty');
+        qtySelector = widgetElement.getAttribute('data-qty'),
+        autoDiscovered = false;
 
     if (priceSelector) {
-      try {
-        document.querySelector(priceSelector);
-      } catch (err) {
-        priceSelector = null;
-        console.warn(err.message);
-      }
+      // try{
+      //   document.querySelector(priceSelector);
+      // } catch(err) {
+      //   priceSelector = null;
+      //   console.warn(err.message);
+      // }
       if (qtySelector) {
         try {
           document.querySelector(qtySelector);
@@ -1862,6 +1880,7 @@ module.exports = function (aplazame) {
 
       if (priceSelector) {
         qtySelector = cmsQtySelector.find(matchSelector);
+        autoDiscovered = true;
 
         _.log('auto-discovered price selector', priceSelector, qtySelector);
       }
@@ -1870,10 +1889,9 @@ module.exports = function (aplazame) {
     var getter = priceSelector ? function () {
       var qty = qtySelector ? getQty(qtySelector) : 1,
           priceElement = document.querySelector(priceSelector),
-          amount = priceElement.value;
+          amount = priceElement ? priceElement.value : '0';
 
       if (typeof amount === 'undefined') {
-        // console.log('priceElement.children', priceElement.children);
         if (!/\d+[,.]\d+/.test(priceElement.textContent) && priceElement.children && priceElement.children.length) {
           amount = '';
 
@@ -1905,6 +1923,7 @@ module.exports = function (aplazame) {
 
     getter.priceSelector = priceSelector;
     getter.qtySelector = qtySelector;
+    getter.autoDiscovered = autoDiscovered;
 
     return getter;
   }
@@ -1938,7 +1957,9 @@ module.exports = function (aplazame) {
       event: eventName,
       mobile: isMobile.matches
     }, data || {});
-    this.el.contentWindow.postMessage(_data, '*');
+    if (this.el.contentWindow) {
+      this.el.contentWindow.postMessage(_data, '*');
+    }
   };
 
   function maxInstalments(prev, choice) {
@@ -1978,9 +1999,11 @@ module.exports = function (aplazame) {
         simulatorOptions.view = simulator.getAttribute('data-view');
       }
 
-      _.log('simulator', getAmount, dataAmount, currentAmount, simulatorOptions);
+      // _.log('simulator', ( currentQty || 1 ) * (dataAmount || currentAmount), simulatorOptions );
 
-      aplazame.simulator(currentQty * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
+      var simulatorAmount = (currentQty || 1) * (dataAmount || currentAmount);
+
+      aplazame.simulator((currentQty || 1) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
 
         if (_options.widget && _options.widget.disabled) {
           return;
@@ -2043,7 +2066,9 @@ module.exports = function (aplazame) {
           });
         }
 
-        simulator.appendChild(widget.el);
+        if (simulatorAmount) {
+          simulator.appendChild(widget.el);
+        }
 
         var liveAmount = false,
             updating = false,
@@ -2070,6 +2095,12 @@ module.exports = function (aplazame) {
             widget.trigger('choices.updating', [amount, _choices, _options]);
             aplazame.simulator(amount, function (_choices, _options) {
               if (amount === updating) {
+                if (amount) {
+                  simulator.appendChild(widget.el);
+                } else if (widget.el.parentElement === simulator) {
+                  simulator.removeChild(widget.el);
+                }
+
                 choices = _choices;
                 options = _options;
                 choice = choices.reduce(maxInstalments, null);
@@ -2454,6 +2485,8 @@ function log() {
       clean: caller_line.slice(index + 2, caller_line.length)
     }
   });
+
+  // console.log.apply(console, arguments);
 }
 
 log.history = [];

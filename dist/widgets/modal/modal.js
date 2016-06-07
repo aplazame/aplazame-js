@@ -39,8 +39,8 @@ function _merge () {
         for( key in src ) {
           if( src[key] === undefined ) {
             dest[key] = undefined;
-          } else if( typeof dest[key] !== typeof src[key] ) {
-            dest[key] = _merge(undefined, src[key]);
+          // } else if( typeof dest[key] !== typeof src[key] ) {
+          //   dest[key] = _merge(undefined, src[key]);
           } else if( _.isArray(dest[key]) ) {
             [].push.apply(dest[key], src[key]);
           } else if( _.isObject(dest[key]) ) {
@@ -274,7 +274,7 @@ function iterateeFn (iteratee) {
 	};
 }
 
-function find (list, iteratee, thisArg) {
+function first (list, iteratee, thisArg) {
 		thisArg = thisArg === undefined ? this : thisArg;
 		iteratee = iterateeFn(iteratee);
 
@@ -283,7 +283,17 @@ function find (list, iteratee, thisArg) {
             return list[i];
         }
     }
-		return null;
+}
+
+function last (list, iteratee, thisArg) {
+		thisArg = thisArg === undefined ? this : thisArg;
+		iteratee = iterateeFn(iteratee);
+
+		for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+        if( iteratee.call(thisArg, list[i]) ) {
+            return list[i];
+        }
+    }
 }
 
 function filter (list, iteratee, thisArg) {
@@ -304,7 +314,9 @@ function filter (list, iteratee, thisArg) {
 module.exports = {
   matchAll: matchAll,
   matchAny: matchAny,
-  find: find,
+  find: first,
+  first: first,
+  last: last,
   filter: filter,
   each: each,
   some: some,
@@ -314,7 +326,12 @@ module.exports = {
   indexOf: indexOf,
   indexBy: indexBy,
   pluck: pluck,
-  remove: remove
+  remove: remove,
+  if: function (result, fn) {
+    if( result !== undefined && fn instanceof Function ) {
+      return fn(result);
+    }
+  }
 };
 
 },{"./kit-type":6}],5:[function(require,module,exports){
@@ -695,6 +712,8 @@ function log() {
       clean: caller_line.slice(index + 2, caller_line.length)
     }
   });
+
+  // console.log.apply(console, arguments);
 }
 
 log.history = [];

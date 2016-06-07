@@ -57,12 +57,12 @@ module.exports = function (aplazame) {
         autoDiscovered = false;
 
     if( priceSelector ) {
-      try{
-        document.querySelector(priceSelector);
-      } catch(err) {
-        priceSelector = null;
-        console.warn(err.message);
-      }
+      // try{
+      //   document.querySelector(priceSelector);
+      // } catch(err) {
+      //   priceSelector = null;
+      //   console.warn(err.message);
+      // }
       if( qtySelector ) {
         try{
           document.querySelector(qtySelector);
@@ -82,13 +82,12 @@ module.exports = function (aplazame) {
       }
     }
 
-    var getter = ( priceSelector && document.querySelector( priceSelector ) ) ? function () {
+    var getter = priceSelector ? function () {
       var qty = qtySelector ? getQty( qtySelector ) : 1,
           priceElement = document.querySelector( priceSelector ),
-          amount = priceElement.value;
+          amount = priceElement ? priceElement.value : '0';
 
       if( typeof amount === 'undefined' ) {
-        // console.log('priceElement.children', priceElement.children);
         if( !/\d+[,.]\d+/.test(priceElement.textContent) && priceElement.children && priceElement.children.length ) {
           amount = '';
 
@@ -153,7 +152,9 @@ module.exports = function (aplazame) {
       event: eventName,
       mobile: isMobile.matches
     }, data || {});
-    this.el.contentWindow.postMessage(_data, '*');
+    if( this.el.contentWindow ) {
+      this.el.contentWindow.postMessage(_data, '*');
+    }
   };
 
   function maxInstalments (prev, choice) {
@@ -190,9 +191,11 @@ module.exports = function (aplazame) {
         simulatorOptions.view = simulator.getAttribute('data-view');
       }
 
-      _.log('simulator', getAmount, dataAmount, currentAmount, simulatorOptions );
+      // _.log('simulator', ( currentQty || 1 ) * (dataAmount || currentAmount), simulatorOptions );
 
-      aplazame.simulator( currentQty * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
+      var simulatorAmount = ( currentQty || 1 ) * (dataAmount || currentAmount);
+
+      aplazame.simulator( ( currentQty || 1 ) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
 
         if( _options.widget && _options.widget.disabled ) {
           return;
@@ -256,7 +259,9 @@ module.exports = function (aplazame) {
           });
         }
 
-        simulator.appendChild(widget.el);
+        if( simulatorAmount ) {
+          simulator.appendChild(widget.el);
+        }
 
         var liveAmount = false,
             updating = false,
@@ -283,6 +288,12 @@ module.exports = function (aplazame) {
                 widget.trigger('choices.updating', [amount, _choices, _options]);
                 aplazame.simulator( amount, function (_choices, _options) {
                   if( amount === updating ) {
+                    if( amount ) {
+                      simulator.appendChild(widget.el);
+                    } else if( widget.el.parentElement === simulator ) {
+                      simulator.removeChild(widget.el);
+                    }
+
                     choices = _choices;
                     options = _options;
                     choice = choices.reduce(maxInstalments, null);

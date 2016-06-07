@@ -14,15 +14,17 @@ aplazame._.ready(function () {
   }
 
   var price = document.querySelector('[itemprop="price"]'),
-      priceCents = Number( price.getAttribute('content') );
+      // priceCents = price ? Number( price.getAttribute('content') ) : 0,
       choices = document.querySelectorAll('.article-type-choices .article-type input');
 
-  console.log('price', price, priceCents);
+  console.log('price', price);
 
   [].forEach.call(choices, function (choice) {
     choice.addEventListener('change', function (e) {
-      var factor = Number( price.getAttribute('data-price-' + this.value) ) || 1;
-      price.textContent = toEUR( priceCents * factor );
+      var price = document.querySelector('[itemprop="price"]'),
+          factor = Number( price.getAttribute('data-price-' + this.value) ) || 1;
+
+      price.textContent = toEUR( ( price ? Number( price.getAttribute('content') ) : 0 ) * factor );
 
       // console.log('change', this, e, this.value, factor, toEUR( priceCents * factor ) );
 

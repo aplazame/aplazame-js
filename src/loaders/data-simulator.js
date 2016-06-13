@@ -83,9 +83,12 @@ module.exports = function (aplazame) {
     }
 
     var getter = priceSelector ? function () {
-      var qty = qtySelector ? getQty( qtySelector ) : 1,
-          priceElement = document.querySelector( priceSelector ),
-          amount = priceElement ? priceElement.value : '0';
+      var qty = qtySelector ? getQty( qtySelector ) : 1, priceElement;
+      try {
+        priceElement = document.querySelector( priceSelector );
+      } catch(err) {}
+
+      var amount = priceElement ? priceElement.value : '0';
 
       if( typeof amount === 'undefined' ) {
         if( !/\d+[,.]\d+/.test(priceElement.textContent) && priceElement.children && priceElement.children.length ) {

@@ -174,46 +174,23 @@
 
     <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js{:}dist/aplazame.js?v=${version}{/}"
             data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
-            data-version="v1.2"
             data-sandbox="true">
     </script>
 
     <script type="text/javascript" src="/demo-article.js?v=${version}"></script>
-    <script type="text/javascript">
-      var loadCheckout = (function () {
+    <script type="text/x-javascript-example">
+      // example of checkout loading
 
-        var checkoutdata = $json{checkout};
-
-        if( aplazame.info().api.host === 'https://api.dev.aplazame.com/' ) {
-          checkoutdata.merchant.confirmation_url = checkoutdata.merchant.confirmation_url.replace('http://demo.aplazame.com', 'http://demo.debug.aplazame.com/');
-        }
-
-        function randOrderId (timeout) {
-          return 'test-' + new Date().getTime();
-        }
-
-        function loadCheckout(orderId) {
-
-          if( !orderId ) {
-            orderId = randOrderId();
-            location.hash = '/order/' + orderId;
-          }
-
-          checkoutdata.order.id = orderId;
-
-          // aplazame.checkout.animatedLogo = true;
-          aplazame.checkout(checkoutdata);
-        }
-
-        var matchOrderId = ( location.hash || '' ).match(/^#\/order\/([^&]*)/);
-
-        if( matchOrderId && matchOrderId[1] ) {
-          loadCheckout( matchOrderId[1] === 'random' ? randOrderId() : matchOrderId[1] );
-        }
-
-        return loadCheckout;
-
-      })();
+      aplazame.checkout($json{checkout});
     </script>
+    $if{dev}
+      <script type="application/javascript">
+        var head= document.getElementsByTagName('head')[0];
+        var script= document.createElement('script');
+        script.type= 'text/javascript';
+        script.src= '//' + location.hostname + ':12321/livereload.js';
+        head.appendChild(script);
+      </script>
+    {/}
   </body>
 </html>

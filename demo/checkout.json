@@ -1,7 +1,7 @@
 {
   "toc": true,
   "merchant": {
-    "confirmation_url": "http://demo.aplazame.com/confirm?order_id=test3232321",
+    "confirmation_url": "http://demo.aplazame.com/confirm",
     "cancel_url": "/demo-cancel.html",
     "success_url": "/demo-success.html"
   },

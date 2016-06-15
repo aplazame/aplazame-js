@@ -39,8 +39,9 @@ module.exports = function (nitro) {
       .when('widgets/assets/**', 'widgets.assets:dev');
 
     nitro.watch('demo')
-      .when('{,**/}*.{html,js}', 'demo-templates:dev')
-      .when('{,**/}*.{sass,scss}', 'demo-sass:dev');
+      .when('{,**/}*.js', ['demo-lintjs', 'demo-js:dev'])
+      .when('{,**/}*.html', ['demo-templates:dev'])
+      .when('{,**/}*.{sass,scss}', ['demo-sass:dev']);
 
     nitro.watch('.make', function () {
       nitro.import('.make');

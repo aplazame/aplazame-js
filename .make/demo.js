@@ -6,9 +6,17 @@ module.exports = function (nitro) {
     nitro.dir('public').remove();
   });
 
+  nitro.task('demo-lintjs', function () {
+      nitro.load('demo/{,**/}*.js').process('jshint', {
+        jshintrc: nitro.file.readJSON('.jshintrc')
+      });
+  });
+
   nitro.task('demo-assets', function (target) {
 
     nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
+
+    nitro.file.copy('demo/checkout.json', 'public/checkout.json');
 
   });
 
@@ -28,9 +36,13 @@ module.exports = function (nitro) {
 
   nitro.task('demo-js', function (target) {
 
-    nitro.dir('demo').load('demo-simulator.js').process('browserify', {
-      plugins: [nitro.require('babelify')]
-    }).write('public/simulator');
+    nitro.dir('demo').load('demo-simulator.js')
+      .process('browserify', { plugins: [nitro.require('babelify')] })
+      .write('public/simulator');
+
+    nitro.dir('demo').load('demo-article.js')
+      .process('browserify', { plugins: [nitro.require('babelify')] })
+      .write('public');
 
   });
 
@@ -108,11 +120,10 @@ module.exports = function (nitro) {
     file.write('public/playground.html', template( file.read('demo/playground.html') )( indexData ) );
 
     file.write('public/simulator/index.html', template( file.read('demo/demo-simulator.html') )( indexData.new({ baseHref: '/simulator/' }) ) );
-    file.copy('demo/demo-article.js', 'public/demo-article.js');
   });
 
-  nitro.task('demo-dev', ['demo-clear', 'demo-assets', 'demo-js', 'demo-sass:dev', 'demo-templates:dev']);
+  nitro.task('demo-dev', ['demo-lintjs', 'demo-clear', 'demo-assets', 'demo-js', 'demo-sass:dev', 'demo-templates:dev']);
 
-  nitro.task('demo', ['demo-clear', 'demo-assets', 'demo-js', 'demo-sass', 'demo-templates']);
+  nitro.task('demo', ['demo-lintjs', 'demo-clear', 'demo-assets', 'demo-js', 'demo-sass', 'demo-templates']);
 
 };

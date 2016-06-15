@@ -1,3 +1,5 @@
+/* globals aplazame */
+
 
 aplazame._.ready(function () {
 
@@ -17,7 +19,7 @@ aplazame._.ready(function () {
       // priceCents = price ? Number( price.getAttribute('content') ) : 0,
       choices = document.querySelectorAll('.article-type-choices .article-type input');
 
-  console.log('price', price);
+  // console.log('price', price);
 
   [].forEach.call(choices, function (choice) {
     choice.addEventListener('change', function (e) {
@@ -57,5 +59,65 @@ aplazame._.ready(function () {
     qtyInput.value = '' + ( Number(qtyInput.value) + 1 );
     qtyMinus.removeAttribute('disabled');
   });
+
+  // checkout launching
+
+  var params = {
+    'checkout-json': 'checkout.json'
+  };
+
+  if( location.search ) {
+    location.search.replace(/^\?/, '').split('&').forEach(function (part) {
+      var param = part.match(/(.*?)\=(.*)/);
+      if( param ) {
+        params[param[1].trim()] = param[2].trim();
+      }
+    });
+  }
+
+  // console.log('params', location.search.replace(/^\?/, '').split('&')[0].match(/(.*?)\=(.*)/) );
+
+  var http = require('http-browser'),
+      checkoutData = http(params['checkout-json']);
+
+  function randOrderId (timeout) {
+    return 'test-' + new Date().getTime();
+  }
+
+  var matchOrderId = ( location.hash || '' ).match(/^#\/order\/([^&]*)/),
+      orderId = matchOrderId && matchOrderId[1];
+
+  if( orderId === 'random' ) {
+    orderId = randOrderId();
+  }
+
+  window.loadCheckout = function () {
+
+    checkoutData.then(function (response) {
+      var data = response.data;
+
+      if( typeof data === 'string' ) {
+        try {
+          data = JSON.parse(data);
+        } catch(err) {
+          console.error('received json is not valid');
+        }
+      }
+
+      if( aplazame.info().api.host === 'https://api.dev.aplazame.com/' ) {
+        data.merchant.confirmation_url = data.merchant.confirmation_url.replace('http://demo.aplazame.com', 'http://demo.debug.aplazame.com/');
+      }
+
+      if( !orderId ) {
+        orderId = randOrderId();
+        location.hash = '/order/' + orderId;
+      }
+
+      data.order.id = orderId;
+
+      aplazame.checkout(data);
+    });
+
+  };
 
 });

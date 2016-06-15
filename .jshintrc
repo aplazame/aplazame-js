@@ -21,6 +21,7 @@
   "expr": true,
   "validthis": true,
   "globals": {
+    "aplazame": true,
     "XMLHttpRequest": false,
     "ActiveXObject": false,
     "module": true,

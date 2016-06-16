@@ -104,8 +104,8 @@ aplazame._.ready(function () {
         }
       }
 
-      if( aplazame.info().api.host === 'https://api.dev.aplazame.com/' ) {
-        data.merchant.confirmation_url = data.merchant.confirmation_url.replace('http://demo.aplazame.com', 'http://demo.debug.aplazame.com/');
+      if( aplazame.info().api.host === 'https://api-dev.aplazame.com/' ) {
+        data.merchant.confirmation_url = data.merchant.confirmation_url.replace('//demo.aplazame.com/', '//demo-dev.aplazame.com/');
       }
 
       if( !orderId ) {

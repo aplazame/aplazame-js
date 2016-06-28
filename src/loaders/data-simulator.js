@@ -72,10 +72,10 @@ module.exports = function (aplazame) {
         }
       }
     } else {
-      priceSelector = cmsPriceSelector.find(matchSelector);
+      priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {
-        qtySelector = cmsQtySelector.find(matchSelector);
+        qtySelector = _.find(cmsQtySelector, matchSelector);
         autoDiscovered = true;
 
         _.log('auto-discovered price selector', priceSelector, qtySelector);

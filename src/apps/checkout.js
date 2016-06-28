@@ -83,7 +83,6 @@ function checkout (options) {
           };
 
       iframe.className = 'aplazame-modal';
-      iframe.style.display = 'none';
 
       document.body.appendChild(iframe);
       iframe.src = iframeSrc;

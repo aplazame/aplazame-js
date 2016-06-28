@@ -21,8 +21,5 @@
 		"test",
 		"tests"
 	],
-	"devDependencies": {
-		"fastclick": "~1.0.6",
-		"ng-aplazame": "git@github.com:aplazame/ng-aplazame.git#0.1.104"
-	}
+	"devDependencies": {}
 }

@@ -1,41 +1,42 @@
 {
-	"name": "aplazame",
-	"version": "0.0.285",
-	"description": "javascript sdk for aplazame.com api",
-	"main": "aplazame.min.js",
-	"scripts": {
-		"build": "make build",
-		"start": "make live",
-		"test": "make test"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@github.com/aplazame/aplazame-js.git"
-	},
-	"keywords": [
-		"aplazame",
-		"sdk",
-		"js",
-		"javascript"
-	],
-	"author": "Jesús Germade <jesus@aplazame.com>",
-	"license": "GPL-3.0",
-	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
-	"devDependencies": {
-		"bower": "^1.7.9",
-		"jasmine-core": "^2.4.1",
-		"karma": "^0.13.22",
-		"karma-chrome-launcher": "^1.0.1",
-		"karma-firefox-launcher": "^1.0.0",
-		"karma-jasmine": "^1.0.2",
-		"karma-story-reporter": "^0.3.1",
-		"git-rev-sync": "^1.6.0",
-		"nitro": "1.7.2"
-	},
-	"dependencies": {
-		"events-wrapper": "0.2.2",
-		"http-browser": "0.1.14",
-		"nitro-tools": "0.1.13",
-		"q-promise": "0.2.6"
-	}
+  "name": "aplazame",
+  "version": "0.0.285",
+  "description": "javascript sdk for aplazame.com api",
+  "main": "aplazame.min.js",
+  "scripts": {
+    "build": "make build",
+    "start": "make live",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/aplazame/aplazame-js.git"
+  },
+  "keywords": [
+    "aplazame",
+    "sdk",
+    "js",
+    "javascript"
+  ],
+  "author": "Jesús Germade <jesus@aplazame.com>",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-story-reporter": "^0.3.1",
+    "git-rev-sync": "^1.6.0",
+    "nitro": "1.7.2",
+    "ng-aplazame": "git+ssh://github.com/aplazame/ng-aplazame.git#v0.1.104"
+  },
+  "dependencies": {
+    "events-wrapper": "0.2.2",
+    "http-browser": "0.1.14",
+    "nitro-tools": "0.1.13",
+    "q-promise": "0.2.6"
+  }
 }

@@ -44,7 +44,7 @@ function modal (content, options) {
       });
 
   modal.iframe.className = 'aplazame-modal';
-  modal.iframe.style.display = 'none';
+  // modal.iframe.style.display = 'none';
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);

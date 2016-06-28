@@ -37,7 +37,6 @@
     "http-browser": "0.1.14",
     "nitro-tools": "0.1.13",
     "q-promise": "0.2.6",
-		"ng-aplazame": "git+ssh://github.com/aplazame/ng-aplazame.git#v0.1.104",
-		"sasslets-animate": "0.0.4"
+		"ng-aplazame": "git+ssh://github.com/aplazame/ng-aplazame.git#v0.1.104"
   }
 }

@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.283",
+	"version": "0.0.284",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {

@@ -7,8 +7,8 @@ build:
   environment:
     - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:
-    - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//" bower.json'
-    - 'sed -i "s/git\+ssh:\/\/github.com\/aplazame\//http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json'
+    - 'sed -i "s/git@github.com:/https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//" bower.json'
+    - 'sed -i "s/git+ssh:\/\/github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json'
     - 'npm install'
     - 'bower install --allow-root'
     - 'make test'

@@ -10,7 +10,6 @@ git.hooks:
 
 install:
 	npm install
-	bower install --allow-root
 
 auto.install: git.hooks
 	@node auto-install

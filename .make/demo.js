@@ -14,7 +14,7 @@ module.exports = function (nitro) {
 
   nitro.task('demo-assets', function (target) {
 
-    nitro.dir('node_modules/ng-aplazame/assets').copy('public/assets');
+    nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
 
     nitro.file.copy('demo/checkout.json', 'public/checkout.json');
 
@@ -25,8 +25,7 @@ module.exports = function (nitro) {
 
     nitro.dir('demo/styles').load('{,**/}*.{sass,scss}').process('sass', {
       includePaths: [
-        'node_modules',
-        'node_modules/ng-aplazame/node_modules' // old npm versions support
+        '.bower_components'
       ],
       autoprefix: true,
       sourceMap: dev,

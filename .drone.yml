@@ -4,8 +4,6 @@ branches:
 
 build:
   image: aplazame/nodejs-karma:phantomjs
-  environment:
-    - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:
     - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//g" bower.json'
     - 'sed -i "s/git+ssh:\/\/github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//g" package.json'

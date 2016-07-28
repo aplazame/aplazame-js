@@ -1,7 +1,6 @@
 branches:
   - master
   - release
-  - make-debug
 
 build:
   image: aplazame/nodejs-karma:phantomjs

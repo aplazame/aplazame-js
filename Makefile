@@ -22,6 +22,7 @@ test: install
 	# @$(npmdir)/karma start karma/min.conf.js
 
 build: install
+	@echo "running make build"
 	node make build
 
 dev: git.hooks install

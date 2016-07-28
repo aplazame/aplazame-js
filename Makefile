@@ -22,13 +22,13 @@ test: install
 	# @$(npmdir)/karma start karma/min.conf.js
 
 build: install
-	@node make build
+	node make build
 
 dev: git.hooks install
-	@node make dev
+	node make dev
 
 live: git.hooks install
-	@node make live
+	node make live
 
 master.increaseVersion:
 	git checkout master

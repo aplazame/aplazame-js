@@ -15,12 +15,8 @@ module.exports = function (nitro) {
       nitro.file.write( path.join('.tmp', this.getPath().replace(/\.html$/, '.js') ), 'module.exports = \'' + this.getSrc().replace(/\'/g, '\\\'').replace(/\n/g, '') + '\';' );
     });
 
-    nitro.load('widgets/simulator/simulator.js').process('browserify', {
-      plugins: [nitro.require('babelify')]
-    }).write('dist/widgets/simulator');
-    nitro.load('widgets/modal/modal.js').process('browserify', {
-      plugins: [nitro.require('babelify')]
-    }).write('dist/widgets/modal');
+    nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist/widgets/simulator');
+    nitro.load('widgets/modal/modal.js').process('browserify').write('dist/widgets/modal');
   });
 
   nitro.task('widgets.html', function (target) {
@@ -50,7 +46,8 @@ module.exports = function (nitro) {
       .load('{,**/}*.{sass,scss}')
       .process('sass', {
         includePaths: [
-          '../node_modules'
+          'node_modules',
+          'node_modules/ng-aplazame/node_modules' // old npm versions support
         ],
         autoprefix: true,
         minify: !dev,

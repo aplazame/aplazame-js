@@ -4,10 +4,10 @@ module.exports = function (nitro) {
 
   nitro.task('aplazame.js', function () {
     nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
-    nitro.load('src/aplazame.js').process('browserify', {
-      plugins: [nitro.require('babelify')]
-    }).write('dist');
-    // nitro.load('src/aplazame.js').process('browserify', { plugins: [nitro.require('babelify')] }).write('dist');
+    nitro
+      .load('src/aplazame.js')
+      .process('browserify')
+      .write('dist');
   });
 
   nitro.task('aplazame.min.js', function () {

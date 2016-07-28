@@ -25,7 +25,8 @@ module.exports = function (nitro) {
 
     nitro.dir('demo/styles').load('{,**/}*.{sass,scss}').process('sass', {
       includePaths: [
-        '../../node_modules'
+        'node_modules',
+        'node_modules/ng-aplazame/node_modules' // old npm versions support
       ],
       autoprefix: true,
       sourceMap: dev,
@@ -37,11 +38,11 @@ module.exports = function (nitro) {
   nitro.task('demo-js', function (target) {
 
     nitro.dir('demo').load('demo-simulator.js')
-      .process('browserify', { plugins: [nitro.require('babelify')] })
+      .process('browserify')
       .write('public/simulator');
 
     nitro.dir('demo').load('demo-article.js')
-      .process('browserify', { plugins: [nitro.require('babelify')] })
+      .process('browserify')
       .write('public');
 
   });

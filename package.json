@@ -30,13 +30,12 @@
 		"karma-firefox-launcher": "^1.0.0",
 		"karma-jasmine": "^1.0.2",
 		"karma-story-reporter": "^0.3.1",
-		"nitro": "1.8.2"
+		"nitro": "1.8.3"
 	},
 	"dependencies": {
 		"events-wrapper": "0.2.2",
 		"http-browser": "0.1.14",
 		"nitro-tools": "0.1.13",
-		"q-promise": "0.2.6",
-		"ng-aplazame": "git+ssh://github.com/aplazame/ng-aplazame.git#v0.1.107"
+		"q-promise": "0.2.6"
 	}
 }

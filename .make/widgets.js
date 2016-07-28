@@ -3,7 +3,7 @@
 module.exports = function (nitro) {
 
   nitro.task('widgets.assets', function () {
-    nitro.dir('node_modules/ng-aplazame/assets').copy('dist/widgets/assets');
+    nitro.dir('.bower_components/ng-aplazame/assets').copy('dist/widgets/assets');
     nitro.dir('widgets/assets').copy('dist/widgets/assets');
   });
 
@@ -46,8 +46,7 @@ module.exports = function (nitro) {
       .load('{,**/}*.{sass,scss}')
       .process('sass', {
         includePaths: [
-          'node_modules',
-          'node_modules/ng-aplazame/node_modules' // old npm versions support
+          '.bower_components'
         ],
         autoprefix: true,
         minify: !dev,

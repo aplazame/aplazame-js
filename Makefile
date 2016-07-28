@@ -10,11 +10,11 @@ git.hooks:
 
 install:
 	@echo "running npm install"
-	@npm install > /dev/null
+	@npm install &> /dev/null
 
 bower-install:
 	@echo "running bower install"
-	@bower install --allow-root > /dev/null
+	@bower install --allow-root &> /dev/null
 
 test: install
 	@node make lintjs

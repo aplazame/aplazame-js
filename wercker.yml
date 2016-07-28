@@ -1,4 +1,4 @@
-box: aplazame/nodejs-karma:0.3.3
+box: aplazame/nodejs-karma:phantomjs
 # Build definition
 build:
   # The steps that will be executed on build

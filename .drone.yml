@@ -5,10 +5,8 @@ branches:
 build:
   image: aplazame/nodejs-karma:phantomjs
   commands:
-    - 'sed -i "s/git@github.com:/https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//" bower.json'
-    - 'sed -i "s/git+ssh:\/\/github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json'
-    - 'make install'
-    - 'make test'
+    - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//g" bower.json'
+    - 'sed -i "s/git+ssh:\/\/github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//g" package.json'
     - 'make build'
 
 deploy:

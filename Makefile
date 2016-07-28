@@ -9,23 +9,25 @@ git.hooks:
 	@./bin/git-hooks
 
 install:
-	npm install
+	@echo "running npm install"
+	@npm install > /dev/null
 
-auto.install: git.hooks
-	@node auto-install
+bower-install:
+	@echo "running bower install"
+	@bower install --allow-root > /dev/null
 
-test: auto.install
+test: install
 	@node make lintjs
 	# @$(npmdir)/karma start karma/src.conf.js
 	# @$(npmdir)/karma start karma/min.conf.js
 
-build: install
+build: install test
 	@node make build
 
-dev: install
+dev: git.hooks install
 	@node make dev
 
-live: install
+live: git.hooks install
 	@node make live
 
 master.increaseVersion:

@@ -3,7 +3,8 @@
 var apiDevHosts = [
   'demo-dev.aplazame.com',
   'magento.aplazame.com',
-  'prestashop.aplazame.com'
+  'prestashop.aplazame.com',
+  'presta.ovh2.germade.es'
 ];
 
 module.exports = {

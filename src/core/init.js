@@ -30,7 +30,7 @@ function init (options) {
 
   _.extend(api, options);
 
-  _.log('aplazame.init', api);
+  console.log('aplazame.init', api);
 }
 
 module.exports = init;

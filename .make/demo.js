@@ -70,6 +70,9 @@ module.exports = function (nitro) {
         checkout = file.readJSON('./demo/checkout.json'),
         indexData = nitro.tools.scope({
           dev: dev, pkg: pkg,
+          git: {
+            branch: process.env.GIT_BRANCH
+          },
           dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
           version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
           checkout: checkout,

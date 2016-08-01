@@ -39,6 +39,10 @@ module.exports = function (aplazame) {
       }
     }
 
+    if( script.getAttribute('data-api-host') ) {
+      options.host = script.getAttribute('data-api-host');
+    }
+
     if( script.getAttribute('data-version') ) {
       options.version = script.getAttribute('data-version');
     }

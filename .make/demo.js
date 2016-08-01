@@ -71,7 +71,7 @@ module.exports = function (nitro) {
         indexData = nitro.tools.scope({
           dev: dev, pkg: pkg,
           git: {
-            branch: process.env.GIT_BRANCH
+            branch: process.env.DRONE_BRANCH || process.env.GIT_BRANCH || require('git-rev-sync').branch()
           },
           dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
           version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),

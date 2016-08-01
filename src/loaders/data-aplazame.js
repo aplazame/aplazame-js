@@ -2,41 +2,50 @@
 
 module.exports = function (aplazame) {
 
-  var aplazameScript = document.currentScript,
-      options = {};
+  var _ = aplazame._,
+      script = document.currentScript,
+      dataAplazame = script.getAttribute('data-aplazame'),
+      options = script.src && (/\?/.test(script.src) ? _.deserialize(script.src.match(/(.*?)\?(.*)/)[2]) : {}) || {};
 
-  if( aplazameScript ) {
-
-    if( aplazameScript.src ) {
-      options.baseUrl = aplazameScript.src.match(/(.*)\/(.*)$/)[1];
-
-      if( !/\/$/.test(options.baseUrl) ) {
-        options.baseUrl += '/';
-      }
-    }
-
-    var href = aplazameScript.src.split('?'),
-        sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
-
-    if( sandboxMatch ) {
-      options.sandbox = sandboxMatch[1] === '1' || sandboxMatch[1] === 'true';
-    }
+  if( options.sandbox ) {
+    options.sandbox = options.sandbox === 'true' || options.sandbox === '1';
   }
 
-  if( document.querySelector('script[data-aplazame]') ) {
+  // if( script && script.src ) {
 
-    var script = document.querySelector('script[data-aplazame]'),
-        initText = script.getAttribute('data-aplazame');
+  //   _.merge(options, _.deserialize());
 
-    if( /\:/.test(initText) ) {
-      initText.split(',').forEach(function (part) {
+  //   if( script.src ) {
+  //     options.baseUrl = script.src.match(/(.*)\/(.*)$/)[1];
+
+  //     if( !/\/$/.test(options.baseUrl) ) {
+  //       options.baseUrl += '/';
+  //     }
+  //   }
+
+  //   var href = script.src.split('?'),
+  //       sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
+
+  //   if( sandboxMatch ) {
+  //     options.sandbox = sandboxMatch[1] === '1' || sandboxMatch[1] === 'true';
+  //   }
+  // }
+
+  if( dataAplazame ) {
+
+    // var script = document.querySelector('script[data-aplazame]');
+
+    if( /\:/.test(dataAplazame) ) {
+      dataAplazame.split(',').forEach(function (part) {
         var keys = part.match(/^([^\:]+)\:(.*)/);
         options[keys[1].trim()] = keys[2].trim();
       });
-    } else {
-      if( initText ) {
-        options.publicKey = initText;
+
+      if( !options.publicKey ) {
+        throw new Error('publicKey missing in data-aplazame');
       }
+    } else {
+      options.publicKey = dataAplazame;
     }
 
     if( script.getAttribute('data-api-host') ) {

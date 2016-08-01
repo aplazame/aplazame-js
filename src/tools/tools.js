@@ -59,13 +59,14 @@ function parsePrice (price) {
 
 _.extend(_,
   require('./colors'),
-  require('./browser-tools')(_),
+  require('./browser-tools'),
   {
-    liveDOM: require('./live-dom')(_),
+    liveDOM: require('./live-dom'),
     template: require('./template'),
     getAmount: getAmount,
     parsePrice: parsePrice,
-    onMessage: require('./message-listener')(_)
+    onMessage: require('./message-listener'),
+    deserialize: require('./deserialize')
   }
 );
 

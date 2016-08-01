@@ -125,54 +125,54 @@ var _classActions = {
   }
 };
 
-module.exports = function (_) {
+function writeIframe (iframe, content) {
+  var iframeDoc = iframe.contentWindow.document;
+  try { iframeDoc.charset = 'UTF-8'; } catch(err) {}
+  iframeDoc.open();
+  iframeDoc.write(content);
+  iframeDoc.close();
+}
 
-  function writeIframe (iframe, content) {
-    var iframeDoc = iframe.contentWindow.document;
-    try { iframeDoc.charset = 'UTF-8'; } catch(err) {}
-    iframeDoc.open();
-    iframeDoc.write(content);
-    iframeDoc.close();
-  }
+function getIFrame (iframeStyles) {
+  var iframe = document.createElement('iframe');
+  require('nitro-tools/lib/kit-extend').extend(iframe.style, iframeStyles || {});
 
-  function getIFrame (iframeStyles) {
-    var iframe = document.createElement('iframe');
-    _.extend(iframe.style, iframeStyles || {});
+  iframe.frameBorder = '0';
+  return iframe;
+}
 
-    iframe.frameBorder = '0';
-    return iframe;
-  }
+var _ = {
+  ready: _ready,
+  getIFrame: getIFrame,
+  writeIframe: writeIframe,
+  cssQuery: cssQuery,
+  scrollTop: scrollTop,
+  clearElement: clearElement,
+  elementData: document.createElement('div').dataset ? function (el, key, value) {
+    if( value !== undefined ) {
+      el.dataset[key] = value;
+    }
+    return el.dataset[key];
+  } : function (el, key, value) {
+    if( value !== undefined ) {
+      el.setAttribute('data-' + key, value);
+    }
+    return el.getAttribute('data-' + key);
+  },
+};
 
-  var addClass = _classActions.action('add', _ );
-  var removeClass = _classActions.action('remove', _ );
-
-  return {
-    ready: _ready,
-    getIFrame: getIFrame,
-    writeIframe: writeIframe,
-    cssQuery: cssQuery,
-    scrollTop: scrollTop,
-    clearElement: clearElement,
-    addClass: addClass,
-    removeClass: removeClass,
-    tmpClass: function (element, className, delay) {
+var addClass = _classActions.action('add', _ ),
+    removeClass = _classActions.action('remove', _ ),
+    tmpClass = function (element, className, delay) {
       addClass(element, className);
       setTimeout(function () {
         removeClass(element, className);
       }, delay);
       return _;
-    },
-    elementData: document.createElement('div').dataset ? function (el, key, value) {
-      if( value !== undefined ) {
-        el.dataset[key] = value;
-      }
-      return el.dataset[key];
-    } : function (el, key, value) {
-      if( value !== undefined ) {
-        el.setAttribute('data-' + key, value);
-      }
-      return el.getAttribute('data-' + key);
-    },
-  };
+    };
 
-};
+_.addClass = addClass;
+_.removeClass = removeClass;
+_.tmpClass = tmpClass;
+
+module.exports = _;

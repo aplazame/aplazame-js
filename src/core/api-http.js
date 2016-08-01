@@ -18,16 +18,13 @@ var apzVersion = require('../../.tmp/aplazame-version'),
     authorizationHeader = function (config) {
       config.publicKey = config.publicKey || api.publicKey;
       return 'Bearer ' + config.publicKey;
-    },
-    pathJoin = function (path1, path2) {
-      return path1.replace(/\/$/, '') + ( /^\//.test(path2) ? '' : '/' ) + path2;
     };
 
 var apiHttp = {};
 
 _.each(['get', 'delete'], function (method) {
   apiHttp[method] = function (path, options) {
-    var url = pathJoin(api.host, path);
+    var url = _.joinPath(api.host, path);
     return http[method](url, _.merge(options, { headers: {
         xAjsVersion: apzVersion,
         accept: acceptHeader,
@@ -38,7 +35,7 @@ _.each(['get', 'delete'], function (method) {
 
 _.each(['post', 'put', 'patch'], function (method) {
   apiHttp[method] = function (path, data, options) {
-    var url = pathJoin(api.host, path);
+    var url = _.joinPath(api.host, path);
     return http[method](url, data, _.merge(options, { headers: {
         xAjsVersion: apzVersion,
         accept: acceptHeader,

@@ -34,7 +34,7 @@ module.exports = {
   },
   post: function (path, data, options) {
     var url = pathJoin(api.host, path);
-    return http.get(url, data, _.merge(options, { headers: {
+    return http.post(url, data, _.merge(options, { headers: {
         xAjsVersion: apzVersion,
         accept: acceptHeader,
         authorization: authorizationHeader

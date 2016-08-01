@@ -23,21 +23,28 @@ var apzVersion = require('../../.tmp/aplazame-version'),
       return path1.replace(/\/$/, '') + ( /^\//.test(path2) ? '' : '/' ) + path2;
     };
 
-module.exports = {
-  get: function (path, options) {
+var apiHttp = {};
+
+_.each(['get', 'delete'], function (method) {
+  apiHttp[method] = function (path, options) {
     var url = pathJoin(api.host, path);
-    return http.get(url, _.merge(options, { headers: {
+    return http[method](url, _.merge(options, { headers: {
         xAjsVersion: apzVersion,
         accept: acceptHeader,
         authorization: authorizationHeader
       } }) );
-  },
-  post: function (path, data, options) {
+  };
+});
+
+_.each(['post', 'put', 'patch'], function (method) {
+  apiHttp[method] = function (path, data, options) {
     var url = pathJoin(api.host, path);
-    return http.post(url, data, _.merge(options, { headers: {
+    return http[method](url, data, _.merge(options, { headers: {
         xAjsVersion: apzVersion,
         accept: acceptHeader,
         authorization: authorizationHeader
-      }}) );
-  }
-};
+      } }) );
+  };
+});
+
+module.exports = apiHttp;

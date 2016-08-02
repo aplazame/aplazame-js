@@ -11,7 +11,8 @@ module.exports = function (aplazame) {
 
     if( btns.length ) {
 
-      [].forEach.call(btns, function (btn) {
+      _.each(btns, function (btn) {
+        console.log('.btn', arguments, btns);
         var btnId = btn.getAttribute('data-aplazame-button'),
             btnParams = {
               selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',

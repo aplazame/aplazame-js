@@ -11,29 +11,7 @@ module.exports = function (aplazame) {
     options.sandbox = options.sandbox === 'true' || options.sandbox === '1';
   }
 
-  // if( script && script.src ) {
-
-  //   _.merge(options, _.deserialize());
-
-  //   if( script.src ) {
-  //     options.baseUrl = script.src.match(/(.*)\/(.*)$/)[1];
-
-  //     if( !/\/$/.test(options.baseUrl) ) {
-  //       options.baseUrl += '/';
-  //     }
-  //   }
-
-  //   var href = script.src.split('?'),
-  //       sandboxMatch = href && href[1] && href[1].match(/sandbox\=([^&]*)/);
-
-  //   if( sandboxMatch ) {
-  //     options.sandbox = sandboxMatch[1] === '1' || sandboxMatch[1] === 'true';
-  //   }
-  // }
-
   if( dataAplazame ) {
-
-    // var script = document.querySelector('script[data-aplazame]');
 
     if( /\:/.test(dataAplazame) ) {
       dataAplazame.split(',').forEach(function (part) {
@@ -62,6 +40,13 @@ module.exports = function (aplazame) {
 
     if( script.getAttribute('data-analytics') ) {
       options.analytics = script.getAttribute('data-analytics');
+    }
+
+    if( script.getAttribute('data-callback') ) {
+      if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
+        throw new Error('callback should be a global function');
+      }
+      _.ready( global[script.getAttribute('data-callback')] );
     }
   }
 

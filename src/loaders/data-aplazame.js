@@ -46,7 +46,9 @@ module.exports = function (aplazame) {
       if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
         throw new Error('callback should be a global function');
       }
-      _.ready( global[script.getAttribute('data-callback')] );
+      _.ready(function () {
+        global[script.getAttribute('data-callback')](aplazame);
+      });
     }
   }
 

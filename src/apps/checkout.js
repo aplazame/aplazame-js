@@ -172,13 +172,29 @@ function checkout (options) {
 
               switch( message.result ) {
                 case 'dismiss':
-                  location.replace(options.merchant.checkout_url || '/');
+                  if( typeof options.merchant.onDismiss === 'function' ) {
+                    options.merchant.onDismiss();
+                  } else {
+                    location.replace(options.merchant.checkout_url || '/');
+                  }
                   break;
                 case 'success':
-                  location.replace(options.merchant.success_url);
+                  if( typeof options.merchant.onSuccess === 'function' ) {
+                    options.merchant.onSuccess();
+                  } else if( !options.merchant.success_url ) {
+                    throw new Error('success_url missing');
+                  } else {
+                    location.replace(options.merchant.success_url);
+                  }
                   break;
                 case 'cancel':
-                  location.replace(options.merchant.cancel_url);
+                  if( typeof options.merchant.onCancel === 'function' ) {
+                    options.merchant.onCancel();
+                  } else if( !options.merchant.cancel_url ) {
+                    throw new Error('cancel_url missing');
+                  } else {
+                    location.replace(options.merchant.cancel_url);
+                  }
                   break;
               }
             }

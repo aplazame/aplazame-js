@@ -15,13 +15,27 @@ function checkout (options) {
     baseUrl += '/';
   }
 
-  var iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
+  var on = {},
+      iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
       errorLoading = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
       cssBlur = cssHack('blur'),
       cssLogo = cssHack('logo'),
       cssModal = cssHack('modal');
+
+  if( options.merchant.onSuccess ) {
+    on.success = options.merchant.onSuccess;
+    delete options.merchant.onSuccess;
+  }
+  if( options.merchant.onError ) {
+    on.error = options.merchant.onError;
+    delete options.merchant.onError;
+  }
+  if( options.merchant.onDismiss ) {
+    on.dismiss = options.merchant.onDismiss;
+    delete options.merchant.onDismiss;
+  }
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
@@ -171,16 +185,9 @@ function checkout (options) {
               iframe = null;
 
               switch( message.result ) {
-                case 'dismiss':
-                  if( typeof options.merchant.onDismiss === 'function' ) {
-                    options.merchant.onDismiss();
-                  } else {
-                    location.replace(options.merchant.checkout_url || '/');
-                  }
-                  break;
                 case 'success':
-                  if( typeof options.merchant.onSuccess === 'function' ) {
-                    options.merchant.onSuccess();
+                  if( typeof on.success === 'function' ) {
+                    on.success();
                   } else if( !options.merchant.success_url ) {
                     throw new Error('success_url missing');
                   } else {
@@ -188,12 +195,19 @@ function checkout (options) {
                   }
                   break;
                 case 'cancel':
-                  if( typeof options.merchant.onCancel === 'function' ) {
-                    options.merchant.onCancel();
+                  if( typeof on.error === 'function' ) {
+                    on.error();
                   } else if( !options.merchant.cancel_url ) {
                     throw new Error('cancel_url missing');
                   } else {
                     location.replace(options.merchant.cancel_url);
+                  }
+                  break;
+                case 'dismiss':
+                  if( typeof on.dismiss === 'function' ) {
+                    on.dismiss();
+                  } else {
+                    location.replace(options.merchant.checkout_url || '/');
                   }
                   break;
               }

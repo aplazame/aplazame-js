@@ -93,15 +93,15 @@ function button (options) {
     if( el.style.display !== 'none' ) {
       el.__display = el.style.display;
     }
-    el.__input = el.querySelector('input');
+    el.__input = ( el.nodeName === 'INPUT' || el.nodeName === 'BUTTON' ) ? el : el.querySelector('input, button');
 
     if( el.__input ) {
       el.__input.__disabled = el.__input.__disabled === undefined ? el.__input.hasAttribute('disabled') : el.__input.__disabled;
       el.__input.__checked = el.__input.__checked === undefined ? el.__input.checked : el.__input.__checked;
-      if( el.__input.__checked === true || el.__input.__checked === false ) {
+      if( el.__input.__checked !== undefined ) {
         el.__input.checked = false;
       }
-      if( !el.__disabled ) {
+      if( !el.__input.__disabled ) {
         el.__input.setAttribute('disabled', 'disabled');
       }
     }
@@ -114,10 +114,10 @@ function button (options) {
       elms.forEach(function (el) {
         el.style.display = el.__display;
         if ( el.__input ) {
-          if( !el.__input.__disabled ) {
+          if( !el.__input.__disabled && el.__input.hasAttribute('disabled') ) {
             el.__input.removeAttribute('disabled');
           }
-          if( el.__input.__checked === true || el.__input.__checked === false ) {
+          if( el.__input.__checked !== undefined ) {
             el.__input.checked = el.__input.__checked;
           }
         }

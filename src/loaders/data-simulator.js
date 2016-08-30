@@ -245,7 +245,7 @@ module.exports = function (aplazame) {
     }
 
     var pseudoLocator;
-    selector = selector.replace(/:(\w+?)$/, function (matched, locator) {
+    selector = selector.trim().replace(/:(\w+?)$/, function (matched, locator) {
       pseudoLocator = locator;
       return '';
     });

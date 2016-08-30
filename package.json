@@ -31,7 +31,8 @@
     "karma-jasmine": "^1.0.2",
     "karma-story-reporter": "^0.3.1",
     "mocha": "^3.0.2",
-    "nitro": "1.9.9"
+    "nitro": "1.9.9",
+    "watch": "^0.19.2"
   },
   "dependencies": {
     "events-wrapper": "0.2.2",

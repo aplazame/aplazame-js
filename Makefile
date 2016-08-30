@@ -18,9 +18,10 @@ install: bower-install
 
 test: install
 	@node make lintjs
-	@@$(npmdir)/mocha tests
-	# @$(npmdir)/karma start karma/src.conf.js
-	# @$(npmdir)/karma start karma/min.conf.js
+	@$(npmdir)/mocha tests
+
+test-tools:
+	@$(npmdir)/watch "$(npmdir)/mocha tests" src/tools
 
 build: install
 	@echo "running make build"

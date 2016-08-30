@@ -65,10 +65,6 @@ function button (options) {
 
   if( !options.$$running && options.selector ) {
     options.$$running = true;
-
-    _.liveDOM.subscribe(function (el) {
-      button(options);
-    });
   }
 
   if( !options.forceUpdate && ( !elements.length || _.elementData(elButton, 'buttonInitialized') ) ) {
@@ -108,7 +104,11 @@ function button (options) {
     el.style.display = 'none';
   });
 
-  button.check(options, function (allowed) {
+  elements.forEach(function (el) {
+    _.elementData(el, 'buttonInitialized', true);
+  });
+
+  return button.check(options, function (allowed) {
     if( allowed ) {
       var elms = elements.slice();
       elms.forEach(function (el) {
@@ -124,10 +124,10 @@ function button (options) {
 
       });
     }
-  });
-
-  elements.forEach(function (el) {
-    _.elementData(el, 'buttonInitialized', true);
+  }).then(function () {
+    _.liveDOM.subscribe(function (el) {
+      button(options);
+    });
   });
 }
 

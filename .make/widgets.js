@@ -15,8 +15,8 @@ module.exports = function (nitro) {
       nitro.file.write( path.join('.tmp', this.getPath().replace(/\.html$/, '.js') ), 'module.exports = \'' + this.getSrc().replace(/\'/g, '\\\'').replace(/\n/g, '') + '\';' );
     });
 
-    nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist/widgets/simulator');
-    nitro.load('widgets/modal/modal.js').process('browserify').write('dist/widgets/modal');
+    nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist');
+    nitro.load('widgets/modal/modal.js').process('browserify').write('dist');
   });
 
   nitro.task('widgets.html', function (target) {

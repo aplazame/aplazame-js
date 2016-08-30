@@ -124,10 +124,6 @@ function button (options) {
 
       });
     }
-  }).then(function () {
-    _.liveDOM.subscribe(function (el) {
-      button(options);
-    });
   });
 }
 

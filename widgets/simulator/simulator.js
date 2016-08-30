@@ -93,6 +93,9 @@ var main = document.getElementById('main'), currentMessage,
       },
       loading: function (message) {
         _.addClass(main, 'loading');
+      },
+      abort: function (message) {
+        _.removeClass(main, 'loading');
       }
     };
 
@@ -102,7 +105,14 @@ _.onMessage('simulator', function (e, message) {
   }
 });
 
+var simulatorId = -1;
+
+if( location.href.match(/[\?&]simulator=(\w+?)(\&|$)/) ) {
+  simulatorId = Number(location.href.match(/[\?&]simulator=(\w+?)(\&|$)/)[1]);
+}
+
 parent.window.postMessage({
   aplazame: 'simulator',
-  event: 'require.choices'
+  event: 'require.choices',
+  simulatorId: simulatorId
 }, '*');

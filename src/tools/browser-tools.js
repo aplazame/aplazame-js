@@ -135,7 +135,7 @@ function writeIframe (iframe, content) {
 
 function getIFrame (iframeStyles) {
   var iframe = document.createElement('iframe');
-  require('nitro-tools/lib/kit-extend').extend(iframe.style, iframeStyles || {});
+  require('nitro-tools/extend').extend(iframe.style, iframeStyles || {});
 
   iframe.frameBorder = '0';
   return iframe;

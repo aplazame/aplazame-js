@@ -36,11 +36,11 @@ module.exports = function (nitro) {
 
   nitro.task('demo-js', function (target) {
 
-    nitro.dir('demo').load('demo-simulator.js')
+    nitro.dir('demo').load('demo-simulator.js', { sourceMap: target === 'dev' && 'inline' })
       .process('browserify')
       .write('public/simulator');
 
-    nitro.dir('demo').load('demo-article.js')
+    nitro.dir('demo').load('demo-article.js', { sourceMap: target === 'dev' && 'inline' })
       .process('browserify')
       .write('public');
 

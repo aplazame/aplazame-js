@@ -1,7 +1,8 @@
 'use strict';
 
 module.exports = function (aplazame) {
-  var _ = aplazame._;
+  var _ = aplazame._,
+      $q = require('q-promise');
 
   function buttonsLookup (element) {
     if( !element.querySelectorAll ) {
@@ -11,6 +12,7 @@ module.exports = function (aplazame) {
 
     if( btns.length ) {
       console.log('.btn(s)', btns);
+      var promises = [];
 
       _.each(btns, function (btn) {
         // console.log('.btn', arguments, btns);
@@ -25,16 +27,23 @@ module.exports = function (aplazame) {
               country: btn.getAttribute('data-country') || undefined
             };
 
-        aplazame.button(btnParams);
+        promises.push( aplazame.button(btnParams) );
       });
 
+      if( promises.length ) {
+        return $q.all(promises);
+      } else {
+        return $q.resolve();
+      }
+    } else {
+      return $q.resolve();
     }
   }
 
-  // _.liveDOM.subscribe(buttonsLookup);
-
   _.ready(function () {
-    buttonsLookup(document);
+    buttonsLookup(document).then(function () {
+      _.liveDOM.subscribe(buttonsLookup);
+    });
   });
 
 };

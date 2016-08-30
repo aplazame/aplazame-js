@@ -3,9 +3,11 @@
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
     $q = require('q-promise'),
-    cache = [];
+    cache = [],
+    requestsCache = {};
 
 function simulator (amount, _options, callback, onError) {
+
   if( _.isFunction(_options) ) {
     onError = callback;
     callback = _options;
@@ -13,11 +15,20 @@ function simulator (amount, _options, callback, onError) {
   } else {
     _options = _options || {};
   }
+
   var options = {
-    params: {
-      amount: amount
-    }
-  };
+        params: {
+          amount: amount
+        }
+      },
+      hash = amount + ',' + JSON.stringify(options);
+
+  if( requestsCache[hash] ) {
+    return requestsCache[hash].then(function (result) {
+      (callback || _.noop)( result.choices, result.options );
+    });
+  }
+
   if( _options.view ) {
     options.params.view = _options.view;
   }
@@ -32,7 +43,7 @@ function simulator (amount, _options, callback, onError) {
     return item.amount === amount;
   });
 
-  var promise = ( !_options.noCache && foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
+  requestsCache[hash] = ( !_options.noCache && foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
       var result = {
         amount: amount,
         choices: response.data.choices[0].instalments,
@@ -45,6 +56,7 @@ function simulator (amount, _options, callback, onError) {
     }) )
     .then(function (result) {
       (callback || _.noop)( result.choices, result.options );
+      return result;
     }, function (response) {
       if( response.status === 403 ) {
         console.error('Aplazame: Permiso denegado usando la clave pública: ' + response.config.publicKey);
@@ -57,7 +69,7 @@ function simulator (amount, _options, callback, onError) {
       (onError || _.noop)(response);
     });
 
-  return promise;
+  return requestsCache[hash];
 }
 
 module.exports = simulator;

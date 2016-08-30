@@ -21,7 +21,7 @@ test: install
 	@$(npmdir)/mocha tests
 
 test-tools:
-	@$(npmdir)/watch "$(npmdir)/mocha tests" src/tools
+	@$(npmdir)/watch "date +\"%Y-%m-%d %T\" && $(npmdir)/mocha -R spec tests" src/tools tests
 
 build: install
 	@echo "running make build"

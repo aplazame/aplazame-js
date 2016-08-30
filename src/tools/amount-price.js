@@ -42,4 +42,4 @@ function parsePrice (price) {
 module.exports = {
 	getAmount: getAmount,
 	parsePrice: parsePrice
-};	
+};

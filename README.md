@@ -1,21 +1,21 @@
-[![Image](https://aplazame.com/static/img/banners/banner-728-white-js.png "Aplazame") ](https://aplazame.com "Aplazame")
+[![aplazame-js-banner](https://cloud.githubusercontent.com/assets/2305833/18111968/37951520-6f24-11e6-8732-fa73796231ab.png) ](https://aplazame.com "Aplazame")
 
-Aplazame.js
-[![wercker status](https://app.wercker.com/status/e3cdbafb5813b255e8dd982354e686ed/s/master "wercker status")](https://app.wercker.com/project/bykey/e3cdbafb5813b255e8dd982354e686ed) [![Build Status](http://drone.aplazame.com/api/badges/aplazame/aplazame-js/status.svg)](http://drone.aplazame.com/aplazame/aplazame-js)
-===========
+[![Build Status](http://drone.aplazame.com/api/badges/aplazame/aplazame-js/status.svg)](http://drone.aplazame.com/aplazame/aplazame-js)
+
+#### [ver documentación](https://aplazame.com/docs/api/)
 
 Main File
 ---------
 ``` html
 <script type="text/javascript" src="https://aplazame.com/static/aplazame.js"
-        data-aplazame="publicKey: f5f64b3e9c7d8da5de29d4a45f40d370282f6f05"></script>
+        data-aplazame="f5f64b3e9c7d8da5de29d4a45f40d370282f6f05" data-sandbox="true"></script>
 
 <!-- the recommended place for this line is at the end of <body> tag -->
 ```
 
 Instalments Simulator Widget
 ----------------------------
-![image](https://cloud.githubusercontent.com/assets/2305833/11635252/cc93ac0e-9d15-11e5-930d-89a27f2882f1.png)
+![image](https://cloud.githubusercontent.com/assets/2305833/18111724/39eb570a-6f22-11e6-8b0a-86cc42f18916.png)
 
 
 ``` html
@@ -36,7 +36,7 @@ Aplazame button
 
 ``` html
 <button>Payment Method</button>
-<button data-aplazame-button="default" data-amount="10050">
+<button data-aplazame-button data-amount="10050">
   <img src="assets/images/logo-color.svg">
 </button>
 <button>Other Payment Method</button>

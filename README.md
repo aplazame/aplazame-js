@@ -15,7 +15,7 @@ Main File
 
 Instalments Simulator Widget
 ----------------------------
-![image](https://cloud.githubusercontent.com/assets/2305833/18111724/39eb570a-6f22-11e6-8b0a-86cc42f18916.png)
+[![image](https://cloud.githubusercontent.com/assets/2305833/18111724/39eb570a-6f22-11e6-8b0a-86cc42f18916.png)](https://demo.aplazame.com/)
 
 
 ``` html
@@ -32,7 +32,7 @@ you can specify selectors to watch price and quantity, and those values will be 
 
 Aplazame button
 ---------------
-![image](https://cloud.githubusercontent.com/assets/2305833/11635328/4417726a-9d16-11e5-9f8c-91205319aaa5.png)
+[![image](https://cloud.githubusercontent.com/assets/2305833/11635328/4417726a-9d16-11e5-9f8c-91205319aaa5.png)](https://demo.aplazame.com/)
 
 ``` html
 <button>Payment Method</button>
@@ -46,9 +46,9 @@ Aplazame button
 Checkout
 ---------------
 
-[see demo](http://demo.aplazame.com)
+[see demo](https://demo.aplazame.com)
 
-![image](https://cloud.githubusercontent.com/assets/2305833/11635342/5cd3cc90-9d16-11e5-80b4-4e72824ba4ed.png)
+[![image](https://cloud.githubusercontent.com/assets/2305833/11635342/5cd3cc90-9d16-11e5-80b4-4e72824ba4ed.png)](https://demo.aplazame.com/)
 
 ``` js
 aplazame.checkout({

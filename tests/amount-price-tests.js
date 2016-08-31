@@ -4,31 +4,107 @@ var assert = require('assert'),
 
 describe('amount getter', function () {
 
-    it("only decimals", function() {
+    it("only cents", function() {
       assert.equal( _.parsePrice('29.00') , 2900);
     });
 
-    it("thousands and decimals", function() {
+    it("only cents (2)", function() {
+      assert.equal( _.parsePrice('29.00') , 2900);
+    });
+
+    it("only cents comma", function() {
+      assert.equal( _.parsePrice('29,00') , 2900);
+    });
+
+    it("only cents comma (2)", function() {
+      assert.equal( _.parsePrice('29,00') , 2900);
+    });
+
+    it("only one decimal", function() {
+      assert.equal( _.parsePrice('29.0') , 2900);
+    });
+
+    it("only one decimal (2)", function() {
+      assert.equal( _.parsePrice('29.8') , 2980);
+    });
+
+    it("only one decimal comma", function() {
+      assert.equal( _.parsePrice('29,0') , 2900);
+    });
+
+    it("only one decimal comma (2)", function() {
+      assert.equal( _.parsePrice('29,8') , 2980);
+    });
+
+    it("thousands and cents", function() {
       assert.equal( _.parsePrice('2,709.00') , 270900);
     });
 
-    it("thousands and decimals inverse", function() {
+    it("thousands and cents (2)", function() {
+      assert.equal( _.parsePrice('2,709.82') , 270982);
+    });
+
+    it("thousands and cents inverse", function() {
       assert.equal( _.parsePrice('2.709,00') , 270900);
     });
 
-    it("thousands and decimals dots", function() {
+    it("thousands and cents inverse (2)", function() {
+      assert.equal( _.parsePrice('2.709,63') , 270963);
+    });
+
+    it("thousands and cents dots", function() {
       assert.equal( _.parsePrice('2.709.00') , 270900);
     });
 
-    it("thousands and decimals commas", function() {
+    it("thousands and cents dots ()", function() {
+      assert.equal( _.parsePrice('2.709.83') , 270983);
+    });
+
+    it("thousands and cents commas", function() {
       assert.equal( _.parsePrice('2,709,00') , 270900);
     });
 
-    it("thousands no decimals", function() {
+    it("thousands and cents commas (2)", function() {
+      assert.equal( _.parsePrice('2,709,38') , 270938);
+    });
+
+    it("thousands and decimal", function() {
+      assert.equal( _.parsePrice('2,709.0') , 270900);
+    });
+
+    it("thousands and decimal (2)", function() {
+      assert.equal( _.parsePrice('2,709.4') , 270940);
+    });
+
+    it("thousands and decimal inverse", function() {
+      assert.equal( _.parsePrice('2.709,0') , 270900);
+    });
+
+    it("thousands and decimal inverse (2)", function() {
+      assert.equal( _.parsePrice('2.709,2') , 270920);
+    });
+
+    it("thousands and decimal dots", function() {
+      assert.equal( _.parsePrice('2.709.0') , 270900);
+    });
+
+    it("thousands and decimal dots (2)", function() {
+      assert.equal( _.parsePrice('2.709.7') , 270970);
+    });
+
+    it("thousands and decimal commas", function() {
+      assert.equal( _.parsePrice('2,709,0') , 270900);
+    });
+
+    it("thousands and decimal commas (2)", function() {
+      assert.equal( _.parsePrice('2,709,9') , 270990);
+    });
+
+    it("thousands no cents", function() {
       assert.equal( _.parsePrice('2.709') , 270900);
     });
 
-    it("thousands no decimals (comma)", function() {
+    it("thousands no cents (comma)", function() {
       assert.equal( _.parsePrice('2,709') , 270900);
     });
 
@@ -46,6 +122,14 @@ describe('amount getter', function () {
 
     it("decimals only (4)", function() {
       assert.equal( _.parsePrice('2709') , 270900);
+    });
+
+    it("millions", function() {
+      assert.equal( _.parsePrice('1981092,70') , 198109270);
+    });
+
+    it("millions thousands", function() {
+      assert.equal( _.parsePrice('1.981.092,70') , 198109270);
     });
 
 });

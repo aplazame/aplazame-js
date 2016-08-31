@@ -38,6 +38,10 @@ function parsePrice (price) {
       return Number( tail + '00' );
     }
 
+    if( tail.length === 1 ) {
+      return Number(main + tail + '0');
+    }
+
     if( tail.length !== 2 ) {
       tail += '00';
     }

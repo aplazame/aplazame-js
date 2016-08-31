@@ -15,7 +15,7 @@ Main File
 
 Instalments Simulator Widget
 ----------------------------
-[![image](https://cloud.githubusercontent.com/assets/2305833/18111724/39eb570a-6f22-11e6-8b0a-86cc42f18916.png)](https://demo.aplazame.com/)
+[![image](https://cloud.githubusercontent.com/assets/2305833/18114489/c3a44866-6f37-11e6-8a7b-f45f73233fab.png)](https://demo.aplazame.com/)
 
 
 ``` html

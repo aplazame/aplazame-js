@@ -9,7 +9,7 @@ describe('amount getter', function () {
     });
 
     it("only cents (2)", function() {
-      assert.equal( _.parsePrice('29.00') , 2900);
+      assert.equal( _.parsePrice('29.34') , 2934);
     });
 
     it("only cents comma", function() {
@@ -17,7 +17,7 @@ describe('amount getter', function () {
     });
 
     it("only cents comma (2)", function() {
-      assert.equal( _.parsePrice('29,00') , 2900);
+      assert.equal( _.parsePrice('29,12') , 2912);
     });
 
     it("only one decimal", function() {

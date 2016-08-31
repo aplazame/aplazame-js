@@ -29,7 +29,9 @@ module.exports = function (nitro) {
       nitro.task(['aplazame.js:dev', 'aplazame.min.js:dev']);
     } else {
       nitro.task(['aplazame.js', 'aplazame.min.js']);
-      nitro.copy('dist', 'aplazame{,.min}.js', '.');
+      // nitro.copy('dist', 'aplazame{,.min}.js', '.');
+      nitro.file.copy('dist/aplazame.min.js', 'aplazame.js');
+      nitro.file.copy('dist/aplazame.min.js', 'aplazame.min.js');
     }
   });
 

@@ -178,7 +178,7 @@ module.exports = function (aplazame) {
     var widget,
         id = getWidget.serial;
 
-    // api.baseUrl = 'http://js.aplazame.air/dist/';
+    // api.baseUrl = 'http://js.aplazame.z/dist/';
 
     if( meta.options.widget.type === 'button' ) {
       widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );

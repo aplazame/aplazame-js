@@ -1,7 +1,8 @@
 
 var _ = require('../../src/tools/tools'),
     template = _.template,
-    each = Array.prototype.forEach;
+    each = Array.prototype.forEach,
+    waitingForData;
 
 template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments') );
 template.put('widget-button', require('../../.tmp/simulator/templates/widget-button') );
@@ -79,6 +80,9 @@ var main = document.getElementById('main'), currentMessage,
     },
     onMessage = {
       choices: function (message) {
+        if( waitingForData ) {
+          clearInterval(waitingForData);
+        }
         currentMessage = message;
         currentMessage.$$choice = currentMessage.choices.reduce(maxInstalments, null);
 
@@ -111,8 +115,12 @@ if( location.href.match(/[\?&]simulator=(\w+?)(\&|$)/) ) {
   simulatorId = Number(location.href.match(/[\?&]simulator=(\w+?)(\&|$)/)[1]);
 }
 
-parent.window.postMessage({
-  aplazame: 'simulator',
-  event: 'require.choices',
-  simulatorId: simulatorId
-}, '*');
+function requireData () {
+  parent.window.postMessage({
+    aplazame: 'simulator',
+    event: 'require.choices',
+    simulatorId: simulatorId
+  }, '*');
+}
+
+waitingForData = setInterval(requireData, 250);

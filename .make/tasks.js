@@ -27,9 +27,13 @@ module.exports = function (nitro) {
 
   nitro.task('dev', ['git.branch', 'lintjs', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev'], function () {
 
+    if( !nitro.file.exists('public/dist') ) {
+      nitro.symlink('public/dist', '../dist');
+    }
+
     nitro.watch('src')
-      .when('{,**/}*.js', ['lintjs', 'js'])
-      .when('{,**/}*.sass', ['css-hacks', 'js']);
+      .when('{,**/}*.js', ['lintjs', 'js:dev'])
+      .when('{,**/}*.sass', ['css-hacks', 'js:dev']);
 
     nitro.watch('widgets')
       .when('{,**/}*.js', 'widgets.js:dev')

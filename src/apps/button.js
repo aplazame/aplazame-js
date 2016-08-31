@@ -4,9 +4,6 @@ var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools');
 
 function getCartPrice () {
-  //  var priceParts = document.querySelector('#total_price').textContent.match(/(\d+)([,.](\d+))?/);
-  //  var amount = Number(priceParts[1])*100 + ( priceParts[3] ? Number(priceParts[3]) : 0);
-  //  return amount;
   return _.parsePrice( document.querySelector('#total_price').textContent );
 }
 
@@ -124,10 +121,6 @@ function button (options) {
 
       });
     }
-  }).then(function () {
-    _.liveDOM.subscribe(function (el) {
-      button(options);
-    });
   });
 }
 

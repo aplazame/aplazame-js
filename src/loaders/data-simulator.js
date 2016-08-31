@@ -168,160 +168,195 @@ module.exports = function (aplazame) {
     }
   }
 
-  function widgetsLookup (element) {
-    if( !element.querySelectorAll ) {
+  function getWidget (meta) {
+    if( !meta.options.widget ) {
       return;
     }
 
-    var simulators = element.querySelectorAll('[data-aplazame-simulator]');
+    getWidget.serial = getWidget.serial ? getWidget.serial + 1 : 1;
 
-    each.call(simulators, function (simulator) {
+    var widget,
+        id = getWidget.serial;
 
-      if( simulator.$$aplazame ) {
-        return;
-      }
+    // api.baseUrl = 'http://js.aplazame.air/dist/';
 
-      simulator.$$aplazame = true;
+    if( meta.options.widget.type === 'button' ) {
+      widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
 
-      var choice, choices, options, iframe,
-          getAmount = amountGetter(simulator),
-          dataAmount = simulator.getAttribute('data-amount') && Number(simulator.getAttribute('data-amount')),
-          currentAmount = getAmount.priceSelector && getAmount(),
-          simulatorOptions = {},
-          currentQty = (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) || 1;
-
-      if( simulator.getAttribute('data-view') ) {
-        simulatorOptions.view = simulator.getAttribute('data-view');
-      }
-
-      // _.log('simulator', ( currentQty || 1 ) * (dataAmount || currentAmount), simulatorOptions );
-
-      var simulatorAmount = ( currentQty || 1 ) * (dataAmount || currentAmount);
-
-      aplazame.simulator( ( currentQty || 1 ) * (dataAmount || currentAmount), simulatorOptions, function (_choices, _options) {
-
-        if( _options.widget && _options.widget.disabled ) {
+      widget.on('message:require.choices choices.update', function (e, message) {
+        if( message && message.simulatorId && message.simulatorId !== id ) {
           return;
         }
-
-        choices = _choices;
-        options = _options;
-
-        choice = choices.reduce(maxInstalments, null);
-
-        var widgetOptions = options.widget, widget;
-
-        _.clearElement(simulator);
-
-        if( widgetOptions.type === 'button' ) {
-          widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() );
-
-          widget.on('message:require.choices choices.update', function () {
-            widget.message('choices', {
-              amount: currentAmount,
-              choice: choice,
-              choices: choices,
-              options: options
-            });
-          });
-
-          widget.on('choices.updating', function (e) {
-            widget.message('loading');
-          });
-
-        } else {
-          _.template.put('widget-raw', require('../../.tmp/simulator/templates/widget-raw') );
-          widget = { el: document.createElement('div') };
-          new Events(widget);
-
-          widget.el.innerHTML = _.template('widget-raw', {
-            getAmount: _.getAmount,
-            amount: currentAmount,
-            choice: choice,
-            choices: choices,
-            options: options
-          });
-
-          widget.el.addEventListener('click', function () {
-            window.postMessage({
-              aplazame: 'modal',
-              event: 'open',
-              name: 'instalments',
-              data: {
-                card: _.template.compile( require('../../.tmp/simulator/templates/modal-instalments') )({
-                  selectedChoice: choice,
-                  choices: choices,
-                  getAmount: _.getAmount,
-                  months: function (m) {
-                    return m > 1 ? 'meses' : 'mes';
-                  }
-                })
-              }
-            }, '*');
-
-          });
-        }
-
-        if( simulatorAmount ) {
-          simulator.appendChild(widget.el);
-        }
-
-        var liveAmount = false,
-            updating = false,
-            amountInterval = setInterval(function () {
-              var amount = getAmount.priceSelector && getAmount(),
-                  qty = (getAmount.qtySelector ? getQty(getAmount.qtySelector) : 1) || 1;
-
-              if( amount !== currentAmount || qty !== currentQty ) {
-                currentQty = qty;
-
-                if( amount && amount !== currentAmount ) {
-                  liveAmount = true;
-                  currentAmount = amount;
-                }
-
-                amount = qty * ( liveAmount ? amount : dataAmount);
-
-                if( amount === updating ) {
-                  return;
-                }
-
-                updating = amount;
-
-                widget.trigger('choices.updating', [amount, _choices, _options]);
-                aplazame.simulator( amount, function (_choices, _options) {
-                  if( amount === updating ) {
-                    if( amount ) {
-                      simulator.appendChild(widget.el);
-                    } else if( widget.el.parentElement === simulator ) {
-                      simulator.removeChild(widget.el);
-                    }
-
-                    choices = _choices;
-                    options = _options;
-                    choice = choices.reduce(maxInstalments, null);
-                    widget.trigger('choices.update', [amount, _choices, _options]);
-                  }
-                });
-              }
-            }, 200);
-
+        // console.log(e, meta, message);
+        widget.message('choices', {
+          amount: meta.amount,
+          choice: meta.choices.reduce(maxInstalments, null),
+          choices: meta.choices,
+          options: meta.options
+        });
       });
 
-    });
+      widget.on('choices.updating', function (e) {
+        widget.message('loading');
+      });
 
+    } else {
+      _.template.put('widget-raw', require('../../.tmp/simulator/templates/widget-raw') );
+      widget = { el: document.createElement('div') };
+      new Events(widget);
+
+      widget.el.innerHTML = _.template('widget-raw', {
+        getAmount: _.getAmount,
+        amount: meta.amount,
+        choice: meta.choices.reduce(maxInstalments, null),
+        choices: meta.choices,
+        options: meta.options
+      });
+
+      widget.el.addEventListener('click', function () {
+        window.postMessage({
+          aplazame: 'modal',
+          event: 'open',
+          name: 'instalments',
+          data: {
+            card: _.template.compile( require('../../.tmp/simulator/templates/modal-instalments') )({
+              selectedChoice: meta.choices.reduce(maxInstalments, null),
+              choices: meta.choices,
+              getAmount: _.getAmount,
+              months: function (m) {
+                return m > 1 ? 'meses' : 'mes';
+              }
+            })
+          }
+        }, '*');
+
+      });
+    }
+
+    widget.id = id;
+
+    return widget;
   }
 
-  _.ready(function () {
-    widgetsLookup(document);
+  function placeWidget (widget, widgetWrapper, selector) {
+    if( !selector ) {
+      widgetWrapper.appendChild(widget.el);
+      return;
+    }
+
+    var pseudoLocator;
+    selector = selector.trim().replace(/:(\w+?)$/, function (matched, locator) {
+      pseudoLocator = locator;
+      return '';
+    });
+
+    var el = document.querySelector(selector);
+    if( el ) {
+      if( pseudoLocator ) {
+        switch( pseudoLocator ) {
+          case 'after':
+            if( el.nextElementSibling ) {
+              el.parentElement.insertBefore(widget.el, el.nextElementSibling);
+            } else {
+              el.parentElement.appendChild(widget.el);
+            }
+            break;
+          case 'before':
+            el.parentElement.insertBefore(widget.el, el);
+            break;
+          default:
+            throw new Error('pseudoLocator ' + pseudoLocator + ' not defined');
+        }
+      } else {
+        el.appendChild(widget.el);
+      }
+    }
+  }
+
+  function evalWidget (widgetWrapper) {
+    var meta, updateData = false, detectedAmount, simulatorOptions = {};
+
+    if( widgetWrapper.__apz_widget__ ) {
+      meta = widgetWrapper.__apz_widget__;
+      if( meta.updating ) {
+        return;
+      }
+      detectedAmount = meta.getAmount();
+      if( detectedAmount && meta.amount !== detectedAmount ) {
+        updateData = true;
+        // console.log(widgetWrapper, meta.amount, meta.getAmount() );
+        meta.amount = meta.getAmount();
+      }
+    } else {
+      meta = { getAmount: amountGetter(widgetWrapper) };
+      meta.amount = widgetWrapper.getAttribute('data-amount') ? Number(widgetWrapper.getAttribute('data-amount')) : meta.getAmount();
+      updateData = true;
+      if( meta.getAmount.qtySelector ) {
+        meta.qty = getQty(meta.getAmount.qtySelector) || 1;
+        console.debug('new watcher');
+        meta.watchQty = setInterval(function () {
+          if( !document.body.contains(widgetWrapper) ) {
+            clearInterval(meta.watchQty);
+            return;
+          }
+          var qty = getQty(meta.getAmount.qtySelector);
+          if( qty !== meta.qty ) {
+            meta.qty = qty;
+            evalWidget(widgetWrapper);
+          }
+        }, 250);
+      }
+    }
+
+    if( widgetWrapper.getAttribute('data-view') ) {
+      simulatorOptions.view = widgetWrapper.getAttribute('data-view');
+    }
+
+    if( meta.amount && meta.getAmount.qtySelector ) {
+      meta.amount *= ( getQty(meta.getAmount.qtySelector) || 1 );
+    }
+    if( meta.amount && updateData ) {
+      if( meta.widget ) {
+        meta.widget.message('loading');
+      }
+      meta.updating = aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
+        _options.widget = _options.widget || {};
+        meta.choices = _choices;
+        meta.options = _options;
+        meta.widget = meta.widget || getWidget(meta);
+
+        if( meta.widget && !document.body.contains(meta.widget.el) ) {
+          placeWidget(meta.widget, widgetWrapper, widgetWrapper.getAttribute('data-location') || _options.widget.location );
+        }
+
+        meta.widget.trigger('choices.update');
+
+        meta.updating = false;
+      }, function () {
+        meta.updating = false;
+        if( meta.widget ) {
+          meta.widget.message('abort');
+        }
+        if( meta.widget && document.body.contains(meta.widget.el) ) {
+          var parent = meta.widget.el.parentElement;
+          parent.removeChild(meta.widget.el);
+        }
+      });
+    }
+
+    widgetWrapper.__apz_widget__ = meta;
+  }
+
+  function widgetsLookup (element) {
+    var promises = [];
+
+    each.call(document.querySelectorAll('[data-aplazame-simulator]'), evalWidget );
+
+    return promises.length ? $q.all(promises) : $q.resolve();
+  }
+
+  widgetsLookup().then(function () {
     _.liveDOM.subscribe(widgetsLookup);
   });
-
-  // *****************************************************************************
-  // *****************************************************************************
-  // *****************************************************************************
-  // *****************************************************************************
-
-
 
 };

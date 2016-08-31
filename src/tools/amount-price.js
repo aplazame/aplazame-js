@@ -1,3 +1,11 @@
+
+function thousands(amount) {
+  if( /\d{3}\d+/.test(amount) ) {
+    return thousands(amount.replace(/(\d{3}?)(\.|$)/, '.$&'))
+  }
+  return amount;
+}
+
 function getAmount (amount) {
   var prefix = '';
 
@@ -13,33 +21,38 @@ function getAmount (amount) {
   } else if( amount < 100 ) {
     return '0,' + amount;
   }
-  return prefix + ('' + amount).replace(/..$/, ',$&');
+  return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (matched, main, tail) {
+    return thousands(main) + ',' + tail;
+  });
 }
 
 function parsePrice (price) {
-  price = price.replace(' ', '');
-  price = price.match(/[\d,.]+/);
-  price = price && price[0] || '';
-  price = price.replace(/([,.])0$/, '$100');
-  var priceParts = ( '' + price ).replace(/[^0-9.,]/g, '').split(/[,.]/),
-      amount = Number(priceParts.shift()),
-      piece = priceParts.shift(), i, n;
+  var matched = price.match(/((\d+[,. ])*)(\d+)/),
+      amount, main, tail;
 
-  if( !piece ) {
-    return amount*100;
-  }
+  if( matched ) {
+    tail = matched[3];
+    main = matched[1].replace(/[^\d]/g, '');
 
-  while( piece ) {
-    for( i = 0, n = piece.length ; i < n ; i++ ) {
-      amount*=10;
+    if( !main ) {
+      return Number( tail + '00' );
     }
-    amount += Number(piece);
-    piece = priceParts.shift();
+
+    if( tail.length !== 2 ) {
+      tail += '00';
+    }
+
+    return Number(main + tail);
   }
-  return amount;
+
+  if( /\d+/.test(price) ) {
+    return Number( price.replace(/[^\d]+/g, '') + '00' );
+  }
+
+  console.warn('price data mismatch', price);
 }
 
 module.exports = {
 	getAmount: getAmount,
 	parsePrice: parsePrice
-};	
+};

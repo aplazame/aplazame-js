@@ -3,16 +3,19 @@ var messageTarget = {};
 
 window.addEventListener('message', function (e) {
   var message = e.data,
-      listener = messageTarget[message.aplazame];
+      listeners = messageTarget[message.aplazame] || [];
 
-  if( !e.used && listener ) {
+  if( !e.used ) {
     e.used = true;
-    listener(e, message);
+    for( var i = 0, n = listeners.length ; i < n ; i++ ) {
+      listeners[i](e, message);
+    }
   }
 });
 
 module.exports = function (target, handler) {
   if( typeof target === 'string' && handler instanceof Function ) {
-    messageTarget[target] = handler;
+    messageTarget[target] = messageTarget[target] || [];
+    messageTarget[target].push(handler);
   }
 };

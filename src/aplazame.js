@@ -11,7 +11,7 @@ global.aplazame = aplazame;
 require('./apps/http-service');
 
 require('./loaders/data-aplazame')(global.aplazame);
-aplazame._.ready(function () {  
+aplazame._.ready(function () {
   require('./loaders/data-button')(global.aplazame);
   require('./loaders/data-simulator')(global.aplazame);
 });
@@ -33,5 +33,5 @@ global.aplazame.log = function () {
 };
 
 
-global.$q = require('q-promise');
-global.$http = require('http-browser');
+// global.$q = require('q-promise');
+// global.$http = require('http-browser');

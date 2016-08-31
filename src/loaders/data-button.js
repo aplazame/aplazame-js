@@ -11,7 +11,7 @@ module.exports = function (aplazame) {
     var btns = element.querySelectorAll('[data-aplazame-button]');
 
     if( btns.length ) {
-      console.log('.btn(s)', btns);
+      // console.log('.btn(s)', btns);
       var promises = [];
 
       _.each(btns, function (btn) {

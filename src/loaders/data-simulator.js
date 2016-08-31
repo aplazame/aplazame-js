@@ -178,7 +178,7 @@ module.exports = function (aplazame) {
     var widget,
         id = getWidget.serial;
 
-    api.baseUrl = 'http://js.aplazame.z/dist/';
+    // api.baseUrl = 'http://js.aplazame.air/dist/';
 
     if( meta.options.widget.type === 'button' ) {
       widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
@@ -278,6 +278,9 @@ module.exports = function (aplazame) {
 
     if( widgetWrapper.__apz_widget__ ) {
       meta = widgetWrapper.__apz_widget__;
+      if( meta.updating ) {
+        return;
+      }
       detectedAmount = meta.getAmount();
       if( detectedAmount && meta.amount !== detectedAmount ) {
         updateData = true;
@@ -285,11 +288,12 @@ module.exports = function (aplazame) {
         meta.amount = meta.getAmount();
       }
     } else {
-      meta = { serial: 0, getAmount: amountGetter(widgetWrapper) };
+      meta = { getAmount: amountGetter(widgetWrapper) };
       meta.amount = widgetWrapper.getAttribute('data-amount') ? Number(widgetWrapper.getAttribute('data-amount')) : meta.getAmount();
       updateData = true;
       if( meta.getAmount.qtySelector ) {
         meta.qty = getQty(meta.getAmount.qtySelector) || 1;
+        console.debug('new watcher');
         meta.watchQty = setInterval(function () {
           if( !document.body.contains(widgetWrapper) ) {
             clearInterval(meta.watchQty);
@@ -315,18 +319,21 @@ module.exports = function (aplazame) {
       if( meta.widget ) {
         meta.widget.message('loading');
       }
-      aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
+      meta.updating = aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
+        _options.widget = _options.widget || {};
         meta.choices = _choices;
         meta.options = _options;
         meta.widget = meta.widget || getWidget(meta);
 
         if( meta.widget && !document.body.contains(meta.widget.el) ) {
-          placeWidget(meta.widget, widgetWrapper, widgetWrapper.getAttribute('data-location') || meta.options.widget_location );
+          placeWidget(meta.widget, widgetWrapper, widgetWrapper.getAttribute('data-location') || _options.widget.location );
         }
 
         meta.widget.trigger('choices.update');
 
+        meta.updating = false;
       }, function () {
+        meta.updating = false;
         if( meta.widget ) {
           meta.widget.message('abort');
         }

@@ -83,7 +83,7 @@ var main = document.getElementById('main'), currentMessage,
         if( waitingForData ) {
           clearInterval(waitingForData);
         }
-        console.log('choices', message);
+        // console.log('choices', message);
         currentMessage = message;
         currentMessage.$$choice = currentMessage.choices.reduce(maxInstalments, null);
 
@@ -124,4 +124,6 @@ function requireData () {
   }, '*');
 }
 
-waitingForData = setInterval(requireData, 250);
+// waitingForData = setInterval(requireData, 250);
+
+requireData();

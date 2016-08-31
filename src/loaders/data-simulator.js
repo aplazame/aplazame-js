@@ -139,6 +139,7 @@ module.exports = function (aplazame) {
     };
 
     _.onMessage('simulator', function (e, message) {
+      // console.log('message.simulator', e, message);
       if( e.source === el.contentWindow ) {
         iframe.trigger('message:' + message.event, [message], this);
       }
@@ -156,7 +157,10 @@ module.exports = function (aplazame) {
       mobile: isMobile.matches
     }, data || {});
     if( this.el.contentWindow ) {
+      // console.log('iframe message', eventName, _data, this);
       this.el.contentWindow.postMessage(_data, '*');
+    } else {
+      console.warn('iframe contentWindow missing', this);
     }
   };
 
@@ -278,9 +282,7 @@ module.exports = function (aplazame) {
 
     if( widgetWrapper.__apz_widget__ ) {
       meta = widgetWrapper.__apz_widget__;
-      if( meta.updating ) {
-        return;
-      }
+
       detectedAmount = meta.getAmount();
       if( detectedAmount && meta.amount !== detectedAmount ) {
         updateData = true;
@@ -293,7 +295,7 @@ module.exports = function (aplazame) {
       updateData = true;
       if( meta.getAmount.qtySelector ) {
         meta.qty = getQty(meta.getAmount.qtySelector) || 1;
-        console.debug('new watcher');
+        // console.debug('new watcher');
         meta.watchQty = setInterval(function () {
           if( !document.body.contains(widgetWrapper) ) {
             clearInterval(meta.watchQty);
@@ -319,7 +321,7 @@ module.exports = function (aplazame) {
       if( meta.widget ) {
         meta.widget.message('loading');
       }
-      meta.updating = aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
+      aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
         _options.widget = _options.widget || {};
         meta.choices = _choices;
         meta.options = _options;
@@ -330,10 +332,7 @@ module.exports = function (aplazame) {
         }
 
         meta.widget.trigger('choices.update');
-
-        meta.updating = false;
       }, function () {
-        meta.updating = false;
         if( meta.widget ) {
           meta.widget.message('abort');
         }

@@ -1,7 +1,7 @@
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
-    return thousands(amount.replace(/(\d{3}?)(\.|$)/, '.$&'))
+    return thousands(amount.replace(/(\d{3}?)(\.|$)/, '.$&'));
   }
   return amount;
 }

@@ -24,20 +24,20 @@
 	"devDependencies": {
 		"bower": "^1.7.9",
 		"git-rev-sync": "^1.6.0",
-		"jasmine-core": "^2.4.1",
+		"jasmine-core": "^2.5.0",
 		"karma": "^1.2.0",
 		"karma-chrome-launcher": "^2.0.0",
 		"karma-firefox-launcher": "^1.0.0",
 		"karma-jasmine": "^1.0.2",
 		"karma-story-reporter": "^0.3.1",
 		"mocha": "^3.0.2",
-		"nitro": "1.9.9",
+		"nitro": "1.9.11",
 		"watch": "^0.19.2"
 	},
 	"dependencies": {
 		"events-wrapper": "0.2.2",
-		"http-browser": "0.1.26",
-		"nitro-tools": "0.2.2",
+		"http-browser": "0.1.28",
+		"nitro-tools": "0.2.4",
 		"q-promise": "0.3.5"
 	}
 }

@@ -124,7 +124,7 @@ function checkout (options) {
         origin: location.origin
       };
 
-      _.onMessage('checkout', function (e, message) {
+      var onMessage = function (e, message) {
 
         switch( message.event ) {
           case 'merchant':
@@ -146,7 +146,9 @@ function checkout (options) {
             _.removeClass(document.body, 'aplazame-blur');
             _.addClass(document.body, 'aplazame-unblur');
             setTimeout(function () {
-              document.head.removeChild(cssBlur);
+              cssBlur.hack(false);
+              _.removeClass(document.body, 'aplazame-blur');
+              _.removeClass(document.body, 'aplazame-unblur');
             }, 600);
             break;
           case 'confirm':
@@ -184,6 +186,8 @@ function checkout (options) {
               cssModal.hack(false);
               iframe = null;
 
+              _.onMessage.off('checkout', onMessage);
+
               switch( message.result ) {
                 case 'success':
                   if( typeof on.success === 'function' ) {
@@ -214,8 +218,9 @@ function checkout (options) {
             }
             break;
         }
+      };
 
-      });
+      _.onMessage('checkout', onMessage);
 
     }).catch(function (reason) {
       // throw new Error('can not connect to ' + baseUrl);

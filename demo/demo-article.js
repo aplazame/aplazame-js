@@ -115,6 +115,18 @@ aplazame._.ready(function () {
 
       data.order.id = orderId;
 
+      data.merchant.onError = function () {
+        console.log('whoops!!');
+      };
+
+      data.merchant.onSuccess = function () {
+        console.log('gogogo!!');
+      };
+
+      data.merchant.onDismiss = function () {
+        console.log('try again!!');
+      };
+
       aplazame.checkout(data);
     });
 

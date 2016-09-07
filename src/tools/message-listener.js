@@ -22,10 +22,22 @@ window.addEventListener('message', function (e) {
   }
 }, true);
 
-module.exports = function (target, handler, logs) {
+function onMessage (target, handler, logs) {
   showLogs = logs;
   if( typeof target === 'string' && handler instanceof Function ) {
     messageTarget[target] = messageTarget[target] || [];
     messageTarget[target].push(handler);
   }
+}
+
+onMessage.off = function (target, handler) {
+  if( typeof target === 'string' && handler instanceof Function ) {
+    messageTarget[target] = messageTarget[target] || [];
+    var i = messageTarget[target].indexOf(handler);
+    if( i !== -1 ) {
+      messageTarget[target].splice(i,1);
+    }
+  }
 };
+
+module.exports = onMessage;

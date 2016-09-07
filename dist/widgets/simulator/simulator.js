@@ -43,8 +43,6 @@ function _merge () {
         for( key in src ) {
           if( src[key] === undefined ) {
             dest[key] = undefined;
-          // } else if( typeof dest[key] !== typeof src[key] ) {
-          //   dest[key] = _merge(undefined, src[key]);
           } else if( type.isArray(dest[key]) ) {
             [].push.apply(dest[key], src[key]);
           } else if( type.isObject(dest[key]) ) {
@@ -60,12 +58,34 @@ function _merge () {
     return dest;
 }
 
+function mapObject (o, iteratee) {
+  var result = {};
+  for( var key in o ) {
+    result[key] = iteratee(o[key], key);
+  }
+  return result;
+}
+
+function _copy (src) {
+  if( type.isArray(src) ) {
+    return src.map(function (item) {
+      return _copy(item);
+    });
+  }
+  
+  if( type.isObject(src) ) {
+    return mapObject(src, function (item) {
+      return _copy(item);
+    });
+  }
+
+  return src;
+}
+
 module.exports = {
   extend: require('./_extend'),
   merge: _merge,
-  copy: function (o) {
-      return _merge(undefined, o);
-  }
+  copy: _copy
 };
 
 },{"./_extend":3,"./type":7}],5:[function(require,module,exports){
@@ -637,13 +657,25 @@ window.addEventListener('message', function (e) {
   }
 }, true);
 
-module.exports = function (target, handler, logs) {
+function onMessage (target, handler, logs) {
   showLogs = logs;
   if( typeof target === 'string' && handler instanceof Function ) {
     messageTarget[target] = messageTarget[target] || [];
     messageTarget[target].push(handler);
   }
+}
+
+onMessage.off = function (target, handler) {
+  if( typeof target === 'string' && handler instanceof Function ) {
+    messageTarget[target] = messageTarget[target] || [];
+    var i = messageTarget[target].indexOf(handler);
+    if( i !== -1 ) {
+      messageTarget[target].splice(i,1);
+    }
+  }
 };
+
+module.exports = onMessage;
 
 },{}],16:[function(require,module,exports){
 

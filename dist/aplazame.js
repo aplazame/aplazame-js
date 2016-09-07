@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.332';
+module.exports = '0.0.333';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -475,8 +475,6 @@ function _merge () {
         for( key in src ) {
           if( src[key] === undefined ) {
             dest[key] = undefined;
-          // } else if( typeof dest[key] !== typeof src[key] ) {
-          //   dest[key] = _merge(undefined, src[key]);
           } else if( type.isArray(dest[key]) ) {
             [].push.apply(dest[key], src[key]);
           } else if( type.isObject(dest[key]) ) {
@@ -492,12 +490,34 @@ function _merge () {
     return dest;
 }
 
+function mapObject (o, iteratee) {
+  var result = {};
+  for( var key in o ) {
+    result[key] = iteratee(o[key], key);
+  }
+  return result;
+}
+
+function _copy (src) {
+  if( type.isArray(src) ) {
+    return src.map(function (item) {
+      return _copy(item);
+    });
+  }
+  
+  if( type.isObject(src) ) {
+    return mapObject(src, function (item) {
+      return _copy(item);
+    });
+  }
+
+  return src;
+}
+
 module.exports = {
   extend: require('./_extend'),
   merge: _merge,
-  copy: function (o) {
-      return _merge(undefined, o);
-  }
+  copy: _copy
 };
 
 },{"./_extend":10,"./type":14}],12:[function(require,module,exports){
@@ -1151,7 +1171,7 @@ function checkout (options) {
         origin: location.origin
       };
 
-      _.onMessage('checkout', function (e, message) {
+      var onMessage = function (e, message) {
 
         switch( message.event ) {
           case 'merchant':
@@ -1173,7 +1193,9 @@ function checkout (options) {
             _.removeClass(document.body, 'aplazame-blur');
             _.addClass(document.body, 'aplazame-unblur');
             setTimeout(function () {
-              document.head.removeChild(cssBlur);
+              cssBlur.hack(false);
+              _.removeClass(document.body, 'aplazame-blur');
+              _.removeClass(document.body, 'aplazame-unblur');
             }, 600);
             break;
           case 'confirm':
@@ -1211,6 +1233,8 @@ function checkout (options) {
               cssModal.hack(false);
               iframe = null;
 
+              _.onMessage.off('checkout', onMessage);
+
               switch( message.result ) {
                 case 'success':
                   if( typeof on.success === 'function' ) {
@@ -1241,8 +1265,9 @@ function checkout (options) {
             }
             break;
         }
+      };
 
-      });
+      _.onMessage('checkout', onMessage);
 
     }).catch(function (reason) {
       // throw new Error('can not connect to ' + baseUrl);
@@ -2593,13 +2618,25 @@ window.addEventListener('message', function (e) {
   }
 }, true);
 
-module.exports = function (target, handler, logs) {
+function onMessage (target, handler, logs) {
   showLogs = logs;
   if( typeof target === 'string' && handler instanceof Function ) {
     messageTarget[target] = messageTarget[target] || [];
     messageTarget[target].push(handler);
   }
+}
+
+onMessage.off = function (target, handler) {
+  if( typeof target === 'string' && handler instanceof Function ) {
+    messageTarget[target] = messageTarget[target] || [];
+    var i = messageTarget[target].indexOf(handler);
+    if( i !== -1 ) {
+      messageTarget[target].splice(i,1);
+    }
+  }
 };
+
+module.exports = onMessage;
 
 },{}],42:[function(require,module,exports){
 

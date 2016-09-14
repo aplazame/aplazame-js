@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.334';
+module.exports = '0.0.335';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -863,16 +863,7 @@ aplazame.modal = require('./apps/modal');
 
 global.aplazame = aplazame;
 
-require('./apps/http-service');
-
-require('./loaders/data-aplazame')(global.aplazame);
-aplazame._.ready(function () {
-  require('./loaders/data-button')(global.aplazame);
-  require('./loaders/data-simulator')(global.aplazame);
-});
-
-
-global.aplazame.info = function () {
+aplazame.info = function () {
   return {
     api: require('./core/api'),
     log: require('./tools/log').history,
@@ -880,12 +871,31 @@ global.aplazame.info = function () {
   };
 };
 
-global.aplazame.log = function () {
+aplazame.log = function () {
   require('./tools/log').history.forEach(function (l) {
     console.log(l.time);
     console.log.apply(console, l.args);
   });
 };
+
+require('./apps/http-service');
+
+require('./loaders/data-aplazame')(global.aplazame);
+aplazame._.ready(function () {
+  var buttonsLookup = require('./loaders/data-button')(global.aplazame),
+      widgetsLookup = require('./loaders/data-simulator')(global.aplazame),
+      cb = require('./core/api').callback;
+
+  if( cb ) {
+    if(  typeof global[cb] !== 'function' ) {
+      throw new Error('callback should be a global function');
+    }
+    global[cb](aplazame);
+    buttonsLookup();
+    widgetsLookup();
+  }
+
+});
 
 
 // global.$q = require('q-promise');
@@ -1653,7 +1663,6 @@ function init (options) {
 module.exports = init;
 
 },{"../tools/tools":43,"./api":27}],30:[function(require,module,exports){
-(function (global){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -1699,12 +1708,14 @@ module.exports = function (aplazame) {
     }
 
     if( script.getAttribute('data-callback') ) {
-      if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
-        throw new Error('callback should be a global function');
-      }
-      _.ready(function () {
-        global[script.getAttribute('data-callback')](aplazame);
-      });
+      // if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
+      //   throw new Error('callback should be a global function');
+      // }
+
+      options.callback = script.getAttribute('data-callback');
+      // _.ready(function () {
+      //   global[script.getAttribute('data-callback')](aplazame);
+      // });
     }
   }
 
@@ -1712,7 +1723,6 @@ module.exports = function (aplazame) {
 
 };
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],31:[function(require,module,exports){
 'use strict';
 
@@ -1721,6 +1731,7 @@ module.exports = function (aplazame) {
       $q = require('q-promise');
 
   function buttonsLookup (element) {
+    element = element || document;
     if( !element.querySelectorAll ) {
       return;
     }
@@ -1757,10 +1768,12 @@ module.exports = function (aplazame) {
   }
 
   _.ready(function () {
-    buttonsLookup(document).then(function () {
+    buttonsLookup().then(function () {
       _.liveDOM.subscribe(buttonsLookup);
     });
   });
+
+  return buttonsLookup;
 
 };
 
@@ -2124,6 +2137,8 @@ module.exports = function (aplazame) {
   widgetsLookup().then(function () {
     _.liveDOM.subscribe(widgetsLookup);
   });
+
+  return widgetsLookup;
 
 };
 

@@ -5,6 +5,7 @@ module.exports = function (aplazame) {
       $q = require('q-promise');
 
   function buttonsLookup (element) {
+    element = element || document;
     if( !element.querySelectorAll ) {
       return;
     }
@@ -41,9 +42,11 @@ module.exports = function (aplazame) {
   }
 
   _.ready(function () {
-    buttonsLookup(document).then(function () {
+    buttonsLookup().then(function () {
       _.liveDOM.subscribe(buttonsLookup);
     });
   });
+
+  return buttonsLookup;
 
 };

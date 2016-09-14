@@ -43,12 +43,14 @@ module.exports = function (aplazame) {
     }
 
     if( script.getAttribute('data-callback') ) {
-      if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
-        throw new Error('callback should be a global function');
-      }
-      _.ready(function () {
-        global[script.getAttribute('data-callback')](aplazame);
-      });
+      // if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
+      //   throw new Error('callback should be a global function');
+      // }
+
+      options.callback = script.getAttribute('data-callback');
+      // _.ready(function () {
+      //   global[script.getAttribute('data-callback')](aplazame);
+      // });
     }
   }
 

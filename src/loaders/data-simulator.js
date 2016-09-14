@@ -358,4 +358,6 @@ module.exports = function (aplazame) {
     _.liveDOM.subscribe(widgetsLookup);
   });
 
+  return widgetsLookup;
+
 };

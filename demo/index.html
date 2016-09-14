@@ -171,8 +171,19 @@
     <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js{:}dist/aplazame.js?build=${build}{/}"
             data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
             data-sandbox="true"
+            data-callback="apzReady"
             $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com"{/}>
     </script>
+
+    <script>
+      window.apzReady = function () {
+        console.log('hello, aplazame callback!', arguments);
+      };
+    </script>
+
+    <!-- alt version using url params:
+      <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
+    -->
 
     <script type="text/javascript" src="/demo-article.js?build=${build}"></script>
     <script type="text/x-javascript-example">

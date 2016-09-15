@@ -1,4 +1,8 @@
 
+if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
+  require('q-promise').usePolyfill();
+}
+
 var aplazame = require('./core/core');
 
 aplazame.checkout = require('./apps/checkout');

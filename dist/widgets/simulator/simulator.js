@@ -469,7 +469,7 @@ function getIFrame (iframeStyles) {
   require('nitro-tools/extend').extend(iframe.style, iframeStyles || {});
 
   iframe.frameBorder = '0';
-  iframe.style.display = 'none';
+  // iframe.style.display = 'none';
   iframe.onload = function () {
     iframe.style.display = null;
   };

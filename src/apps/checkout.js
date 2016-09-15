@@ -9,7 +9,7 @@ var api = require('../core/api'),
 function checkout (options) {
 
   options = options || {};
-  var baseUrl = ( options.host === 'location' ? location.origin : options.host ) || 'https://aplazame.com/static/checkout/';
+  var baseUrl = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || 'https://aplazame.com/static/checkout/';
 
   if( !/\/$/.test(baseUrl) ) {
     baseUrl += '/';

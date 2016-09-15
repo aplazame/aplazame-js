@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.336';
+module.exports = '0.0.337';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -854,6 +854,10 @@ module.exports = function (Promise) {
 },{"./promise-polyfill":16}],19:[function(require,module,exports){
 (function (global){
 
+if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
+  require('q-promise').usePolyfill();
+}
+
 var aplazame = require('./core/core');
 
 aplazame.checkout = require('./apps/checkout');
@@ -902,7 +906,7 @@ aplazame._.ready(function () {
 // global.$http = require('http-browser');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":20,"./apps/checkout":21,"./apps/http-service":22,"./apps/modal":24,"./apps/simulator":25,"./core/api":27,"./core/core":28,"./loaders/data-aplazame":30,"./loaders/data-button":31,"./loaders/data-simulator":32,"./tools/log":40}],20:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":20,"./apps/checkout":21,"./apps/http-service":22,"./apps/modal":24,"./apps/simulator":25,"./core/api":27,"./core/core":28,"./loaders/data-aplazame":30,"./loaders/data-button":31,"./loaders/data-simulator":32,"./tools/log":40,"q-promise":17}],20:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),

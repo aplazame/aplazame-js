@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.337';
+module.exports = '0.0.338';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -9,7 +9,7 @@ module.exports = '.aplazame-modal{height:100%!important;z-index:2147483647;}body
 },{}],5:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.9);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay;opacity:0}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
 },{}],6:[function(require,module,exports){
-module.exports = '<div class="modal"><div class="card size-lg has-cta modal-instalments-info">  <div class="card-content">    <header class="aplazame"></header>    <section class="info">      Elige el número de meses y la cuota que más te convengan    </section>    <div class="choices-wrapper">      <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>      <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">        <div class="wrapper">          <div class="num-instalments">            <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>          </div>          <div class="amount">            <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--            --><span class="amount-currency">€</span><!--            --><span class="amount-per-month">/mes</span></div>        </div>      </button>      <% } %>    </div>    <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>    <section class="how-it-works">      <header>¿Cómo funciona?</header>      <div class="info-wrapper">        <div class="info">          <h3>Elige Aplazame</h3>          <p>en la tienda, cuando vayas a pagar el pedido.</p>        </div>        <div class="info">          <h3>Decide cómo quieres pagar</h3>          <p>Hasta en 12 cuotas, pagando con tarjeta.</p>        </div>        <div class="info">          <h3>Disfruta de tu compra</h3>          <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>        </div>      </div>    </section>  </div>  <div class="cta btn-double size-sm" style="overflow: auto;">    <div class="button-wrapper">      <button class="button btn-white" type="submit" modal-reject="back">        <span class="cta-title">Volver a Tienda</span>      </button>    </div>    <div class="button-wrapper">      <a class="button" href="http://aplazame.com/how/" target="_blank">        <span class="cta-title">¿Quieres saber más?</span>      </a>    </div>  </div></div></div>';
+module.exports = '<div class="modal">  <div class="card size-lg has-cta modal-instalments-info">    <div class="card-content">      <header class="aplazame"></header>      <section class="info">        Elige el número de meses y la cuota que más te convengan      </section>      <div class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>        <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">          <div class="wrapper">            <div class="num-instalments">              <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>            </div>            <div class="amount">              <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--              --><span class="amount-currency">€</span><!--              --><span class="amount-per-month">/mes</span></div>          </div>        </button>        <% } %>      </div>      <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>      <section class="how-it-works">        <header>¿Cómo funciona?</header>        <div class="info-wrapper">          <div class="info">            <h3>Elige Aplazame</h3>            <p>en la tienda, cuando vayas a pagar el pedido.</p>          </div>          <div class="info">            <h3>Decide cómo quieres pagar</h3>            <p>Hasta en 12 cuotas, pagando con tarjeta.</p>          </div>          <div class="info">            <h3>Disfruta de tu compra</h3>            <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>          </div>        </div>      </section>    </div>    <div class="cta">      <div class="col-sm-6 button-wrapper">        <button class="btn lg btn-block white" type="button" modal-reject="back">Volver a Tienda</button>      </div>      <div class="col-sm-6 button-wrapper">        <a class="btn lg btn-block" href="http://aplazame.com/how/" target="_blank">¿Quieres saber más?</a>      </div>    </div>  </div></div>';
 },{}],7:[function(require,module,exports){
 module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num">12</em>    <span>&nbsp;cuotas</span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
 },{}],8:[function(require,module,exports){
@@ -1070,14 +1070,14 @@ var api = require('../core/api'),
 function checkout (options) {
 
   options = options || {};
-  var baseUrl = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || 'https://aplazame.com/static/checkout/';
+  var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || 'https://aplazame.com/static/checkout/';
 
-  if( !/\/$/.test(baseUrl) ) {
-    baseUrl += '/';
+  if( !/\/$/.test(baseCheckout) ) {
+    baseCheckout += '/';
   }
 
   var on = {},
-      iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
+      iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),
       errorLoading = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
@@ -1126,7 +1126,7 @@ function checkout (options) {
   options.api = _.copy(api);
 
   return http( iframeSrc ).then(function (response) {
-      var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
+      var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseCheckout + '" />'),
           iframe = _.getIFrame({
             top: 0,
             left: 0,
@@ -1284,7 +1284,7 @@ function checkout (options) {
       _.onMessage('checkout', onMessage);
 
     }).catch(function (reason) {
-      // throw new Error('can not connect to ' + baseUrl);
+      // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
       console.error('Aplazame ' + reason);
@@ -1404,7 +1404,7 @@ function modal (content, options) {
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);
-  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
+  modal.iframe.src = api.staticUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
 }
 
 _.onMessage('modal', function (e, message) {
@@ -1609,7 +1609,7 @@ module.exports = apiHttp;
 module.exports = {
   host: 'https://api.aplazame.com/',
   // host: 'https://api.aplazame.com/',
-  baseUrl: 'https://aplazame.com/static/',
+  staticUrl: 'https://aplazame.com/static/',
   version: 1,
   checkoutVersion: 1,
   sandbox: false
@@ -1709,6 +1709,10 @@ module.exports = function (aplazame) {
 
     if( script.getAttribute('data-analytics') ) {
       options.analytics = script.getAttribute('data-analytics');
+    }
+
+    if( script.getAttribute('data-static-url') ) {
+      options.staticUrl = script.getAttribute('data-static-url');
     }
 
     if( script.getAttribute('data-callback') ) {
@@ -1966,10 +1970,8 @@ module.exports = function (aplazame) {
     var widget,
         id = getWidget.serial;
 
-    // api.baseUrl = 'http://js.aplazame.z/dist/';
-
     if( meta.options.widget.type === 'button' ) {
-      widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
+      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
 
       widget.on('message:require.choices choices.update', function (e, message) {
         if( message && message.simulatorId && message.simulatorId !== id ) {

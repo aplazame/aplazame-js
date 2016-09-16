@@ -172,7 +172,8 @@
             data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
             data-sandbox="true"
             data-callback="apzReady"
-            $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com"{/}>
+            $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com"{/}
+            $if{ dev }data-static-url="/dist/"{/}>
     </script>
 
     <script>

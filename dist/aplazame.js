@@ -1,13 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.341';
+module.exports = '0.0.342';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#485259}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:1.5s;animation-duration:1.5s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.logo-aplazame.animate .smile{-webkit-animation-name:aplazame-logo-smile;animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{-webkit-animation-name:aplazame-logo-large;animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{-webkit-animation-name:aplazame-logo-short;animation-name:aplazame-logo-short}';
 },{}],4:[function(require,module,exports){
-module.exports = '.aplazame-modal{height:100%!important;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
+module.exports = '.aplazame-modal{height:100%;height:100vh;position:relative;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
 },{}],5:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.9);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay;opacity:0}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
+module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.9);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-show{opacity:1}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse;opacity:0}';
 },{}],6:[function(require,module,exports){
 module.exports = '<div class="modal">  <div class="card size-lg has-cta modal-instalments-info">    <div class="card-content">      <header class="aplazame"></header>      <section class="info">        Elige el número de meses y la cuota que más te convengan      </section>      <div class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>        <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">          <div class="wrapper">            <div class="num-instalments">              <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>            </div>            <div class="amount">              <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--              --><span class="amount-currency">€</span><!--              --><span class="amount-per-month">/mes</span></div>          </div>        </button>        <% } %>      </div>      <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>      <section class="how-it-works">        <header>¿Cómo funciona?</header>        <div class="info-wrapper">          <div class="info">            <h3>Elige Aplazame</h3>            <p>en la tienda, cuando vayas a pagar el pedido.</p>          </div>          <div class="info">            <h3>Decide cómo quieres pagar</h3>            <p>Hasta en 12 cuotas, pagando con tarjeta.</p>          </div>          <div class="info">            <h3>Disfruta de tu compra</h3>            <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>          </div>        </div>      </section>    </div>    <div class="cta">      <div class="col-sm-6 button-wrapper">        <button class="btn lg btn-block white" type="button" modal-reject="back">Volver a Tienda</button>      </div>      <div class="col-sm-6 button-wrapper">        <a class="btn lg btn-block" href="http://aplazame.com/how/" target="_blank">¿Quieres saber más?</a>      </div>    </div>  </div></div>';
 },{}],7:[function(require,module,exports){
@@ -2473,43 +2473,52 @@ module.exports = {
 },{}],37:[function(require,module,exports){
 
 
-var cssHack = (function () {
-  var cache = {},
-      hacks = {
-        overlay: require('../../.tmp/css-hacks/overlay'),
-        blur: require('../../.tmp/css-hacks/blur'),
-        logo: require('../../.tmp/css-hacks/logo'),
-        modal: require('../../.tmp/css-hacks/modal')
-      };
+var importantCSS = function (css) {
+      return css.replace(/;/g, ' !important;').replace(/:([^:;]+?)}/g, function (matched, value) {
+        return ':' + value + ' !important;}';
+      }).replace(/(\d+%|from|to){([^}]+)/g, function (matched, pos, content) {
+        return pos + '{' + content.replace(/ !important;/g, ';');
+      });
+    },
+    cssHack = (function () {
+      var cache = {},
+          hacks = {
+            overlay: importantCSS(require('../../.tmp/css-hacks/overlay')),
+            blur: importantCSS(require('../../.tmp/css-hacks/blur')),
+            logo: importantCSS(require('../../.tmp/css-hacks/logo')),
+            modal: importantCSS(require('../../.tmp/css-hacks/modal'))
+          };
 
-  return function hack (hackName) {
-    if( !cache[hackName] ) {
-      var style = document.createElement('style');
-      style.setAttribute('rel', 'stylesheet');
-      style.setAttribute('type', 'text/css');
-      style.textContent = hacks[hackName];
+      console.log('cssHacks', hacks);
 
-      var enabled = false;
+      return function hack (hackName) {
+        if( !cache[hackName] ) {
+          var style = document.createElement('style');
+          style.setAttribute('rel', 'stylesheet');
+          style.setAttribute('type', 'text/css');
+          style.textContent = hacks[hackName];
 
-      style.hack = function (enable) {
-        enable = enable === undefined || enable;
+          var enabled = false;
 
-        if( enable ) {
-          if( enabled ) { return; }
-          enabled = true;
-          document.head.appendChild(style);
-        } else {
-          if( !enabled ) { return; }
-          enabled = false;
-          document.head.removeChild(style);
+          style.hack = function (enable) {
+            enable = enable === undefined || enable;
+
+            if( enable ) {
+              if( enabled ) { return; }
+              enabled = true;
+              document.head.appendChild(style);
+            } else {
+              if( !enabled ) { return; }
+              enabled = false;
+              document.head.removeChild(style);
+            }
+          };
+
+          cache[hackName] = style;
         }
+        return cache[hackName];
       };
-
-      cache[hackName] = style;
-    }
-    return cache[hackName];
-  };
-})();
+    })();
 
 module.exports = cssHack;
 

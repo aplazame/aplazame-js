@@ -316,7 +316,7 @@ module.exports = function (aplazame) {
       meta.amount *= ( getQty(meta.getAmount.qtySelector) || 1 );
     }
     if( meta.amount && updateData ) {
-      if( meta.widget ) {
+      if( meta.widget && meta.widget.message ) {
         meta.widget.message('loading');
       }
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
@@ -331,7 +331,7 @@ module.exports = function (aplazame) {
 
         meta.widget.trigger('choices.update');
       }, function () {
-        if( meta.widget ) {
+        if( meta.widget && meta.widget.message ) {
           meta.widget.message('abort');
         }
         if( meta.widget && document.body.contains(meta.widget.el) ) {

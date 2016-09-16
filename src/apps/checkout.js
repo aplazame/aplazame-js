@@ -9,14 +9,14 @@ var api = require('../core/api'),
 function checkout (options) {
 
   options = options || {};
-  var baseUrl = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || 'https://aplazame.com/static/checkout/';
+  var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || 'https://aplazame.com/static/checkout/';
 
-  if( !/\/$/.test(baseUrl) ) {
-    baseUrl += '/';
+  if( !/\/$/.test(baseCheckout) ) {
+    baseCheckout += '/';
   }
 
   var on = {},
-      iframeSrc = baseUrl + 'iframe.html?' + new Date().getTime(),
+      iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),
       errorLoading = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
@@ -65,7 +65,7 @@ function checkout (options) {
   options.api = _.copy(api);
 
   return http( iframeSrc ).then(function (response) {
-      var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseUrl + '" />'),
+      var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseCheckout + '" />'),
           iframe = _.getIFrame({
             top: 0,
             left: 0,
@@ -223,7 +223,7 @@ function checkout (options) {
       _.onMessage('checkout', onMessage);
 
     }).catch(function (reason) {
-      // throw new Error('can not connect to ' + baseUrl);
+      // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
       console.error('Aplazame ' + reason);

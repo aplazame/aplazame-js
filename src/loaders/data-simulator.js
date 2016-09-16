@@ -182,10 +182,8 @@ module.exports = function (aplazame) {
     var widget,
         id = getWidget.serial;
 
-    // api.baseUrl = 'http://js.aplazame.z/dist/';
-
     if( meta.options.widget.type === 'button' ) {
-      widget = new Iframe( api.baseUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
+      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
 
       widget.on('message:require.choices choices.update', function (e, message) {
         if( message && message.simulatorId && message.simulatorId !== id ) {

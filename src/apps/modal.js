@@ -48,7 +48,7 @@ function modal (content, options) {
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);
-  modal.iframe.src = api.baseUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
+  modal.iframe.src = api.staticUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
 }
 
 _.onMessage('modal', function (e, message) {

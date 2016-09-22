@@ -97,33 +97,33 @@ function clearElement (el) {
   }
 }
 
-var _classActions = {
-  add: document.documentElement.classList ? function (element, className) {
-    element.classList.add(className);
-  } : function (element, className) {
-    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
-    _classActions.remove(element, className);
-    element.className += ' ' + className;
-  },
-  remove: document.documentElement.classList ? function (element, className) {
-    element.classList.remove(className);
-  } : function (element, className) {
-    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
-    element.className = element.className.replace(RE_CLEANCLASS,'');
-  },
-  action: function (action, tools) {
-    return function (element, className) {
-      if( className.indexOf(' ') >= 0 ) {
-        className.split(' ').forEach(function (cn) {
-          _classActions[action](element, cn);
-        });
-      } else {
-        _classActions[action](element, className);
-      }
-      return tools;
-    };
-  }
-};
+// var _classActions = {
+//   add: document.documentElement.classList ? function (element, className) {
+//     element.classList.add(className);
+//   } : function (element, className) {
+//     var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+//     _classActions.remove(element, className);
+//     element.className += ' ' + className;
+//   },
+//   remove: document.documentElement.classList ? function (element, className) {
+//     element.classList.remove(className);
+//   } : function (element, className) {
+//     var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+//     element.className = element.className.replace(RE_CLEANCLASS,'');
+//   },
+//   action: function (action, tools) {
+//     return function (element, className) {
+//       if( className.indexOf(' ') >= 0 ) {
+//         className.split(' ').forEach(function (cn) {
+//           _classActions[action](element, cn);
+//         });
+//       } else {
+//         _classActions[action](element, className);
+//       }
+//       return tools;
+//     };
+//   }
+// };
 
 function writeIframe (iframe, content) {
   var iframeDoc = iframe.contentWindow.document;
@@ -165,18 +165,18 @@ var _ = {
   },
 };
 
-var addClass = _classActions.action('add', _ ),
-    removeClass = _classActions.action('remove', _ ),
-    tmpClass = function (element, className, delay) {
-      addClass(element, className);
-      setTimeout(function () {
-        removeClass(element, className);
-      }, delay);
-      return _;
-    };
+// var addClass = _classActions.action('add', _ ),
+//     removeClass = _classActions.action('remove', _ );
 
-_.addClass = addClass;
-_.removeClass = removeClass;
-_.tmpClass = tmpClass;
+// _.addClass = addClass;
+// _.removeClass = removeClass;
+
+_.addClass = function (element, className) {
+  element.classList.add(className);
+};
+
+_.removeClass = function (element, className) {
+  element.classList.remove(className);
+};
 
 module.exports = _;

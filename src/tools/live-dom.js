@@ -2,7 +2,6 @@
 
 var suscriptors = [],
     running = false;
-    // nUpdates = 0;
 
 function initLiveDOM () {
 

@@ -37,7 +37,11 @@ var main = document.getElementById('main'), currentMessage,
           event: 'open',
           name: 'instalments',
           data: {
-            card: _.template('modal-instalments', {
+            size: 'lg',
+            card: {
+              className: 'modal-instalments-info'
+            },
+            template: _.template('modal-instalments', {
               selectedChoice: currentMessage.$$choice,
               choices: currentMessage.choices,
               getAmount: _.getAmount,

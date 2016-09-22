@@ -24,6 +24,7 @@ function modal (content, options) {
 
   cssOverlay.hack(true);
   cssBlur.hack(true);
+  cssModal.hack(true);
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
   document.body.appendChild(tmpOverlay);
@@ -39,7 +40,7 @@ function modal (content, options) {
         top: 0,
         left: 0,
         width: '100%',
-        height: '0',
+        height: '100%',
         background: 'transparent'
       });
 
@@ -64,7 +65,6 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();
-      cssModal.hack(true);
       e.source.postMessage({
         aplazame: 'modal',
         event: 'content',
@@ -91,12 +91,12 @@ _.onMessage('modal', function (e, message) {
       }, isMobile.matches ? 0 : 600 );
       break;
     case 'close':
-      cssModal.hack(false);
+      setTimeout(function () {
+        cssModal.hack(false);
+      }, isMobile.matches ? 0 : 100 );
       document.body.removeChild(tmpOverlay);
       _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
-      setTimeout(function () {
-        _.scrollTop(lastScrollTop);
-      }, 0);
+      _.scrollTop(lastScrollTop);
       if( modal.iframe ) {
         document.body.removeChild(modal.iframe);
 

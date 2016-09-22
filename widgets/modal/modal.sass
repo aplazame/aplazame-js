@@ -20,9 +20,28 @@ html
 
 body
   display: block
+  color: $grey-darken
+  position: relative
 
-  > .modals-container:before
-    display: none
+  > .modals-container
+    @include absolute(fill)
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+    &:before
+      display: none
 
 a
   text-decoration: none
+
+.modal .cta
+  transform: translateZ(0)
+
+// html, body
+  // background: transparent !important
+  // color: transparent !important
+  // background-color: transparent !important
+  // position: absolute
+  // top: 0
+  // left: 0
+  // right: 0
+  // -webkit-backface-visibility: visible

@@ -7,7 +7,8 @@ var api = require('../core/api'),
     cssHack = require('../tools/css-hack'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
     isMobile = window.matchMedia('( max-width: 767px )'),
-    lastScrollTop;
+    lastScrollTop, updatingHeight,
+    iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
 
 var tmpOverlay = document.createElement('div'),
     cssOverlay = cssHack('overlay'),
@@ -46,10 +47,21 @@ function modal (content, options) {
 
   modal.iframe.className = 'aplazame-modal';
   // modal.iframe.style.display = 'none';
+  modal.iframe.setAttribute('scrolling', 'no');
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);
   modal.iframe.src = api.staticUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
+
+  if( iOS && isMobile.matches ) {
+    updatingHeight = setInterval(function () {
+      modal.iframe.contentWindow.postMessage({
+        aplazame: 'modal',
+        event: 'height',
+        height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+      }, '*');
+    }, 400);
+  }
 }
 
 _.onMessage('modal', function (e, message) {
@@ -91,9 +103,7 @@ _.onMessage('modal', function (e, message) {
       }, isMobile.matches ? 0 : 600 );
       break;
     case 'close':
-      setTimeout(function () {
-        cssModal.hack(false);
-      }, isMobile.matches ? 0 : 100 );
+      cssModal.hack(false);
       document.body.removeChild(tmpOverlay);
       _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
       _.scrollTop(lastScrollTop);
@@ -114,6 +124,7 @@ _.onMessage('modal', function (e, message) {
         }
         delete modal.iframe;
       }
+      clearInterval(updatingHeight);
       break;
   }
 

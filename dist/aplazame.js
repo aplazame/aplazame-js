@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.343';
+module.exports = '0.0.344';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -7,12 +7,360 @@ module.exports = '@-webkit-keyframes aplazame-logo-large{0%{-webkit-transform:ro
 },{}],4:[function(require,module,exports){
 module.exports = '.aplazame-modal{height:100%;height:100vh;position:relative;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
 },{}],5:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.9);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:both;animation-fill-mode:both}.aplazame-overlay.aplazame-overlay-show{opacity:1}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse;opacity:0}';
+module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.9);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
 },{}],6:[function(require,module,exports){
-module.exports = '<div class="modal">  <div class="card size-lg has-cta modal-instalments-info">    <div class="card-content">      <header class="aplazame"></header>      <section class="info">        Elige el número de meses y la cuota que más te convengan      </section>      <div class="choices-wrapper">        <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>        <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">          <div class="wrapper">            <div class="num-instalments">              <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>            </div>            <div class="amount">              <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--              --><span class="amount-currency">€</span><!--              --><span class="amount-per-month">/mes</span></div>          </div>        </button>        <% } %>      </div>      <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>      <section class="how-it-works">        <header>¿Cómo funciona?</header>        <div class="info-wrapper">          <div class="info">            <h3>Elige Aplazame</h3>            <p>en la tienda, cuando vayas a pagar el pedido.</p>          </div>          <div class="info">            <h3>Decide cómo quieres pagar</h3>            <p>Hasta en 12 cuotas, pagando con tarjeta.</p>          </div>          <div class="info">            <h3>Disfruta de tu compra</h3>            <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>          </div>        </div>      </section>    </div>    <div class="cta">      <div class="col-sm-6 button-wrapper">        <button class="btn lg btn-block white" type="button" modal-reject="back">Volver a Tienda</button>      </div>      <div class="col-sm-6 button-wrapper">        <a class="btn lg btn-block" href="http://aplazame.com/how/" target="_blank">¿Quieres saber más?</a>      </div>    </div>  </div></div>';
+module.exports = '<div class="card-content">  <header class="aplazame"></header>  <section class="info">    Elige el número de meses y la cuota que más te convengan  </section>  <div class="choices-wrapper">    <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>    <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">      <div class="wrapper">        <div class="num-instalments">          <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>        </div>        <div class="amount">          <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--          --><span class="amount-currency">€</span><!--          --><span class="amount-per-month">/mes</span></div>      </div>    </button>    <% } %>  </div>  <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>  <section class="how-it-works">    <header>¿Cómo funciona?</header>    <div class="info-wrapper">      <div class="info">        <h3>Elige Aplazame</h3>        <p>en la tienda, cuando vayas a pagar el pedido.</p>      </div>      <div class="info">        <h3>Decide cómo quieres pagar</h3>        <p>Hasta en 12 cuotas, pagando con tarjeta.</p>      </div>      <div class="info">        <h3>Disfruta de tu compra</h3>        <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>      </div>    </div>  </section></div><div class="cta">  <div class="col-sm-6 button-wrapper">    <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>  </div>  <div class="col-sm-6 button-wrapper">    <a class="btn lg btn-block" href="http://aplazame.com/how/" target="_blank">¿Quieres saber más?</a>  </div></div>';
 },{}],7:[function(require,module,exports){
 module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num">12</em>    <span>&nbsp;cuotas</span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
 },{}],8:[function(require,module,exports){
+/**
+ * https://github.com/gre/bezier-easing
+ * BezierEasing - use bezier curve for transition easing function
+ * by Gaëtan Renaudeau 2014 - 2015 – MIT License
+ */
+
+// These values are established by empiricism with tests (tradeoff: performance VS precision)
+var NEWTON_ITERATIONS = 4;
+var NEWTON_MIN_SLOPE = 0.001;
+var SUBDIVISION_PRECISION = 0.0000001;
+var SUBDIVISION_MAX_ITERATIONS = 10;
+
+var kSplineTableSize = 11;
+var kSampleStepSize = 1.0 / (kSplineTableSize - 1.0);
+
+var float32ArraySupported = typeof Float32Array === 'function';
+
+function A (aA1, aA2) { return 1.0 - 3.0 * aA2 + 3.0 * aA1; }
+function B (aA1, aA2) { return 3.0 * aA2 - 6.0 * aA1; }
+function C (aA1)      { return 3.0 * aA1; }
+
+// Returns x(t) given t, x1, and x2, or y(t) given t, y1, and y2.
+function calcBezier (aT, aA1, aA2) { return ((A(aA1, aA2) * aT + B(aA1, aA2)) * aT + C(aA1)) * aT; }
+
+// Returns dx/dt given t, x1, and x2, or dy/dt given t, y1, and y2.
+function getSlope (aT, aA1, aA2) { return 3.0 * A(aA1, aA2) * aT * aT + 2.0 * B(aA1, aA2) * aT + C(aA1); }
+
+function binarySubdivide (aX, aA, aB, mX1, mX2) {
+  var currentX, currentT, i = 0;
+  do {
+    currentT = aA + (aB - aA) / 2.0;
+    currentX = calcBezier(currentT, mX1, mX2) - aX;
+    if (currentX > 0.0) {
+      aB = currentT;
+    } else {
+      aA = currentT;
+    }
+  } while (Math.abs(currentX) > SUBDIVISION_PRECISION && ++i < SUBDIVISION_MAX_ITERATIONS);
+  return currentT;
+}
+
+function newtonRaphsonIterate (aX, aGuessT, mX1, mX2) {
+ for (var i = 0; i < NEWTON_ITERATIONS; ++i) {
+   var currentSlope = getSlope(aGuessT, mX1, mX2);
+   if (currentSlope === 0.0) {
+     return aGuessT;
+   }
+   var currentX = calcBezier(aGuessT, mX1, mX2) - aX;
+   aGuessT -= currentX / currentSlope;
+ }
+ return aGuessT;
+}
+
+module.exports = function bezier (mX1, mY1, mX2, mY2) {
+  if (!(0 <= mX1 && mX1 <= 1 && 0 <= mX2 && mX2 <= 1)) {
+    throw new Error('bezier x values must be in [0, 1] range');
+  }
+
+  // Precompute samples table
+  var sampleValues = float32ArraySupported ? new Float32Array(kSplineTableSize) : new Array(kSplineTableSize);
+  if (mX1 !== mY1 || mX2 !== mY2) {
+    for (var i = 0; i < kSplineTableSize; ++i) {
+      sampleValues[i] = calcBezier(i * kSampleStepSize, mX1, mX2);
+    }
+  }
+
+  function getTForX (aX) {
+    var intervalStart = 0.0;
+    var currentSample = 1;
+    var lastSample = kSplineTableSize - 1;
+
+    for (; currentSample !== lastSample && sampleValues[currentSample] <= aX; ++currentSample) {
+      intervalStart += kSampleStepSize;
+    }
+    --currentSample;
+
+    // Interpolate to provide an initial guess for t
+    var dist = (aX - sampleValues[currentSample]) / (sampleValues[currentSample + 1] - sampleValues[currentSample]);
+    var guessForT = intervalStart + dist * kSampleStepSize;
+
+    var initialSlope = getSlope(guessForT, mX1, mX2);
+    if (initialSlope >= NEWTON_MIN_SLOPE) {
+      return newtonRaphsonIterate(aX, guessForT, mX1, mX2);
+    } else if (initialSlope === 0.0) {
+      return guessForT;
+    } else {
+      return binarySubdivide(aX, intervalStart, intervalStart + kSampleStepSize, mX1, mX2);
+    }
+  }
+
+  return function BezierEasing (x) {
+    if (mX1 === mY1 && mX2 === mY2) {
+      return x; // linear
+    }
+    // Because JavaScript number are imprecise, we should guarantee the extremes are right.
+    if (x === 0) {
+      return 0;
+    }
+    if (x === 1) {
+      return 1;
+    }
+    return calcBezier(getTForX(x), mY1, mY2);
+  };
+};
+
+},{}],9:[function(require,module,exports){
+/*
+ * classList.js: Cross-browser full element.classList implementation.
+ * 1.1.20150312
+ *
+ * By Eli Grey, http://eligrey.com
+ * License: Dedicated to the public domain.
+ *   See https://github.com/eligrey/classList.js/blob/master/LICENSE.md
+ */
+
+/*global self, document, DOMException */
+
+/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
+
+if ("document" in self) {
+
+// Full polyfill for browsers with no classList support
+// Including IE < Edge missing SVGElement.classList
+if (!("classList" in document.createElement("_")) 
+	|| document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg","g"))) {
+
+(function (view) {
+
+"use strict";
+
+if (!('Element' in view)) return;
+
+var
+	  classListProp = "classList"
+	, protoProp = "prototype"
+	, elemCtrProto = view.Element[protoProp]
+	, objCtr = Object
+	, strTrim = String[protoProp].trim || function () {
+		return this.replace(/^\s+|\s+$/g, "");
+	}
+	, arrIndexOf = Array[protoProp].indexOf || function (item) {
+		var
+			  i = 0
+			, len = this.length
+		;
+		for (; i < len; i++) {
+			if (i in this && this[i] === item) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	// Vendors: please allow content code to instantiate DOMExceptions
+	, DOMEx = function (type, message) {
+		this.name = type;
+		this.code = DOMException[type];
+		this.message = message;
+	}
+	, checkTokenAndGetIndex = function (classList, token) {
+		if (token === "") {
+			throw new DOMEx(
+				  "SYNTAX_ERR"
+				, "An invalid or illegal string was specified"
+			);
+		}
+		if (/\s/.test(token)) {
+			throw new DOMEx(
+				  "INVALID_CHARACTER_ERR"
+				, "String contains an invalid character"
+			);
+		}
+		return arrIndexOf.call(classList, token);
+	}
+	, ClassList = function (elem) {
+		var
+			  trimmedClasses = strTrim.call(elem.getAttribute("class") || "")
+			, classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
+			, i = 0
+			, len = classes.length
+		;
+		for (; i < len; i++) {
+			this.push(classes[i]);
+		}
+		this._updateClassName = function () {
+			elem.setAttribute("class", this.toString());
+		};
+	}
+	, classListProto = ClassList[protoProp] = []
+	, classListGetter = function () {
+		return new ClassList(this);
+	}
+;
+// Most DOMException implementations don't allow calling DOMException's toString()
+// on non-DOMExceptions. Error's toString() is sufficient here.
+DOMEx[protoProp] = Error[protoProp];
+classListProto.item = function (i) {
+	return this[i] || null;
+};
+classListProto.contains = function (token) {
+	token += "";
+	return checkTokenAndGetIndex(this, token) !== -1;
+};
+classListProto.add = function () {
+	var
+		  tokens = arguments
+		, i = 0
+		, l = tokens.length
+		, token
+		, updated = false
+	;
+	do {
+		token = tokens[i] + "";
+		if (checkTokenAndGetIndex(this, token) === -1) {
+			this.push(token);
+			updated = true;
+		}
+	}
+	while (++i < l);
+
+	if (updated) {
+		this._updateClassName();
+	}
+};
+classListProto.remove = function () {
+	var
+		  tokens = arguments
+		, i = 0
+		, l = tokens.length
+		, token
+		, updated = false
+		, index
+	;
+	do {
+		token = tokens[i] + "";
+		index = checkTokenAndGetIndex(this, token);
+		while (index !== -1) {
+			this.splice(index, 1);
+			updated = true;
+			index = checkTokenAndGetIndex(this, token);
+		}
+	}
+	while (++i < l);
+
+	if (updated) {
+		this._updateClassName();
+	}
+};
+classListProto.toggle = function (token, force) {
+	token += "";
+
+	var
+		  result = this.contains(token)
+		, method = result ?
+			force !== true && "remove"
+		:
+			force !== false && "add"
+	;
+
+	if (method) {
+		this[method](token);
+	}
+
+	if (force === true || force === false) {
+		return force;
+	} else {
+		return !result;
+	}
+};
+classListProto.toString = function () {
+	return this.join(" ");
+};
+
+if (objCtr.defineProperty) {
+	var classListPropDesc = {
+		  get: classListGetter
+		, enumerable: true
+		, configurable: true
+	};
+	try {
+		objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+	} catch (ex) { // IE 8 doesn't support enumerable:true
+		if (ex.number === -0x7FF5EC54) {
+			classListPropDesc.enumerable = false;
+			objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+		}
+	}
+} else if (objCtr[protoProp].__defineGetter__) {
+	elemCtrProto.__defineGetter__(classListProp, classListGetter);
+}
+
+}(self));
+
+} else {
+// There is full or partial native classList support, so just check if we need
+// to normalize the add/remove and toggle APIs.
+
+(function () {
+	"use strict";
+
+	var testElement = document.createElement("_");
+
+	testElement.classList.add("c1", "c2");
+
+	// Polyfill for IE 10/11 and Firefox <26, where classList.add and
+	// classList.remove exist but support only one argument at a time.
+	if (!testElement.classList.contains("c2")) {
+		var createMethod = function(method) {
+			var original = DOMTokenList.prototype[method];
+
+			DOMTokenList.prototype[method] = function(token) {
+				var i, len = arguments.length;
+
+				for (i = 0; i < len; i++) {
+					token = arguments[i];
+					original.call(this, token);
+				}
+			};
+		};
+		createMethod('add');
+		createMethod('remove');
+	}
+
+	testElement.classList.toggle("c3", false);
+
+	// Polyfill for IE 10 and Firefox <24, where classList.toggle does not
+	// support the second argument.
+	if (testElement.classList.contains("c3")) {
+		var _toggle = DOMTokenList.prototype.toggle;
+
+		DOMTokenList.prototype.toggle = function(token, force) {
+			if (1 in arguments && !this.contains(token) === !force) {
+				return force;
+			} else {
+				return _toggle.call(this, token);
+			}
+		};
+
+	}
+
+	testElement = null;
+}());
+
+}
+
+}
+
+
+},{}],10:[function(require,module,exports){
 /*
  * events.js - Single library to handle generic events
 
@@ -189,7 +537,7 @@ module.exports = '<div class="aplazame-widget-instalments">  <span class="aplaza
   return Events;
 });
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 // factory http
 
@@ -434,7 +782,7 @@ http.responseData = function (response) {
 
 module.exports = http;
 
-},{"nitro-tools/extend":11,"q-promise":17}],10:[function(require,module,exports){
+},{"nitro-tools/extend":13,"q-promise":20}],12:[function(require,module,exports){
 
 var arrayShift = [].shift;
 
@@ -453,7 +801,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 var RE_$$ = /^\$\$/,
     arrayShift = [].shift,
@@ -520,7 +868,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":10,"./type":14}],12:[function(require,module,exports){
+},{"./_extend":12,"./type":17}],14:[function(require,module,exports){
 
 var type = require('./type');
 
@@ -569,7 +917,235 @@ module.exports = {
   keys: Object.keys
 };
 
-},{"./type":14}],13:[function(require,module,exports){
+},{"./type":17}],15:[function(require,module,exports){
+
+var type = require('./type'),
+    arrSome = Array.prototype.some,
+    arrEvery = Array.prototype.every,
+    arrForEach = Array.prototype.forEach,
+    arrMap = Array.prototype.map,
+    arrIndexOf = Array.prototype.indexOf;
+
+// -----------------------------------------
+
+function _eachInList( list, iteratee, thisArg ) {
+  return arrForEach.call(list, iteratee, thisArg);
+}
+
+function _eachInObject( o, iteratee, thisArg ) {
+  for( var key in o ) {
+    iteratee.call(thisArg, [o[key], key]);
+  }
+}
+
+function _matchAll (o, filters) {
+  for( var key in filters ) {
+    if( o[key] !== filters[key] ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function _matchAny (o, filters) {
+  for( var key in filters ) {
+    if( o[key] === filters[key] ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function _iterateeFn (iteratee) {
+  if( type.isFunction(iteratee) ) {
+    return iteratee;
+  }
+
+  if( type.isObject(iteratee) ) {
+    return function (item) {
+      return _matchAll(item, iteratee);
+    };
+  }
+
+  return function (item) {
+    return item === iteratee;
+  };
+}
+
+// -----------------------------------------
+
+function each (o, iteratee, thisArg) {
+  if( o && o.length ) {
+    arrForEach.call(o, iteratee, thisArg);
+  } else if( type.isObject(o) ) {
+    _eachInObject(o, iteratee, thisArg || this);
+  }
+}
+
+function indexOf (list, iteratee, thisArg) {
+  if( !type.isFunction(iteratee) ) {
+    return arrIndexOf.call(list, iteratee, thisArg);
+  }
+
+  for( var i = 0, n = list.length; i < n ; i++ ) {
+    if( iteratee.call(thisArg, list[i], i) ) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function _indexBy (list, iteratee, thisArg) {
+  var map = {};
+
+	for( var i = 0, len = list.length; i < len; i++ ) {
+    map[iteratee.call(thisArg, list[i], i)] = list[i];
+  }
+  return map;
+}
+
+function indexBy (list, iteratee, thisArg) {
+	if( type.isString(iteratee) ) {
+		return _indexBy(list, function (item) { return item[iteratee]; }, thisArg);
+	} else if( type.isFunction(iteratee) ) {
+		return _indexBy(list, iteratee, thisArg);
+	}
+	return {};
+}
+
+function some (list, iteratee, thisArg) {
+  iteratee = _iterateeFn(iteratee);
+
+  if( list && list.length ) {
+    return arrSome.call(list, iteratee, thisArg);
+  } else if( type.isObject(list) ) {
+    for( var key in list )  {
+      if( iteratee.call(thisArg, list[key], key) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+function every (list, iteratee, thisArg) {
+  iteratee = _iterateeFn(iteratee);
+
+  if( list && list.length ) {
+    return arrEvery.call(list, iteratee, thisArg);
+  } else if( type.isObject(list) ) {
+    for( var key in list )  {
+      if( !iteratee.call(thisArg, list[key], key) ) {
+        return false;
+      }
+    }
+    return true;
+  }
+};
+
+function map (list, _iteratee, thisArg) {
+  var iteratee = type.isString(_iteratee) ? function (item) { return item[_iteratee]; } : _iteratee;
+
+  if( list && list.length ) {
+    return arrMap.call(list, iteratee, thisArg);
+  } else if( type.isObject(list) ) {
+    var result = {};
+    for( var key in list )  {
+      result[key] = iteratee.call(thisArg, list[key], key);
+    }
+    return result;
+  }
+};
+
+function map2List (list, iteratee, thisArg) {
+  if( list && list.length ) {
+    return arrMap.call(list, iteratee, thisArg);
+  }
+  var result = [], i = 0;
+  for( var key in list )  {
+    result[i++] = iteratee.call(thisArg, list[key], key);
+  }
+  return result;
+};
+
+function remove (list, iteratee, thisArg) {
+    thisArg = thisArg === undefined ? this : thisArg;
+
+    iteratee = _iterateeFn(iteratee);
+
+    for( var i = 0, len = list.length; i < len; i++ ) {
+				if( iteratee.call(thisArg, list[i]) ) {
+						list.splice(i, 1);
+						i--;
+				}
+		}
+}
+
+function first (list, iteratee, thisArg) {
+		thisArg = thisArg === undefined ? this : thisArg;
+
+		iteratee = _iterateeFn(iteratee);
+
+    var i = arrIndexOf.call(list, iteratee, thisArg);
+
+		for( var i = 0, len = list.length ; i < len ; i++ ) {
+        if( iteratee.call(thisArg, list[i]) ) {
+            return list[i];
+        }
+    }
+}
+
+function last (list, iteratee, thisArg) {
+		thisArg = thisArg === undefined ? this : thisArg;
+
+		iteratee = _iterateeFn(iteratee);
+
+		for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+        if( iteratee.call(thisArg, list[i]) ) {
+            return list[i];
+        }
+    }
+}
+
+function filter (list, iteratee, thisArg) {
+    var newList = [];
+
+		thisArg = thisArg === undefined ? this : thisArg;
+		iteratee = _iterateeFn(iteratee);
+
+		for( var i = 0, len = list.length ; i < len ; i++ ) {
+        if( iteratee.call(thisArg, list[i]) ) {
+            newList.push(list[i]);
+        }
+    }
+
+    return newList;
+}
+
+module.exports = {
+  _matchAll: _matchAll,
+  _matchAny: _matchAny,
+  find: first,
+  first: first,
+  last: last,
+  filter: filter,
+  each: each,
+  some: some,
+  every: every,
+  map: map,
+  pluck: map,
+  map2List: map2List,
+  indexOf: indexOf,
+  indexBy: indexBy,
+  remove: remove,
+  if: function (result, fn) {
+    if( result !== undefined && fn instanceof Function ) {
+      return fn(result);
+    }
+  }
+};
+
+},{"./type":17}],16:[function(require,module,exports){
 
 var RE_dotsBack = /[^\/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
@@ -596,7 +1172,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 function _isType (type) {
@@ -641,7 +1217,7 @@ module.exports = {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
@@ -725,7 +1301,7 @@ module.exports = function (Promise) {
 	return Promise;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 
 function stepResult (step, value, type) {
   if( value && value.then ) {
@@ -821,13 +1397,13 @@ require('./promise-methods')(Promise);
 
 module.exports = Promise;
 
-},{"./promise-methods":15}],17:[function(require,module,exports){
+},{"./promise-methods":18}],20:[function(require,module,exports){
 (function (global){
 
 module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(global.Promise) : require('./promise-polyfill') );
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-methods":15,"./promise-polyfill":16,"./qizer":18}],18:[function(require,module,exports){
+},{"./promise-methods":18,"./promise-polyfill":19,"./qizer":21}],21:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
@@ -851,7 +1427,589 @@ module.exports = function (Promise) {
 
 };
 
-},{"./promise-polyfill":16}],19:[function(require,module,exports){
+},{"./promise-polyfill":19}],22:[function(require,module,exports){
+
+require('./browser-polyfills/current-script');
+require('./browser-polyfills/date');
+require('./browser-polyfills/dom-closest');
+require('./browser-polyfills/event-listener');
+require('./browser-polyfills/match-media');
+require('./browser-polyfills/matches-selector');
+},{"./browser-polyfills/current-script":23,"./browser-polyfills/date":24,"./browser-polyfills/dom-closest":25,"./browser-polyfills/event-listener":26,"./browser-polyfills/match-media":27,"./browser-polyfills/matches-selector":28}],23:[function(require,module,exports){
+
+document.currentScript = document.currentScript || (function() {
+   var scripts = document.getElementsByTagName('script');
+   return scripts[scripts.length - 1];
+ })();
+},{}],24:[function(require,module,exports){
+
+if (!Date.now) {
+  Date.now = function now() {
+    return new Date().getTime();
+  };
+}
+},{}],25:[function(require,module,exports){
+
+if( !Element.prototype.closest ) {
+  Element.prototype.closest = function (selector) {
+    var el = this;
+
+    while( el ) {
+      if( el.matchesSelector(selector) ) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    return el;
+  };
+}
+},{}],26:[function(require,module,exports){
+
+if( !Element.prototype.addEventListener ) {
+  if( Element.prototype.attachEvent ) {
+    Element.prototype.addEventListener = function (eventName, listener) {
+      return Element.prototype.attachEvent( 'on' + eventName, listener );
+    };
+    Element.prototype.removeEventListener = function (eventName, listener) {
+      return Element.prototype.detachEvent( 'on' + eventName, listener );
+    };
+  } else {
+    throw 'Browser not compatible with element events';
+  }
+}
+},{}],27:[function(require,module,exports){
+(function (root) {
+  'use strict';
+
+  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
+})(this);
+},{}],28:[function(require,module,exports){
+
+if( !Element.prototype.matchesSelector ) {
+  Element.prototype.matchesSelector = (
+    Element.prototype.webkitMatchesSelector ||
+    Element.prototype.mozMatchesSelector ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.oMatchesSelector
+  );
+}
+
+
+},{}],29:[function(require,module,exports){
+
+require('./browser-polyfills');
+// document.currentScript
+// Date.now()
+// HTMLElement.closest()
+// HTMLElement.addEventListener
+// HTMLElement.removeEventListener
+// window.matchMedia
+// Element.prototype.matchesSelector
+
+require('classlist.js'); // https://developer.mozilla.org/es/docs/Web/API/Element/classList
+
+var extend = require('nitro-tools/extend');
+
+function _ (selector, source) {
+  return source && typeof source === 'string' ?
+		selector.querySelector(source) :
+		(source || document).querySelector(selector);
+}
+
+_.noop = function (value) { return value; };
+
+extend.extend(_, extend);
+
+_.extend(_,
+  require('nitro-tools/type'),
+	require('nitro-tools/key'),
+	require('nitro-tools/path')
+);
+
+_.extend(_, {
+	animate: require('./deferred/animate'),
+	wait: require('./deferred/wait')
+});
+
+_.extend(_, {
+	ready: require('./fn/ready'),
+	template: require('./fn/template'),
+	debounce: require('./fn/debounce')
+});
+
+_.extend(_,
+  require('./utils/events'),
+	// _.on(el, eventName, handler, useCapture)
+	// _.off(el, eventName, handler, useCapture)
+	// _.triggerEvent(element, eventName, data)
+
+  require('./utils/dom')
+  // _.create(tagName, attrs)
+	// _.attr(el, name, value)
+  // _.tmpClass(el, className, duration, cb)
+);
+
+_.extend(_, {
+	normalize: require('./utils/normalize'),
+	// _.touchDevice === true | false
+	// _.isMac === true | false
+	// _.isAndroid === true | false
+
+	scroll: require('./utils/scroll/bundle') // scroll is not available until document is ready
+	// _.scroll.on( handler, useCapture )
+	// _.scroll.off( handler, useCapture )
+	// _.scroll.top()
+	// _.scroll.goto(value)
+	// _.scroll.animateTo(value | HTMLElement, callback, duration): Promise
+	// _,scroll.inAnimation === true | false
+});
+
+module.exports = _;
+
+},{"./browser-polyfills":22,"./deferred/animate":30,"./deferred/wait":31,"./fn/debounce":32,"./fn/ready":33,"./fn/template":34,"./utils/dom":35,"./utils/events":36,"./utils/normalize":37,"./utils/scroll/bundle":40,"classlist.js":9,"nitro-tools/extend":13,"nitro-tools/key":14,"nitro-tools/path":16,"nitro-tools/type":17}],30:[function(require,module,exports){
+
+var $q = require('q-promise'),
+    timingFunctions = {},
+    noop = function () {},
+    getTimingFunction = function (timingFunctionName) {
+      if( !timingFunctions[timingFunctionName] ) {
+        if( timingFunctionName === 'linear' ) {
+          timingFunctions[timingFunctionName] = function ( value ) { return value; };
+        } else if( timingFunctionName === 'ease' ) {
+          timingFunctions[timingFunctionName] = require('bezier-easing')(.17,.67,.83,.67);
+        } else if( timingFunctionName === 'ease-in' ) {
+          timingFunctions[timingFunctionName] = require('bezier-easing')(.42,0,1,1);
+        } else if( timingFunctionName === 'ease-out' ) {
+          timingFunctions[timingFunctionName] = require('bezier-easing')(0,0,.58,1);
+        } else if( timingFunctionName === 'ease-in-out' ) {
+          timingFunctions[timingFunctionName] = require('bezier-easing')(.42,0,.58,1);
+        }
+      }
+      return timingFunctions[timingFunctionName];
+    };
+
+function animate (progressFn, duration, atEnd, timingFunctionName) {
+  if ( duration instanceof Function ) {
+    if ( typeof atEnd === 'number' ) {
+      aux = duration;
+      duration = atEnd;
+      atEnd = aux;
+    } else {
+      atEnd = duration;
+      duration = 400;
+    }
+  } else if ( duration === undefined ) {
+    duration = 400;
+  }
+
+  timingFunctionName = timingFunctionName || ( typeof atEnd === 'string' ? atEnd : ( typeof duration === 'string' ? duration : 'ease' ) );
+
+  progressFn(duration === 0 ? 1 : 0);
+
+  var stopped = false,
+      timingFunction = getTimingFunction(timingFunctionName),
+      deferred = $q.defer();
+
+  if( duration > 0 ) {
+    var start = Date.now(),
+        interval = setInterval(function () {
+          var elapsed = Date.now() - start;
+
+          if( stopped ) {
+            clearInterval(interval);
+          } else if( elapsed >= duration ) {
+            stopped = true;
+            progressFn(1);
+            deferred.resolve();
+            (atEnd || noop)();
+          } else {
+            progressFn( timingFunction(elapsed/duration) );
+          }
+        }, 10);
+  }
+
+  deferred.promise.stop = function (reject) {
+    stopped = true;
+    if( reject ) {
+      deferred.reject();
+    }
+  };
+
+  return deferred.promise;
+}
+
+animate.time = function (el) {
+  var time = 0;
+  var duration = window.getComputedStyle(el).animationDuration;
+  if( duration ) {
+    duration.replace(/([0-9](\.[0-9])?)(m)?s/, function (matched, t, decimals, ms) {
+      time += ms ? Number(t) : Number(t)*1000;
+    });
+  }
+  if( window.getComputedStyle(el).animationDelay ) {
+    window.getComputedStyle(el).animationDelay.replace(/([0-9](\.[0-9])?)(m)?s/, function (matched, t, decimals, ms) {
+      time += ms ? Number(t) : Number(t)*1000;
+    });
+  }
+  duration = window.getComputedStyle(el).transitionDuration;
+  if( duration ) {
+    duration.replace(/([0-9](\.[0-9])?)(m)?s/, function (matched, t, decimals, ms) {
+      var t = ms ? Number(t) : Number(t)*1000;
+      if( t > time ) {
+        time = t;
+      }
+    });
+  }
+  // console.log('animationTime', el, time);
+  return time;
+};
+
+module.exports = animate;
+
+},{"bezier-easing":8,"q-promise":20}],31:[function(require,module,exports){
+
+var $q = require('q-promise'),
+	wait = function (delay, callback) {
+		if( delay instanceof Function ) {
+			delay = [callback, callback = delay][0];
+		}
+		if( callback && !(callback instanceof Function) ) {
+			throw new Error('callback should be a Function');
+		}
+		if( typeof delay !== 'number' ) {
+			throw new Error('delay should be a Number');
+		}
+		return $q(function (resolve, reject) {
+			setTimeout(function () {
+				resolve();
+				if( callback ) {
+					callback();
+				}
+			}, delay);
+		});
+	};
+
+module.exports = wait;
+},{"q-promise":20}],32:[function(require,module,exports){
+
+function debounce (fn, timeslot) {
+  var timer = null,
+      timeslot = timeslot || 80;
+
+  return function () {
+    var _this = this, args = arguments;
+
+    if( timer ) {
+      clearTimeout(timer);
+      timer = null;
+    }
+
+    timer = setTimeout(function () {
+      fn.apply(_this, args);
+    }, timeslot);
+  };
+}
+
+module.exports = debounce;
+},{}],33:[function(require,module,exports){
+var readyListeners = [],
+    initReady = function () {
+      var listeners = readyListeners;
+      readyListeners = undefined;
+      [].forEach.call(listeners, function (cb) { cb(); });
+      document.removeEventListener('DOMContentLoaded', initReady);
+      window.removeEventListener('load', initReady);
+    };
+
+document.addEventListener('DOMContentLoaded', initReady);
+window.addEventListener('load', initReady);
+
+function ready (callback) {
+  if( callback instanceof Function ) {
+    if( readyListeners ) {
+      readyListeners.push(callback);
+    } else {
+      callback();
+    }
+  }
+}
+
+module.exports = ready;
+
+},{}],34:[function(require,module,exports){
+
+function template (name, data){
+  return template.cache[name](data || {});
+}
+
+template.cache = {};
+
+template.compile = function (tmpl) {
+  // John Resig micro-template
+  return new Function('obj', // jshint ignore:line
+    'var p=[],print=function(){p.push.apply(p,arguments);};' +
+
+    // Introduce the data as local variables using with(){}
+    'with(obj){p.push(\'' +
+
+    // Convert the template into pure JavaScript
+    tmpl.trim()
+      .replace(/[\r\t\n]/g, ' ')
+      .split('<%').join('\t')
+      .replace(/((^|%>)[^\t]*)'/g, '$1\r')
+      .replace(/\t=(.*?)%>/g, '\',$1,\'')
+      .split('\t').join('\');')
+      .split('%>').join('p.push(\'')
+      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+};
+
+template.put = function (name, tmpl) {
+  template.cache[name] = template.compile(tmpl);
+};
+
+template.lookup = function () {
+  [].forEach.call(document.querySelectorAll('script[type="application/x-template"][data-template]'), function (tmpl) {
+    template.put(tmpl.getAttribute('data-template'), tmpl.text);
+  });
+};
+
+module.exports = template;
+},{}],35:[function(require,module,exports){
+
+var _dom = {
+  create: function (tagName, attrs) {
+    var el = document.createElement(tagName);
+    
+    if( attrs ) {
+      if( attrs.html ) {
+        el.innerHTML = attrs.html;
+      }
+      for( var attr in attrs ) {
+        if( attr !== 'html' ) {
+          el[attr] = attrs[attr];
+        }
+      }
+    }
+    return el;
+  },
+  attr: function (el, name, value) {
+    if( !(el instanceof Element) && el[0] instanceof Element ) {
+      el = el[0];
+    }
+    if( value !== undefined ) {
+      el.setAttribute(name, value);
+    }
+    return el.getAttribute(name);
+  },
+  tmpClass: function (el, className, duration, cb) {
+    var isCollection = !(el instanceof Element ) && el.length;
+
+    if( isCollection ) {
+      [].forEach.call(el, function (_el) {
+        _el.classList.add(className);
+      });
+    } else {
+      el.classList.add(className);
+    }
+    setTimeout(function () {
+      if( isCollection ) {
+        [].forEach.call(el, function (_el) {
+          _el.classList.remove(className);
+        });
+      } else {
+        el.classList.remove(className);
+      }
+      if( cb instanceof Function ) {
+        cb();
+      }
+    }, duration instanceof Function ? duration() : duration );
+  },
+  formParams: function (form) {
+    if( !(form instanceof Element) && form.length ) {
+      form = form[0];
+    }
+
+    var data = {};
+    [].forEach.call(form.elements, function (el) {
+      if( el.name && !el.disabled ) {
+        if( el.type === 'radio' ) {
+          if( el.checked ) {
+            data[el.name] = el.value;
+          }
+        } else {
+          data[el.name] = el.value;
+        }
+      }
+    });
+    return data;
+  }
+};
+
+module.exports = _dom;
+
+},{}],36:[function(require,module,exports){
+
+module.exports = {
+  on: function (el, eventName, handler, useCapture) {
+    if( typeof el === 'string' ) {
+      return document.documentElement.addEventListener(el, eventName, handler);
+    }
+    return el.addEventListener(eventName, handler, useCapture);
+  },
+  off: function (el, eventName, handler, useCapture) {
+    if( typeof el === 'string' ) {
+      return document.documentElement.removeEventListener(el, eventName, handler);
+    }
+    return el.removeEventListener(eventName, handler, useCapture);
+  },
+  triggerEvent: document.createEvent ? function (element, eventName, data) {
+    var event = document.createEvent("HTMLEvents");
+    event.data = data;
+    event.initEvent(eventName, true, true);
+    element.dispatchEvent(event);
+    return event;
+  } : function (element, eventName, data) {
+    var event = document.createEventObject();
+    event.data = data;
+    element.fireEvent("on" + eventName, event);
+    return event;
+  }
+};
+
+},{}],37:[function(require,module,exports){
+
+var normalize = {
+  isTouchDevice: 'ontouchstart' in document.documentElement,
+  isMac: /^Mac/.test(navigator.platform),
+  isAndroid: /^Android/.test(navigator.platform)
+};
+
+document.documentElement.classList.add( normalize.isTouchDevice ? 'touch' : 'no-touch' );
+if( normalize.isMac ) {
+  document.documentElement.classList.add('is-mac');
+}
+if( normalize.isAndroid ) {
+  document.documentElement.classList.add('is-android');
+}
+
+module.exports = normalize;
+
+},{}],38:[function(require,module,exports){
+
+function getScrollRoot () {
+    if( document.documentElement.scrollTop ) {
+      return document.documentElement;
+    } else if ( document.body.scrollTop ) {
+      return document.body;
+    }
+
+    var html = document.documentElement, body = document.body,
+        cacheTop = ((typeof window.pageYOffset !== "undefined") ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
+        root;
+
+    html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
+    // find root by checking which scrollTop has a value larger than the cache.
+    root = (html.scrollTop !== cacheTop) ? html : body;
+
+    root.scrollTop = cacheTop; // restore the window's scroll position to cached value
+
+    return root; // return the scrolling root element
+}
+
+var ready = require('../fn/ready'),
+	scrollRoot = { scrollTop: 0 }
+    scroll = {
+      root: scrollRoot,
+      on: function ( handler, useCapture ) {
+        return document.addEventListener('scroll', handler, useCapture);
+      },
+      off: function ( handler, useCapture ) {
+        return document.removeEventListener('scroll', handler, useCapture);
+      },
+      top: function () {
+        return scroll.root.scrollTop;
+      },
+      goto: function ( value ) {
+        scroll.root.scrollTop = value;
+      }
+    };
+
+ready(function () {
+  scrollRoot = getScrollRoot();
+  scroll.root = scrollRoot;
+});
+
+module.exports = scroll;
+
+},{"../fn/ready":33}],39:[function(require,module,exports){
+
+module.exports = function (scroll) {
+	
+	var animate = require('../../deferred/animate'),
+		$q = require('q-promise'),
+		noop = function() {},
+		scrollAnimation = animate(noop, 0),
+		aux;
+
+	scroll.animation = function () {
+		return scrollAnimation;
+	};
+
+	scroll.animateTo = function (value, cb, duration ) {
+		if( value === undefined ) {
+		  return $q.reject();
+		}
+		if( value instanceof Element ) {
+		  value = value.offsetTop;
+		}
+
+		if( typeof cb === 'number' ) {
+		  aux = cb;
+		  duration = cb;
+		  cb = aux;
+		}
+
+		var scrollFrom = scroll.top(),
+		    scrollDelta = value - scrollFrom;
+
+		scrollAnimation.stop();
+		scroll.inAnimation = true;
+		scrollAnimation = animate(function (progress) {
+		  scroll.goto( scrollFrom + scrollDelta*progress );
+		}, function () {
+		  scroll.inAnimation = false;
+		  (cb || _.noop)();
+		}, duration || 350, 'ease-out');
+
+		return scrollAnimation;
+	};
+
+	return scroll;
+};
+
+},{"../../deferred/animate":30,"q-promise":20}],40:[function(require,module,exports){
+
+var scroll = require('../scroll');
+
+require('./top-class')(scroll);
+require('./animate')(scroll);
+
+module.exports = scroll;
+},{"../scroll":38,"./animate":39,"./top-class":41}],41:[function(require,module,exports){
+
+module.exports = function (scroll) {
+
+	var onScroll = function () {
+	      document.documentElement.classList.toggle('scroll-top', !scroll.top() );
+	    };
+
+	scroll.on(onScroll);
+
+	require('../../fn/ready')(onScroll);
+
+};
+
+},{"../../fn/ready":33}],42:[function(require,module,exports){
 (function (global){
 
 if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
@@ -906,7 +2064,7 @@ aplazame._.ready(function () {
 // global.$http = require('http-browser');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":20,"./apps/checkout":21,"./apps/http-service":22,"./apps/modal":24,"./apps/simulator":25,"./core/api":27,"./core/core":28,"./loaders/data-aplazame":30,"./loaders/data-button":31,"./loaders/data-simulator":32,"./tools/log":40,"q-promise":17}],20:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":43,"./apps/checkout":44,"./apps/http-service":45,"./apps/modal":47,"./apps/simulator":48,"./core/api":50,"./core/core":51,"./loaders/data-aplazame":53,"./loaders/data-button":54,"./loaders/data-simulator":55,"./tools/log":62,"q-promise":20}],43:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -1058,7 +2216,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":26,"../tools/tools":43}],21:[function(require,module,exports){
+},{"../core/api-http":49,"../tools/tools":65}],44:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -1300,7 +2458,7 @@ function checkout (options) {
 
 module.exports = checkout;
 
-},{"../core/api":27,"../tools/css-hack":37,"../tools/tools":43,"./loading-svg":23,"http-browser":9,"q-promise":17}],22:[function(require,module,exports){
+},{"../core/api":50,"../tools/css-hack":59,"../tools/tools":65,"./loading-svg":46,"http-browser":11,"q-promise":20}],45:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -1338,7 +2496,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":43,"http-browser":9}],23:[function(require,module,exports){
+},{"../tools/tools":65,"http-browser":11}],46:[function(require,module,exports){
 
 module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' +
 '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' +
@@ -1353,7 +2511,7 @@ module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' 
 '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' +
 '</svg>';
 
-},{}],24:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
@@ -1380,6 +2538,7 @@ function modal (content, options) {
 
   cssOverlay.hack(true);
   cssBlur.hack(true);
+  cssModal.hack(true);
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
   document.body.appendChild(tmpOverlay);
@@ -1395,7 +2554,7 @@ function modal (content, options) {
         top: 0,
         left: 0,
         width: '100%',
-        height: '0',
+        height: '100%',
         background: 'transparent'
       });
 
@@ -1420,7 +2579,6 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();
-      cssModal.hack(true);
       e.source.postMessage({
         aplazame: 'modal',
         event: 'content',
@@ -1447,12 +2605,12 @@ _.onMessage('modal', function (e, message) {
       }, isMobile.matches ? 0 : 600 );
       break;
     case 'close':
-      cssModal.hack(false);
+      setTimeout(function () {
+        cssModal.hack(false);
+      }, isMobile.matches ? 0 : 100 );
       document.body.removeChild(tmpOverlay);
       _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
-      setTimeout(function () {
-        _.scrollTop(lastScrollTop);
-      }, 0);
+      _.scrollTop(lastScrollTop);
       if( modal.iframe ) {
         document.body.removeChild(modal.iframe);
 
@@ -1477,7 +2635,7 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":27,"../tools/css-hack":37,"../tools/tools":43}],25:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":50,"../tools/css-hack":59,"../tools/tools":65}],48:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -1554,7 +2712,7 @@ function simulator (amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":26,"../tools/tools":43,"q-promise":17}],26:[function(require,module,exports){
+},{"../core/api-http":49,"../tools/tools":65,"q-promise":20}],49:[function(require,module,exports){
 'use strict';
 
 var apzVersion = require('../../.tmp/aplazame-version'),
@@ -1603,7 +2761,7 @@ _.each(['post', 'put', 'patch'], function (method) {
 
 module.exports = apiHttp;
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":43,"./api":27,"http-browser":9}],27:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":65,"./api":50,"http-browser":11}],50:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1615,7 +2773,7 @@ module.exports = {
   sandbox: false
 };
 
-},{}],28:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1628,7 +2786,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":43,"./api-http":26,"./init":29}],29:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":65,"./api-http":49,"./init":52}],52:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -1666,7 +2824,7 @@ function init (options) {
 
 module.exports = init;
 
-},{"../tools/tools":43,"./api":27}],30:[function(require,module,exports){
+},{"../tools/tools":65,"./api":50}],53:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -1731,7 +2889,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{}],31:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -1785,7 +2943,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"q-promise":17}],32:[function(require,module,exports){
+},{"q-promise":20}],55:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -2148,7 +3306,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"../../.tmp/simulator/templates/modal-instalments":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":27,"events-wrapper":8,"q-promise":17}],33:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/modal-instalments":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":50,"events-wrapper":10,"q-promise":20}],56:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -2212,62 +3370,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],34:[function(require,module,exports){
-
-document.currentScript = document.currentScript || (function() {
-   var scripts = document.getElementsByTagName('script');
-   return scripts[scripts.length - 1];
- })();
-
-if( !Element.prototype.matchesSelector ) {
-  Element.prototype.matchesSelector = (
-    Element.prototype.webkitMatchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector
-  );
-}
-
-if( !Element.prototype.closest ) {
-  Element.prototype.closest = function (selector) {
-    var el = this;
-
-    while( el ) {
-      if( el.matchesSelector(selector) ) {
-        break;
-      }
-      el = el.parentElement;
-    }
-    return el;
-  };
-}
-
-if( !Element.prototype.addEventListener ) {
-  if( Element.prototype.attachEvent ) {
-    Element.prototype.addEventListener = function (eventName, listener) {
-      return Element.prototype.attachEvent( 'on' + eventName, listener );
-    };
-    Element.prototype.removeEventListener = function (eventName, listener) {
-      return Element.prototype.detachEvent( 'on' + eventName, listener );
-    };
-  } else {
-    throw 'Browser not compatible with element events';
-  }
-}
-
-if (!Date.now) {
-  Date.now = function now() {
-    return new Date().getTime();
-  };
-}
-
-(function (root) {
-  'use strict';
-
-  root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
-})(this);
-
-},{}],35:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -2367,33 +3470,33 @@ function clearElement (el) {
   }
 }
 
-var _classActions = {
-  add: document.documentElement.classList ? function (element, className) {
-    element.classList.add(className);
-  } : function (element, className) {
-    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
-    _classActions.remove(element, className);
-    element.className += ' ' + className;
-  },
-  remove: document.documentElement.classList ? function (element, className) {
-    element.classList.remove(className);
-  } : function (element, className) {
-    var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
-    element.className = element.className.replace(RE_CLEANCLASS,'');
-  },
-  action: function (action, tools) {
-    return function (element, className) {
-      if( className.indexOf(' ') >= 0 ) {
-        className.split(' ').forEach(function (cn) {
-          _classActions[action](element, cn);
-        });
-      } else {
-        _classActions[action](element, className);
-      }
-      return tools;
-    };
-  }
-};
+// var _classActions = {
+//   add: document.documentElement.classList ? function (element, className) {
+//     element.classList.add(className);
+//   } : function (element, className) {
+//     var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+//     _classActions.remove(element, className);
+//     element.className += ' ' + className;
+//   },
+//   remove: document.documentElement.classList ? function (element, className) {
+//     element.classList.remove(className);
+//   } : function (element, className) {
+//     var RE_CLEANCLASS = new RegExp('\\b' + (className || '') + '\\b','');
+//     element.className = element.className.replace(RE_CLEANCLASS,'');
+//   },
+//   action: function (action, tools) {
+//     return function (element, className) {
+//       if( className.indexOf(' ') >= 0 ) {
+//         className.split(' ').forEach(function (cn) {
+//           _classActions[action](element, cn);
+//         });
+//       } else {
+//         _classActions[action](element, className);
+//       }
+//       return tools;
+//     };
+//   }
+// };
 
 function writeIframe (iframe, content) {
   var iframeDoc = iframe.contentWindow.document;
@@ -2435,23 +3538,23 @@ var _ = {
   },
 };
 
-var addClass = _classActions.action('add', _ ),
-    removeClass = _classActions.action('remove', _ ),
-    tmpClass = function (element, className, delay) {
-      addClass(element, className);
-      setTimeout(function () {
-        removeClass(element, className);
-      }, delay);
-      return _;
-    };
+// var addClass = _classActions.action('add', _ ),
+//     removeClass = _classActions.action('remove', _ );
 
-_.addClass = addClass;
-_.removeClass = removeClass;
-_.tmpClass = tmpClass;
+// _.addClass = addClass;
+// _.removeClass = removeClass;
+
+_.addClass = function (element, className) {
+  element.classList.add(className);
+};
+
+_.removeClass = function (element, className) {
+  element.classList.remove(className);
+};
 
 module.exports = _;
 
-},{"nitro-tools/extend":11}],36:[function(require,module,exports){
+},{"nitro-tools/extend":13}],58:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -2470,7 +3573,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],37:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 
 
 var importantCSS = function (css) {
@@ -2522,7 +3625,7 @@ var importantCSS = function (css) {
 
 module.exports = cssHack;
 
-},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],38:[function(require,module,exports){
+},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],60:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -2563,12 +3666,11 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],39:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
     running = false;
-    // nUpdates = 0;
 
 function initLiveDOM () {
 
@@ -2594,7 +3696,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":35}],40:[function(require,module,exports){
+},{"./browser-tools":57}],62:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -2623,7 +3725,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],41:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false;
@@ -2668,7 +3770,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],42:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -2707,52 +3809,12 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],43:[function(require,module,exports){
-// 'use strict';
+},{}],65:[function(require,module,exports){
 
-require('./browser-polyfills');
-
-// require('q-promise').usePolyfill();
-
-var _ = require('nitro-tools/extend');
+var _ = require('vanilla-tools');
 
 _.extend(_,
-  require('nitro-tools/key'),
-  require('nitro-tools/type'),
-  // require('nitro-tools/lists'),
-  {
-    each: function (list, iteratee, thisArg) {
-      for( var i = 0, n = list.length ; i < n ; i++ ) {
-        iteratee.call(list[i], list[i], i);
-      }
-    },
-    find: function (list, iteratee, thisArg) {
-      for( var i = 0, n = list.length ; i < n ; i++ ) {
-        if( iteratee.call(list[i], list[i], i) ) {
-          return list[i];
-        }
-      }
-      return null;
-    },
-    debounce: function (fn, timeslot) {
-      var timer = null;
-      
-      timeslot = timeslot || 80;
-
-      return function () {
-        var _this = this, args = arguments;
-
-        if( timer ) {
-          clearTimeout(timer);
-          timer = null;
-        }
-
-        timer = setTimeout(function () {
-          fn.apply(_this, args);
-        }, timeslot);
-      };
-    }
-  },
+  require('nitro-tools/lists'),
   require('nitro-tools/path'),
   require('./colors'),
   require('./browser-tools'),
@@ -2770,4 +3832,4 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":33,"./browser-polyfills":34,"./browser-tools":35,"./colors":36,"./deserialize":38,"./live-dom":39,"./log":40,"./message-listener":41,"./template":42,"nitro-tools/extend":11,"nitro-tools/key":12,"nitro-tools/path":13,"nitro-tools/type":14}]},{},[19]);
+},{"./amount-price":56,"./browser-tools":57,"./colors":58,"./deserialize":60,"./live-dom":61,"./log":62,"./message-listener":63,"./template":64,"nitro-tools/lists":15,"nitro-tools/path":16,"vanilla-tools":29}]},{},[42]);

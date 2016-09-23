@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.345';
+module.exports = '0.0.346';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -1403,6 +1403,7 @@ module.exports = Promise;
 module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(global.Promise) : require('./promise-polyfill') );
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
 },{"./promise-methods":18,"./promise-polyfill":19,"./qizer":21}],21:[function(require,module,exports){
 
 module.exports = function (Promise) {
@@ -2012,10 +2013,9 @@ module.exports = function (scroll) {
 },{"../../fn/ready":33}],42:[function(require,module,exports){
 (function (global){
 
-require('q-promise').usePolyfill();
-// if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
-//   require('q-promise').usePolyfill();
-// }
+if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
+  require('q-promise').usePolyfill();
+}
 
 var aplazame = require('./core/core');
 
@@ -2065,6 +2065,7 @@ aplazame._.ready(function () {
 // global.$http = require('http-browser');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
 },{"../.tmp/aplazame-version":1,"./apps/button":43,"./apps/checkout":44,"./apps/http-service":45,"./apps/modal":47,"./apps/simulator":48,"./core/api":50,"./core/core":51,"./loaders/data-aplazame":53,"./loaders/data-button":54,"./loaders/data-simulator":55,"./tools/log":62,"q-promise":20}],43:[function(require,module,exports){
 'use strict';
 
@@ -3833,4 +3834,6 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":56,"./browser-tools":57,"./colors":58,"./deserialize":60,"./live-dom":61,"./log":62,"./message-listener":63,"./template":64,"nitro-tools/lists":15,"nitro-tools/path":16,"vanilla-tools":29}]},{},[42]);
+},{"./amount-price":56,"./browser-tools":57,"./colors":58,"./deserialize":60,"./live-dom":61,"./log":62,"./message-listener":63,"./template":64,"nitro-tools/lists":15,"nitro-tools/path":16,"vanilla-tools":29}]},{},[42])
+undefined
+//# sourceMappingURL=aplazame.js.map

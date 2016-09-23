@@ -39,6 +39,6 @@
 		"http-browser": "0.1.28",
 		"nitro-tools": "0.2.4",
 		"q-promise": "0.3.5",
-		"vanilla-tools": "^1.1.22"
+		"vanilla-tools": "^1.1.23"
 	}
 }

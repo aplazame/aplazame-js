@@ -3,7 +3,7 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      script = document.currentScript,
+      script = _.currentScript,
       dataAplazame = script.getAttribute('data-aplazame'),
       options = script.src && (/\?/.test(script.src) ? _.deserialize(script.src.match(/(.*?)\?(.*)/)[2]) : {}) || {};
 

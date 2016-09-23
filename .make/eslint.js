@@ -3,15 +3,8 @@
 module.exports = function (nitro) {
 
   nitro.task('lintjs', function () {
-      nitro.load('src/{,**/}*.js').process('jshint', {
-        jshintrc: nitro.file.readJSON('.jshintrc')
-        // onError: function () {
-        //   console.log('bye!!!!');
-        //   process.exit(1);
-        // }
-      });
-
-      nitro.load('tests/{,**/}*.js').process('jshint');
+      nitro.load('src/{,**/}*.js').process('eslint');
+      nitro.load('tests/{,**/}*.js').process('eslint');
   });
 
 };

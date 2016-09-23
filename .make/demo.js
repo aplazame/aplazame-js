@@ -7,9 +7,7 @@ module.exports = function (nitro) {
   });
 
   nitro.task('demo-lintjs', function () {
-      nitro.load('demo/{,**/}*.js').process('jshint', {
-        jshintrc: nitro.file.readJSON('.jshintrc')
-      });
+      nitro.load('demo/{,**/}*.js').process('eslint');
   });
 
   nitro.task('demo-assets', function (target) {

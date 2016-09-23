@@ -9,14 +9,7 @@ module.exports = function (nitro) {
     nitro.dir('src')
       .load('aplazame.js', { sourceMap: dev ? 'inline' : 'inline' })
       .process('browserify')
-      .write('dist');
-  });
-
-  nitro.task('aplazame.min.js', function (target) {
-    var dev = target === 'dev';
-
-    nitro.dir('dist')
-      .load('aplazame.js', { sourceMap: dev ? 'inline' : 'inline' })
+      .write('dist')
       .each(function (f) {
         f.filename = f.filename.replace(/\.js$/, '.min.js');
       })
@@ -26,10 +19,9 @@ module.exports = function (nitro) {
 
   nitro.task('js', function (target) {
     if( target === 'dev' ) {
-      nitro.task(['aplazame.js:dev', 'aplazame.min.js:dev']);
+      nitro.task(['aplazame.js:dev']);
     } else {
-      nitro.task(['aplazame.js', 'aplazame.min.js']);
-      // nitro.copy('dist', 'aplazame{,.min}.js', '.');
+      nitro.task(['aplazame.js']);
       nitro.file.copy('dist/aplazame.min.js', 'aplazame.js');
       nitro.file.copy('dist/aplazame.min.js', 'aplazame.min.js');
     }

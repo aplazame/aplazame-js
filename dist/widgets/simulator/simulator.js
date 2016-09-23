@@ -997,26 +997,21 @@ module.exports = function (Promise) {
 
 },{"./promise-polyfill":12}],15:[function(require,module,exports){
 
-require('./browser-polyfills/current-script');
+// require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
 require('./browser-polyfills/dom-closest');
 require('./browser-polyfills/event-listener');
 require('./browser-polyfills/match-media');
 require('./browser-polyfills/matches-selector');
-},{"./browser-polyfills/current-script":16,"./browser-polyfills/date":17,"./browser-polyfills/dom-closest":18,"./browser-polyfills/event-listener":19,"./browser-polyfills/match-media":20,"./browser-polyfills/matches-selector":21}],16:[function(require,module,exports){
 
-document.currentScript = document.currentScript || (function() {
-   var scripts = document.getElementsByTagName('script');
-   return scripts[scripts.length - 1];
- })();
-},{}],17:[function(require,module,exports){
+},{"./browser-polyfills/date":16,"./browser-polyfills/dom-closest":17,"./browser-polyfills/event-listener":18,"./browser-polyfills/match-media":19,"./browser-polyfills/matches-selector":20}],16:[function(require,module,exports){
 
 if (!Date.now) {
   Date.now = function now() {
     return new Date().getTime();
   };
 }
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 if( !Element.prototype.closest ) {
   Element.prototype.closest = function (selector) {
@@ -1031,7 +1026,7 @@ if( !Element.prototype.closest ) {
     return el;
   };
 }
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 if( !Element.prototype.addEventListener ) {
   if( Element.prototype.attachEvent ) {
@@ -1045,13 +1040,13 @@ if( !Element.prototype.addEventListener ) {
     throw 'Browser not compatible with element events';
   }
 }
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (root) {
   'use strict';
 
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
@@ -1063,7 +1058,7 @@ if( !Element.prototype.matchesSelector ) {
 }
 
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 
 require('./browser-polyfills');
 // document.currentScript
@@ -1134,7 +1129,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":15,"./deferred/animate":23,"./deferred/wait":24,"./fn/debounce":25,"./fn/ready":26,"./fn/template":27,"./utils/dom":28,"./utils/events":29,"./utils/normalize":30,"./utils/scroll/bundle":33,"classlist.js":4,"nitro-tools/extend":6,"nitro-tools/key":7,"nitro-tools/path":9,"nitro-tools/type":10}],23:[function(require,module,exports){
+},{"./browser-polyfills":15,"./deferred/animate":22,"./deferred/wait":23,"./fn/debounce":24,"./fn/ready":25,"./fn/template":26,"./utils/dom":27,"./utils/events":28,"./utils/normalize":29,"./utils/scroll/bundle":32,"classlist.js":4,"nitro-tools/extend":6,"nitro-tools/key":7,"nitro-tools/path":9,"nitro-tools/type":10}],22:[function(require,module,exports){
 
 var $q = require('q-promise'),
     timingFunctions = {},
@@ -1234,7 +1229,7 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":3,"q-promise":13}],24:[function(require,module,exports){
+},{"bezier-easing":3,"q-promise":13}],23:[function(require,module,exports){
 
 var $q = require('q-promise'),
 	wait = function (delay, callback) {
@@ -1258,7 +1253,7 @@ var $q = require('q-promise'),
 	};
 
 module.exports = wait;
-},{"q-promise":13}],25:[function(require,module,exports){
+},{"q-promise":13}],24:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   var timer = null,
@@ -1279,7 +1274,7 @@ function debounce (fn, timeslot) {
 }
 
 module.exports = debounce;
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var readyListeners = [],
     initReady = function () {
       var listeners = readyListeners;
@@ -1304,7 +1299,7 @@ function ready (callback) {
 
 module.exports = ready;
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -1342,12 +1337,16 @@ template.lookup = function () {
 };
 
 module.exports = template;
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 
 var _dom = {
+  currentScript: document.currentScript || (function() {
+    var scripts = document.getElementsByTagName('script');
+    return scripts[scripts.length - 1];
+  })(),
   create: function (tagName, attrs) {
     var el = document.createElement(tagName);
-    
+
     if( attrs ) {
       if( attrs.html ) {
         el.innerHTML = attrs.html;
@@ -1415,7 +1414,7 @@ var _dom = {
 
 module.exports = _dom;
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 
 module.exports = {
   on: function (el, eventName, handler, useCapture) {
@@ -1444,7 +1443,7 @@ module.exports = {
   }
 };
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 
 var normalize = {
   isTouchDevice: 'ontouchstart' in document.documentElement,
@@ -1462,7 +1461,7 @@ if( normalize.isAndroid ) {
 
 module.exports = normalize;
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 function getScrollRoot () {
     if( document.documentElement.scrollTop ) {
@@ -1509,7 +1508,7 @@ ready(function () {
 
 module.exports = scroll;
 
-},{"../fn/ready":26}],32:[function(require,module,exports){
+},{"../fn/ready":25}],31:[function(require,module,exports){
 
 module.exports = function (scroll) {
 	
@@ -1555,7 +1554,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../../deferred/animate":23,"q-promise":13}],33:[function(require,module,exports){
+},{"../../deferred/animate":22,"q-promise":13}],32:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -1563,7 +1562,7 @@ require('./top-class')(scroll);
 require('./animate')(scroll);
 
 module.exports = scroll;
-},{"../scroll":31,"./animate":32,"./top-class":34}],34:[function(require,module,exports){
+},{"../scroll":30,"./animate":31,"./top-class":33}],33:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -1577,7 +1576,7 @@ module.exports = function (scroll) {
 
 };
 
-},{"../../fn/ready":26}],35:[function(require,module,exports){
+},{"../../fn/ready":25}],34:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -1641,7 +1640,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -1825,7 +1824,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":6}],37:[function(require,module,exports){
+},{"nitro-tools/extend":6}],36:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -1844,7 +1843,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -1885,7 +1884,7 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
@@ -1915,7 +1914,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":36}],40:[function(require,module,exports){
+},{"./browser-tools":35}],39:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -1944,7 +1943,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false;
@@ -1989,7 +1988,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],42:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -2028,7 +2027,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],43:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -2051,7 +2050,7 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":35,"./browser-tools":36,"./colors":37,"./deserialize":38,"./live-dom":39,"./log":40,"./message-listener":41,"./template":42,"nitro-tools/lists":8,"nitro-tools/path":9,"vanilla-tools":22}],44:[function(require,module,exports){
+},{"./amount-price":34,"./browser-tools":35,"./colors":36,"./deserialize":37,"./live-dom":38,"./log":39,"./message-listener":40,"./template":41,"nitro-tools/lists":8,"nitro-tools/path":9,"vanilla-tools":21}],43:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     template = _.template,
@@ -2186,4 +2185,4 @@ function requireData () {
 
 requireData();
 
-},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget-button":2,"../../src/tools/tools":43}]},{},[44]);
+},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget-button":2,"../../src/tools/tools":42}]},{},[43]);

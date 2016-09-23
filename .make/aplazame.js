@@ -7,7 +7,7 @@ module.exports = function (nitro) {
 
     nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
     nitro.dir('src')
-      .load('aplazame.js', { sourceMap: dev ? 'inline' : true })
+      .load('aplazame.js', { sourceMap: dev ? 'inline' : 'inline' })
       .process('browserify')
       .write('dist');
   });
@@ -16,7 +16,7 @@ module.exports = function (nitro) {
     var dev = target === 'dev';
 
     nitro.dir('dist')
-      .load('aplazame.js', { sourceMap: dev ? 'inline' : true })
+      .load('aplazame.js', { sourceMap: dev ? 'inline' : 'inline' })
       .each(function (f) {
         f.filename = f.filename.replace(/\.js$/, '.min.js');
       })

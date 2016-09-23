@@ -1,8 +1,7 @@
 
-require('q-promise').usePolyfill();
-// if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
-//   require('q-promise').usePolyfill();
-// }
+if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
+  require('q-promise').usePolyfill();
+}
 
 var aplazame = require('./core/core');
 

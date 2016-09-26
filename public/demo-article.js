@@ -513,18 +513,7 @@ module.exports = {
 
 },{}],6:[function(require,module,exports){
 
-module.exports = function (Promise) {
-
-	if( !Promise.defer ) {
-		Promise.defer = function () {
-		  var deferred = {};
-		  deferred.promise = new Promise(function (resolve, reject) {
-		    deferred.resolve = resolve;
-		    deferred.reject = reject;
-		  });
-		  return deferred;
-		};
-	}
+module.exports = function (qPromise) {
 
 	function each (iterable, handler) {
 		for( var i = 0, n = iterable.length; i < n ; i++ ) {
@@ -532,14 +521,32 @@ module.exports = function (Promise) {
 		}
 	}
 
-	if( !Promise.all ) {
-		Promise.all = function (iterable) {
-		  return new Promise(function (resolve, reject) {
+	function qResolve (result) {
+	  return qPromise(function (resolve, reject) { resolve(result); });
+	};
+
+	function qReject (reason) {
+	  return qPromise(function (resolve, reject) { reject(reason); });
+	};
+
+	var methods = {
+		resolve: qResolve,
+		reject: qReject,
+		defer: function () {
+		  var deferred = {};
+		  deferred.promise = qPromise(function (resolve, reject) {
+		    deferred.resolve = resolve;
+		    deferred.reject = reject;
+		  });
+		  return deferred;
+		},
+		all: function (iterable) {
+		  return qPromise(function (resolve, reject) {
 		    var pending = iterable.length,
 		        results = [];
 		    each(iterable, function (_promise, i) {
 
-		      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
 		        results[i] = result;
 		        if( --pending === 0 ) {
 		          resolve(results);
@@ -552,19 +559,16 @@ module.exports = function (Promise) {
 		      });
 		    });
 		  });
-		};
-	}
-
-	if( !Promise.race ) {
-		Promise.race = function (iterable) {
-		  return new Promise(function (resolve, reject) {
+		},
+		race: function (iterable) {
+		  return qPromise(function (resolve, reject) {
 		    var done = false;
 
 		    each(iterable, function (_promise, i) {
 		      if( done ) {
 		        return;
 		      }
-		      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
 		        if( !done ) {
 		          done = true;
 		          resolve(result);
@@ -577,22 +581,17 @@ module.exports = function (Promise) {
 		      });
 		    });
 		  });
-		};
-	}
+		}
+	};
 
-	if( !Promise.resolve ) {
-		Promise.resolve = function (result) {
-		  return new Promise(function (resolve, reject) { resolve(result); });
-		};
-	}
-
-	if( !Promise.reject ) {
-		Promise.reject = function (reason) {
-		  return new Promise(function (resolve, reject) { reject(reason); });
-		};
-	}
-
-	return Promise;
+	return function (q, override) {
+		for( var key in methods ) {
+			if( !q[key] || override ) {
+				q[key] = methods[key];
+			}
+		}
+		return q;
+	};
 };
 
 },{}],7:[function(require,module,exports){
@@ -638,15 +637,13 @@ function processQueue(promise) {
   }
 
   if( !promise.$$succeeded && uncough ) {
-    // setTimeout(function () {
     if( promise.$$uncough === uncough ) {
       throw new Error('Uncaught (in promise)');
     }
-    // }, 0);
   }
 }
 
-function Promise (executor) {
+function P (executor) {
   if( !( executor instanceof Function ) ) {
     throw new TypeError('Promise resolver undefined is not a function');
   }
@@ -672,9 +669,9 @@ function Promise (executor) {
   }
 }
 
-Promise.prototype.then = function (onsucceeded, onRejected) {
+P.prototype.then = function (onsucceeded, onRejected) {
   var _this = this,
-      _promise = new Promise(function (resolve, reject) {
+      _promise = new P(function (resolve, reject) {
         _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
       });
 
@@ -683,18 +680,18 @@ Promise.prototype.then = function (onsucceeded, onRejected) {
   return _promise;
 };
 
-Promise.prototype.catch = function (onRejected) {
+P.prototype.catch = function (onRejected) {
   return this.then(undefined, onRejected);
 };
 
-require('./promise-methods')(Promise);
+require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
 
-module.exports = Promise;
+module.exports = P;
 
 },{"./promise-methods":6}],8:[function(require,module,exports){
 (function (global){
 
-module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(global.Promise) : require('./promise-polyfill') );
+module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(function (executor) { return new global.Promise(executor); })(global.Promise) : require('./promise-polyfill') );
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./promise-methods":6,"./promise-polyfill":7,"./qizer":9}],9:[function(require,module,exports){
@@ -705,20 +702,15 @@ module.exports = function (Promise) {
     return new Promise(executor);
   }
 
-  ['defer', 'resolve', 'reject', 'all', 'race'].forEach(function (fName) {
-    q[fName] = Promise[fName];
-  });
+  require('./promise-methods')(q)(q, true);
 
   q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
   q.usePolyfill = function () {
   	Promise = require('./promise-polyfill');
-    ['defer', 'resolve', 'reject', 'all', 'race'].forEach(function (fName) {
-      q[fName] = Promise[fName];
-    });
   };
 
   return q;
 
 };
 
-},{"./promise-polyfill":7}]},{},[1]);
+},{"./promise-methods":6,"./promise-polyfill":7}]},{},[1]);

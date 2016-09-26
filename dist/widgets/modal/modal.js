@@ -1050,18 +1050,7 @@ module.exports = {
 
 },{}],10:[function(require,module,exports){
 
-module.exports = function (Promise) {
-
-	if( !Promise.defer ) {
-		Promise.defer = function () {
-		  var deferred = {};
-		  deferred.promise = new Promise(function (resolve, reject) {
-		    deferred.resolve = resolve;
-		    deferred.reject = reject;
-		  });
-		  return deferred;
-		};
-	}
+module.exports = function (qPromise) {
 
 	function each (iterable, handler) {
 		for( var i = 0, n = iterable.length; i < n ; i++ ) {
@@ -1069,14 +1058,32 @@ module.exports = function (Promise) {
 		}
 	}
 
-	if( !Promise.all ) {
-		Promise.all = function (iterable) {
-		  return new Promise(function (resolve, reject) {
+	function qResolve (result) {
+	  return qPromise(function (resolve, reject) { resolve(result); });
+	};
+
+	function qReject (reason) {
+	  return qPromise(function (resolve, reject) { reject(reason); });
+	};
+
+	var methods = {
+		resolve: qResolve,
+		reject: qReject,
+		defer: function () {
+		  var deferred = {};
+		  deferred.promise = qPromise(function (resolve, reject) {
+		    deferred.resolve = resolve;
+		    deferred.reject = reject;
+		  });
+		  return deferred;
+		},
+		all: function (iterable) {
+		  return qPromise(function (resolve, reject) {
 		    var pending = iterable.length,
 		        results = [];
 		    each(iterable, function (_promise, i) {
 
-		      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
 		        results[i] = result;
 		        if( --pending === 0 ) {
 		          resolve(results);
@@ -1089,19 +1096,16 @@ module.exports = function (Promise) {
 		      });
 		    });
 		  });
-		};
-	}
-
-	if( !Promise.race ) {
-		Promise.race = function (iterable) {
-		  return new Promise(function (resolve, reject) {
+		},
+		race: function (iterable) {
+		  return qPromise(function (resolve, reject) {
 		    var done = false;
 
 		    each(iterable, function (_promise, i) {
 		      if( done ) {
 		        return;
 		      }
-		      ( _promise.then ? _promise : Promise.resolve(_promise) ).then(function (result) {
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
 		        if( !done ) {
 		          done = true;
 		          resolve(result);
@@ -1114,22 +1118,17 @@ module.exports = function (Promise) {
 		      });
 		    });
 		  });
-		};
-	}
+		}
+	};
 
-	if( !Promise.resolve ) {
-		Promise.resolve = function (result) {
-		  return new Promise(function (resolve, reject) { resolve(result); });
-		};
-	}
-
-	if( !Promise.reject ) {
-		Promise.reject = function (reason) {
-		  return new Promise(function (resolve, reject) { reject(reason); });
-		};
-	}
-
-	return Promise;
+	return function (q, override) {
+		for( var key in methods ) {
+			if( !q[key] || override ) {
+				q[key] = methods[key];
+			}
+		}
+		return q;
+	};
 };
 
 },{}],11:[function(require,module,exports){
@@ -1175,15 +1174,13 @@ function processQueue(promise) {
   }
 
   if( !promise.$$succeeded && uncough ) {
-    // setTimeout(function () {
     if( promise.$$uncough === uncough ) {
       throw new Error('Uncaught (in promise)');
     }
-    // }, 0);
   }
 }
 
-function Promise (executor) {
+function P (executor) {
   if( !( executor instanceof Function ) ) {
     throw new TypeError('Promise resolver undefined is not a function');
   }
@@ -1209,9 +1206,9 @@ function Promise (executor) {
   }
 }
 
-Promise.prototype.then = function (onsucceeded, onRejected) {
+P.prototype.then = function (onsucceeded, onRejected) {
   var _this = this,
-      _promise = new Promise(function (resolve, reject) {
+      _promise = new P(function (resolve, reject) {
         _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
       });
 
@@ -1220,13 +1217,13 @@ Promise.prototype.then = function (onsucceeded, onRejected) {
   return _promise;
 };
 
-Promise.prototype.catch = function (onRejected) {
+P.prototype.catch = function (onRejected) {
   return this.then(undefined, onRejected);
 };
 
-require('./promise-methods')(Promise);
+require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
 
-module.exports = Promise;
+module.exports = P;
 
 },{"./promise-methods":10}],12:[function(require,module,exports){
 
@@ -1236,23 +1233,18 @@ module.exports = function (Promise) {
     return new Promise(executor);
   }
 
-  ['defer', 'resolve', 'reject', 'all', 'race'].forEach(function (fName) {
-    q[fName] = Promise[fName];
-  });
+  require('./promise-methods')(q)(q, true);
 
   q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
   q.usePolyfill = function () {
   	Promise = require('./promise-polyfill');
-    ['defer', 'resolve', 'reject', 'all', 'race'].forEach(function (fName) {
-      q[fName] = Promise[fName];
-    });
   };
 
   return q;
 
 };
 
-},{"./promise-polyfill":11}],13:[function(require,module,exports){
+},{"./promise-methods":10,"./promise-polyfill":11}],13:[function(require,module,exports){
 
 module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
 
@@ -1341,6 +1333,7 @@ function _ (selector, source) {
 }
 
 _.noop = function (value) { return value; };
+_.q = require('q-promise/no-native');
 
 extend.extend(_, extend);
 
@@ -1390,7 +1383,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":14,"./deferred/animate":21,"./deferred/wait":22,"./fn/debounce":23,"./fn/ready":24,"./fn/template":25,"./utils/dom":26,"./utils/events":27,"./utils/normalize":28,"./utils/scroll/bundle":31,"classlist.js":3,"nitro-tools/extend":5,"nitro-tools/key":6,"nitro-tools/path":8,"nitro-tools/type":9}],21:[function(require,module,exports){
+},{"./browser-polyfills":14,"./deferred/animate":21,"./deferred/wait":22,"./fn/debounce":23,"./fn/ready":24,"./fn/template":25,"./utils/dom":26,"./utils/events":27,"./utils/normalize":28,"./utils/scroll/bundle":31,"classlist.js":3,"nitro-tools/extend":5,"nitro-tools/key":6,"nitro-tools/path":8,"nitro-tools/type":9,"q-promise/no-native":13}],21:[function(require,module,exports){
 
 var $q = require('q-promise/no-native'),
     timingFunctions = {},
@@ -1440,7 +1433,7 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
 
   var stopped = false,
       timingFunction = getTimingFunction(timingFunctionName),
-      deferred = defer();
+      deferred = $q.defer();
 
   if( duration > 0 ) {
     var start = Date.now(),
@@ -1460,12 +1453,19 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
         }, 10);
   }
 
-  deferred.promise.stop = function (reject) {
-    stopped = true;
-    if( reject ) {
-      deferred.reject();
-    }
-  };
+  if( !deferred || !deferred.promise ) {
+    console.warn('deferred', deferred, deferred.promise );
+  } else {
+
+    deferred.promise.stop = function (reject) {
+      stopped = true;
+      if( reject ) {
+        deferred.reject();
+      }
+    };
+
+  }
+
 
   return deferred.promise;
 }

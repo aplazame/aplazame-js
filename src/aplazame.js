@@ -2,7 +2,6 @@
 require('./sandbox')(function () {
   'use strict';
 
-  require('q-promise/no-native').usePolyfill();
   // if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
   //   require('q-promise/no-native').usePolyfill();
   // }

@@ -1410,7 +1410,15 @@ var $q = require('q-promise/no-native'),
         }
       }
       return timingFunctions[timingFunctionName];
-    };
+    },
+    defer = function () {
+		  var deferred = {};
+		  deferred.promise = $q(function (resolve, reject) {
+		    deferred.resolve = resolve;
+		    deferred.reject = reject;
+		  });
+		  return deferred;
+		};;
 
 function animate (progressFn, duration, atEnd, timingFunctionName) {
   if ( duration instanceof Function ) {
@@ -1432,7 +1440,7 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
 
   var stopped = false,
       timingFunction = getTimingFunction(timingFunctionName),
-      deferred = $q.defer();
+      deferred = defer();
 
   if( duration > 0 ) {
     var start = Date.now(),

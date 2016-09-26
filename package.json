@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.353",
+	"version": "0.0.354",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {
@@ -38,7 +38,7 @@
 		"events-wrapper": "0.2.2",
 		"http-browser": "0.1.28",
 		"nitro-tools": "0.2.4",
-		"q-promise": "0.3.6",
-		"vanilla-tools": "^1.1.25"
+		"q-promise": "0.3.7",
+		"vanilla-tools": "^1.1.27"
 	}
 }

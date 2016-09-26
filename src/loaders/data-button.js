@@ -2,7 +2,7 @@
 
 module.exports = function (aplazame) {
   var _ = aplazame._,
-      $q = require('q-promise');
+      $q = require('q-promise/no-native');
 
   function buttonsLookup (element) {
     element = element || document;

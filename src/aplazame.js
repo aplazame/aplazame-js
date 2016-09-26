@@ -2,9 +2,9 @@
 require('./sandbox')(function () {
   'use strict';
 
-  require('q-promise').usePolyfill();
+  require('q-promise/no-native').usePolyfill();
   // if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
-  //   require('q-promise').usePolyfill();
+  //   require('q-promise/no-native').usePolyfill();
   // }
 
   var aplazame = require('./core/core');
@@ -50,7 +50,7 @@ require('./sandbox')(function () {
 
   });
 
-  // global.$q = require('q-promise');
+  // global.$q = require('q-promise/no-native');
   // global.$http = require('http-browser');
 
 });

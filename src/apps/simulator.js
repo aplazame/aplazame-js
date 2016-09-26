@@ -2,7 +2,7 @@
 
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
-    $q = require('q-promise'),
+    $q = require('q-promise/no-native'),
     cache = [],
     requestsCache = {};
 

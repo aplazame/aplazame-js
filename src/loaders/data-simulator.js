@@ -3,7 +3,7 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      $q = require('q-promise'),
+      $q = require('q-promise/no-native'),
       Events = require('events-wrapper'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),

@@ -3,7 +3,7 @@
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     http = require('http-browser'),
-    $q = require('q-promise'),
+    $q = require('q-promise/no-native'),
     cssHack = require('../tools/css-hack');
 
 function checkout (options) {

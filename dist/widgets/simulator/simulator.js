@@ -966,12 +966,6 @@ require('./promise-methods')(Promise);
 module.exports = Promise;
 
 },{"./promise-methods":11}],13:[function(require,module,exports){
-(function (global){
-
-module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(global.Promise) : require('./promise-polyfill') );
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-methods":11,"./promise-polyfill":12,"./qizer":14}],14:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
@@ -995,7 +989,11 @@ module.exports = function (Promise) {
 
 };
 
-},{"./promise-polyfill":12}],15:[function(require,module,exports){
+},{"./promise-polyfill":12}],14:[function(require,module,exports){
+
+module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
+
+},{"./lib/promise-polyfill":12,"./lib/qizer":13}],15:[function(require,module,exports){
 
 // require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
@@ -1131,7 +1129,7 @@ module.exports = _;
 
 },{"./browser-polyfills":15,"./deferred/animate":22,"./deferred/wait":23,"./fn/debounce":24,"./fn/ready":25,"./fn/template":26,"./utils/dom":27,"./utils/events":28,"./utils/normalize":29,"./utils/scroll/bundle":32,"classlist.js":4,"nitro-tools/extend":6,"nitro-tools/key":7,"nitro-tools/path":9,"nitro-tools/type":10}],22:[function(require,module,exports){
 
-var $q = require('q-promise'),
+var $q = require('q-promise/no-native'),
     timingFunctions = {},
     noop = function () {},
     getTimingFunction = function (timingFunctionName) {
@@ -1229,9 +1227,9 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":3,"q-promise":13}],23:[function(require,module,exports){
+},{"bezier-easing":3,"q-promise/no-native":14}],23:[function(require,module,exports){
 
-var $q = require('q-promise'),
+var $q = require('q-promise/no-native'),
 	wait = function (delay, callback) {
 		if( delay instanceof Function ) {
 			delay = [callback, callback = delay][0];
@@ -1253,7 +1251,8 @@ var $q = require('q-promise'),
 	};
 
 module.exports = wait;
-},{"q-promise":13}],24:[function(require,module,exports){
+
+},{"q-promise/no-native":14}],24:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   var timer = null,
@@ -1511,9 +1510,9 @@ module.exports = scroll;
 },{"../fn/ready":25}],31:[function(require,module,exports){
 
 module.exports = function (scroll) {
-	
+
 	var animate = require('../../deferred/animate'),
-		$q = require('q-promise'),
+		$q = require('q-promise/no-native'),
 		noop = function() {},
 		scrollAnimation = animate(noop, 0),
 		aux;
@@ -1554,7 +1553,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../../deferred/animate":22,"q-promise":13}],32:[function(require,module,exports){
+},{"../../deferred/animate":22,"q-promise/no-native":14}],32:[function(require,module,exports){
 
 var scroll = require('../scroll');
 

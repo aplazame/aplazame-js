@@ -1181,15 +1181,7 @@ var $q = require('q-promise/no-native'),
         }
       }
       return timingFunctions[timingFunctionName];
-    },
-    defer = function () {
-		  var deferred = {};
-		  deferred.promise = $q(function (resolve, reject) {
-		    deferred.resolve = resolve;
-		    deferred.reject = reject;
-		  });
-		  return deferred;
-		};;
+    };
 
 function animate (progressFn, duration, atEnd, timingFunctionName) {
   if ( duration instanceof Function ) {
@@ -1231,19 +1223,12 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
         }, 10);
   }
 
-  if( !deferred || !deferred.promise ) {
-    console.warn('deferred', deferred, deferred.promise );
-  } else {
-
-    deferred.promise.stop = function (reject) {
-      stopped = true;
-      if( reject ) {
-        deferred.reject();
-      }
-    };
-
-  }
-
+  deferred.promise.stop = function (reject) {
+    stopped = true;
+    if( reject ) {
+      deferred.reject();
+    }
+  };
 
   return deferred.promise;
 }
@@ -1561,10 +1546,10 @@ module.exports = scroll;
 module.exports = function (scroll) {
 
 	var animate = require('../../deferred/animate'),
-		$q = require('q-promise/no-native'),
-		noop = function() {},
-		scrollAnimation = animate(noop, 0),
-		aux;
+			$q = require('q-promise/no-native'),
+			noop = function() {},
+			scrollAnimation = animate(noop, 0),
+			aux;
 
 	scroll.animation = function () {
 		return scrollAnimation;

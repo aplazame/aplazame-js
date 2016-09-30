@@ -321,8 +321,13 @@ module.exports = function (aplazame) {
       }
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
         _options.widget = _options.widget || {};
+        if( _options.widget.disabled ) {
+          return;
+        }
+
         meta.choices = _choices;
         meta.options = _options;
+
         meta.widget = meta.widget || getWidget(meta);
 
         if( meta.widget && !document.body.contains(meta.widget.el) ) {

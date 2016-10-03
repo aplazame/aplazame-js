@@ -45,6 +45,7 @@ module.exports = function (aplazame) {
   cmsQtySelector = [
     'form#product_addtocart_form input[name="qty"]', // magento
     'form#buy_block input[name="qty"]', // prestashop
+    '#quantity_wanted', // prestashop
     'form#product-options-form button[data-id=qty]', // custom
     '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]' // woocommerce
   ];

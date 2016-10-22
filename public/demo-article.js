@@ -170,7 +170,7 @@ function headerToCamelCase(text) {
   });
 }
 
-var RE_contentType = /([^\/]+)\/([^+]+\+)?(.*)/;
+var RE_contentType = /([^\/]+)\/([^+]+\+)?([^;]*)/;
 function parseContentType(contentType, text, xml) {
   var matches = contentType && contentType.match(RE_contentType);
   return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );

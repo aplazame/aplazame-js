@@ -31,12 +31,12 @@
 		"karma-jasmine": "^1.0.2",
 		"karma-story-reporter": "^0.3.1",
 		"mocha": "^3.0.2",
-		"nitro": "1.9.14",
-		"watch": "^0.19.2"
+		"nitro": "1.9.16",
+		"watch": "^1.0.1"
 	},
 	"dependencies": {
 		"events-wrapper": "0.2.2",
-		"http-browser": "0.1.28",
+		"http-browser": "0.1.30",
 		"nitro-tools": "0.2.4",
 		"q-promise": "0.3.7",
 		"vanilla-tools": "^1.1.28"

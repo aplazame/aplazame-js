@@ -2,18 +2,12 @@
 require('./sandbox')(function () {
   'use strict';
 
-  // if( document.documentMode || /Edge\//.test(navigator.userAgent) ) {
-  //   require('q-promise/no-native').usePolyfill();
-  // }
-
   var aplazame = require('./core/core');
 
   aplazame.checkout = require('./apps/checkout');
   aplazame.button = require('./apps/button');
   aplazame.simulator = require('./apps/simulator');
   aplazame.modal = require('./apps/modal');
-
-  global.aplazame = aplazame;
 
   aplazame.info = function () {
     return {
@@ -32,10 +26,12 @@ require('./sandbox')(function () {
 
   require('./apps/http-service');
 
+  global.aplazame = aplazame;
+
   require('./loaders/data-aplazame')(global.aplazame);
   aplazame._.ready(function () {
-    var buttonsLookup = require('./loaders/data-button')(global.aplazame),
-        widgetsLookup = require('./loaders/data-simulator')(global.aplazame),
+    var buttonsLookup = require('./loaders/data-button')(aplazame),
+        widgetsLookup = require('./loaders/data-simulator')(aplazame),
         cb = require('./core/api').callback;
 
     if( cb ) {
@@ -48,8 +44,5 @@ require('./sandbox')(function () {
     }
 
   });
-
-  // global.$q = require('q-promise/no-native');
-  // global.$http = require('http-browser');
 
 });

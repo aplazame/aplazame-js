@@ -111,8 +111,10 @@ module.exports = function (aplazame) {
 
             part = part.nextSibling;
           }
-        } else {
+        } else if( priceElement.textContent ) {
           amount = priceElement.textContent;
+        } else if( priceElement.getAttribute('content') ) {
+          amount = priceElement.getAttribute('content');
         }
       }
 

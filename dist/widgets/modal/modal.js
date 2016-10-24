@@ -1739,7 +1739,7 @@ function getScrollRoot () {
 }
 
 var ready = require('../fn/ready'),
-    scrollRoot = { scrollTop: 0 },
+	scrollRoot = { scrollTop: 0 }
     scroll = {
       root: scrollRoot,
       on: function ( handler, useCapture ) {

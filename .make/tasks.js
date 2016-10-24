@@ -23,9 +23,9 @@ module.exports = function (nitro) {
 
   // main tasks
 
-  nitro.task('build', ['git.branch', 'clear:build', 'css-hacks', 'widgets', 'js', 'demo']);
+  nitro.task('build', ['git.branch', 'clear:build', 'css-hacks', 'widgets', 'js', 'demo', 'loading']);
 
-  nitro.task('dev', ['git.branch', 'lintjs', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev'], function () {
+  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev'], function () {
 
     if( !nitro.file.exists('public/dist') ) {
       nitro.symlink('public/dist', '../dist');
@@ -33,7 +33,7 @@ module.exports = function (nitro) {
 
     nitro.watch('src')
       .when('{,**/}*.js', ['lintjs', 'js:dev'])
-      .when('{,**/}*.sass', ['css-hacks', 'js:dev']);
+      .when('{,**/}*.sass', ['css-hacks', 'js:dev', 'loading:dev']);
 
     nitro.watch('widgets')
       .when('{,**/}*.js', 'widgets.js:dev')
@@ -44,7 +44,7 @@ module.exports = function (nitro) {
 
     nitro.watch('demo')
       .when('{,**/}*.js', ['demo-lintjs', 'demo-js:dev'])
-      .when('{,**/}*.html', ['demo-templates:dev'])
+      .when('{,**/}*.html', ['demo-templates:dev', 'loading:dev'])
       .when('{,**/}*.{sass,scss}', ['demo-sass:dev']);
 
     nitro.watch('.make', function () {

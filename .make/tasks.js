@@ -32,7 +32,7 @@ module.exports = function (nitro) {
     }
 
     nitro.watch('src')
-      .when('{,**/}*.js', ['lintjs', 'js:dev'])
+      .when('{,**/}*.js', ['lint', 'js:dev'])
       .when('{,**/}*.sass', ['css-hacks', 'js:dev', 'loading:dev']);
 
     nitro.watch('widgets')

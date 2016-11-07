@@ -4,7 +4,8 @@ var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools');
 
 function getCartPrice () {
-  return _.parsePrice( document.querySelector('#total_price').textContent );
+  var ttp = document.querySelector('#total_price');
+  return ttp && ttp.textContent && _.parsePrice( ttp.textContent );
 }
 
 function button (options) {

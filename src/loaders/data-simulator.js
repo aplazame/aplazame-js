@@ -118,7 +118,7 @@ module.exports = function (aplazame) {
         }
       }
 
-      return _.parsePrice( amount );
+      return amount && _.parsePrice( amount );
     } : function () {
       // return Number( widgetElement.getAttribute('data-amount') );
       return;
@@ -190,18 +190,14 @@ module.exports = function (aplazame) {
     if( meta.options.widget.type === 'button' ) {
       widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
 
-      widget.on('message:require.choices choices.update', function (e, message) {
-        if( message && message.simulatorId && message.simulatorId !== id ) {
-          return;
-        }
-        // console.log(e, meta, message);
+      widget.render = function () {
         widget.message('choices', {
           amount: meta.amount,
           choice: meta.choices.reduce(maxInstalments, null),
           choices: meta.choices,
           options: meta.options
         });
-      });
+      };
 
       widget.on('choices.updating', function (e) {
         widget.message('loading');
@@ -212,13 +208,20 @@ module.exports = function (aplazame) {
       widget = { el: document.createElement('div') };
       new Events(widget);
 
-      widget.el.innerHTML = _.template('widget-raw', {
-        getAmount: _.getAmount,
-        amount: meta.amount,
-        choice: meta.choices.reduce(maxInstalments, null),
-        choices: meta.choices,
-        options: meta.options
+      widget.on('choices.updating', function (e) {
+        widget.el.style.opacity = 0.5;
       });
+
+      widget.render = function () {
+        widget.el.style.opacity = null;
+        widget.el.innerHTML = _.template('widget-raw', {
+          getAmount: _.getAmount,
+          amount: meta.amount,
+          choice: meta.choices.reduce(maxInstalments, null),
+          choices: meta.choices,
+          options: meta.options
+        });
+      };
 
       widget.el.addEventListener('click', function () {
         window.postMessage({
@@ -243,6 +246,16 @@ module.exports = function (aplazame) {
 
       });
     }
+
+    widget.render();
+
+    widget.on('message:require.choices choices.update', function (e, message) {
+      if( message && message.simulatorId && message.simulatorId !== id ) {
+        return;
+      }
+      // console.log(e, meta, message);
+      widget.render();
+    });
 
     widget.id = id;
 
@@ -325,8 +338,10 @@ module.exports = function (aplazame) {
       meta.amount *= ( getQty(meta.getAmount.qtySelector) || 1 );
     }
     if( meta.amount && updateData ) {
-      if( meta.widget && meta.widget.message ) {
-        meta.widget.message('loading');
+      // if( meta.widget && meta.widget.message ) {
+      if( meta.widget ) {
+        // meta.widget.message('loading');
+        meta.widget.trigger('choices.updating');
       }
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
         _options.widget = _options.widget || {};

@@ -17,7 +17,7 @@ install: bower-install
 	@npm install > /dev/null 2>&1
 
 test: install
-	@node make lintjs
+	@node make lint
 	@$(npmdir)/mocha tests
 
 test-tools:

@@ -26,7 +26,7 @@ module.exports = function (aplazame) {
       case 'input':
         return Number( qtyElement.value );
       case 'select':
-        return Number( qtyElement.querySelector('option[selected]').value );
+        return qtyElement.querySelector('option[selected]') && Number( qtyElement.querySelector('option[selected]').value ) || 1;
       default:
         return Number( qtyElement.textContent.trim() );
     }

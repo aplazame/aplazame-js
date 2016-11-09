@@ -1523,9 +1523,9 @@ module.exports = function (scroll) {
 		}
 
 		if( typeof cb === 'number' ) {
-		  aux = duration;
+		  aux = cb;
 		  duration = cb;
-		  cb = typeof aux === 'function' ? aux : noop;
+		  cb = aux;
 		}
 
 		var scrollFrom = scroll.top(),
@@ -1537,7 +1537,7 @@ module.exports = function (scroll) {
 		  scroll.goto( scrollFrom + scrollDelta*progress );
 		}, function () {
 		  scroll.inAnimation = false;
-		  (cb || noop)();
+		  (cb || _.noop)();
 		}, duration || 350, 'ease-out');
 
 		return scrollAnimation;

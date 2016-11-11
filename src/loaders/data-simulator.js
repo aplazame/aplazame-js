@@ -40,6 +40,7 @@ module.exports = function (aplazame) {
     'form#buy_block #our_price_display', // prestashop
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price ins .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
+    '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce
     '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]' // Schema.org
   ],
   cmsQtySelector = [

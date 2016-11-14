@@ -64,12 +64,13 @@ module.exports = function (nitro) {
 
     var pkg = require('../package'),
         dev = target === 'dev',
+        branch = '' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null'),
         renderIndex = template( file.read('demo/index.html') ),
         checkout = file.readJSON('./demo/checkout.json'),
         indexData = nitro.tools.scope({
           dev: dev, pkg: pkg,
           git: {
-            branch: process.env.DRONE_BRANCH || process.env.GIT_BRANCH || require('git-rev-sync').branch()
+            branch: process.env.DRONE_BRANCH || process.env.GIT_BRANCH || branch || require('git-rev-sync').branch()
           },
           dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
           version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),

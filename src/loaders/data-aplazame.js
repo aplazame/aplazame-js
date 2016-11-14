@@ -46,6 +46,10 @@ module.exports = function (aplazame) {
       options.staticUrl = script.getAttribute('data-static-url');
     }
 
+    if( script.getAttribute('data-checkout-url') ) {
+      options.checkoutUrl = script.getAttribute('data-checkout-url');
+    }
+
     if( script.getAttribute('data-callback') ) {
       // if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
       //   throw new Error('callback should be a global function');

@@ -40,13 +40,17 @@ function checkout (options) {
   try {
     options = checkoutNormalizer(options, location, _.copy(api));
     on.success = options.merchant.onSuccess;
-    delete options.merchant.onSuccess;
     on.error = options.merchant.onError;
-    delete options.merchant.onError;
     on.dismiss = options.merchant.onDismiss;
-    delete options.merchant.onDismiss;
   } catch (e) {
     errorMessage = e.message;
+  }
+  
+  if (options.merchant) {
+    // All functions must be removed as them can't be serialized by postMessage
+    delete options.merchant.onSuccess;
+    delete options.merchant.onError;
+    delete options.merchant.onDismiss;
   }
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';

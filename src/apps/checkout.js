@@ -2,39 +2,51 @@
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
+    checkoutNormalizer = require('./checkout-normalizer'),
     http = require('http-browser'),
     $q = require('q-promise/no-native'),
     cssHack = require('../tools/css-hack');
 
-function checkout (options) {
-
-  options = options || {};
+function getBaseCheckout(options) {
   var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
 
-  if( !/\/$/.test(baseCheckout) ) {
+  // Append trailing slash if not exists.
+  if (!/\/$/.test(baseCheckout)) {
     baseCheckout += '/';
   }
 
+  return baseCheckout;
+}
+
+function checkout (options) {
+
+  options = options || {};
+  var baseCheckout = getBaseCheckout(options);
+
   var on = {},
+      onError,
       iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),
       errorLoading = false,
+      errorMessage = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
       cssBlur = cssHack('blur'),
       cssLogo = cssHack('logo'),
       cssModal = cssHack('modal');
 
-  if( options.merchant.onSuccess ) {
+  onError = options.onError || _.noop;
+  delete options.onError;
+
+  try {
+    options = checkoutNormalizer(options, location, _.copy(api));
     on.success = options.merchant.onSuccess;
     delete options.merchant.onSuccess;
-  }
-  if( options.merchant.onError ) {
     on.error = options.merchant.onError;
     delete options.merchant.onError;
-  }
-  if( options.merchant.onDismiss ) {
     on.dismiss = options.merchant.onDismiss;
     delete options.merchant.onDismiss;
+  } catch (e) {
+    errorMessage = e.message;
   }
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
@@ -61,8 +73,6 @@ function checkout (options) {
       tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
     }
   }, 200);
-
-  options.api = _.copy(api);
 
   return http( iframeSrc ).then(function (response) {
       var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseCheckout + '" />'),
@@ -101,28 +111,9 @@ function checkout (options) {
       document.body.appendChild(iframe);
       iframe.src = iframeSrc;
 
-      if( !options.merchant ) {
-        throw new Error('missing merchant parameters');
+      if (errorMessage) {
+        throw new Error(errorMessage);
       }
-
-      if( 'sandbox' in options.merchant ) {
-        api.sandbox = options.merchant.sandbox;
-      }
-
-      if( !options.merchant.public_api_key ) {
-        if( api.publicKey ) {
-          options.merchant.public_api_key = api.publicKey;
-        } else {
-          throw new Error('missing public key');
-        }
-      }
-
-      options.origin = {
-        href: location.href,
-        host: location.host,
-        protocol: location.protocol,
-        origin: location.origin
-      };
 
       var onMessage = function (e, message) {
 
@@ -190,29 +181,13 @@ function checkout (options) {
 
               switch( message.result ) {
                 case 'success':
-                  if( typeof on.success === 'function' ) {
-                    on.success();
-                  } else if( !options.merchant.success_url ) {
-                    throw new Error('success_url missing');
-                  } else {
-                    location.replace(options.merchant.success_url);
-                  }
+                  on.success();
                   break;
                 case 'cancel':
-                  if( typeof on.error === 'function' ) {
-                    on.error();
-                  } else if( !options.merchant.cancel_url ) {
-                    throw new Error('cancel_url missing');
-                  } else {
-                    location.replace(options.merchant.cancel_url);
-                  }
+                  on.error();
                   break;
                 case 'dismiss':
-                  if( typeof on.dismiss === 'function' ) {
-                    on.dismiss();
-                  } else {
-                    location.replace(options.merchant.checkout_url || '/');
-                  }
+                  on.dismiss();
                   break;
               }
             }
@@ -232,7 +207,7 @@ function checkout (options) {
       loadingText.innerHTML = '<div class="text-error">Error cargando pasarela de pago</div><br/><div><a href="mailto:soporte@aplazame.com?subject=' + encodeURI('Checkout error: ' + reason) + '">soporte@aplazame.com</a></div>';
       loadingText.style.lineHeight = '1.5';
 
-      (options.onError || _.noop)(reason);
+      onError(reason);
     });
 
 }

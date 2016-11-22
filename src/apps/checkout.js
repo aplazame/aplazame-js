@@ -6,14 +6,21 @@ var api = require('../core/api'),
     $q = require('q-promise/no-native'),
     cssHack = require('../tools/css-hack');
 
+function getBaseCheckout(options) {
+  var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
+
+  // Append trailing slash if not exists.
+  if (!/\/$/.test(baseCheckout)) {
+    baseCheckout += '/';
+  }
+
+  return baseCheckout;
+}
+
 function checkout (options) {
 
   options = options || {};
-  var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
-
-  if( !/\/$/.test(baseCheckout) ) {
-    baseCheckout += '/';
-  }
+  var baseCheckout = getBaseCheckout(options);
 
   var on = {},
       iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),

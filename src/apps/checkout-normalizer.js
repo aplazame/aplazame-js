@@ -18,6 +18,7 @@ function checkoutNormalizer(checkout, location, api) {
     throw new Error('missing public key');
   }
 
+  // We put public_api_key as soon as possible so we can track the merchant from our API and notify him about any issue.
   checkout.merchant.public_api_key = checkout.merchant.public_api_key || api.publicKey;
   checkout.merchant.sandbox = checkout.merchant.sandbox === undefined ? api.sandbox : checkout.merchant.sandbox;
 

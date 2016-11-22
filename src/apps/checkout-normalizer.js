@@ -40,6 +40,11 @@ function checkoutNormalizer(checkout, location, api) {
     location.replace(checkout.merchant.checkout_url || '/');
   };
 
+  if (checkout.customer && checkout.customer.birthday) {
+    // Strip time from value
+    checkout.customer.birthday = checkout.customer.birthday.split('T')[0];
+  }
+
   return checkout;
 }
 

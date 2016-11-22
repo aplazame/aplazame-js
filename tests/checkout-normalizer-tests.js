@@ -137,4 +137,37 @@ describe('amount getter', function () {
     assert.equal(checkout.merchant.sandbox, false);
     assert.equal(checkout.api.sandbox, true);
   });
+
+  it('preserve keep birthday value when only the date is provided', function() {
+    var checkout = {
+      merchant: {
+        sandbox: false,
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        birthday: '2000-12-31'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.birthday, '2000-12-31');
+  });
+
+  it('strip time from birthday value when date time is provided', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        birthday: '2000-12-31T23:59:59+0000'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.birthday, '2000-12-31');
+  });
 });

@@ -57,6 +57,21 @@ function checkoutNormalizer(checkout, location, api) {
         checkout.customer.type = 'n';
         break;
     }
+
+    switch (checkout.customer.gender) {
+      case 'unknown':
+        checkout.customer.gender = 0;
+        break;
+      case 'male':
+        checkout.customer.gender = 1;
+        break;
+      case 'female':
+        checkout.customer.gender = 2;
+        break;
+      case 'not_applicable':
+        checkout.customer.gender = 3;
+        break;
+    }
   }
 
   return checkout;

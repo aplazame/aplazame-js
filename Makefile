@@ -16,14 +16,14 @@ install: bower-install
 	@echo "running npm install"
 	@npm install > /dev/null 2>&1
 
-test: install
-	@node make lint
-	@$(npmdir)/mocha tests
+tests:
+	@$(npmdir)/eslint src/**
+	@$(npmdir)/mocha src/**/*-tests.js
 
 test-tools:
 	@$(npmdir)/watch "date +\"%Y-%m-%d %T\" && $(npmdir)/mocha -R spec tests" src/tools tests
 
-build: install
+build: install tests
 	@echo "running make build"
 	node make build
 

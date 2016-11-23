@@ -21,14 +21,14 @@ function getAmount (amount) {
   } else if( amount < 100 ) {
     return '0,' + amount;
   }
-  return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (matched, main, tail) {
+  return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
     return thousands(main) + ',' + tail;
   });
 }
 
 function parsePrice (price) {
   var matched = price.match(/((\d+[,. ])*)(\d+)/),
-      amount, main, tail;
+      main, tail;
 
   if( matched ) {
     tail = matched[3];

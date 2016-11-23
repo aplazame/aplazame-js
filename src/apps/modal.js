@@ -14,13 +14,11 @@ var tmpOverlay = document.createElement('div'),
     cssBlur = cssHack('blur'),
     cssModal = cssHack('modal');
 
-function modal (content, options) {
+function modal (content) {
 
   if( modal.iframe ) {
     document.body.removeChild(modal.iframe);
   }
-
-  options = options || {};
 
   cssOverlay.hack(true);
   cssBlur.hack(true);

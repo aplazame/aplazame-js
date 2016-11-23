@@ -12,7 +12,7 @@ function _key (o, key, value) {
 }
 
 function camelCase (text) {
-	return text.replace(/_(\w)/g, function (matched, letter) {
+	return text.replace(/_(\w)/g, function (_matched, letter) {
 		return letter.toUpperCase();
 	});
 }

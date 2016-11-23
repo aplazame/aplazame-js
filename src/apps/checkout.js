@@ -4,7 +4,6 @@ var api = require('../core/api'),
     _ = require('../tools/tools'),
     checkoutNormalizer = require('./checkout-normalizer'),
     http = require('http-browser'),
-    $q = require('q-promise/no-native'),
     cssHack = require('../tools/css-hack');
 
 function getBaseCheckout(options) {
@@ -45,7 +44,7 @@ function checkout (options) {
   } catch (e) {
     errorMessage = e.message;
   }
-  
+
   if (options.merchant) {
     // All functions must be removed as them can't be serialized by postMessage
     delete options.merchant.onSuccess;
@@ -79,8 +78,7 @@ function checkout (options) {
   }, 200);
 
   return http( iframeSrc ).then(function (response) {
-      var iframeHtml = response.data.replace(/<head\>/, '<head><base href="' + baseCheckout + '" />'),
-          iframe = _.getIFrame({
+      var iframe = _.getIFrame({
             top: 0,
             left: 0,
             width: '100%',

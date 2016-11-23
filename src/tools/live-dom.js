@@ -17,7 +17,7 @@ var suscriptors = [],
           var target = lastTarget;
           lastTarget = null;
           waitTimer();
-          triggerListeners(lastTarget);
+          triggerListeners(target);
         }
       }, 250);
     };

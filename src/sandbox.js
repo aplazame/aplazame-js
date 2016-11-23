@@ -4,7 +4,6 @@ function _errorData(err) {
   (console.info || console.log)('%c[non blocking error] %caplazame.js\n\n', 'font-weight: bold; color: #267BBD;', 'color: #267BBD;');
 
   var filename = err.fileName ? err.fileName.lastIndexOf('/') : '<not defined>';
-  var stamp = new Date();
   var str = '%cname: %c' + err.name +
           '\n%cError: %c' + err.message +
           '\n%cFile: %c' + filename;

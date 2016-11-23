@@ -1,9 +1,9 @@
 
 
 var importantCSS = function (css) {
-      return css.replace(/;/g, ' !important;').replace(/:([^:;]+?)}/g, function (matched, value) {
+      return css.replace(/;/g, ' !important;').replace(/:([^:;]+?)}/g, function (_matched, value) {
         return ':' + value + ' !important;}';
-      }).replace(/(\d+%|from|to){([^}]+)/g, function (matched, pos, content) {
+      }).replace(/(\d+%|from|to){([^}]+)/g, function (_matched, pos, content) {
         return pos + '{' + content.replace(/ !important;/g, ';');
       });
     },

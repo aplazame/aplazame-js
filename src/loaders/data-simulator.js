@@ -87,7 +87,7 @@ module.exports = function (aplazame) {
     }
 
     var getter = priceSelector ? function () {
-      var qty = qtySelector ? getQty( qtySelector ) : 1, priceElement;
+      var priceElement;
       try {
         priceElement = document.querySelector( priceSelector );
       } catch(err) {}
@@ -151,7 +151,7 @@ module.exports = function (aplazame) {
       }
     });
 
-    this.on('message:resize', function (e, message) {
+    this.on('message:resize', function (_e, message) {
       el.style.height = message.height + 'px';
     });
   }
@@ -200,7 +200,7 @@ module.exports = function (aplazame) {
         });
       };
 
-      widget.on('choices.updating', function (e) {
+      widget.on('choices.updating', function (_e) {
         widget.message('loading');
       });
 
@@ -209,7 +209,7 @@ module.exports = function (aplazame) {
       widget = { el: document.createElement('div') };
       new Events(widget);
 
-      widget.on('choices.updating', function (e) {
+      widget.on('choices.updating', function (_e) {
         widget.el.style.opacity = 0.5;
       });
 
@@ -250,7 +250,7 @@ module.exports = function (aplazame) {
 
     widget.render();
 
-    widget.on('message:require.choices choices.update', function (e, message) {
+    widget.on('message:require.choices choices.update', function (_e, message) {
       if( message && message.simulatorId && message.simulatorId !== id ) {
         return;
       }
@@ -270,7 +270,7 @@ module.exports = function (aplazame) {
     }
 
     var pseudoLocator;
-    selector = selector.trim().replace(/:(\w+?)$/, function (matched, locator) {
+    selector = selector.trim().replace(/:(\w+?)$/, function (_matched, locator) {
       pseudoLocator = locator;
       return '';
     });
@@ -374,7 +374,7 @@ module.exports = function (aplazame) {
     widgetWrapper.__apz_widget__ = meta;
   }
 
-  function widgetsLookup (element) {
+  function widgetsLookup () {
     var promises = [];
 
     each.call(document.querySelectorAll('[data-aplazame-simulator]'), evalWidget );

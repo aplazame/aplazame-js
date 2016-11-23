@@ -1,8 +1,9 @@
+/* global describe, it */
 
 var assert = require('assert'),
-    checkoutNormalizer = require('../src/apps/checkout-normalizer');
+    checkoutNormalizer = require('./checkout-normalizer');
 
-describe('amount getter', function () {
+describe('checkout normalizer', function () {
 
   // Store last href so it can be inspected.
   var lastHref;

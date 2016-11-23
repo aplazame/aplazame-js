@@ -40,9 +40,23 @@ function checkoutNormalizer(checkout, location, api) {
     location.replace(checkout.merchant.checkout_url || '/');
   };
 
-  if (checkout.customer && checkout.customer.birthday) {
-    // Strip time from value
-    checkout.customer.birthday = checkout.customer.birthday.split('T')[0];
+  if (checkout.customer) {
+    if (checkout.customer.birthday) {
+      // Strip time from value
+      checkout.customer.birthday = checkout.customer.birthday.split('T')[0];
+    }
+
+    switch (checkout.customer.type) {
+      case 'existing':
+        checkout.customer.type = 'e';
+        break;
+      case 'guess':
+        checkout.customer.type = 'g';
+        break;
+      case 'new':
+        checkout.customer.type = 'n';
+        break;
+    }
   }
 
   return checkout;

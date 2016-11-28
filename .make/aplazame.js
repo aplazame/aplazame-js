@@ -7,7 +7,7 @@ module.exports = function (nitro) {
 
     nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
     nitro.dir('src')
-      .load('aplazame.js', { sourceMap: dev ? 'inline' : 'inline' })
+      .load('aplazame.js', { sourceMap: dev ? 'inline' : false })
       .process('browserify')
       .write('dist')
       .each(function (f) {

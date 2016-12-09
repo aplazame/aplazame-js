@@ -1,6 +1,6 @@
 {
 	"name": "aplazame",
-	"version": "0.0.374",
+	"version": "0.0.375",
 	"description": "javascript sdk for aplazame.com api",
 	"main": "aplazame.min.js",
 	"scripts": {
@@ -23,17 +23,17 @@
 	"homepage": "https://github.com/aplazame/aplazame-js.git#readme",
 	"devDependencies": {
 		"bower": "^1.8.0",
-		"eslint": "^3.10.2",
+		"eslint": "^3.11.1",
 		"git-rev-sync": "^1.8.0",
-		"mocha": "^3.1.2",
-		"nitro": "1.10.6",
+		"mocha": "^3.2.0",
+		"nitro": "1.10.8",
 		"watch": "^1.0.1"
 	},
 	"dependencies": {
 		"events-wrapper": "0.2.2",
 		"http-browser": "0.1.30",
 		"nitro-tools": "0.2.4",
-		"q-promise": "0.3.7",
+		"q-promise": "1.0.0",
 		"vanilla-tools": "^1.1.33"
 	}
 }

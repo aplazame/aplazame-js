@@ -828,206 +828,6 @@ module.exports = {
 
 },{}],10:[function(require,module,exports){
 
-module.exports = function (qPromise) {
-
-	function each (iterable, handler) {
-		for( var i = 0, n = iterable.length; i < n ; i++ ) {
-			handler(iterable[i], i);
-		}
-	}
-
-	function qResolve (result) {
-	  return qPromise(function (resolve, reject) { resolve(result); });
-	};
-
-	function qReject (reason) {
-	  return qPromise(function (resolve, reject) { reject(reason); });
-	};
-
-	var methods = {
-		resolve: qResolve,
-		reject: qReject,
-		defer: function () {
-		  var deferred = {};
-		  deferred.promise = qPromise(function (resolve, reject) {
-		    deferred.resolve = resolve;
-		    deferred.reject = reject;
-		  });
-		  return deferred;
-		},
-		all: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var pending = iterable.length,
-		        results = [];
-		    each(iterable, function (_promise, i) {
-
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        results[i] = result;
-		        if( --pending === 0 ) {
-		          resolve(results);
-		        }
-		      }, function (reason) {
-		        if( pending !== -1 ) {
-		          pending === -1;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		},
-		race: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var done = false;
-
-		    each(iterable, function (_promise, i) {
-		      if( done ) {
-		        return;
-		      }
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        if( !done ) {
-		          done = true;
-		          resolve(result);
-		        }
-		      }, function (reason) {
-		        if( !done ) {
-		          done = true;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		}
-	};
-
-	return function (q, override) {
-		for( var key in methods ) {
-			if( !q[key] || override ) {
-				q[key] = methods[key];
-			}
-		}
-		return q;
-	};
-};
-
-},{}],11:[function(require,module,exports){
-
-function stepResult (step, value, type) {
-  if( value && value.then ) {
-    value.then(function (result) {
-      step.deferred.resolve(result);
-    }, function (reason) {
-      step.deferred.reject(reason);
-    });
-  } else {
-    step.deferred[type](value);
-  }
-}
-
-function processQueue(promise) {
-  if( promise.$$succeeded === undefined ) {
-    return;
-  }
-
-  var len = promise.$$queue.length,
-      step = promise.$$queue.shift(),
-      type = promise.$$succeeded ? 'resolve' : 'reject',
-      uncough = !promise.$$succeeded && promise.$$uncought++;
-
-  while( step ) {
-
-    if( step[type] ) {
-      uncough = false;
-
-      try {
-        stepResult(step, step[type](promise.$$value), 'resolve');
-      } catch (reason) {
-        stepResult(step, reason, 'reject');
-      }
-
-    } else {
-      stepResult(step, promise.$$value, type);
-    }
-
-    step = promise.$$queue.shift();
-  }
-
-  if( !promise.$$succeeded && uncough ) {
-    if( promise.$$uncough === uncough ) {
-      throw new Error('Uncaught (in promise)');
-    }
-  }
-}
-
-function P (executor) {
-  if( !( executor instanceof Function ) ) {
-    throw new TypeError('Promise resolver undefined is not a function');
-  }
-
-  var p = this;
-  this.$$queue = [];
-  this.$$uncough = 0;
-
-  try {
-    executor(function (result) {
-      p.$$succeeded = true;
-      p.$$value = result;
-      processQueue(p);
-    }, function (reason) {
-      p.$$succeeded = false;
-      p.$$value = reason;
-      processQueue(p);
-    });
-  } catch (err) {
-    p.$$succeeded = false;
-    p.$$value = err;
-    processQueue(p);
-  }
-}
-
-P.prototype.then = function (onsucceeded, onRejected) {
-  var _this = this,
-      _promise = new P(function (resolve, reject) {
-        _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
-      });
-
-  processQueue(this);
-
-  return _promise;
-};
-
-P.prototype.catch = function (onRejected) {
-  return this.then(undefined, onRejected);
-};
-
-require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
-
-module.exports = P;
-
-},{"./promise-methods":10}],12:[function(require,module,exports){
-
-module.exports = function (Promise) {
-
-  function q (executor) {
-    return new Promise(executor);
-  }
-
-  require('./promise-methods')(q)(q, true);
-
-  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
-  q.usePolyfill = function () {
-  	Promise = require('./promise-polyfill');
-  };
-
-  return q;
-
-};
-
-},{"./promise-methods":10,"./promise-polyfill":11}],13:[function(require,module,exports){
-
-module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
-
-},{"./lib/promise-polyfill":11,"./lib/qizer":12}],14:[function(require,module,exports){
-
 // require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
 require('./browser-polyfills/dom-closest');
@@ -1035,14 +835,14 @@ require('./browser-polyfills/event-listener');
 require('./browser-polyfills/match-media');
 require('./browser-polyfills/matches-selector');
 
-},{"./browser-polyfills/date":15,"./browser-polyfills/dom-closest":16,"./browser-polyfills/event-listener":17,"./browser-polyfills/match-media":18,"./browser-polyfills/matches-selector":19}],15:[function(require,module,exports){
+},{"./browser-polyfills/date":11,"./browser-polyfills/dom-closest":12,"./browser-polyfills/event-listener":13,"./browser-polyfills/match-media":14,"./browser-polyfills/matches-selector":15}],11:[function(require,module,exports){
 
 if (!Date.now) {
   Date.now = function now() {
     return new Date().getTime();
   };
 }
-},{}],16:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 if( !Element.prototype.closest ) {
   Element.prototype.closest = function (selector) {
@@ -1057,7 +857,7 @@ if( !Element.prototype.closest ) {
     return el;
   };
 }
-},{}],17:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 if( !Element.prototype.addEventListener ) {
   if( Element.prototype.attachEvent ) {
@@ -1071,13 +871,13 @@ if( !Element.prototype.addEventListener ) {
     throw 'Browser not compatible with element events';
   }
 }
-},{}],18:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (root) {
   'use strict';
 
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
-},{}],19:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
@@ -1089,7 +889,7 @@ if( !Element.prototype.matchesSelector ) {
 }
 
 
-},{}],20:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 
 require('./browser-polyfills');
 // document.currentScript
@@ -1161,7 +961,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":14,"./deferred/animate":21,"./deferred/wait":22,"./fn/debounce":23,"./fn/ready":24,"./fn/template":25,"./utils/dom":26,"./utils/events":27,"./utils/normalize":28,"./utils/scroll/bundle":31,"classlist.js":3,"nitro-tools/extend":5,"nitro-tools/key":6,"nitro-tools/path":8,"nitro-tools/type":9,"q-promise/no-native":13}],21:[function(require,module,exports){
+},{"./browser-polyfills":10,"./deferred/animate":17,"./deferred/wait":18,"./fn/debounce":19,"./fn/ready":20,"./fn/template":21,"./utils/dom":26,"./utils/events":27,"./utils/normalize":28,"./utils/scroll/bundle":31,"classlist.js":3,"nitro-tools/extend":5,"nitro-tools/key":6,"nitro-tools/path":8,"nitro-tools/type":9,"q-promise/no-native":25}],17:[function(require,module,exports){
 
 var $q = require('q-promise/no-native'),
     timingFunctions = {},
@@ -1261,7 +1061,7 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":2,"q-promise/no-native":13}],22:[function(require,module,exports){
+},{"bezier-easing":2,"q-promise/no-native":25}],18:[function(require,module,exports){
 
 var $q = require('q-promise/no-native'),
 	wait = function (delay, callback) {
@@ -1286,7 +1086,7 @@ var $q = require('q-promise/no-native'),
 
 module.exports = wait;
 
-},{"q-promise/no-native":13}],23:[function(require,module,exports){
+},{"q-promise/no-native":25}],19:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   var timer = null,
@@ -1307,7 +1107,7 @@ function debounce (fn, timeslot) {
 }
 
 module.exports = debounce;
-},{}],24:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var readyListeners = [],
     initReady = function () {
       var listeners = readyListeners;
@@ -1332,7 +1132,7 @@ function ready (callback) {
 
 module.exports = ready;
 
-},{}],25:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -1370,7 +1170,207 @@ template.lookup = function () {
 };
 
 module.exports = template;
-},{}],26:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
+
+module.exports = function (qPromise) {
+
+	function each (iterable, handler) {
+		for( var i = 0, n = iterable.length; i < n ; i++ ) {
+			handler(iterable[i], i);
+		}
+	}
+
+	function qResolve (result) {
+	  return qPromise(function (resolve, reject) { resolve(result); });
+	};
+
+	function qReject (reason) {
+	  return qPromise(function (resolve, reject) { reject(reason); });
+	};
+
+	var methods = {
+		resolve: qResolve,
+		reject: qReject,
+		defer: function () {
+		  var deferred = {};
+		  deferred.promise = qPromise(function (resolve, reject) {
+		    deferred.resolve = resolve;
+		    deferred.reject = reject;
+		  });
+		  return deferred;
+		},
+		all: function (iterable) {
+		  return qPromise(function (resolve, reject) {
+		    var pending = iterable.length,
+		        results = [];
+		    each(iterable, function (_promise, i) {
+
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
+		        results[i] = result;
+		        if( --pending === 0 ) {
+		          resolve(results);
+		        }
+		      }, function (reason) {
+		        if( pending !== -1 ) {
+		          pending === -1;
+		          reject(reason);
+		        }
+		      });
+		    });
+		  });
+		},
+		race: function (iterable) {
+		  return qPromise(function (resolve, reject) {
+		    var done = false;
+
+		    each(iterable, function (_promise, i) {
+		      if( done ) {
+		        return;
+		      }
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
+		        if( !done ) {
+		          done = true;
+		          resolve(result);
+		        }
+		      }, function (reason) {
+		        if( !done ) {
+		          done = true;
+		          reject(reason);
+		        }
+		      });
+		    });
+		  });
+		}
+	};
+
+	return function (q, override) {
+		for( var key in methods ) {
+			if( !q[key] || override ) {
+				q[key] = methods[key];
+			}
+		}
+		return q;
+	};
+};
+
+},{}],23:[function(require,module,exports){
+
+function stepResult (step, value, type) {
+  if( value && value.then ) {
+    value.then(function (result) {
+      step.deferred.resolve(result);
+    }, function (reason) {
+      step.deferred.reject(reason);
+    });
+  } else {
+    step.deferred[type](value);
+  }
+}
+
+function processQueue(promise) {
+  if( promise.$$succeeded === undefined ) {
+    return;
+  }
+
+  var len = promise.$$queue.length,
+      step = promise.$$queue.shift(),
+      type = promise.$$succeeded ? 'resolve' : 'reject',
+      uncough = !promise.$$succeeded && promise.$$uncought++;
+
+  while( step ) {
+
+    if( step[type] ) {
+      uncough = false;
+
+      try {
+        stepResult(step, step[type](promise.$$value), 'resolve');
+      } catch (reason) {
+        stepResult(step, reason, 'reject');
+      }
+
+    } else {
+      stepResult(step, promise.$$value, type);
+    }
+
+    step = promise.$$queue.shift();
+  }
+
+  if( !promise.$$succeeded && uncough ) {
+    if( promise.$$uncough === uncough ) {
+      throw new Error('Uncaught (in promise)');
+    }
+  }
+}
+
+function P (executor) {
+  if( !( executor instanceof Function ) ) {
+    throw new TypeError('Promise resolver undefined is not a function');
+  }
+
+  var p = this;
+  this.$$queue = [];
+  this.$$uncough = 0;
+
+  try {
+    executor(function (result) {
+      p.$$succeeded = true;
+      p.$$value = result;
+      processQueue(p);
+    }, function (reason) {
+      p.$$succeeded = false;
+      p.$$value = reason;
+      processQueue(p);
+    });
+  } catch (err) {
+    p.$$succeeded = false;
+    p.$$value = err;
+    processQueue(p);
+  }
+}
+
+P.prototype.then = function (onsucceeded, onRejected) {
+  var _this = this,
+      _promise = new P(function (resolve, reject) {
+        _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
+      });
+
+  processQueue(this);
+
+  return _promise;
+};
+
+P.prototype.catch = function (onRejected) {
+  return this.then(undefined, onRejected);
+};
+
+require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
+
+module.exports = P;
+
+},{"./promise-methods":22}],24:[function(require,module,exports){
+
+module.exports = function (Promise) {
+
+  function q (executor) {
+    return new Promise(executor);
+  }
+
+  require('./promise-methods')(q)(q, true);
+
+  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
+  q.usePolyfill = function () {
+  	Promise = require('./promise-polyfill');
+  };
+
+  return q;
+
+};
+
+},{"./promise-methods":22,"./promise-polyfill":23}],25:[function(require,module,exports){
+
+module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
+
+},{"./lib/promise-polyfill":23,"./lib/qizer":24}],26:[function(require,module,exports){
 
 var _dom = {
   currentScript: document.currentScript || (function() {
@@ -1541,7 +1541,7 @@ ready(function () {
 
 module.exports = scroll;
 
-},{"../fn/ready":24}],30:[function(require,module,exports){
+},{"../fn/ready":20}],30:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -1589,7 +1589,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../../deferred/animate":21,"q-promise/no-native":13}],31:[function(require,module,exports){
+},{"../../deferred/animate":17,"q-promise/no-native":25}],31:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -1611,7 +1611,7 @@ module.exports = function (scroll) {
 
 };
 
-},{"../../fn/ready":24}],33:[function(require,module,exports){
+},{"../../fn/ready":20}],33:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -2107,4 +2107,4 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":33,"./browser-tools":34,"./colors":35,"./deserialize":36,"./live-dom":37,"./log":38,"./message-listener":39,"./template":40,"nitro-tools/lists":7,"nitro-tools/path":8,"vanilla-tools":20}]},{},[1]);
+},{"./amount-price":33,"./browser-tools":34,"./colors":35,"./deserialize":36,"./live-dom":37,"./log":38,"./message-listener":39,"./template":40,"nitro-tools/lists":7,"nitro-tools/path":8,"vanilla-tools":16}]},{},[1]);

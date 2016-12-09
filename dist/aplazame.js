@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.374';
+module.exports = '0.0.375';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -11,7 +11,7 @@ module.exports = '@keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}.aplaz
 },{}],6:[function(require,module,exports){
 module.exports = '<div class="card-content">  <header class="aplazame"></header>  <section class="info">    Elige el número de meses y la cuota que más te convengan  </section>  <div class="choices-wrapper">    <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>    <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">      <div class="wrapper">        <div class="num-instalments">          <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>        </div>        <div class="amount">          <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--          --><span class="amount-currency">€</span><!--          --><span class="amount-per-month">/mes</span></div>      </div>    </button>    <% } %>  </div>  <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>  <section class="how-it-works">    <header>¿Cómo funciona?</header>    <div class="info-wrapper">      <div class="info">        <h3>Elige Aplazame</h3>        <p>en la tienda, cuando vayas a pagar el pedido.</p>      </div>      <div class="info">        <h3>Decide cómo quieres pagar</h3>        <p>Hasta en 12 cuotas, pagando con tarjeta.</p>      </div>      <div class="info">        <h3>Disfruta de tu compra</h3>        <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>      </div>    </div>  </section></div><div class="cta">  <div class="col-sm-6 button-wrapper">    <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>  </div>  <div class="col-sm-6 button-wrapper">    <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>  </div></div>';
 },{}],7:[function(require,module,exports){
-module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num">12</em>    <span>&nbsp;cuotas</span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
+module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num"><%= choice.num_instalments %></em>    <span>&nbsp;<%= choice.num_instalments === 1 ? \'cuota\' : \'cuotas\' %></span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
 },{}],8:[function(require,module,exports){
 /**
  * https://github.com/gre/bezier-easing
@@ -539,6 +539,208 @@ if (objCtr.defineProperty) {
 
 },{}],11:[function(require,module,exports){
 
+module.exports = function (qPromise) {
+
+	function each (iterable, handler) {
+		for( var i = 0, n = iterable.length; i < n ; i++ ) {
+			handler(iterable[i], i);
+		}
+	}
+
+	function qResolve (result) {
+	  return qPromise(function (resolve, reject) { resolve(result); });
+	};
+
+	function qReject (reason) {
+	  return qPromise(function (resolve, reject) { reject(reason); });
+	};
+
+	var methods = {
+		resolve: qResolve,
+		reject: qReject,
+		defer: function () {
+		  var deferred = {};
+		  deferred.promise = qPromise(function (resolve, reject) {
+		    deferred.resolve = resolve;
+		    deferred.reject = reject;
+		  });
+		  return deferred;
+		},
+		all: function (iterable) {
+		  return qPromise(function (resolve, reject) {
+		    var pending = iterable.length,
+		        results = [];
+		    each(iterable, function (_promise, i) {
+
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
+		        results[i] = result;
+		        if( --pending === 0 ) {
+		          resolve(results);
+		        }
+		      }, function (reason) {
+		        if( pending !== -1 ) {
+		          pending === -1;
+		          reject(reason);
+		        }
+		      });
+		    });
+		  });
+		},
+		race: function (iterable) {
+		  return qPromise(function (resolve, reject) {
+		    var done = false;
+
+		    each(iterable, function (_promise, i) {
+		      if( done ) {
+		        return;
+		      }
+		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
+		        if( !done ) {
+		          done = true;
+		          resolve(result);
+		        }
+		      }, function (reason) {
+		        if( !done ) {
+		          done = true;
+		          reject(reason);
+		        }
+		      });
+		    });
+		  });
+		}
+	};
+
+	return function (q, override) {
+		for( var key in methods ) {
+			if( !q[key] || override ) {
+				q[key] = methods[key];
+			}
+		}
+		return q;
+	};
+};
+
+},{}],12:[function(require,module,exports){
+
+function stepResult (step, value, type) {
+  if( value && value.then ) {
+    value.then(function (result) {
+      step.deferred.resolve(result);
+    }, function (reason) {
+      step.deferred.reject(reason);
+    });
+  } else {
+    step.deferred[type](value);
+  }
+}
+
+function processQueue(promise) {
+  if( promise.$$succeeded === undefined ) {
+    return;
+  }
+
+  var len = promise.$$queue.length,
+      step = promise.$$queue.shift(),
+      type = promise.$$succeeded ? 'resolve' : 'reject',
+      uncough = !promise.$$succeeded && promise.$$uncought++;
+
+  while( step ) {
+
+    if( step[type] ) {
+      uncough = false;
+
+      try {
+        stepResult(step, step[type](promise.$$value), 'resolve');
+      } catch (reason) {
+        stepResult(step, reason, 'reject');
+      }
+
+    } else {
+      stepResult(step, promise.$$value, type);
+    }
+
+    step = promise.$$queue.shift();
+  }
+
+  if( !promise.$$succeeded && uncough ) {
+    if( promise.$$uncough === uncough ) {
+      throw new Error('Uncaught (in promise)');
+    }
+  }
+}
+
+function P (executor) {
+  if( !( executor instanceof Function ) ) {
+    throw new TypeError('Promise resolver undefined is not a function');
+  }
+
+  var p = this;
+  this.$$queue = [];
+  this.$$uncough = 0;
+
+  try {
+    executor(function (result) {
+      p.$$succeeded = true;
+      p.$$value = result;
+      processQueue(p);
+    }, function (reason) {
+      p.$$succeeded = false;
+      p.$$value = reason;
+      processQueue(p);
+    });
+  } catch (err) {
+    p.$$succeeded = false;
+    p.$$value = err;
+    processQueue(p);
+  }
+}
+
+P.prototype.then = function (onsucceeded, onRejected) {
+  var _this = this,
+      _promise = new P(function (resolve, reject) {
+        _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
+      });
+
+  processQueue(this);
+
+  return _promise;
+};
+
+P.prototype.catch = function (onRejected) {
+  return this.then(undefined, onRejected);
+};
+
+require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
+
+module.exports = P;
+
+},{"./promise-methods":11}],13:[function(require,module,exports){
+(function (global){
+
+module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(function (executor) { return new global.Promise(executor); })(global.Promise) : require('./promise-polyfill') );
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./promise-methods":11,"./promise-polyfill":12,"./qizer":14}],14:[function(require,module,exports){
+
+module.exports = function (Promise) {
+
+  function q (executor) {
+    return new Promise(executor);
+  }
+
+  require('./promise-methods')(q)(q, true);
+
+  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
+  q.usePolyfill = function () {
+  	Promise = require('./promise-polyfill');
+  };
+
+  return q;
+
+};
+
+},{"./promise-methods":11,"./promise-polyfill":12}],15:[function(require,module,exports){
+
 // factory http
 
 var $q = require('q-promise'),
@@ -782,7 +984,7 @@ http.responseData = function (response) {
 
 module.exports = http;
 
-},{"nitro-tools/extend":13,"q-promise":20}],12:[function(require,module,exports){
+},{"nitro-tools/extend":17,"q-promise":13}],16:[function(require,module,exports){
 
 var arrayShift = [].shift;
 
@@ -801,7 +1003,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 var RE_$$ = /^\$\$/,
     arrayShift = [].shift,
@@ -868,7 +1070,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":12,"./type":17}],14:[function(require,module,exports){
+},{"./_extend":16,"./type":21}],18:[function(require,module,exports){
 
 var type = require('./type');
 
@@ -917,7 +1119,7 @@ module.exports = {
   keys: Object.keys
 };
 
-},{"./type":17}],15:[function(require,module,exports){
+},{"./type":21}],19:[function(require,module,exports){
 
 var type = require('./type'),
     arrSome = Array.prototype.some,
@@ -1145,7 +1347,7 @@ module.exports = {
   }
 };
 
-},{"./type":17}],16:[function(require,module,exports){
+},{"./type":21}],20:[function(require,module,exports){
 
 var RE_dotsBack = /[^\/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
@@ -1172,7 +1374,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],17:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 function _isType (type) {
@@ -1217,213 +1419,231 @@ module.exports = {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 
-module.exports = function (qPromise) {
-
-	function each (iterable, handler) {
-		for( var i = 0, n = iterable.length; i < n ; i++ ) {
-			handler(iterable[i], i);
-		}
-	}
-
-	function qResolve (result) {
-	  return qPromise(function (resolve, reject) { resolve(result); });
-	};
-
-	function qReject (reason) {
-	  return qPromise(function (resolve, reject) { reject(reason); });
-	};
-
-	var methods = {
-		resolve: qResolve,
-		reject: qReject,
-		defer: function () {
-		  var deferred = {};
-		  deferred.promise = qPromise(function (resolve, reject) {
-		    deferred.resolve = resolve;
-		    deferred.reject = reject;
-		  });
-		  return deferred;
-		},
-		all: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var pending = iterable.length,
-		        results = [];
-		    each(iterable, function (_promise, i) {
-
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        results[i] = result;
-		        if( --pending === 0 ) {
-		          resolve(results);
-		        }
-		      }, function (reason) {
-		        if( pending !== -1 ) {
-		          pending === -1;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		},
-		race: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var done = false;
-
-		    each(iterable, function (_promise, i) {
-		      if( done ) {
-		        return;
-		      }
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        if( !done ) {
-		          done = true;
-		          resolve(result);
-		        }
-		      }, function (reason) {
-		        if( !done ) {
-		          done = true;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		}
-	};
-
-	return function (q, override) {
-		for( var key in methods ) {
-			if( !q[key] || override ) {
-				q[key] = methods[key];
-			}
-		}
-		return q;
-	};
-};
-
-},{}],19:[function(require,module,exports){
-
-function stepResult (step, value, type) {
-  if( value && value.then ) {
-    value.then(function (result) {
-      step.deferred.resolve(result);
-    }, function (reason) {
-      step.deferred.reject(reason);
-    });
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+      // AMD. Register as an anonymous module.
+      define(factory);
+  } else if (typeof module === 'object' && module.exports) {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
   } else {
-    step.deferred[type](value);
+    // Browser globals (root is window)
+    root.$q = factory();
   }
-}
+}(this, function () {
 
-function processQueue(promise) {
-  if( promise.$$succeeded === undefined ) {
-    return;
-  }
-
-  var len = promise.$$queue.length,
-      step = promise.$$queue.shift(),
-      type = promise.$$succeeded ? 'resolve' : 'reject',
-      uncough = !promise.$$succeeded && promise.$$uncought++;
-
-  while( step ) {
-
-    if( step[type] ) {
-      uncough = false;
-
+  function runHandler (fn, deferred, x, fulfilled) {
+    if( typeof fn === 'function' ) {
       try {
-        stepResult(step, step[type](promise.$$value), 'resolve');
-      } catch (reason) {
-        stepResult(step, reason, 'reject');
+        deferred.resolve( fn(x) );
+      } catch(reason) {
+        deferred.reject( reason );
       }
-
     } else {
-      stepResult(step, promise.$$value, type);
-    }
-
-    step = promise.$$queue.shift();
-  }
-
-  if( !promise.$$succeeded && uncough ) {
-    if( promise.$$uncough === uncough ) {
-      throw new Error('Uncaught (in promise)');
+      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
     }
   }
-}
 
-function P (executor) {
-  if( !( executor instanceof Function ) ) {
-    throw new TypeError('Promise resolver undefined is not a function');
+  function resolvePromise (p, x, fulfilled) {
+    if( p.resolved ) {
+      return;
+    }
+    p.resolved = true;
+
+    p.result = x;
+    p.fulfilled = fulfilled || false;
+
+    var queue = p.queue.splice(0);
+    p.queue = null;
+
+    setTimeout(function () {
+      for( var i = 0, n = queue.length ; i < n ; i++ ) {
+        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+      }
+    }, 0);
   }
 
-  var p = this;
-  this.$$queue = [];
-  this.$$uncough = 0;
-
-  try {
-    executor(function (result) {
-      p.$$succeeded = true;
-      p.$$value = result;
-      processQueue(p);
-    }, function (reason) {
-      p.$$succeeded = false;
-      p.$$value = reason;
-      processQueue(p);
-    });
-  } catch (err) {
-    p.$$succeeded = false;
-    p.$$value = err;
-    processQueue(p);
-  }
-}
-
-P.prototype.then = function (onsucceeded, onRejected) {
-  var _this = this,
-      _promise = new P(function (resolve, reject) {
-        _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
+  function runThenable (then, p, x) {
+    var executed = false;
+    try {
+      then.call(x, function (value) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, value, true);
+      }, function (reason) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, reason, false);
       });
-
-  processQueue(this);
-
-  return _promise;
-};
-
-P.prototype.catch = function (onRejected) {
-  return this.then(undefined, onRejected);
-};
-
-require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
-
-module.exports = P;
-
-},{"./promise-methods":18}],20:[function(require,module,exports){
-(function (global){
-
-module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(function (executor) { return new global.Promise(executor); })(global.Promise) : require('./promise-polyfill') );
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-methods":18,"./promise-polyfill":19,"./qizer":21}],21:[function(require,module,exports){
-
-module.exports = function (Promise) {
-
-  function q (executor) {
-    return new Promise(executor);
+    } catch(err) {
+      if( executed ) return;
+      xThen(p, err, false);
+    }
   }
 
-  require('./promise-methods')(q)(q, true);
+  function xThen (p, x, fulfilled) {
+    var then;
 
-  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
-  q.usePolyfill = function () {
-  	Promise = require('./promise-polyfill');
+    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+      try {
+        then = x.then;
+
+        if( fulfilled && typeof then === 'function' ) {
+          runThenable(then, p, x);
+        } else {
+          resolvePromise(p, x, fulfilled);
+        }
+      } catch (reason) {
+        resolvePromise(p, reason, false);
+      }
+    } else {
+      resolvePromise(p, x, fulfilled);
+    }
+  }
+
+  function resolveProcedure (p, x, fulfilled) {
+    if( p.resolving ) return;
+    p.resolving = true;
+
+    if( x === p.promise ) {
+      fulfilled = false;
+      x = new TypeError('A promise can not be resolved by itself');
+    }
+
+    xThen(p, x, fulfilled);
+  }
+
+  function Q (resolver) {
+    if( !(this instanceof Q) ) {
+      return new Q(resolver);
+    }
+
+    if( typeof resolver !== 'function' ) {
+      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
+    }
+
+    var p = {
+      queue: [],
+      promise: this
+    };
+
+    this.__promise = p;
+
+    try {
+      resolver(function (value) {
+        resolveProcedure(p, value, true);
+      }, function (reason) {
+        resolveProcedure(p, reason, false);
+      });
+    } catch (reason) {
+      resolveProcedure(p, reason, false);
+    }
+
+  }
+
+  Q.prototype.then = function (onFulfilled, onRejected) {
+    var p = this.__promise,
+        deferred = Q.defer();
+
+    if( p.queue ) {
+      p.queue.push([onFulfilled, onRejected, deferred]);
+    } else {
+      setTimeout(function () {
+        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      }, 0);
+    }
+
+    return deferred.promise;
   };
 
-  return q;
+  Q.prototype.catch = function (onRejected) {
+    return this.then(null, onRejected);
+  };
 
-};
+  // Promise methods
 
-},{"./promise-methods":18,"./promise-polyfill":19}],22:[function(require,module,exports){
+  function each (iterable, handler) {
+    for( var i = 0, n = iterable.length; i < n ; i++ ) {
+      handler(iterable[i], i);
+    }
+  }
 
-module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
+  Q.defer = function () {
+    var deferred = {};
+    deferred.promise = new Q(function (resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+    return deferred;
+  };
 
-},{"./lib/promise-polyfill":19,"./lib/qizer":21}],23:[function(require,module,exports){
+  Q.when = function (x) { return ( x && x.then ) ? x : Q.resolve(x); };
+
+  Q.resolve = function (value) {
+    return new Q(function (resolve) {
+      resolve(value);
+    });
+  };
+
+  Q.reject = function (value) {
+    return new Q(function (resolve, reject) {
+      reject(value);
+    });
+  };
+
+  Q.all = function (iterable) {
+    return new Q(function (resolve, reject) {
+      var pending = iterable.length,
+          results = [];
+      each(iterable, function (_promise, i) {
+
+        ( _promise.then ? _promise : Q.resolve(_promise) ).then(function (result) {
+          results[i] = result;
+          if( --pending === 0 ) {
+            resolve(results);
+          }
+        }, function (reason) {
+          if( pending !== -1 ) {
+            pending === -1;
+            reject(reason);
+          }
+        });
+      });
+    });
+  };
+
+  Q.race = function (iterable) {
+    return new Q(function (resolve, reject) {
+      var done = false;
+
+      each(iterable, function (_promise) {
+        if( done ) {
+          return;
+        }
+        ( _promise.then ? _promise : Q.resolve(_promise) ).then(function (result) {
+          if( !done ) {
+            done = true;
+            resolve(result);
+          }
+        }, function (reason) {
+          if( !done ) {
+            done = true;
+            reject(reason);
+          }
+        });
+      });
+    });
+  };
+
+  return Q;
+
+}));
+
+},{}],23:[function(require,module,exports){
 
 // require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
@@ -1558,7 +1778,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":23,"./deferred/animate":30,"./deferred/wait":31,"./fn/debounce":32,"./fn/ready":33,"./fn/template":34,"./utils/dom":35,"./utils/events":36,"./utils/normalize":37,"./utils/scroll/bundle":40,"classlist.js":9,"nitro-tools/extend":13,"nitro-tools/key":14,"nitro-tools/path":16,"nitro-tools/type":17,"q-promise/no-native":22}],30:[function(require,module,exports){
+},{"./browser-polyfills":23,"./deferred/animate":30,"./deferred/wait":31,"./fn/debounce":32,"./fn/ready":33,"./fn/template":34,"./utils/dom":39,"./utils/events":40,"./utils/normalize":41,"./utils/scroll/bundle":44,"classlist.js":9,"nitro-tools/extend":17,"nitro-tools/key":18,"nitro-tools/path":20,"nitro-tools/type":21,"q-promise/no-native":38}],30:[function(require,module,exports){
 
 var $q = require('q-promise/no-native'),
     timingFunctions = {},
@@ -1658,7 +1878,7 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":8,"q-promise/no-native":22}],31:[function(require,module,exports){
+},{"bezier-easing":8,"q-promise/no-native":38}],31:[function(require,module,exports){
 
 var $q = require('q-promise/no-native'),
 	wait = function (delay, callback) {
@@ -1683,7 +1903,7 @@ var $q = require('q-promise/no-native'),
 
 module.exports = wait;
 
-},{"q-promise/no-native":22}],32:[function(require,module,exports){
+},{"q-promise/no-native":38}],32:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   var timer = null,
@@ -1768,6 +1988,16 @@ template.lookup = function () {
 
 module.exports = template;
 },{}],35:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],36:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./promise-methods":35,"dup":12}],37:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"./promise-methods":35,"./promise-polyfill":36,"dup":14}],38:[function(require,module,exports){
+
+module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
+
+},{"./lib/promise-polyfill":36,"./lib/qizer":37}],39:[function(require,module,exports){
 
 var _dom = {
   currentScript: document.currentScript || (function() {
@@ -1844,7 +2074,7 @@ var _dom = {
 
 module.exports = _dom;
 
-},{}],36:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 
 module.exports = {
   on: function (el, eventName, handler, useCapture) {
@@ -1873,7 +2103,7 @@ module.exports = {
   }
 };
 
-},{}],37:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 
 var normalize = {
   isTouchDevice: 'ontouchstart' in document.documentElement,
@@ -1891,7 +2121,7 @@ if( normalize.isAndroid ) {
 
 module.exports = normalize;
 
-},{}],38:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 
 function getScrollRoot () {
     if( document.documentElement.scrollTop ) {
@@ -1938,7 +2168,7 @@ ready(function () {
 
 module.exports = scroll;
 
-},{"../fn/ready":33}],39:[function(require,module,exports){
+},{"../fn/ready":33}],43:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -1986,7 +2216,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../../deferred/animate":30,"q-promise/no-native":22}],40:[function(require,module,exports){
+},{"../../deferred/animate":30,"q-promise/no-native":38}],44:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -1994,7 +2224,7 @@ require('./top-class')(scroll);
 require('./animate')(scroll);
 
 module.exports = scroll;
-},{"../scroll":38,"./animate":39,"./top-class":41}],41:[function(require,module,exports){
+},{"../scroll":42,"./animate":43,"./top-class":45}],45:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -2008,7 +2238,7 @@ module.exports = function (scroll) {
 
 };
 
-},{"../../fn/ready":33}],42:[function(require,module,exports){
+},{"../../fn/ready":33}],46:[function(require,module,exports){
 (function (global){
 
 require('./sandbox')(function () {
@@ -2060,7 +2290,7 @@ require('./sandbox')(function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":43,"./apps/checkout":45,"./apps/http-service":46,"./apps/modal":48,"./apps/simulator":49,"./core/api":51,"./core/core":52,"./loaders/data-aplazame":54,"./loaders/data-button":55,"./loaders/data-simulator":56,"./sandbox":57,"./tools/log":64}],43:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":47,"./apps/checkout":49,"./apps/http-service":50,"./apps/modal":52,"./apps/simulator":53,"./core/api":55,"./core/core":56,"./loaders/data-aplazame":58,"./loaders/data-button":59,"./loaders/data-simulator":60,"./sandbox":61,"./tools/log":68}],47:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -2213,7 +2443,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":50,"../tools/tools":67}],44:[function(require,module,exports){
+},{"../core/api-http":54,"../tools/tools":71}],48:[function(require,module,exports){
 'use strict';
 
 function checkoutNormalizer(checkout, location, api) {
@@ -2266,7 +2496,7 @@ function checkoutNormalizer(checkout, location, api) {
 
 module.exports = checkoutNormalizer;
 
-},{}],45:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -2485,7 +2715,7 @@ function checkout (options) {
 
 module.exports = checkout;
 
-},{"../core/api":51,"../tools/css-hack":61,"../tools/tools":67,"./checkout-normalizer":44,"./loading-svg":47,"http-browser":11}],46:[function(require,module,exports){
+},{"../core/api":55,"../tools/css-hack":65,"../tools/tools":71,"./checkout-normalizer":48,"./loading-svg":51,"http-browser":15}],50:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -2523,7 +2753,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":67,"http-browser":11}],47:[function(require,module,exports){
+},{"../tools/tools":71,"http-browser":15}],51:[function(require,module,exports){
 
 module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' +
 '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' +
@@ -2538,7 +2768,7 @@ module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' 
 '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' +
 '</svg>';
 
-},{}],48:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 
 window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
@@ -2660,12 +2890,12 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":51,"../tools/css-hack":61,"../tools/tools":67}],49:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":55,"../tools/css-hack":65,"../tools/tools":71}],53:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
-    $q = require('q-promise/no-native'),
+    $q = require('q-promise'),
     cache = [],
     requestsCache = {};
 
@@ -2737,7 +2967,7 @@ function simulator (amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":50,"../tools/tools":67,"q-promise/no-native":22}],50:[function(require,module,exports){
+},{"../core/api-http":54,"../tools/tools":71,"q-promise":22}],54:[function(require,module,exports){
 'use strict';
 
 var apzVersion = require('../../.tmp/aplazame-version'),
@@ -2786,7 +3016,7 @@ _.each(['post', 'put', 'patch'], function (method) {
 
 module.exports = apiHttp;
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":67,"./api":51,"http-browser":11}],51:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":71,"./api":55,"http-browser":15}],55:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -2798,7 +3028,7 @@ module.exports = {
   sandbox: false
 };
 
-},{}],52:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -2811,7 +3041,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":67,"./api-http":50,"./init":53}],53:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":71,"./api-http":54,"./init":57}],57:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -2849,7 +3079,7 @@ function init (options) {
 
 module.exports = init;
 
-},{"../tools/tools":67,"./api":51}],54:[function(require,module,exports){
+},{"../tools/tools":71,"./api":55}],58:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -2918,12 +3148,12 @@ module.exports = function (aplazame) {
 
 };
 
-},{}],55:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
   var _ = aplazame._,
-      $q = require('q-promise/no-native');
+      $q = require('q-promise');
 
   function buttonsLookup (element) {
     element = element || document;
@@ -2972,13 +3202,13 @@ module.exports = function (aplazame) {
 
 };
 
-},{"q-promise/no-native":22}],56:[function(require,module,exports){
+},{"q-promise":22}],60:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      $q = require('q-promise/no-native'),
+      $q = require('q-promise'),
       Events = require('events-wrapper'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
@@ -3365,7 +3595,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"../../.tmp/simulator/templates/modal-instalments":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":51,"events-wrapper":10,"q-promise/no-native":22}],57:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/modal-instalments":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":55,"events-wrapper":10,"q-promise":22}],61:[function(require,module,exports){
 'use strict';
 
 function _errorData(err) {
@@ -3389,7 +3619,7 @@ module.exports = function (func) {
   }
 };
 
-},{}],58:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -3453,7 +3683,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],59:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -3637,7 +3867,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":13}],60:[function(require,module,exports){
+},{"nitro-tools/extend":17}],64:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -3656,7 +3886,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],61:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 
 
 var importantCSS = function (css) {
@@ -3708,7 +3938,7 @@ var importantCSS = function (css) {
 
 module.exports = cssHack;
 
-},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],62:[function(require,module,exports){
+},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],66:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -3749,7 +3979,7 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],63:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
@@ -3801,7 +4031,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":59}],64:[function(require,module,exports){
+},{"./browser-tools":63}],68:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -3830,7 +4060,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],65:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false;
@@ -3875,7 +4105,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],66:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -3914,7 +4144,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],67:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -3937,4 +4167,4 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":58,"./browser-tools":59,"./colors":60,"./deserialize":62,"./live-dom":63,"./log":64,"./message-listener":65,"./template":66,"nitro-tools/lists":15,"nitro-tools/path":16,"vanilla-tools":29}]},{},[42]);
+},{"./amount-price":62,"./browser-tools":63,"./colors":64,"./deserialize":66,"./live-dom":67,"./log":68,"./message-listener":69,"./template":70,"nitro-tools/lists":19,"nitro-tools/path":20,"vanilla-tools":29}]},{},[46]);

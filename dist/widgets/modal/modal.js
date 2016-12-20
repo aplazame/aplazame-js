@@ -457,56 +457,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":3,"./type":8}],5:[function(require,module,exports){
-
-var type = require('./type');
-
-function _key (o, _key, value){
-    if( !type.isObject(o) ) {
-			return undefined;
-		}
-
-    var keys = _key.split('.'),
-        key = keys.shift();
-
-    if( value === undefined ) {
-      while (key) {
-        if( type.isObject(o) && key in o ) {
-          o = o[key];
-        } else {
-          return;
-        }
-        key = keys.shift();
-      }
-
-      return o;
-    } else {
-
-      while (key) {
-        if( o instanceof Object ) {
-          if ( keys.length ){
-            if( !(key in o) ) {
-              o[key] = {};
-            }
-            o = o[key];
-          } else {
-            o[key] = value;
-            return true;
-          }
-        }
-        key = keys.shift();
-      }
-
-      return false;
-    }
-}
-
-module.exports = {
-  key: _key,
-  keys: Object.keys
-};
-
-},{"./type":8}],6:[function(require,module,exports){
+},{"./_extend":3,"./type":7}],5:[function(require,module,exports){
 
 var type = require('./type'),
     arrSome = Array.prototype.some,
@@ -734,7 +685,7 @@ module.exports = {
   }
 };
 
-},{"./type":8}],7:[function(require,module,exports){
+},{"./type":7}],6:[function(require,module,exports){
 
 var RE_dotsBack = /[^\/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
@@ -761,7 +712,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 function _isType (type) {
@@ -806,7 +757,7 @@ module.exports = {
   }
 };
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1030,6 +981,24 @@ module.exports = {
 
 }));
 
+},{}],9:[function(require,module,exports){
+var arrayShift = [].shift;
+
+module.exports = function extend () {
+  var dest = arrayShift.call(arguments),
+      src = arrayShift.call(arguments),
+      key;
+
+  while( src ) {
+    for( key in src) {
+      dest[key] = src[key];
+    }
+    src = arrayShift.call(arguments);
+  }
+
+  return dest;
+};
+
 },{}],10:[function(require,module,exports){
 
 // require('./browser-polyfills/current-script');
@@ -1095,17 +1064,7 @@ if( !Element.prototype.matchesSelector ) {
 
 },{}],16:[function(require,module,exports){
 
-// document.currentScript
-// Date.now()
-// HTMLElement.closest()
-// HTMLElement.addEventListener
-// HTMLElement.removeEventListener
-// window.matchMedia
-// Element.prototype.matchesSelector
-
-// require('classlist.js'); // https://developer.mozilla.org/es/docs/Web/API/Element/classList
-
-var extend = require('nitro-tools/extend');
+var extend = require('./extend');
 
 function _ (selector, source) {
   return source && typeof source === 'string' ?
@@ -1132,13 +1091,13 @@ _.usePolyfills = _.once(function () {
 
 _.q = require('parole');
 
-extend.extend(_, extend);
-
-_.extend(_,
-  require('nitro-tools/type'),
-	require('nitro-tools/key'),
-	require('nitro-tools/path')
+extend.extend(_, extend,
+  require('./key'),
+  require('./type'),
+  require('./path')
 );
+
+_.Scope = require('./scope');
 
 _.extend(_, {
 	animate: require('./deferred/animate'),
@@ -1148,29 +1107,29 @@ _.extend(_, {
 _.extend(_, {
 	ready: require('./fn/ready'),
 	template: require('./fn/template'),
-	template: require('./fn/once'),
+	once: require('./fn/once'),
 	debounce: require('./fn/debounce')
 });
 
 _.extend(_,
-  require('./utils/events'),
+  require('./events'),
 	// _.on(el, eventName, handler, useCapture)
 	// _.off(el, eventName, handler, useCapture)
 	// _.triggerEvent(element, eventName, data)
 
-  require('./utils/dom')
+  require('./dom')
   // _.create(tagName, attrs)
 	// _.attr(el, name, value)
   // _.tmpClass(el, className, duration, cb)
 );
 
 _.extend(_, {
-	normalize: require('./utils/normalize'),
+	normalize: require('./normalize'),
 	// _.touchDevice === true | false
 	// _.isMac === true | false
 	// _.isAndroid === true | false
 
-	scroll: require('./utils/scroll/bundle') // scroll is not available until document is ready
+	scroll: require('./scroll/bundle') // scroll is not available until document is ready
 	// _.scroll.on( handler, useCapture )
 	// _.scroll.off( handler, useCapture )
 	// _.scroll.top()
@@ -1181,7 +1140,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":10,"./deferred/animate":17,"./deferred/wait":18,"./fn/debounce":19,"./fn/once":20,"./fn/ready":21,"./fn/template":22,"./utils/dom":23,"./utils/events":24,"./utils/normalize":25,"./utils/scroll/bundle":28,"nitro-tools/extend":4,"nitro-tools/key":5,"nitro-tools/path":7,"nitro-tools/type":8,"parole":9}],17:[function(require,module,exports){
+},{"./browser-polyfills":10,"./deferred/animate":17,"./deferred/wait":18,"./dom":19,"./events":21,"./extend":22,"./fn/debounce":23,"./fn/once":24,"./fn/ready":25,"./fn/template":26,"./key":27,"./normalize":28,"./path":29,"./scope":30,"./scroll/bundle":33,"./type":35,"parole":8}],17:[function(require,module,exports){
 
 var Parole = require('parole'),
     beizerEasing = require('bezier-easing'),
@@ -1211,6 +1170,7 @@ var now = Date.now ? function () {
 };
 
 function animate (progressFn, duration, atEnd, timingFunctionName) {
+  var aux;
   if ( duration instanceof Function ) {
     if ( typeof atEnd === 'number' ) {
       aux = duration;
@@ -1276,7 +1236,7 @@ animate.time = function (el) {
   duration = window.getComputedStyle(el).transitionDuration;
   if( duration ) {
     duration.replace(/([0-9](\.[0-9])?)(m)?s/, function (matched, t, decimals, ms) {
-      var t = ms ? Number(t) : Number(t)*1000;
+      t = ms ? Number(t) : Number(t)*1000;
       if( t > time ) {
         time = t;
       }
@@ -1288,7 +1248,7 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":2,"parole":9}],18:[function(require,module,exports){
+},{"bezier-easing":2,"parole":8}],18:[function(require,module,exports){
 
 var Parole = require('parole'),
 	wait = function (delay, callback) {
@@ -1301,7 +1261,7 @@ var Parole = require('parole'),
 		if( typeof delay !== 'number' ) {
 			throw new Error('delay should be a Number');
 		}
-		return new Parole(function (resolve, reject) {
+		return new Parole(function (resolve) {
 			setTimeout(function () {
 				resolve();
 				if( callback ) {
@@ -1313,107 +1273,7 @@ var Parole = require('parole'),
 
 module.exports = wait;
 
-},{"parole":9}],19:[function(require,module,exports){
-
-function debounce (fn, timeslot) {
-  var timer = null,
-      timeslot = timeslot || 80;
-
-  return function () {
-    var _this = this, args = arguments;
-
-    if( timer ) {
-      clearTimeout(timer);
-      timer = null;
-    }
-
-    timer = setTimeout(function () {
-      fn.apply(_this, args);
-    }, timeslot);
-  };
-}
-
-module.exports = debounce;
-},{}],20:[function(require,module,exports){
-
-function once (fn, nextValue) {
-  var result, hasNextValue = arguments.length > 1;
-  return function () {
-    if( fn ) {
-      result = fn.apply(this, arguments);
-      fn = null;
-      return result;
-    }
-    return hasNextValue ? nextValue : result;
-  };
-}
-
-module.exports = once;
-
-},{}],21:[function(require,module,exports){
-var readyListeners = [],
-    initReady = function () {
-      var listeners = readyListeners;
-      readyListeners = undefined;
-      [].forEach.call(listeners, function (cb) { cb(); });
-      document.removeEventListener('DOMContentLoaded', initReady);
-      window.removeEventListener('load', initReady);
-    };
-
-document.addEventListener('DOMContentLoaded', initReady);
-window.addEventListener('load', initReady);
-
-function ready (callback) {
-  if( callback instanceof Function ) {
-    if( readyListeners ) {
-      readyListeners.push(callback);
-    } else {
-      callback();
-    }
-  }
-}
-
-module.exports = ready;
-
-},{}],22:[function(require,module,exports){
-
-function template (name, data){
-  return template.cache[name](data || {});
-}
-
-template.cache = {};
-
-template.compile = function (tmpl) {
-  // John Resig micro-template
-  return new Function('obj', // jshint ignore:line
-    'var p=[],print=function(){p.push.apply(p,arguments);};' +
-
-    // Introduce the data as local variables using with(){}
-    'with(obj){p.push(\'' +
-
-    // Convert the template into pure JavaScript
-    tmpl.trim()
-      .replace(/[\r\t\n]/g, ' ')
-      .split('<%').join('\t')
-      .replace(/((^|%>)[^\t]*)'/g, '$1\r')
-      .replace(/\t=(.*?)%>/g, '\',$1,\'')
-      .split('\t').join('\');')
-      .split('%>').join('p.push(\'')
-      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
-};
-
-template.put = function (name, tmpl) {
-  template.cache[name] = template.compile(tmpl);
-};
-
-template.lookup = function () {
-  [].forEach.call(document.querySelectorAll('script[type="application/x-template"][data-template]'), function (tmpl) {
-    template.put(tmpl.getAttribute('data-template'), tmpl.text);
-  });
-};
-
-module.exports = template;
-},{}],23:[function(require,module,exports){
+},{"parole":8}],19:[function(require,module,exports){
 
 var classListEnabled = !!document.createElement('div').classList;
 
@@ -1523,7 +1383,21 @@ var _dom = {
 
 module.exports = _dom;
 
-},{}],24:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+
+'use strict';
+
+module.exports = function (expression) {
+
+  /* jshint ignore:start */
+  var fn = new Function('model', 'try{ with(model) { return (' + expression + ') }; } catch(err) { return \'\'; }');
+  /* jshint ignore:end */
+  return function (model, thisArg) {
+    return fn.call(thisArg, model);
+  };
+};
+
+},{}],21:[function(require,module,exports){
 
 module.exports = {
   on: function (el, eventName, handler, useCapture) {
@@ -1539,7 +1413,7 @@ module.exports = {
     return el.removeEventListener(eventName, handler, useCapture);
   },
   triggerEvent: document.createEvent ? function (element, eventName, data) {
-    var event = document.createEvent("HTMLEvents");
+    var event = document.createEvent('HTMLEvents');
     event.data = data;
     event.initEvent(eventName, true, true);
     element.dispatchEvent(event);
@@ -1547,12 +1421,228 @@ module.exports = {
   } : function (element, eventName, data) {
     var event = document.createEventObject();
     event.data = data;
-    element.fireEvent("on" + eventName, event);
+    element.fireEvent('on' + eventName, event);
     return event;
   }
 };
 
+},{}],22:[function(require,module,exports){
+
+var arrayShift = [].shift,
+    type = require('./type');
+
+function _merge () {
+    var dest = arrayShift.call(arguments),
+        src = arrayShift.call(arguments),
+        key;
+
+    while( src ) {
+
+      if( typeof dest !== typeof src ) {
+          dest = type.isArray(src) ? [] : ( type.isObject(src) ? {} : src );
+      }
+
+      if( type.isObject(src) ) {
+
+        for( key in src ) {
+          if( src[key] === undefined ) {
+            dest[key] = undefined;
+          } else if( type.isArray(dest[key]) ) {
+            [].push.apply(dest[key], src[key]);
+          } else if( type.isObject(dest[key]) ) {
+            dest[key] = _merge(dest[key], src[key]);
+          } else {
+            dest[key] = src[key];
+          }
+        }
+      }
+      src = arrayShift.call(arguments);
+    }
+
+    return dest;
+}
+
+function mapObject (o, iteratee) {
+  var result = {};
+  for( var key in o ) {
+    result[key] = iteratee(o[key], key);
+  }
+  return result;
+}
+
+function _copy (src) {
+  if( type.isArray(src) ) {
+    return src.map(function (item) {
+      return _copy(item);
+    });
+  }
+
+  if( type.isObject(src) ) {
+    return mapObject(src, function (item) {
+      return _copy(item);
+    });
+  }
+
+  return src;
+}
+
+module.exports = {
+  extend: require('./_extend'),
+  merge: _merge,
+  copy: _copy
+};
+
+},{"./_extend":9,"./type":35}],23:[function(require,module,exports){
+
+function debounce (fn, timeslot) {
+  timeslot = timeslot || 80;
+
+  var timer = null;
+
+  return function () {
+    var _this = this, args = arguments;
+
+    if( timer ) {
+      clearTimeout(timer);
+      timer = null;
+    }
+
+    timer = setTimeout(function () {
+      fn.apply(_this, args);
+    }, timeslot);
+  };
+}
+
+module.exports = debounce;
+
+},{}],24:[function(require,module,exports){
+
+function once (fn, nextValue) {
+  var result, hasNextValue = arguments.length > 1;
+  return function () {
+    if( fn ) {
+      result = fn.apply(this, arguments);
+      fn = null;
+      return result;
+    }
+    return hasNextValue ? nextValue : result;
+  };
+}
+
+module.exports = once;
+
 },{}],25:[function(require,module,exports){
+var readyListeners = [],
+    initReady = function () {
+      var listeners = readyListeners;
+      readyListeners = undefined;
+      [].forEach.call(listeners, function (cb) { cb(); });
+      document.removeEventListener('DOMContentLoaded', initReady);
+      window.removeEventListener('load', initReady);
+    };
+
+document.addEventListener('DOMContentLoaded', initReady);
+window.addEventListener('load', initReady);
+
+function ready (callback) {
+  if( callback instanceof Function ) {
+    if( readyListeners ) {
+      readyListeners.push(callback);
+    } else {
+      callback();
+    }
+  }
+}
+
+module.exports = ready;
+
+},{}],26:[function(require,module,exports){
+
+function template (name, data){
+  return template.cache[name](data || {});
+}
+
+template.cache = {};
+
+template.compile = function (tmpl) {
+  // John Resig micro-template
+  return new Function('obj', // jshint ignore:line
+    'var p=[],print=function(){p.push.apply(p,arguments);};' +
+
+    // Introduce the data as local variables using with(){}
+    'with(obj){p.push(\'' +
+
+    // Convert the template into pure JavaScript
+    tmpl.trim()
+      .replace(/[\r\t\n]/g, ' ')
+      .split('<%').join('\t')
+      .replace(/((^|%>)[^\t]*)'/g, '$1\r')
+      .replace(/\t=(.*?)%>/g, '\',$1,\'')
+      .split('\t').join('\');')
+      .split('%>').join('p.push(\'')
+      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+};
+
+template.put = function (name, tmpl) {
+  template.cache[name] = template.compile(tmpl);
+};
+
+template.lookup = function () {
+  [].forEach.call(document.querySelectorAll('script[type="application/x-template"][data-template]'), function (tmpl) {
+    template.put(tmpl.getAttribute('data-template'), tmpl.text);
+  });
+};
+
+module.exports = template;
+},{}],27:[function(require,module,exports){
+var type = require('./type');
+
+function _key (o, _key, value){
+    if( !type.isObject(o) ) {
+			return undefined;
+		}
+
+    var keys = _key.split('.'),
+        key = keys.shift();
+
+    if( value === undefined ) {
+      while (key) {
+        if( type.isObject(o) && key in o ) {
+          o = o[key];
+        } else {
+          return;
+        }
+        key = keys.shift();
+      }
+
+      return o;
+    } else {
+
+      while (key) {
+        if( o instanceof Object ) {
+          if ( keys.length ){
+            if( !(key in o) ) {
+              o[key] = {};
+            }
+            o = o[key];
+          } else {
+            o[key] = value;
+            return true;
+          }
+        }
+        key = keys.shift();
+      }
+
+      return false;
+    }
+}
+
+module.exports = {
+  key: _key,
+  keys: Object.keys
+};
+
+},{"./type":35}],28:[function(require,module,exports){
 
 var normalize = {
   isTouchDevice: 'ontouchstart' in document.documentElement,
@@ -1573,7 +1663,62 @@ var normalize = {
 
 module.exports = normalize;
 
-},{"./dom":23}],26:[function(require,module,exports){
+},{"./dom":19}],29:[function(require,module,exports){
+var RE_dotsBack = /[^\/]+\/\.\.\//g,
+	clearStr = function () { return ''; };
+
+function _joinPath () {
+    var path = (arguments[0] || '').replace(/\/$/, '');
+
+    for( var i = 1, last = arguments.length - 1 ; i < last ; i++ ) {
+        path += '/' + arguments[i].replace(/^\/|\/$/g, '');
+    }
+    if( last ) {
+        path += arguments[last] ? ( '/' + arguments[last].replace(/^\//, '') ) : '';
+    }
+
+    while( RE_dotsBack.test(path) ) {
+			path = path.replace(RE_dotsBack, clearStr);
+    }
+
+    return path;
+}
+
+module.exports = {
+  joinPath: _joinPath
+};
+
+},{}],30:[function(require,module,exports){
+'use strict';
+
+var evalExpression = require('./eval');
+
+var Scope = function (data) {
+	if(!this) {
+		return new Scope(data);
+	}
+
+  this.extend(data || {});
+};
+
+Scope.prototype.new = function(data) {
+    return Object.create(this).extend(data);
+};
+
+Scope.prototype.extend = function(data) {
+  for( var key in data ) {
+    this[key] = data[key];
+  }
+  return this;
+};
+
+Scope.prototype.eval = function ( expression, thisArg ) {
+  return evalExpression(expression)(this, thisArg);
+};
+
+module.exports = Scope;
+
+},{"./eval":20}],31:[function(require,module,exports){
 
 function getScrollRoot () {
   var html = document.documentElement, body = document.body;
@@ -1581,7 +1726,7 @@ function getScrollRoot () {
   if( html.scrollTop ) return html;
   if( body.scrollTop ) return body;
 
-  var cacheTop = ((typeof window.pageYOffset !== "undefined") ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
+  var cacheTop = ((typeof window.pageYOffset !== 'undefined') ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
       root;
 
   html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
@@ -1593,7 +1738,7 @@ function getScrollRoot () {
   return root; // return the scrolling root element
 }
 
-var ready = require('../fn/ready'),
+var ready = require('./fn/ready'),
     scrollRoot = { scrollTop: 0 },
     scroll = {
       root: scrollRoot,
@@ -1618,11 +1763,11 @@ ready(function () {
 
 module.exports = scroll;
 
-},{"../fn/ready":21}],27:[function(require,module,exports){
+},{"./fn/ready":25}],32:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
-	var animate = require('../../deferred/animate'),
+	var animate = require('../deferred/animate'),
 			Parole = require('parole'),
 			noop = function() {},
 			scrollAnimation = animate(noop, 0),
@@ -1636,7 +1781,7 @@ module.exports = function (scroll) {
 		var scrollFrom = scroll.top();
 
 		if( value === undefined ) {
-		  return Parole.reject();
+			return Parole.reject();
 		}
 		if( value instanceof Element ) {
 			// position from top of the page
@@ -1644,9 +1789,9 @@ module.exports = function (scroll) {
 		}
 
 		if( typeof cb === 'number' ) {
-		  aux = duration;
-		  duration = cb;
-		  cb = typeof aux === 'function' ? aux : noop;
+			aux = duration;
+			duration = cb;
+			cb = typeof aux === 'function' ? aux : noop;
 		}
 
 		var scrollDelta = value - scrollFrom;
@@ -1654,10 +1799,10 @@ module.exports = function (scroll) {
 		scrollAnimation.stop();
 		scroll.inAnimation = true;
 		scrollAnimation = animate(function (progress) {
-		  scroll.goto( scrollFrom + scrollDelta*progress );
+			scroll.goto( scrollFrom + scrollDelta*progress );
 		}, function () {
-		  scroll.inAnimation = false;
-		  (cb || noop)();
+			scroll.inAnimation = false;
+			(cb || noop)();
 		}, duration || 350, 'ease-out');
 
 		return scrollAnimation;
@@ -1666,7 +1811,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../../deferred/animate":17,"parole":9}],28:[function(require,module,exports){
+},{"../deferred/animate":17,"parole":8}],33:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -1674,11 +1819,11 @@ require('./top-class')(scroll);
 require('./animate')(scroll);
 
 module.exports = scroll;
-},{"../scroll":26,"./animate":27,"./top-class":29}],29:[function(require,module,exports){
+},{"../scroll":31,"./animate":32,"./top-class":34}],34:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
-	var ready = require('../../fn/ready');
+	var ready = require('../fn/ready');
 
 	scroll.autoTopClass = function (topClass, topClassAlt) {
 
@@ -1697,7 +1842,9 @@ module.exports = function (scroll) {
 
 };
 
-},{"../../fn/ready":21,"../dom":23}],30:[function(require,module,exports){
+},{"../dom":19,"../fn/ready":25}],35:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"dup":7}],36:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -1761,7 +1908,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],31:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -1945,7 +2092,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":4}],32:[function(require,module,exports){
+},{"nitro-tools/extend":4}],38:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -1964,7 +2111,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],33:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -2005,7 +2152,7 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],34:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
@@ -2057,7 +2204,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":31}],35:[function(require,module,exports){
+},{"./browser-tools":37}],41:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -2086,7 +2233,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],36:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false;
@@ -2131,7 +2278,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],37:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -2170,7 +2317,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],38:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -2193,7 +2340,7 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":30,"./browser-tools":31,"./colors":32,"./deserialize":33,"./live-dom":34,"./log":35,"./message-listener":36,"./template":37,"nitro-tools/lists":6,"nitro-tools/path":7,"vanilla-tools":16}],39:[function(require,module,exports){
+},{"./amount-price":36,"./browser-tools":37,"./colors":38,"./deserialize":39,"./live-dom":40,"./log":41,"./message-listener":42,"./template":43,"nitro-tools/lists":5,"nitro-tools/path":6,"vanilla-tools":16}],45:[function(require,module,exports){
 var _ = require('../../src/tools/tools'), Modal;
 
 _.onMessage('modal', function (e, message) {
@@ -2230,4 +2377,4 @@ _.ready(function () {
   parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
 });
 
-},{"../../.bower_components/ng-aplazame/toolkit/modal":1,"../../src/tools/tools":38}]},{},[39]);
+},{"../../.bower_components/ng-aplazame/toolkit/modal":1,"../../src/tools/tools":44}]},{},[45]);

@@ -86,13 +86,13 @@ function checkout (options) {
             background: 'transparent'
           }),
           httpCheckout = function () {
-            var started = Date.now();
+            var started = _.now();
             return http.apply(this, arguments).then(function (response) {
               iframe.contentWindow.postMessage({
                 aplazame: 'checkout',
                 event: 'http-success',
                 started: started,
-                elapsed: Date.now() - started,
+                elapsed: _.now() - started,
                 response: http.plainResponse(response)
               }, '*');
               return response;
@@ -101,7 +101,7 @@ function checkout (options) {
                 aplazame: 'checkout',
                 event: 'http-error',
                 started: started,
-                elapsed: Date.now() - started,
+                elapsed: _.now() - started,
                 response: http.plainResponse(response)
               }, '*');
               throw response;
@@ -203,7 +203,7 @@ function checkout (options) {
       // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
-      console.error('Aplazame ' + reason);
+      console.log('Aplazame ' + reason);
 
       _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
       loadingText.innerHTML = '<div class="text-error">Error cargando pasarela de pago</div><br/><div><a href="mailto:soporte@aplazame.com?subject=' + encodeURI('Checkout error: ' + reason) + '">soporte@aplazame.com</a></div>';

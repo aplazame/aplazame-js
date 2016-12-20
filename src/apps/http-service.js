@@ -14,7 +14,7 @@ function processResponse(result, message, messageSrc, started) {
       aplazame: 'http',
       event: 'response',
       started: started,
-      elapsed: Date.now() - started,
+      elapsed: _.now() - started,
       result: result,
       response: responsep
     }, '*');
@@ -23,7 +23,7 @@ function processResponse(result, message, messageSrc, started) {
 
 _.onMessage('http', function (e, message) {
 
-  var started = Date.now();
+  var started = _.now();
 
   http( message.url, message )
     .then(

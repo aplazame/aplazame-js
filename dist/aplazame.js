@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.375';
+module.exports = '0.0.376';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -119,248 +119,6 @@ module.exports = function bezier (mX1, mY1, mX2, mY2) {
 };
 
 },{}],9:[function(require,module,exports){
-/*
- * classList.js: Cross-browser full element.classList implementation.
- * 1.1.20150312
- *
- * By Eli Grey, http://eligrey.com
- * License: Dedicated to the public domain.
- *   See https://github.com/eligrey/classList.js/blob/master/LICENSE.md
- */
-
-/*global self, document, DOMException */
-
-/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
-
-if ("document" in self) {
-
-// Full polyfill for browsers with no classList support
-// Including IE < Edge missing SVGElement.classList
-if (!("classList" in document.createElement("_")) 
-	|| document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg","g"))) {
-
-(function (view) {
-
-"use strict";
-
-if (!('Element' in view)) return;
-
-var
-	  classListProp = "classList"
-	, protoProp = "prototype"
-	, elemCtrProto = view.Element[protoProp]
-	, objCtr = Object
-	, strTrim = String[protoProp].trim || function () {
-		return this.replace(/^\s+|\s+$/g, "");
-	}
-	, arrIndexOf = Array[protoProp].indexOf || function (item) {
-		var
-			  i = 0
-			, len = this.length
-		;
-		for (; i < len; i++) {
-			if (i in this && this[i] === item) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	// Vendors: please allow content code to instantiate DOMExceptions
-	, DOMEx = function (type, message) {
-		this.name = type;
-		this.code = DOMException[type];
-		this.message = message;
-	}
-	, checkTokenAndGetIndex = function (classList, token) {
-		if (token === "") {
-			throw new DOMEx(
-				  "SYNTAX_ERR"
-				, "An invalid or illegal string was specified"
-			);
-		}
-		if (/\s/.test(token)) {
-			throw new DOMEx(
-				  "INVALID_CHARACTER_ERR"
-				, "String contains an invalid character"
-			);
-		}
-		return arrIndexOf.call(classList, token);
-	}
-	, ClassList = function (elem) {
-		var
-			  trimmedClasses = strTrim.call(elem.getAttribute("class") || "")
-			, classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
-			, i = 0
-			, len = classes.length
-		;
-		for (; i < len; i++) {
-			this.push(classes[i]);
-		}
-		this._updateClassName = function () {
-			elem.setAttribute("class", this.toString());
-		};
-	}
-	, classListProto = ClassList[protoProp] = []
-	, classListGetter = function () {
-		return new ClassList(this);
-	}
-;
-// Most DOMException implementations don't allow calling DOMException's toString()
-// on non-DOMExceptions. Error's toString() is sufficient here.
-DOMEx[protoProp] = Error[protoProp];
-classListProto.item = function (i) {
-	return this[i] || null;
-};
-classListProto.contains = function (token) {
-	token += "";
-	return checkTokenAndGetIndex(this, token) !== -1;
-};
-classListProto.add = function () {
-	var
-		  tokens = arguments
-		, i = 0
-		, l = tokens.length
-		, token
-		, updated = false
-	;
-	do {
-		token = tokens[i] + "";
-		if (checkTokenAndGetIndex(this, token) === -1) {
-			this.push(token);
-			updated = true;
-		}
-	}
-	while (++i < l);
-
-	if (updated) {
-		this._updateClassName();
-	}
-};
-classListProto.remove = function () {
-	var
-		  tokens = arguments
-		, i = 0
-		, l = tokens.length
-		, token
-		, updated = false
-		, index
-	;
-	do {
-		token = tokens[i] + "";
-		index = checkTokenAndGetIndex(this, token);
-		while (index !== -1) {
-			this.splice(index, 1);
-			updated = true;
-			index = checkTokenAndGetIndex(this, token);
-		}
-	}
-	while (++i < l);
-
-	if (updated) {
-		this._updateClassName();
-	}
-};
-classListProto.toggle = function (token, force) {
-	token += "";
-
-	var
-		  result = this.contains(token)
-		, method = result ?
-			force !== true && "remove"
-		:
-			force !== false && "add"
-	;
-
-	if (method) {
-		this[method](token);
-	}
-
-	if (force === true || force === false) {
-		return force;
-	} else {
-		return !result;
-	}
-};
-classListProto.toString = function () {
-	return this.join(" ");
-};
-
-if (objCtr.defineProperty) {
-	var classListPropDesc = {
-		  get: classListGetter
-		, enumerable: true
-		, configurable: true
-	};
-	try {
-		objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-	} catch (ex) { // IE 8 doesn't support enumerable:true
-		if (ex.number === -0x7FF5EC54) {
-			classListPropDesc.enumerable = false;
-			objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-		}
-	}
-} else if (objCtr[protoProp].__defineGetter__) {
-	elemCtrProto.__defineGetter__(classListProp, classListGetter);
-}
-
-}(self));
-
-} else {
-// There is full or partial native classList support, so just check if we need
-// to normalize the add/remove and toggle APIs.
-
-(function () {
-	"use strict";
-
-	var testElement = document.createElement("_");
-
-	testElement.classList.add("c1", "c2");
-
-	// Polyfill for IE 10/11 and Firefox <26, where classList.add and
-	// classList.remove exist but support only one argument at a time.
-	if (!testElement.classList.contains("c2")) {
-		var createMethod = function(method) {
-			var original = DOMTokenList.prototype[method];
-
-			DOMTokenList.prototype[method] = function(token) {
-				var i, len = arguments.length;
-
-				for (i = 0; i < len; i++) {
-					token = arguments[i];
-					original.call(this, token);
-				}
-			};
-		};
-		createMethod('add');
-		createMethod('remove');
-	}
-
-	testElement.classList.toggle("c3", false);
-
-	// Polyfill for IE 10 and Firefox <24, where classList.toggle does not
-	// support the second argument.
-	if (testElement.classList.contains("c3")) {
-		var _toggle = DOMTokenList.prototype.toggle;
-
-		DOMTokenList.prototype.toggle = function(token, force) {
-			if (1 in arguments && !this.contains(token) === !force) {
-				return force;
-			} else {
-				return _toggle.call(this, token);
-			}
-		};
-
-	}
-
-	testElement = null;
-}());
-
-}
-
-}
-
-
-},{}],10:[function(require,module,exports){
 /*
  * events.js - Single library to handle generic events
 
@@ -537,213 +295,11 @@ if (objCtr.defineProperty) {
   return Events;
 });
 
-},{}],11:[function(require,module,exports){
-
-module.exports = function (qPromise) {
-
-	function each (iterable, handler) {
-		for( var i = 0, n = iterable.length; i < n ; i++ ) {
-			handler(iterable[i], i);
-		}
-	}
-
-	function qResolve (result) {
-	  return qPromise(function (resolve, reject) { resolve(result); });
-	};
-
-	function qReject (reason) {
-	  return qPromise(function (resolve, reject) { reject(reason); });
-	};
-
-	var methods = {
-		resolve: qResolve,
-		reject: qReject,
-		defer: function () {
-		  var deferred = {};
-		  deferred.promise = qPromise(function (resolve, reject) {
-		    deferred.resolve = resolve;
-		    deferred.reject = reject;
-		  });
-		  return deferred;
-		},
-		all: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var pending = iterable.length,
-		        results = [];
-		    each(iterable, function (_promise, i) {
-
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        results[i] = result;
-		        if( --pending === 0 ) {
-		          resolve(results);
-		        }
-		      }, function (reason) {
-		        if( pending !== -1 ) {
-		          pending === -1;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		},
-		race: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var done = false;
-
-		    each(iterable, function (_promise, i) {
-		      if( done ) {
-		        return;
-		      }
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        if( !done ) {
-		          done = true;
-		          resolve(result);
-		        }
-		      }, function (reason) {
-		        if( !done ) {
-		          done = true;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		}
-	};
-
-	return function (q, override) {
-		for( var key in methods ) {
-			if( !q[key] || override ) {
-				q[key] = methods[key];
-			}
-		}
-		return q;
-	};
-};
-
-},{}],12:[function(require,module,exports){
-
-function stepResult (step, value, type) {
-  if( value && value.then ) {
-    value.then(function (result) {
-      step.deferred.resolve(result);
-    }, function (reason) {
-      step.deferred.reject(reason);
-    });
-  } else {
-    step.deferred[type](value);
-  }
-}
-
-function processQueue(promise) {
-  if( promise.$$succeeded === undefined ) {
-    return;
-  }
-
-  var len = promise.$$queue.length,
-      step = promise.$$queue.shift(),
-      type = promise.$$succeeded ? 'resolve' : 'reject',
-      uncough = !promise.$$succeeded && promise.$$uncought++;
-
-  while( step ) {
-
-    if( step[type] ) {
-      uncough = false;
-
-      try {
-        stepResult(step, step[type](promise.$$value), 'resolve');
-      } catch (reason) {
-        stepResult(step, reason, 'reject');
-      }
-
-    } else {
-      stepResult(step, promise.$$value, type);
-    }
-
-    step = promise.$$queue.shift();
-  }
-
-  if( !promise.$$succeeded && uncough ) {
-    if( promise.$$uncough === uncough ) {
-      throw new Error('Uncaught (in promise)');
-    }
-  }
-}
-
-function P (executor) {
-  if( !( executor instanceof Function ) ) {
-    throw new TypeError('Promise resolver undefined is not a function');
-  }
-
-  var p = this;
-  this.$$queue = [];
-  this.$$uncough = 0;
-
-  try {
-    executor(function (result) {
-      p.$$succeeded = true;
-      p.$$value = result;
-      processQueue(p);
-    }, function (reason) {
-      p.$$succeeded = false;
-      p.$$value = reason;
-      processQueue(p);
-    });
-  } catch (err) {
-    p.$$succeeded = false;
-    p.$$value = err;
-    processQueue(p);
-  }
-}
-
-P.prototype.then = function (onsucceeded, onRejected) {
-  var _this = this,
-      _promise = new P(function (resolve, reject) {
-        _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
-      });
-
-  processQueue(this);
-
-  return _promise;
-};
-
-P.prototype.catch = function (onRejected) {
-  return this.then(undefined, onRejected);
-};
-
-require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
-
-module.exports = P;
-
-},{"./promise-methods":11}],13:[function(require,module,exports){
-(function (global){
-
-module.exports = require('./qizer')( global.Promise ? require('./promise-methods')(function (executor) { return new global.Promise(executor); })(global.Promise) : require('./promise-polyfill') );
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-methods":11,"./promise-polyfill":12,"./qizer":14}],14:[function(require,module,exports){
-
-module.exports = function (Promise) {
-
-  function q (executor) {
-    return new Promise(executor);
-  }
-
-  require('./promise-methods')(q)(q, true);
-
-  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
-  q.usePolyfill = function () {
-  	Promise = require('./promise-polyfill');
-  };
-
-  return q;
-
-};
-
-},{"./promise-methods":11,"./promise-polyfill":12}],15:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 
 // factory http
 
-var $q = require('q-promise'),
+var Parole = require('parole'),
     _ = require('nitro-tools/extend');
 
 function resolveFunctions (o, args, thisArg) {
@@ -839,7 +395,7 @@ function http (url, config) {
     throw new Error('url should be a string');
   }
 
-  return $q(function (resolve, reject) {
+  return new Parole(function (resolve, reject) {
 
     var request = null;
 
@@ -984,7 +540,7 @@ http.responseData = function (response) {
 
 module.exports = http;
 
-},{"nitro-tools/extend":17,"q-promise":13}],16:[function(require,module,exports){
+},{"nitro-tools/extend":12,"parole":17}],11:[function(require,module,exports){
 
 var arrayShift = [].shift;
 
@@ -1003,7 +559,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],17:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 var RE_$$ = /^\$\$/,
     arrayShift = [].shift,
@@ -1070,7 +626,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":16,"./type":21}],18:[function(require,module,exports){
+},{"./_extend":11,"./type":16}],13:[function(require,module,exports){
 
 var type = require('./type');
 
@@ -1119,7 +675,7 @@ module.exports = {
   keys: Object.keys
 };
 
-},{"./type":21}],19:[function(require,module,exports){
+},{"./type":16}],14:[function(require,module,exports){
 
 var type = require('./type'),
     arrSome = Array.prototype.some,
@@ -1347,7 +903,7 @@ module.exports = {
   }
 };
 
-},{"./type":21}],20:[function(require,module,exports){
+},{"./type":16}],15:[function(require,module,exports){
 
 var RE_dotsBack = /[^\/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
@@ -1374,7 +930,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],21:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 function _isType (type) {
@@ -1419,7 +975,7 @@ module.exports = {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1432,7 +988,7 @@ module.exports = {
     module.exports = factory();
   } else {
     // Browser globals (root is window)
-    root.$q = factory();
+    root.Parole = factory();
   }
 }(this, function () {
 
@@ -1517,9 +1073,9 @@ module.exports = {
     xThen(p, x, fulfilled);
   }
 
-  function Q (resolver) {
-    if( !(this instanceof Q) ) {
-      return new Q(resolver);
+  function Parole (resolver) {
+    if( !(this instanceof Parole) ) {
+      return new Parole(resolver);
     }
 
     if( typeof resolver !== 'function' ) {
@@ -1545,9 +1101,9 @@ module.exports = {
 
   }
 
-  Q.prototype.then = function (onFulfilled, onRejected) {
+  Parole.prototype.then = function (onFulfilled, onRejected) {
     var p = this.__promise,
-        deferred = Q.defer();
+        deferred = Parole.defer();
 
     if( p.queue ) {
       p.queue.push([onFulfilled, onRejected, deferred]);
@@ -1560,7 +1116,7 @@ module.exports = {
     return deferred.promise;
   };
 
-  Q.prototype.catch = function (onRejected) {
+  Parole.prototype.catch = function (onRejected) {
     return this.then(null, onRejected);
   };
 
@@ -1572,36 +1128,36 @@ module.exports = {
     }
   }
 
-  Q.defer = function () {
+  Parole.defer = function () {
     var deferred = {};
-    deferred.promise = new Q(function (resolve, reject) {
+    deferred.promise = new Parole(function (resolve, reject) {
       deferred.resolve = resolve;
       deferred.reject = reject;
     });
     return deferred;
   };
 
-  Q.when = function (x) { return ( x && x.then ) ? x : Q.resolve(x); };
+  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
 
-  Q.resolve = function (value) {
-    return new Q(function (resolve) {
+  Parole.resolve = function (value) {
+    return new Parole(function (resolve) {
       resolve(value);
     });
   };
 
-  Q.reject = function (value) {
-    return new Q(function (resolve, reject) {
+  Parole.reject = function (value) {
+    return new Parole(function (resolve, reject) {
       reject(value);
     });
   };
 
-  Q.all = function (iterable) {
-    return new Q(function (resolve, reject) {
+  Parole.all = function (iterable) {
+    return new Parole(function (resolve, reject) {
       var pending = iterable.length,
           results = [];
       each(iterable, function (_promise, i) {
 
-        ( _promise.then ? _promise : Q.resolve(_promise) ).then(function (result) {
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
           results[i] = result;
           if( --pending === 0 ) {
             resolve(results);
@@ -1616,15 +1172,15 @@ module.exports = {
     });
   };
 
-  Q.race = function (iterable) {
-    return new Q(function (resolve, reject) {
+  Parole.race = function (iterable) {
+    return new Parole(function (resolve, reject) {
       var done = false;
 
       each(iterable, function (_promise) {
         if( done ) {
           return;
         }
-        ( _promise.then ? _promise : Q.resolve(_promise) ).then(function (result) {
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
           if( !done ) {
             done = true;
             resolve(result);
@@ -1639,11 +1195,11 @@ module.exports = {
     });
   };
 
-  return Q;
+  return Parole;
 
 }));
 
-},{}],23:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 // require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
@@ -1652,14 +1208,14 @@ require('./browser-polyfills/event-listener');
 require('./browser-polyfills/match-media');
 require('./browser-polyfills/matches-selector');
 
-},{"./browser-polyfills/date":24,"./browser-polyfills/dom-closest":25,"./browser-polyfills/event-listener":26,"./browser-polyfills/match-media":27,"./browser-polyfills/matches-selector":28}],24:[function(require,module,exports){
+},{"./browser-polyfills/date":19,"./browser-polyfills/dom-closest":20,"./browser-polyfills/event-listener":21,"./browser-polyfills/match-media":22,"./browser-polyfills/matches-selector":23}],19:[function(require,module,exports){
 
 if (!Date.now) {
   Date.now = function now() {
     return new Date().getTime();
   };
 }
-},{}],25:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 
 if( !Element.prototype.closest ) {
   Element.prototype.closest = function (selector) {
@@ -1674,7 +1230,7 @@ if( !Element.prototype.closest ) {
     return el;
   };
 }
-},{}],26:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 
 if( !Element.prototype.addEventListener ) {
   if( Element.prototype.attachEvent ) {
@@ -1688,13 +1244,13 @@ if( !Element.prototype.addEventListener ) {
     throw 'Browser not compatible with element events';
   }
 }
-},{}],27:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 (function (root) {
   'use strict';
 
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
-},{}],28:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
@@ -1706,9 +1262,8 @@ if( !Element.prototype.matchesSelector ) {
 }
 
 
-},{}],29:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 
-require('./browser-polyfills');
 // document.currentScript
 // Date.now()
 // HTMLElement.closest()
@@ -1717,7 +1272,7 @@ require('./browser-polyfills');
 // window.matchMedia
 // Element.prototype.matchesSelector
 
-require('classlist.js'); // https://developer.mozilla.org/es/docs/Web/API/Element/classList
+// require('classlist.js'); // https://developer.mozilla.org/es/docs/Web/API/Element/classList
 
 var extend = require('nitro-tools/extend');
 
@@ -1728,7 +1283,23 @@ function _ (selector, source) {
 }
 
 _.noop = function (value) { return value; };
-_.q = require('q-promise/no-native');
+_.once = function (fn) {
+  return function () {
+    if( fn ) fn.apply(this, arguments);
+    fn = null;
+  };
+};
+_.now = Date.now ? function () {
+  return Date.now();
+} : function () {
+  return new Date().getTime();
+};
+
+_.usePolyfills = _.once(function () {
+  require('./browser-polyfills');
+});
+
+_.q = require('parole');
 
 extend.extend(_, extend);
 
@@ -1746,6 +1317,7 @@ _.extend(_, {
 _.extend(_, {
 	ready: require('./fn/ready'),
 	template: require('./fn/template'),
+	template: require('./fn/once'),
 	debounce: require('./fn/debounce')
 });
 
@@ -1778,9 +1350,10 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":23,"./deferred/animate":30,"./deferred/wait":31,"./fn/debounce":32,"./fn/ready":33,"./fn/template":34,"./utils/dom":39,"./utils/events":40,"./utils/normalize":41,"./utils/scroll/bundle":44,"classlist.js":9,"nitro-tools/extend":17,"nitro-tools/key":18,"nitro-tools/path":20,"nitro-tools/type":21,"q-promise/no-native":38}],30:[function(require,module,exports){
+},{"./browser-polyfills":18,"./deferred/animate":25,"./deferred/wait":26,"./fn/debounce":27,"./fn/once":28,"./fn/ready":29,"./fn/template":30,"./utils/dom":31,"./utils/events":32,"./utils/normalize":33,"./utils/scroll/bundle":36,"nitro-tools/extend":12,"nitro-tools/key":13,"nitro-tools/path":15,"nitro-tools/type":16,"parole":17}],25:[function(require,module,exports){
 
-var $q = require('q-promise/no-native'),
+var Parole = require('parole'),
+    beizerEasing = require('bezier-easing'),
     timingFunctions = {},
     noop = function () {},
     getTimingFunction = function (timingFunctionName) {
@@ -1788,17 +1361,23 @@ var $q = require('q-promise/no-native'),
         if( timingFunctionName === 'linear' ) {
           timingFunctions[timingFunctionName] = function ( value ) { return value; };
         } else if( timingFunctionName === 'ease' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(.17,.67,.83,.67);
+          timingFunctions[timingFunctionName] = beizerEasing(.17,.67,.83,.67);
         } else if( timingFunctionName === 'ease-in' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(.42,0,1,1);
+          timingFunctions[timingFunctionName] = beizerEasing(.42,0,1,1);
         } else if( timingFunctionName === 'ease-out' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(0,0,.58,1);
+          timingFunctions[timingFunctionName] = beizerEasing(0,0,.58,1);
         } else if( timingFunctionName === 'ease-in-out' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(.42,0,.58,1);
+          timingFunctions[timingFunctionName] = beizerEasing(.42,0,.58,1);
         }
       }
       return timingFunctions[timingFunctionName];
     };
+
+var now = Date.now ? function () {
+  return Date.now();
+} : function () {
+  return new Date().getTime();
+};
 
 function animate (progressFn, duration, atEnd, timingFunctionName) {
   if ( duration instanceof Function ) {
@@ -1820,12 +1399,12 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
 
   var stopped = false,
       timingFunction = getTimingFunction(timingFunctionName),
-      deferred = $q.defer();
+      deferred = Parole.defer();
 
   if( duration > 0 ) {
-    var start = Date.now(),
+    var start = now(),
         interval = setInterval(function () {
-          var elapsed = Date.now() - start;
+          var elapsed = now() - start;
 
           if( stopped ) {
             clearInterval(interval);
@@ -1878,9 +1457,9 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":8,"q-promise/no-native":38}],31:[function(require,module,exports){
+},{"bezier-easing":8,"parole":17}],26:[function(require,module,exports){
 
-var $q = require('q-promise/no-native'),
+var Parole = require('parole'),
 	wait = function (delay, callback) {
 		if( delay instanceof Function ) {
 			delay = [callback, callback = delay][0];
@@ -1891,7 +1470,7 @@ var $q = require('q-promise/no-native'),
 		if( typeof delay !== 'number' ) {
 			throw new Error('delay should be a Number');
 		}
-		return $q(function (resolve, reject) {
+		return new Parole(function (resolve, reject) {
 			setTimeout(function () {
 				resolve();
 				if( callback ) {
@@ -1903,7 +1482,7 @@ var $q = require('q-promise/no-native'),
 
 module.exports = wait;
 
-},{"q-promise/no-native":38}],32:[function(require,module,exports){
+},{"parole":17}],27:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   var timer = null,
@@ -1924,7 +1503,23 @@ function debounce (fn, timeslot) {
 }
 
 module.exports = debounce;
-},{}],33:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
+
+function once (fn, nextValue) {
+  var result, hasNextValue = arguments.length > 1;
+  return function () {
+    if( fn ) {
+      result = fn.apply(this, arguments);
+      fn = null;
+      return result;
+    }
+    return hasNextValue ? nextValue : result;
+  };
+}
+
+module.exports = once;
+
+},{}],29:[function(require,module,exports){
 var readyListeners = [],
     initReady = function () {
       var listeners = readyListeners;
@@ -1949,7 +1544,7 @@ function ready (callback) {
 
 module.exports = ready;
 
-},{}],34:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -1987,23 +1582,46 @@ template.lookup = function () {
 };
 
 module.exports = template;
-},{}],35:[function(require,module,exports){
-arguments[4][11][0].apply(exports,arguments)
-},{"dup":11}],36:[function(require,module,exports){
-arguments[4][12][0].apply(exports,arguments)
-},{"./promise-methods":35,"dup":12}],37:[function(require,module,exports){
-arguments[4][14][0].apply(exports,arguments)
-},{"./promise-methods":35,"./promise-polyfill":36,"dup":14}],38:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 
-module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
+var classListEnabled = !!document.createElement('div').classList;
 
-},{"./lib/promise-polyfill":36,"./lib/qizer":37}],39:[function(require,module,exports){
+var classListHas = classListEnabled ? function (el, className) {
+      return el.classList.contains(className);
+    } : function (el, className) {
+      return new RegExp('\\b' + (className || '') + '\\b','').test(el.className);
+    },
+    classListAdd = classListEnabled ? function (el, className) {
+      el.classList.add(className);
+    } : function (el, className) {
+      if( !classListHas(el, className) ) {
+        el.className += ' ' + className;
+      }
+    },
+    classListRemove = classListEnabled ? function (el, className) {
+      el.classList.remove(className);
+    } : function (el, className) {
+      el.className = el.className.replace(new RegExp('\\s*' + className + '\\s*','g'), ' ');
+    };
 
 var _dom = {
   currentScript: document.currentScript || (function() {
     var scripts = document.getElementsByTagName('script');
     return scripts[scripts.length - 1];
   })(),
+  addClass: classListAdd,
+  removeClass: classListRemove,
+  hasClass: classListHas,
+  toggleClass: function (el, className, toggle) {
+    toggle = toggle === undefined ? !classListHas(el, className) : toggle;
+
+    if( toggle ) {
+      classListRemove(el, className);
+    } else {
+      classListAdd(el, className);
+    }
+    return toggle;
+  },
   create: function (tagName, attrs) {
     var el = document.createElement(tagName);
 
@@ -2033,18 +1651,18 @@ var _dom = {
 
     if( isCollection ) {
       [].forEach.call(el, function (_el) {
-        _el.classList.add(className);
+        classListAdd(_el, className);
       });
     } else {
-      el.classList.add(className);
+      classListAdd(el, className);
     }
     setTimeout(function () {
       if( isCollection ) {
         [].forEach.call(el, function (_el) {
-          _el.classList.remove(className);
+          classListRemove(_el, className);
         });
       } else {
-        el.classList.remove(className);
+        classListRemove(el, className);
       }
       if( cb instanceof Function ) {
         cb();
@@ -2074,7 +1692,7 @@ var _dom = {
 
 module.exports = _dom;
 
-},{}],40:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 
 module.exports = {
   on: function (el, eventName, handler, useCapture) {
@@ -2103,44 +1721,45 @@ module.exports = {
   }
 };
 
-},{}],41:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 
 var normalize = {
   isTouchDevice: 'ontouchstart' in document.documentElement,
   isMac: /^Mac/.test(navigator.platform),
-  isAndroid: /^Android/.test(navigator.platform)
-};
+  isAndroid: /^Android/.test(navigator.platform),
+  addHTMLClasses: function () {
+    var _ = require('./dom');
 
-document.documentElement.classList.add( normalize.isTouchDevice ? 'touch' : 'no-touch' );
-if( normalize.isMac ) {
-  document.documentElement.classList.add('is-mac');
-}
-if( normalize.isAndroid ) {
-  document.documentElement.classList.add('is-android');
-}
+    _.addClass(document.documentElement, normalize.isTouchDevice ? 'touch' : 'no-touch' );
+    if( normalize.isMac ) {
+      _.addClass(document.documentElement, 'is-mac');
+    }
+    if( normalize.isAndroid ) {
+      _.addClass(document.documentElement, 'is-android');
+    }
+  }
+};
 
 module.exports = normalize;
 
-},{}],42:[function(require,module,exports){
+},{"./dom":31}],34:[function(require,module,exports){
 
 function getScrollRoot () {
-    if( document.documentElement.scrollTop ) {
-      return document.documentElement;
-    } else if ( document.body.scrollTop ) {
-      return document.body;
-    }
+  var html = document.documentElement, body = document.body;
 
-    var html = document.documentElement, body = document.body,
-        cacheTop = ((typeof window.pageYOffset !== "undefined") ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
-        root;
+  if( html.scrollTop ) return html;
+  if( body.scrollTop ) return body;
 
-    html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
-    // find root by checking which scrollTop has a value larger than the cache.
-    root = (html.scrollTop !== cacheTop) ? html : body;
+  var cacheTop = ((typeof window.pageYOffset !== "undefined") ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
+      root;
 
-    root.scrollTop = cacheTop; // restore the window's scroll position to cached value
+  html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
+  // find root by checking which scrollTop has a value larger than the cache.
+  root = (html.scrollTop !== cacheTop) ? html : body;
 
-    return root; // return the scrolling root element
+  root.scrollTop = cacheTop; // restore the window's scroll position to cached value
+
+  return root; // return the scrolling root element
 }
 
 var ready = require('../fn/ready'),
@@ -2168,12 +1787,12 @@ ready(function () {
 
 module.exports = scroll;
 
-},{"../fn/ready":33}],43:[function(require,module,exports){
+},{"../fn/ready":29}],35:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
 	var animate = require('../../deferred/animate'),
-			$q = require('q-promise/no-native'),
+			Parole = require('parole'),
 			noop = function() {},
 			scrollAnimation = animate(noop, 0),
 			aux;
@@ -2186,7 +1805,7 @@ module.exports = function (scroll) {
 		var scrollFrom = scroll.top();
 
 		if( value === undefined ) {
-		  return $q.reject();
+		  return Parole.reject();
 		}
 		if( value instanceof Element ) {
 			// position from top of the page
@@ -2216,7 +1835,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../../deferred/animate":30,"q-promise/no-native":38}],44:[function(require,module,exports){
+},{"../../deferred/animate":25,"parole":17}],36:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -2224,21 +1843,30 @@ require('./top-class')(scroll);
 require('./animate')(scroll);
 
 module.exports = scroll;
-},{"../scroll":42,"./animate":43,"./top-class":45}],45:[function(require,module,exports){
+},{"../scroll":34,"./animate":35,"./top-class":37}],37:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
-	var onScroll = function () {
-	      document.documentElement.classList.toggle('scroll-top', !scroll.top() );
-	    };
+	var ready = require('../../fn/ready');
 
-	scroll.on(onScroll);
+	scroll.autoTopClass = function (topClass, topClassAlt) {
 
-	require('../../fn/ready')(onScroll);
+		topClass = topClass || 'js-scroll-top';
+		topClassAlt = topClassAlt || 'js-no-scroll-top';
+
+    ready(function () {
+      var _ = require('../dom');
+      scroll.on(function () {
+        _.toggleClass(document.documentElement, topClass,
+          !_.toggleClass(document.documentElement, topClassAlt, scroll.top() )
+        );
+      });
+    });
+	};
 
 };
 
-},{"../../fn/ready":33}],46:[function(require,module,exports){
+},{"../../fn/ready":29,"../dom":31}],38:[function(require,module,exports){
 (function (global){
 
 require('./sandbox')(function () {
@@ -2290,7 +1918,7 @@ require('./sandbox')(function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":47,"./apps/checkout":49,"./apps/http-service":50,"./apps/modal":52,"./apps/simulator":53,"./core/api":55,"./core/core":56,"./loaders/data-aplazame":58,"./loaders/data-button":59,"./loaders/data-simulator":60,"./sandbox":61,"./tools/log":68}],47:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":39,"./apps/checkout":41,"./apps/http-service":42,"./apps/modal":44,"./apps/simulator":45,"./core/api":47,"./core/core":48,"./loaders/data-aplazame":50,"./loaders/data-button":51,"./loaders/data-simulator":52,"./sandbox":53,"./tools/log":60}],39:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -2443,7 +2071,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":54,"../tools/tools":71}],48:[function(require,module,exports){
+},{"../core/api-http":46,"../tools/tools":63}],40:[function(require,module,exports){
 'use strict';
 
 function checkoutNormalizer(checkout, location, api) {
@@ -2496,7 +2124,7 @@ function checkoutNormalizer(checkout, location, api) {
 
 module.exports = checkoutNormalizer;
 
-},{}],49:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 
 var api = require('../core/api'),
@@ -2585,13 +2213,13 @@ function checkout (options) {
             background: 'transparent'
           }),
           httpCheckout = function () {
-            var started = Date.now();
+            var started = _.now();
             return http.apply(this, arguments).then(function (response) {
               iframe.contentWindow.postMessage({
                 aplazame: 'checkout',
                 event: 'http-success',
                 started: started,
-                elapsed: Date.now() - started,
+                elapsed: _.now() - started,
                 response: http.plainResponse(response)
               }, '*');
               return response;
@@ -2600,7 +2228,7 @@ function checkout (options) {
                 aplazame: 'checkout',
                 event: 'http-error',
                 started: started,
-                elapsed: Date.now() - started,
+                elapsed: _.now() - started,
                 response: http.plainResponse(response)
               }, '*');
               throw response;
@@ -2702,7 +2330,7 @@ function checkout (options) {
       // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
-      console.error('Aplazame ' + reason);
+      console.log('Aplazame ' + reason);
 
       _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
       loadingText.innerHTML = '<div class="text-error">Error cargando pasarela de pago</div><br/><div><a href="mailto:soporte@aplazame.com?subject=' + encodeURI('Checkout error: ' + reason) + '">soporte@aplazame.com</a></div>';
@@ -2715,7 +2343,7 @@ function checkout (options) {
 
 module.exports = checkout;
 
-},{"../core/api":55,"../tools/css-hack":65,"../tools/tools":71,"./checkout-normalizer":48,"./loading-svg":51,"http-browser":15}],50:[function(require,module,exports){
+},{"../core/api":47,"../tools/css-hack":57,"../tools/tools":63,"./checkout-normalizer":40,"./loading-svg":43,"http-browser":10}],42:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -2732,7 +2360,7 @@ function processResponse(result, message, messageSrc, started) {
       aplazame: 'http',
       event: 'response',
       started: started,
-      elapsed: Date.now() - started,
+      elapsed: _.now() - started,
       result: result,
       response: responsep
     }, '*');
@@ -2741,7 +2369,7 @@ function processResponse(result, message, messageSrc, started) {
 
 _.onMessage('http', function (e, message) {
 
-  var started = Date.now();
+  var started = _.now();
 
   http( message.url, message )
     .then(
@@ -2753,7 +2381,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":71,"http-browser":15}],51:[function(require,module,exports){
+},{"../tools/tools":63,"http-browser":10}],43:[function(require,module,exports){
 
 module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' +
 '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' +
@@ -2768,16 +2396,18 @@ module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' 
 '<path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"/>' +
 '</svg>';
 
-},{}],52:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
-window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
+function matchMedia (query) {
+  return (window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia)(query);
+}
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     cssHack = require('../tools/css-hack'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
-    isMobile = window.matchMedia('( max-width: 767px )'),
+    isMobile = matchMedia('( max-width: 767px )'),
     lastScrollTop;
 
 var tmpOverlay = document.createElement('div'),
@@ -2890,12 +2520,12 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":55,"../tools/css-hack":65,"../tools/tools":71}],53:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":47,"../tools/css-hack":57,"../tools/tools":63}],45:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
-    $q = require('q-promise'),
+    $q = require('parole'),
     cache = [],
     requestsCache = {};
 
@@ -2952,12 +2582,12 @@ function simulator (amount, _options, callback, onError) {
       return result;
     }, function (response) {
       if( response.status === 403 ) {
-        console.error('Aplazame: Permiso denegado usando la clave pública: ' + response.config.publicKey);
+        console.log('Aplazame[error]: Permiso denegado usando la clave pública: ' + response.config.publicKey);
         console.info('Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
       } else if( _.key(response, 'data.error.fields.amount.0') ) {
-        console.error('Aplazame: ' + response.data.error.fields.amount[0]);
+        console.log('Aplazame[error]: ' + response.data.error.fields.amount[0]);
       } else if( _.key(response, 'data.error.message') ) {
-        console.error('Aplazame: ' + response.data.error.message);
+        console.log('Aplazame[error]: ' + response.data.error.message);
       }
       (onError || _.noop)(response);
     });
@@ -2967,7 +2597,7 @@ function simulator (amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":54,"../tools/tools":71,"q-promise":22}],54:[function(require,module,exports){
+},{"../core/api-http":46,"../tools/tools":63,"parole":17}],46:[function(require,module,exports){
 'use strict';
 
 var apzVersion = require('../../.tmp/aplazame-version'),
@@ -3016,7 +2646,7 @@ _.each(['post', 'put', 'patch'], function (method) {
 
 module.exports = apiHttp;
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":71,"./api":55,"http-browser":15}],55:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":63,"./api":47,"http-browser":10}],47:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -3028,7 +2658,7 @@ module.exports = {
   sandbox: false
 };
 
-},{}],56:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -3041,7 +2671,7 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":71,"./api-http":54,"./init":57}],57:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":63,"./api-http":46,"./init":49}],49:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
@@ -3079,7 +2709,7 @@ function init (options) {
 
 module.exports = init;
 
-},{"../tools/tools":71,"./api":55}],58:[function(require,module,exports){
+},{"../tools/tools":63,"./api":47}],50:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -3148,12 +2778,12 @@ module.exports = function (aplazame) {
 
 };
 
-},{}],59:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
   var _ = aplazame._,
-      $q = require('q-promise');
+      $q = require('parole');
 
   function buttonsLookup (element) {
     element = element || document;
@@ -3202,13 +2832,13 @@ module.exports = function (aplazame) {
 
 };
 
-},{"q-promise":22}],60:[function(require,module,exports){
+},{"parole":17}],52:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      $q = require('q-promise'),
+      $q = require('parole'),
       Events = require('events-wrapper'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
@@ -3394,7 +3024,7 @@ module.exports = function (aplazame) {
         id = getWidget.serial;
 
     if( meta.options.widget.type === 'button' ) {
-      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
+      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + id );
 
       widget.render = function () {
         widget.message('choices', {
@@ -3595,7 +3225,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"../../.tmp/simulator/templates/modal-instalments":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":55,"events-wrapper":10,"q-promise":22}],61:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/modal-instalments":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":47,"events-wrapper":9,"parole":17}],53:[function(require,module,exports){
 'use strict';
 
 function _errorData(err) {
@@ -3619,7 +3249,7 @@ module.exports = function (func) {
   }
 };
 
-},{}],62:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -3683,7 +3313,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],63:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -3867,7 +3497,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":17}],64:[function(require,module,exports){
+},{"nitro-tools/extend":12}],56:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -3886,7 +3516,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],65:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 
 
 var importantCSS = function (css) {
@@ -3938,7 +3568,7 @@ var importantCSS = function (css) {
 
 module.exports = cssHack;
 
-},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],66:[function(require,module,exports){
+},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],58:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -3979,7 +3609,7 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],67:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
@@ -4031,7 +3661,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":63}],68:[function(require,module,exports){
+},{"./browser-tools":55}],60:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -4060,7 +3690,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],69:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false;
@@ -4105,7 +3735,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],70:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -4144,7 +3774,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],71:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -4167,4 +3797,4 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":62,"./browser-tools":63,"./colors":64,"./deserialize":66,"./live-dom":67,"./log":68,"./message-listener":69,"./template":70,"nitro-tools/lists":19,"nitro-tools/path":20,"vanilla-tools":29}]},{},[46]);
+},{"./amount-price":54,"./browser-tools":55,"./colors":56,"./deserialize":58,"./live-dom":59,"./log":60,"./message-listener":61,"./template":62,"nitro-tools/lists":14,"nitro-tools/path":15,"vanilla-tools":24}]},{},[38]);

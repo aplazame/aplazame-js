@@ -109,248 +109,6 @@ module.exports = function bezier (mX1, mY1, mX2, mY2) {
 };
 
 },{}],4:[function(require,module,exports){
-/*
- * classList.js: Cross-browser full element.classList implementation.
- * 1.1.20150312
- *
- * By Eli Grey, http://eligrey.com
- * License: Dedicated to the public domain.
- *   See https://github.com/eligrey/classList.js/blob/master/LICENSE.md
- */
-
-/*global self, document, DOMException */
-
-/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
-
-if ("document" in self) {
-
-// Full polyfill for browsers with no classList support
-// Including IE < Edge missing SVGElement.classList
-if (!("classList" in document.createElement("_")) 
-	|| document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg","g"))) {
-
-(function (view) {
-
-"use strict";
-
-if (!('Element' in view)) return;
-
-var
-	  classListProp = "classList"
-	, protoProp = "prototype"
-	, elemCtrProto = view.Element[protoProp]
-	, objCtr = Object
-	, strTrim = String[protoProp].trim || function () {
-		return this.replace(/^\s+|\s+$/g, "");
-	}
-	, arrIndexOf = Array[protoProp].indexOf || function (item) {
-		var
-			  i = 0
-			, len = this.length
-		;
-		for (; i < len; i++) {
-			if (i in this && this[i] === item) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	// Vendors: please allow content code to instantiate DOMExceptions
-	, DOMEx = function (type, message) {
-		this.name = type;
-		this.code = DOMException[type];
-		this.message = message;
-	}
-	, checkTokenAndGetIndex = function (classList, token) {
-		if (token === "") {
-			throw new DOMEx(
-				  "SYNTAX_ERR"
-				, "An invalid or illegal string was specified"
-			);
-		}
-		if (/\s/.test(token)) {
-			throw new DOMEx(
-				  "INVALID_CHARACTER_ERR"
-				, "String contains an invalid character"
-			);
-		}
-		return arrIndexOf.call(classList, token);
-	}
-	, ClassList = function (elem) {
-		var
-			  trimmedClasses = strTrim.call(elem.getAttribute("class") || "")
-			, classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
-			, i = 0
-			, len = classes.length
-		;
-		for (; i < len; i++) {
-			this.push(classes[i]);
-		}
-		this._updateClassName = function () {
-			elem.setAttribute("class", this.toString());
-		};
-	}
-	, classListProto = ClassList[protoProp] = []
-	, classListGetter = function () {
-		return new ClassList(this);
-	}
-;
-// Most DOMException implementations don't allow calling DOMException's toString()
-// on non-DOMExceptions. Error's toString() is sufficient here.
-DOMEx[protoProp] = Error[protoProp];
-classListProto.item = function (i) {
-	return this[i] || null;
-};
-classListProto.contains = function (token) {
-	token += "";
-	return checkTokenAndGetIndex(this, token) !== -1;
-};
-classListProto.add = function () {
-	var
-		  tokens = arguments
-		, i = 0
-		, l = tokens.length
-		, token
-		, updated = false
-	;
-	do {
-		token = tokens[i] + "";
-		if (checkTokenAndGetIndex(this, token) === -1) {
-			this.push(token);
-			updated = true;
-		}
-	}
-	while (++i < l);
-
-	if (updated) {
-		this._updateClassName();
-	}
-};
-classListProto.remove = function () {
-	var
-		  tokens = arguments
-		, i = 0
-		, l = tokens.length
-		, token
-		, updated = false
-		, index
-	;
-	do {
-		token = tokens[i] + "";
-		index = checkTokenAndGetIndex(this, token);
-		while (index !== -1) {
-			this.splice(index, 1);
-			updated = true;
-			index = checkTokenAndGetIndex(this, token);
-		}
-	}
-	while (++i < l);
-
-	if (updated) {
-		this._updateClassName();
-	}
-};
-classListProto.toggle = function (token, force) {
-	token += "";
-
-	var
-		  result = this.contains(token)
-		, method = result ?
-			force !== true && "remove"
-		:
-			force !== false && "add"
-	;
-
-	if (method) {
-		this[method](token);
-	}
-
-	if (force === true || force === false) {
-		return force;
-	} else {
-		return !result;
-	}
-};
-classListProto.toString = function () {
-	return this.join(" ");
-};
-
-if (objCtr.defineProperty) {
-	var classListPropDesc = {
-		  get: classListGetter
-		, enumerable: true
-		, configurable: true
-	};
-	try {
-		objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-	} catch (ex) { // IE 8 doesn't support enumerable:true
-		if (ex.number === -0x7FF5EC54) {
-			classListPropDesc.enumerable = false;
-			objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-		}
-	}
-} else if (objCtr[protoProp].__defineGetter__) {
-	elemCtrProto.__defineGetter__(classListProp, classListGetter);
-}
-
-}(self));
-
-} else {
-// There is full or partial native classList support, so just check if we need
-// to normalize the add/remove and toggle APIs.
-
-(function () {
-	"use strict";
-
-	var testElement = document.createElement("_");
-
-	testElement.classList.add("c1", "c2");
-
-	// Polyfill for IE 10/11 and Firefox <26, where classList.add and
-	// classList.remove exist but support only one argument at a time.
-	if (!testElement.classList.contains("c2")) {
-		var createMethod = function(method) {
-			var original = DOMTokenList.prototype[method];
-
-			DOMTokenList.prototype[method] = function(token) {
-				var i, len = arguments.length;
-
-				for (i = 0; i < len; i++) {
-					token = arguments[i];
-					original.call(this, token);
-				}
-			};
-		};
-		createMethod('add');
-		createMethod('remove');
-	}
-
-	testElement.classList.toggle("c3", false);
-
-	// Polyfill for IE 10 and Firefox <24, where classList.toggle does not
-	// support the second argument.
-	if (testElement.classList.contains("c3")) {
-		var _toggle = DOMTokenList.prototype.toggle;
-
-		DOMTokenList.prototype.toggle = function(token, force) {
-			if (1 in arguments && !this.contains(token) === !force) {
-				return force;
-			} else {
-				return _toggle.call(this, token);
-			}
-		};
-
-	}
-
-	testElement = null;
-}());
-
-}
-
-}
-
-
-},{}],5:[function(require,module,exports){
 
 var arrayShift = [].shift;
 
@@ -369,7 +127,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 
 var RE_$$ = /^\$\$/,
     arrayShift = [].shift,
@@ -436,7 +194,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":5,"./type":10}],7:[function(require,module,exports){
+},{"./_extend":4,"./type":9}],6:[function(require,module,exports){
 
 var type = require('./type');
 
@@ -485,7 +243,7 @@ module.exports = {
   keys: Object.keys
 };
 
-},{"./type":10}],8:[function(require,module,exports){
+},{"./type":9}],7:[function(require,module,exports){
 
 var type = require('./type'),
     arrSome = Array.prototype.some,
@@ -713,7 +471,7 @@ module.exports = {
   }
 };
 
-},{"./type":10}],9:[function(require,module,exports){
+},{"./type":9}],8:[function(require,module,exports){
 
 var RE_dotsBack = /[^\/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
@@ -740,7 +498,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 function _isType (type) {
@@ -784,6 +542,230 @@ module.exports = {
     return value === undefined;
   }
 };
+
+},{}],10:[function(require,module,exports){
+
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+      // AMD. Register as an anonymous module.
+      define(factory);
+  } else if (typeof module === 'object' && module.exports) {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    // Browser globals (root is window)
+    root.Parole = factory();
+  }
+}(this, function () {
+
+  function runHandler (fn, deferred, x, fulfilled) {
+    if( typeof fn === 'function' ) {
+      try {
+        deferred.resolve( fn(x) );
+      } catch(reason) {
+        deferred.reject( reason );
+      }
+    } else {
+      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+    }
+  }
+
+  function resolvePromise (p, x, fulfilled) {
+    if( p.resolved ) {
+      return;
+    }
+    p.resolved = true;
+
+    p.result = x;
+    p.fulfilled = fulfilled || false;
+
+    var queue = p.queue.splice(0);
+    p.queue = null;
+
+    setTimeout(function () {
+      for( var i = 0, n = queue.length ; i < n ; i++ ) {
+        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+      }
+    }, 0);
+  }
+
+  function runThenable (then, p, x) {
+    var executed = false;
+    try {
+      then.call(x, function (value) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, value, true);
+      }, function (reason) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, reason, false);
+      });
+    } catch(err) {
+      if( executed ) return;
+      xThen(p, err, false);
+    }
+  }
+
+  function xThen (p, x, fulfilled) {
+    var then;
+
+    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+      try {
+        then = x.then;
+
+        if( fulfilled && typeof then === 'function' ) {
+          runThenable(then, p, x);
+        } else {
+          resolvePromise(p, x, fulfilled);
+        }
+      } catch (reason) {
+        resolvePromise(p, reason, false);
+      }
+    } else {
+      resolvePromise(p, x, fulfilled);
+    }
+  }
+
+  function resolveProcedure (p, x, fulfilled) {
+    if( p.resolving ) return;
+    p.resolving = true;
+
+    if( x === p.promise ) {
+      fulfilled = false;
+      x = new TypeError('A promise can not be resolved by itself');
+    }
+
+    xThen(p, x, fulfilled);
+  }
+
+  function Parole (resolver) {
+    if( !(this instanceof Parole) ) {
+      return new Parole(resolver);
+    }
+
+    if( typeof resolver !== 'function' ) {
+      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
+    }
+
+    var p = {
+      queue: [],
+      promise: this
+    };
+
+    this.__promise = p;
+
+    try {
+      resolver(function (value) {
+        resolveProcedure(p, value, true);
+      }, function (reason) {
+        resolveProcedure(p, reason, false);
+      });
+    } catch (reason) {
+      resolveProcedure(p, reason, false);
+    }
+
+  }
+
+  Parole.prototype.then = function (onFulfilled, onRejected) {
+    var p = this.__promise,
+        deferred = Parole.defer();
+
+    if( p.queue ) {
+      p.queue.push([onFulfilled, onRejected, deferred]);
+    } else {
+      setTimeout(function () {
+        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      }, 0);
+    }
+
+    return deferred.promise;
+  };
+
+  Parole.prototype.catch = function (onRejected) {
+    return this.then(null, onRejected);
+  };
+
+  // Promise methods
+
+  function each (iterable, handler) {
+    for( var i = 0, n = iterable.length; i < n ; i++ ) {
+      handler(iterable[i], i);
+    }
+  }
+
+  Parole.defer = function () {
+    var deferred = {};
+    deferred.promise = new Parole(function (resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+    return deferred;
+  };
+
+  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
+
+  Parole.resolve = function (value) {
+    return new Parole(function (resolve) {
+      resolve(value);
+    });
+  };
+
+  Parole.reject = function (value) {
+    return new Parole(function (resolve, reject) {
+      reject(value);
+    });
+  };
+
+  Parole.all = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var pending = iterable.length,
+          results = [];
+      each(iterable, function (_promise, i) {
+
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          results[i] = result;
+          if( --pending === 0 ) {
+            resolve(results);
+          }
+        }, function (reason) {
+          if( pending !== -1 ) {
+            pending === -1;
+            reject(reason);
+          }
+        });
+      });
+    });
+  };
+
+  Parole.race = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var done = false;
+
+      each(iterable, function (_promise) {
+        if( done ) {
+          return;
+        }
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          if( !done ) {
+            done = true;
+            resolve(result);
+          }
+        }, function (reason) {
+          if( !done ) {
+            done = true;
+            reject(reason);
+          }
+        });
+      });
+    });
+  };
+
+  return Parole;
+
+}));
 
 },{}],11:[function(require,module,exports){
 
@@ -850,7 +832,6 @@ if( !Element.prototype.matchesSelector ) {
 
 },{}],17:[function(require,module,exports){
 
-require('./browser-polyfills');
 // document.currentScript
 // Date.now()
 // HTMLElement.closest()
@@ -859,7 +840,7 @@ require('./browser-polyfills');
 // window.matchMedia
 // Element.prototype.matchesSelector
 
-require('classlist.js'); // https://developer.mozilla.org/es/docs/Web/API/Element/classList
+// require('classlist.js'); // https://developer.mozilla.org/es/docs/Web/API/Element/classList
 
 var extend = require('nitro-tools/extend');
 
@@ -870,7 +851,23 @@ function _ (selector, source) {
 }
 
 _.noop = function (value) { return value; };
-_.q = require('q-promise/no-native');
+_.once = function (fn) {
+  return function () {
+    if( fn ) fn.apply(this, arguments);
+    fn = null;
+  };
+};
+_.now = Date.now ? function () {
+  return Date.now();
+} : function () {
+  return new Date().getTime();
+};
+
+_.usePolyfills = _.once(function () {
+  require('./browser-polyfills');
+});
+
+_.q = require('parole');
 
 extend.extend(_, extend);
 
@@ -888,6 +885,7 @@ _.extend(_, {
 _.extend(_, {
 	ready: require('./fn/ready'),
 	template: require('./fn/template'),
+	template: require('./fn/once'),
 	debounce: require('./fn/debounce')
 });
 
@@ -920,9 +918,10 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":11,"./deferred/animate":18,"./deferred/wait":19,"./fn/debounce":20,"./fn/ready":21,"./fn/template":22,"./utils/dom":27,"./utils/events":28,"./utils/normalize":29,"./utils/scroll/bundle":32,"classlist.js":4,"nitro-tools/extend":6,"nitro-tools/key":7,"nitro-tools/path":9,"nitro-tools/type":10,"q-promise/no-native":26}],18:[function(require,module,exports){
+},{"./browser-polyfills":11,"./deferred/animate":18,"./deferred/wait":19,"./fn/debounce":20,"./fn/once":21,"./fn/ready":22,"./fn/template":23,"./utils/dom":24,"./utils/events":25,"./utils/normalize":26,"./utils/scroll/bundle":29,"nitro-tools/extend":5,"nitro-tools/key":6,"nitro-tools/path":8,"nitro-tools/type":9,"parole":10}],18:[function(require,module,exports){
 
-var $q = require('q-promise/no-native'),
+var Parole = require('parole'),
+    beizerEasing = require('bezier-easing'),
     timingFunctions = {},
     noop = function () {},
     getTimingFunction = function (timingFunctionName) {
@@ -930,17 +929,23 @@ var $q = require('q-promise/no-native'),
         if( timingFunctionName === 'linear' ) {
           timingFunctions[timingFunctionName] = function ( value ) { return value; };
         } else if( timingFunctionName === 'ease' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(.17,.67,.83,.67);
+          timingFunctions[timingFunctionName] = beizerEasing(.17,.67,.83,.67);
         } else if( timingFunctionName === 'ease-in' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(.42,0,1,1);
+          timingFunctions[timingFunctionName] = beizerEasing(.42,0,1,1);
         } else if( timingFunctionName === 'ease-out' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(0,0,.58,1);
+          timingFunctions[timingFunctionName] = beizerEasing(0,0,.58,1);
         } else if( timingFunctionName === 'ease-in-out' ) {
-          timingFunctions[timingFunctionName] = require('bezier-easing')(.42,0,.58,1);
+          timingFunctions[timingFunctionName] = beizerEasing(.42,0,.58,1);
         }
       }
       return timingFunctions[timingFunctionName];
     };
+
+var now = Date.now ? function () {
+  return Date.now();
+} : function () {
+  return new Date().getTime();
+};
 
 function animate (progressFn, duration, atEnd, timingFunctionName) {
   if ( duration instanceof Function ) {
@@ -962,12 +967,12 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
 
   var stopped = false,
       timingFunction = getTimingFunction(timingFunctionName),
-      deferred = $q.defer();
+      deferred = Parole.defer();
 
   if( duration > 0 ) {
-    var start = Date.now(),
+    var start = now(),
         interval = setInterval(function () {
-          var elapsed = Date.now() - start;
+          var elapsed = now() - start;
 
           if( stopped ) {
             clearInterval(interval);
@@ -1020,9 +1025,9 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":3,"q-promise/no-native":26}],19:[function(require,module,exports){
+},{"bezier-easing":3,"parole":10}],19:[function(require,module,exports){
 
-var $q = require('q-promise/no-native'),
+var Parole = require('parole'),
 	wait = function (delay, callback) {
 		if( delay instanceof Function ) {
 			delay = [callback, callback = delay][0];
@@ -1033,7 +1038,7 @@ var $q = require('q-promise/no-native'),
 		if( typeof delay !== 'number' ) {
 			throw new Error('delay should be a Number');
 		}
-		return $q(function (resolve, reject) {
+		return new Parole(function (resolve, reject) {
 			setTimeout(function () {
 				resolve();
 				if( callback ) {
@@ -1045,7 +1050,7 @@ var $q = require('q-promise/no-native'),
 
 module.exports = wait;
 
-},{"q-promise/no-native":26}],20:[function(require,module,exports){
+},{"parole":10}],20:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   var timer = null,
@@ -1067,6 +1072,22 @@ function debounce (fn, timeslot) {
 
 module.exports = debounce;
 },{}],21:[function(require,module,exports){
+
+function once (fn, nextValue) {
+  var result, hasNextValue = arguments.length > 1;
+  return function () {
+    if( fn ) {
+      result = fn.apply(this, arguments);
+      fn = null;
+      return result;
+    }
+    return hasNextValue ? nextValue : result;
+  };
+}
+
+module.exports = once;
+
+},{}],22:[function(require,module,exports){
 var readyListeners = [],
     initReady = function () {
       var listeners = readyListeners;
@@ -1091,7 +1112,7 @@ function ready (callback) {
 
 module.exports = ready;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -1129,213 +1150,46 @@ template.lookup = function () {
 };
 
 module.exports = template;
-},{}],23:[function(require,module,exports){
-
-module.exports = function (qPromise) {
-
-	function each (iterable, handler) {
-		for( var i = 0, n = iterable.length; i < n ; i++ ) {
-			handler(iterable[i], i);
-		}
-	}
-
-	function qResolve (result) {
-	  return qPromise(function (resolve, reject) { resolve(result); });
-	};
-
-	function qReject (reason) {
-	  return qPromise(function (resolve, reject) { reject(reason); });
-	};
-
-	var methods = {
-		resolve: qResolve,
-		reject: qReject,
-		defer: function () {
-		  var deferred = {};
-		  deferred.promise = qPromise(function (resolve, reject) {
-		    deferred.resolve = resolve;
-		    deferred.reject = reject;
-		  });
-		  return deferred;
-		},
-		all: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var pending = iterable.length,
-		        results = [];
-		    each(iterable, function (_promise, i) {
-
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        results[i] = result;
-		        if( --pending === 0 ) {
-		          resolve(results);
-		        }
-		      }, function (reason) {
-		        if( pending !== -1 ) {
-		          pending === -1;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		},
-		race: function (iterable) {
-		  return qPromise(function (resolve, reject) {
-		    var done = false;
-
-		    each(iterable, function (_promise, i) {
-		      if( done ) {
-		        return;
-		      }
-		      ( _promise.then ? _promise : qResolve(_promise) ).then(function (result) {
-		        if( !done ) {
-		          done = true;
-		          resolve(result);
-		        }
-		      }, function (reason) {
-		        if( !done ) {
-		          done = true;
-		          reject(reason);
-		        }
-		      });
-		    });
-		  });
-		}
-	};
-
-	return function (q, override) {
-		for( var key in methods ) {
-			if( !q[key] || override ) {
-				q[key] = methods[key];
-			}
-		}
-		return q;
-	};
-};
-
 },{}],24:[function(require,module,exports){
 
-function stepResult (step, value, type) {
-  if( value && value.then ) {
-    value.then(function (result) {
-      step.deferred.resolve(result);
-    }, function (reason) {
-      step.deferred.reject(reason);
-    });
-  } else {
-    step.deferred[type](value);
-  }
-}
+var classListEnabled = !!document.createElement('div').classList;
 
-function processQueue(promise) {
-  if( promise.$$succeeded === undefined ) {
-    return;
-  }
-
-  var len = promise.$$queue.length,
-      step = promise.$$queue.shift(),
-      type = promise.$$succeeded ? 'resolve' : 'reject',
-      uncough = !promise.$$succeeded && promise.$$uncought++;
-
-  while( step ) {
-
-    if( step[type] ) {
-      uncough = false;
-
-      try {
-        stepResult(step, step[type](promise.$$value), 'resolve');
-      } catch (reason) {
-        stepResult(step, reason, 'reject');
+var classListHas = classListEnabled ? function (el, className) {
+      return el.classList.contains(className);
+    } : function (el, className) {
+      return new RegExp('\\b' + (className || '') + '\\b','').test(el.className);
+    },
+    classListAdd = classListEnabled ? function (el, className) {
+      el.classList.add(className);
+    } : function (el, className) {
+      if( !classListHas(el, className) ) {
+        el.className += ' ' + className;
       }
-
-    } else {
-      stepResult(step, promise.$$value, type);
-    }
-
-    step = promise.$$queue.shift();
-  }
-
-  if( !promise.$$succeeded && uncough ) {
-    if( promise.$$uncough === uncough ) {
-      throw new Error('Uncaught (in promise)');
-    }
-  }
-}
-
-function P (executor) {
-  if( !( executor instanceof Function ) ) {
-    throw new TypeError('Promise resolver undefined is not a function');
-  }
-
-  var p = this;
-  this.$$queue = [];
-  this.$$uncough = 0;
-
-  try {
-    executor(function (result) {
-      p.$$succeeded = true;
-      p.$$value = result;
-      processQueue(p);
-    }, function (reason) {
-      p.$$succeeded = false;
-      p.$$value = reason;
-      processQueue(p);
-    });
-  } catch (err) {
-    p.$$succeeded = false;
-    p.$$value = err;
-    processQueue(p);
-  }
-}
-
-P.prototype.then = function (onsucceeded, onRejected) {
-  var _this = this,
-      _promise = new P(function (resolve, reject) {
-        _this.$$queue.push({ resolve: onsucceeded, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
-      });
-
-  processQueue(this);
-
-  return _promise;
-};
-
-P.prototype.catch = function (onRejected) {
-  return this.then(undefined, onRejected);
-};
-
-require('./promise-methods')(function (executor) { return new P(executor); })(P, true);
-
-module.exports = P;
-
-},{"./promise-methods":23}],25:[function(require,module,exports){
-
-module.exports = function (Promise) {
-
-  function q (executor) {
-    return new Promise(executor);
-  }
-
-  require('./promise-methods')(q)(q, true);
-
-  q.when = function (p) { return ( p && p.then ) ? p : Promise.resolve(p); };
-  q.usePolyfill = function () {
-  	Promise = require('./promise-polyfill');
-  };
-
-  return q;
-
-};
-
-},{"./promise-methods":23,"./promise-polyfill":24}],26:[function(require,module,exports){
-
-module.exports = require('./lib/qizer')( require('./lib/promise-polyfill') );
-
-},{"./lib/promise-polyfill":24,"./lib/qizer":25}],27:[function(require,module,exports){
+    },
+    classListRemove = classListEnabled ? function (el, className) {
+      el.classList.remove(className);
+    } : function (el, className) {
+      el.className = el.className.replace(new RegExp('\\s*' + className + '\\s*','g'), ' ');
+    };
 
 var _dom = {
   currentScript: document.currentScript || (function() {
     var scripts = document.getElementsByTagName('script');
     return scripts[scripts.length - 1];
   })(),
+  addClass: classListAdd,
+  removeClass: classListRemove,
+  hasClass: classListHas,
+  toggleClass: function (el, className, toggle) {
+    toggle = toggle === undefined ? !classListHas(el, className) : toggle;
+
+    if( toggle ) {
+      classListRemove(el, className);
+    } else {
+      classListAdd(el, className);
+    }
+    return toggle;
+  },
   create: function (tagName, attrs) {
     var el = document.createElement(tagName);
 
@@ -1365,18 +1219,18 @@ var _dom = {
 
     if( isCollection ) {
       [].forEach.call(el, function (_el) {
-        _el.classList.add(className);
+        classListAdd(_el, className);
       });
     } else {
-      el.classList.add(className);
+      classListAdd(el, className);
     }
     setTimeout(function () {
       if( isCollection ) {
         [].forEach.call(el, function (_el) {
-          _el.classList.remove(className);
+          classListRemove(_el, className);
         });
       } else {
-        el.classList.remove(className);
+        classListRemove(el, className);
       }
       if( cb instanceof Function ) {
         cb();
@@ -1406,7 +1260,7 @@ var _dom = {
 
 module.exports = _dom;
 
-},{}],28:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 
 module.exports = {
   on: function (el, eventName, handler, useCapture) {
@@ -1435,44 +1289,45 @@ module.exports = {
   }
 };
 
-},{}],29:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 
 var normalize = {
   isTouchDevice: 'ontouchstart' in document.documentElement,
   isMac: /^Mac/.test(navigator.platform),
-  isAndroid: /^Android/.test(navigator.platform)
-};
+  isAndroid: /^Android/.test(navigator.platform),
+  addHTMLClasses: function () {
+    var _ = require('./dom');
 
-document.documentElement.classList.add( normalize.isTouchDevice ? 'touch' : 'no-touch' );
-if( normalize.isMac ) {
-  document.documentElement.classList.add('is-mac');
-}
-if( normalize.isAndroid ) {
-  document.documentElement.classList.add('is-android');
-}
+    _.addClass(document.documentElement, normalize.isTouchDevice ? 'touch' : 'no-touch' );
+    if( normalize.isMac ) {
+      _.addClass(document.documentElement, 'is-mac');
+    }
+    if( normalize.isAndroid ) {
+      _.addClass(document.documentElement, 'is-android');
+    }
+  }
+};
 
 module.exports = normalize;
 
-},{}],30:[function(require,module,exports){
+},{"./dom":24}],27:[function(require,module,exports){
 
 function getScrollRoot () {
-    if( document.documentElement.scrollTop ) {
-      return document.documentElement;
-    } else if ( document.body.scrollTop ) {
-      return document.body;
-    }
+  var html = document.documentElement, body = document.body;
 
-    var html = document.documentElement, body = document.body,
-        cacheTop = ((typeof window.pageYOffset !== "undefined") ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
-        root;
+  if( html.scrollTop ) return html;
+  if( body.scrollTop ) return body;
 
-    html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
-    // find root by checking which scrollTop has a value larger than the cache.
-    root = (html.scrollTop !== cacheTop) ? html : body;
+  var cacheTop = ((typeof window.pageYOffset !== "undefined") ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
+      root;
 
-    root.scrollTop = cacheTop; // restore the window's scroll position to cached value
+  html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
+  // find root by checking which scrollTop has a value larger than the cache.
+  root = (html.scrollTop !== cacheTop) ? html : body;
 
-    return root; // return the scrolling root element
+  root.scrollTop = cacheTop; // restore the window's scroll position to cached value
+
+  return root; // return the scrolling root element
 }
 
 var ready = require('../fn/ready'),
@@ -1500,12 +1355,12 @@ ready(function () {
 
 module.exports = scroll;
 
-},{"../fn/ready":21}],31:[function(require,module,exports){
+},{"../fn/ready":22}],28:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
 	var animate = require('../../deferred/animate'),
-			$q = require('q-promise/no-native'),
+			Parole = require('parole'),
 			noop = function() {},
 			scrollAnimation = animate(noop, 0),
 			aux;
@@ -1518,7 +1373,7 @@ module.exports = function (scroll) {
 		var scrollFrom = scroll.top();
 
 		if( value === undefined ) {
-		  return $q.reject();
+		  return Parole.reject();
 		}
 		if( value instanceof Element ) {
 			// position from top of the page
@@ -1548,7 +1403,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../../deferred/animate":18,"q-promise/no-native":26}],32:[function(require,module,exports){
+},{"../../deferred/animate":18,"parole":10}],29:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -1556,21 +1411,30 @@ require('./top-class')(scroll);
 require('./animate')(scroll);
 
 module.exports = scroll;
-},{"../scroll":30,"./animate":31,"./top-class":33}],33:[function(require,module,exports){
+},{"../scroll":27,"./animate":28,"./top-class":30}],30:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
-	var onScroll = function () {
-	      document.documentElement.classList.toggle('scroll-top', !scroll.top() );
-	    };
+	var ready = require('../../fn/ready');
 
-	scroll.on(onScroll);
+	scroll.autoTopClass = function (topClass, topClassAlt) {
 
-	require('../../fn/ready')(onScroll);
+		topClass = topClass || 'js-scroll-top';
+		topClassAlt = topClassAlt || 'js-no-scroll-top';
+
+    ready(function () {
+      var _ = require('../dom');
+      scroll.on(function () {
+        _.toggleClass(document.documentElement, topClass,
+          !_.toggleClass(document.documentElement, topClassAlt, scroll.top() )
+        );
+      });
+    });
+	};
 
 };
 
-},{"../../fn/ready":21}],34:[function(require,module,exports){
+},{"../../fn/ready":22,"../dom":24}],31:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -1634,7 +1498,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],35:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -1818,7 +1682,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":6}],36:[function(require,module,exports){
+},{"nitro-tools/extend":5}],33:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -1837,7 +1701,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],37:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -1878,7 +1742,7 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],38:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
@@ -1930,7 +1794,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":35}],39:[function(require,module,exports){
+},{"./browser-tools":32}],36:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -1959,7 +1823,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],40:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false;
@@ -2004,7 +1868,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],41:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -2043,7 +1907,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],42:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -2066,7 +1930,7 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":34,"./browser-tools":35,"./colors":36,"./deserialize":37,"./live-dom":38,"./log":39,"./message-listener":40,"./template":41,"nitro-tools/lists":8,"nitro-tools/path":9,"vanilla-tools":17}],43:[function(require,module,exports){
+},{"./amount-price":31,"./browser-tools":32,"./colors":33,"./deserialize":34,"./live-dom":35,"./log":36,"./message-listener":37,"./template":38,"nitro-tools/lists":7,"nitro-tools/path":8,"vanilla-tools":17}],40:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     template = _.template,
@@ -2169,15 +2033,15 @@ var main = document.getElementById('main'), currentMessage,
         }
 
       },
-      loading: function (message) {
+      loading: function (_message) {
         _.addClass(main, 'loading');
       },
-      abort: function (message) {
+      abort: function (_message) {
         _.removeClass(main, 'loading');
       }
     };
 
-_.onMessage('simulator', function (e, message) {
+_.onMessage('simulator', function (_e, message) {
   if( onMessage[message.event] ) {
     onMessage[message.event](message);
   }
@@ -2201,4 +2065,4 @@ function requireData () {
 
 requireData();
 
-},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget-button":2,"../../src/tools/tools":42}]},{},[43]);
+},{"../../.tmp/simulator/templates/modal-instalments":1,"../../.tmp/simulator/templates/widget-button":2,"../../src/tools/tools":39}]},{},[40]);

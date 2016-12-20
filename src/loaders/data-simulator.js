@@ -3,7 +3,7 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      $q = require('q-promise'),
+      $q = require('parole'),
       Events = require('events-wrapper'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
@@ -189,7 +189,7 @@ module.exports = function (aplazame) {
         id = getWidget.serial;
 
     if( meta.options.widget.type === 'button' ) {
-      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
+      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + id );
 
       widget.render = function () {
         widget.message('choices', {

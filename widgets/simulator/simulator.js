@@ -100,15 +100,15 @@ var main = document.getElementById('main'), currentMessage,
         }
 
       },
-      loading: function (message) {
+      loading: function (_message) {
         _.addClass(main, 'loading');
       },
-      abort: function (message) {
+      abort: function (_message) {
         _.removeClass(main, 'loading');
       }
     };
 
-_.onMessage('simulator', function (e, message) {
+_.onMessage('simulator', function (_e, message) {
   if( onMessage[message.event] ) {
     onMessage[message.event](message);
   }

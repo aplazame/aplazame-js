@@ -31,7 +31,13 @@ function checkout (options) {
       cssOverlay = cssHack('overlay'),
       cssBlur = cssHack('blur'),
       cssLogo = cssHack('logo'),
-      cssModal = cssHack('modal');
+      cssModal = cssHack('modal'),
+      viewPortHack = document.createElement('meta');
+
+  viewPortHack.name = 'viewport';
+  viewPortHack.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+
+  document.head.appendChild(viewPortHack);
 
   onError = options.onError || _.noop;
   delete options.onError;
@@ -178,6 +184,7 @@ function checkout (options) {
               document.body.removeChild(iframe);
               cssModal.hack(false);
               iframe = null;
+              document.head.removeChild(viewPortHack);
 
               _.onMessage.off('checkout', onMessage);
 

@@ -87,7 +87,6 @@ var main = document.getElementById('main'), currentMessage,
         if( waitingForData ) {
           clearInterval(waitingForData);
         }
-        // console.log('choices', message);
         currentMessage = message;
         currentMessage.$$choice = currentMessage.choices.reduce(maxInstalments, null);
 

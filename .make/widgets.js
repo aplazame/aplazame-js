@@ -1,5 +1,24 @@
 'use strict';
 
+function compileTemplate (tmpl) {
+  // John Resig micro-template
+  return new Function('obj', // jshint ignore:line
+    'var p=[],print=function(){p.push.apply(p,arguments);};' +
+
+    // Introduce the data as local variables using with(){}
+    'with(obj){p.push(\'' +
+
+    // Convert the template into pure JavaScript
+    tmpl.trim()
+      .replace(/[\r\t\n]/g, ' ')
+      .split('<%').join('\t')
+      .replace(/((^|%>)[^\t]*)'/g, '$1\r')
+      .replace(/\t=(.*?)%>/g, '\',$1,\'')
+      .split('\t').join('\');')
+      .split('%>').join('p.push(\'')
+      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+}
+
 module.exports = function (nitro) {
 
   nitro.task('widgets.assets', function () {
@@ -11,8 +30,9 @@ module.exports = function (nitro) {
 
   nitro.task('widgets.js', function () {
     // nitro.file.write('.tmp/simulator/modal-info.js', 'module.exports = \'' + nitro.file.read('widgets/simulator/modal-info.html').replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
-    nitro.dir('widgets').load('{,**/}templates/*.html').each(function () {
-      nitro.file.write( path.join('.tmp', this.getPath().replace(/\.html$/, '.js') ), 'module.exports = \'' + this.getSrc().replace(/\'/g, '\\\'').replace(/\n/g, '') + '\';' );
+    nitro.dir('widgets').load('{,**/}templates/*.html').each(function (f) {
+      nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.js') ), 'module.exports = \'' + f.src.replace(/\'/g, '\\\'').replace(/\n/g, '') + '\';' );
+      nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.tmpl.js') ), 'module.exports = ' + compileTemplate( f.src ).toString() + ';' );
     });
 
     nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist');

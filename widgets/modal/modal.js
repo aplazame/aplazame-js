@@ -1,6 +1,6 @@
 var _ = require('../../src/tools/tools'), Modal;
 
-_.onMessage('modal', function (e, message) {
+_.onMessage('modal', function (_e, message) {
   if( message.event === 'content' ) {
     Modal = Modal || require('../../.bower_components/ng-aplazame/toolkit/modal')(_);
 

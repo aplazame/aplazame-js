@@ -127,6 +127,4 @@ function requireData () {
   }, '*');
 }
 
-// waitingForData = setInterval(requireData, 250);
-
 requireData();

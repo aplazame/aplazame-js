@@ -15,7 +15,7 @@ deploy:
   rsync:
     user: $$DEPLOY_USER
     host: dev.aplazame.com
-    target: $$DEBUG_PATH
+    target: $$DEPLOY_PATH
     delete: true
     recursive: true
     exclude:

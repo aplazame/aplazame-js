@@ -1,11 +1,11 @@
 
 var _ = require('../../src/tools/tools'),
-    template = _.template,
     each = Array.prototype.forEach,
     waitingForData;
 
-template.put('modal-instalments', require('../../.tmp/simulator/templates/modal-instalments') );
-template.put('widget-button', require('../../.tmp/simulator/templates/widget-button') );
+
+var tmplModalInstalments = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
+    tmplWidget = require('../../.tmp/simulator/templates/widget-button.tmpl');
 
 function emitSize () {
   setTimeout(function () {
@@ -41,7 +41,7 @@ var main = document.getElementById('main'), currentMessage,
             card: {
               className: 'modal-instalments-info'
             },
-            template: _.template('modal-instalments', {
+            template: tmplModalInstalments({
               selectedChoice: currentMessage.$$choice,
               choices: currentMessage.choices,
               getAmount: _.getAmount,
@@ -55,7 +55,7 @@ var main = document.getElementById('main'), currentMessage,
     },
     renderWidget = function () {
       _.removeClass(main, 'loading');
-      main.innerHTML = _.template('widget-button', {
+      main.innerHTML = tmplWidget({
         getAmount: _.getAmount,
         brightness: _.brightness,
         choice: currentMessage.$$choice,
@@ -87,7 +87,6 @@ var main = document.getElementById('main'), currentMessage,
         if( waitingForData ) {
           clearInterval(waitingForData);
         }
-        // console.log('choices', message);
         currentMessage = message;
         currentMessage.$$choice = currentMessage.choices.reduce(maxInstalments, null);
 
@@ -127,7 +126,5 @@ function requireData () {
     simulatorId: simulatorId
   }, '*');
 }
-
-// waitingForData = setInterval(requireData, 250);
 
 requireData();

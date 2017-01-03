@@ -234,7 +234,7 @@ module.exports = function (aplazame) {
             card: {
               className: 'modal-instalments-info'
             },
-            template: _.template.compile( require('../../.tmp/simulator/templates/modal-instalments') )({
+            template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
               selectedChoice: meta.choices.reduce(maxInstalments, null),
               choices: meta.choices,
               getAmount: _.getAmount,

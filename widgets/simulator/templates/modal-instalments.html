@@ -33,7 +33,7 @@
       </div>
       <div class="info">
         <h3>Decide cómo quieres pagar</h3>
-        <p>Hasta en 12 cuotas, pagando con tarjeta.</p>
+        <p>Hasta en <%= selectedChoice.num_instalments %> <%= selectedChoice.num_instalments > 1 ? 'cuotas' : 'cuota' %>, pagando con tarjeta.</p>
       </div>
       <div class="info">
         <h3>Disfruta de tu compra</h3>

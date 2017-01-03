@@ -1307,9 +1307,9 @@ var _dom = {
     toggle = toggle === undefined ? !classListHas(el, className) : toggle;
 
     if( toggle ) {
-      classListRemove(el, className);
-    } else {
       classListAdd(el, className);
+    } else {
+      classListRemove(el, className);
     }
     return toggle;
   },
@@ -2343,7 +2343,7 @@ module.exports = _;
 },{"./amount-price":36,"./browser-tools":37,"./colors":38,"./deserialize":39,"./live-dom":40,"./log":41,"./message-listener":42,"./template":43,"nitro-tools/lists":5,"nitro-tools/path":6,"vanilla-tools":16}],45:[function(require,module,exports){
 var _ = require('../../src/tools/tools'), Modal;
 
-_.onMessage('modal', function (e, message) {
+_.onMessage('modal', function (_e, message) {
   if( message.event === 'content' ) {
     Modal = Modal || require('../../.bower_components/ng-aplazame/toolkit/modal')(_);
 

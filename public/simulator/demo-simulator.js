@@ -1085,9 +1085,9 @@ var _dom = {
     toggle = toggle === undefined ? !classListHas(el, className) : toggle;
 
     if( toggle ) {
-      classListRemove(el, className);
-    } else {
       classListAdd(el, className);
+    } else {
+      classListRemove(el, className);
     }
     return toggle;
   },

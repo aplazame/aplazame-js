@@ -3,8 +3,8 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      $q = require('q-promise'),
-      Events = require('events-wrapper'),
+      $q = require('parole'),
+      Events = require('azazel'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
       each = Array.prototype.forEach;
@@ -141,13 +141,13 @@ module.exports = function (aplazame) {
     new Events (this);
 
     this.onload = function () {
-      this.trigger('load', null, this);
+      this.emit('load', null, this);
     };
 
     _.onMessage('simulator', function (e, message) {
       // console.log('message.simulator', e, message);
       if( e.source === el.contentWindow ) {
-        iframe.trigger('message:' + message.event, [message], this);
+        iframe.emit('message:' + message.event, [message], this);
       }
     });
 
@@ -189,7 +189,7 @@ module.exports = function (aplazame) {
         id = getWidget.serial;
 
     if( meta.options.widget.type === 'button' ) {
-      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + Date.now() + '&simulator=' + id );
+      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + id );
 
       widget.render = function () {
         widget.message('choices', {
@@ -342,7 +342,7 @@ module.exports = function (aplazame) {
       // if( meta.widget && meta.widget.message ) {
       if( meta.widget ) {
         // meta.widget.message('loading');
-        meta.widget.trigger('choices.updating');
+        meta.widget.emit('choices.updating');
       }
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
         _options.widget = _options.widget || {};
@@ -359,7 +359,7 @@ module.exports = function (aplazame) {
           placeWidget(meta.widget, widgetWrapper, widgetWrapper.getAttribute('data-location') || _options.widget.location );
         }
 
-        meta.widget.trigger('choices.update');
+        meta.widget.emit('choices.update');
       }, function () {
         if( meta.widget && meta.widget.message ) {
           meta.widget.message('abort');

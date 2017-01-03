@@ -1,12 +1,14 @@
 'use strict';
 
-window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia;
+function matchMedia (query) {
+  return (window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia)(query);
+}
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     cssHack = require('../tools/css-hack'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
-    isMobile = window.matchMedia('( max-width: 767px )'),
+    isMobile = matchMedia('( max-width: 767px )'),
     lastScrollTop;
 
 var tmpOverlay = document.createElement('div'),

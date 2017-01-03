@@ -26,7 +26,7 @@ deploy:
       branch: master
 
   rsync:
-    user: $$DEPLOY_USER
+    user: $$RELEASE_USER
     host: aplazame.com
     target: $$RELEASE_PATH
     delete: true

@@ -5,7 +5,9 @@ module.exports = function (aplazame) {
   var _ = aplazame._,
       script = _.currentScript,
       dataAplazame = script.getAttribute('data-aplazame'),
-      options = script.src && (/\?/.test(script.src) ? _.deserialize(script.src.match(/(.*?)\?(.*)/)[2]) : {}) || {};
+      options = script.src && (/[?#]/.test(script.src) ? _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) : {}) || {};
+
+  // console.log('currentScript', script.src, script.src && /[?#]/.test(script.src), _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) );
 
   if( options.sandbox ) {
     options.sandbox = options.sandbox === 'true' || options.sandbox === '1';

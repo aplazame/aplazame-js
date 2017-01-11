@@ -1,8 +1,22 @@
+/* global define */
 
 require('./sandbox')(function () {
   'use strict';
 
-  var aplazame = require('./core/core');
+  function once (fn) {
+    var result;
+    return function () {
+      if( fn ) {
+        result = fn.apply(this, arguments);
+        fn = null;
+      }
+      return result;
+    };
+  }
+
+  var aplazame = require('./core/core'),
+      api = require('./core/api'),
+      events = require('./core/events');
 
   aplazame.checkout = require('./apps/checkout');
   aplazame.button = require('./apps/button');
@@ -26,23 +40,34 @@ require('./sandbox')(function () {
 
   require('./apps/http-service');
 
-  global.aplazame = aplazame;
+  // global.aplazame = aplazame;
 
-  require('./loaders/data-aplazame')(global.aplazame);
+  require('./loaders/data-aplazame')(aplazame);
+
+  var runLaunchers = once(function () {
+    require('./loaders/data-button')(aplazame);
+    require('./loaders/data-simulator')(aplazame);
+  });
+
+  if( api.publicKey ) runLaunchers();
+  events.on('init', runLaunchers);
+
+  if (typeof define === 'function' && define.amd) {
+    define([], function () {
+      return aplazame;
+    });
+  } else {
+    global.aplazame = aplazame;
+  }
+
   aplazame._.ready(function () {
-    var buttonsLookup = require('./loaders/data-button')(aplazame),
-        widgetsLookup = require('./loaders/data-simulator')(aplazame),
-        cb = require('./core/api').callback;
-
-    if( cb ) {
-      if(  typeof global[cb] !== 'function' ) {
+    if( api.callback ) {
+      if(  typeof global[api.callback] !== 'function' ) {
         throw new Error('callback should be a global function');
       }
-      global[cb](aplazame);
-      buttonsLookup();
-      widgetsLookup();
-    }
 
+      global[api.callback](aplazame);
+    }
   });
 
 });

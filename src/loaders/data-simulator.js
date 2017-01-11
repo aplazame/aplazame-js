@@ -138,7 +138,7 @@ module.exports = function (aplazame) {
     this.el = el;
     this.el.src = url;
 
-    new Events (this);
+    new Events(this);
 
     this.onload = function () {
       this.emit('load', null, this);

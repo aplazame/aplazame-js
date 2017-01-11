@@ -33,7 +33,7 @@ function init (options) {
 
   _.log('aplazame.init', api);
 
-  events.emit('init');
+  if( api.publicKey ) events.emit('ready');
 }
 
 module.exports = init;

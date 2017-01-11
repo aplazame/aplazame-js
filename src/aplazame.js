@@ -42,15 +42,11 @@ require('./sandbox')(function () {
 
   global.aplazame = aplazame;
 
-  require('./loaders/data-aplazame')(aplazame);
-
-  var runLaunchers = once(function () {
+  events.on('ready', once(function () {
     require('./loaders/data-button')(aplazame);
     require('./loaders/data-simulator')(aplazame);
-  });
-
-  if( api.publicKey ) runLaunchers();
-  events.on('init', runLaunchers);
+  }));
+  require('./loaders/data-aplazame')(aplazame);
 
   if (typeof define === 'function' && define.amd) {
     define([], function () {

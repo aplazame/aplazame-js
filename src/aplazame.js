@@ -40,7 +40,7 @@ require('./sandbox')(function () {
 
   require('./apps/http-service');
 
-  // global.aplazame = aplazame;
+  global.aplazame = aplazame;
 
   require('./loaders/data-aplazame')(aplazame);
 
@@ -56,8 +56,6 @@ require('./sandbox')(function () {
     define([], function () {
       return aplazame;
     });
-  } else {
-    global.aplazame = aplazame;
   }
 
   aplazame._.ready(function () {

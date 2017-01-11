@@ -178,3 +178,27 @@ window.launchCheckout = function () {
 };
 </script>
 ```
+
+#### requirejs
+
+``` js
+
+requirejs.config({
+    // baseUrl: 'scripts',
+    paths: {
+      aplazame: 'https//aplazame.com/static/aplazame.js'
+    }
+});
+
+require(['aplazame'], function (aplazame) {
+  aplazame.init({
+    sandbox: true,
+    publicKey: '12093289b594f50d3971e4719eedd5c314ceb6ba'
+  });
+
+  aplazame.checkout({
+    // ...
+  });
+});
+
+```

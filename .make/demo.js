@@ -62,9 +62,11 @@ module.exports = function (nitro) {
       return JSON.stringify( scope.eval(expression), null, '\t' );
     }, true);
 
+    // console.log('-------------------\nbranch: ' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null') + '\n-------------------');
+
     var pkg = require('../package'),
         dev = target === 'dev',
-        branch = '' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null'),
+        branch = ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim(),
         renderIndex = template( file.read('demo/index.html') ),
         checkout = file.readJSON('./demo/checkout.json'),
         indexData = nitro.tools.scope({
@@ -72,7 +74,7 @@ module.exports = function (nitro) {
           git: {
             branch: process.env.DRONE_BRANCH || process.env.GIT_BRANCH || branch || require('git-rev-sync').branch()
           },
-          dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
+          // dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
           version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
           build: Date.now(),
           checkout: checkout,

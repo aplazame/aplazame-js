@@ -1,7 +1,8 @@
 'use strict';
 
 var api = require('./api'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    events = require('./events');
 
 function init (options) {
   options = options || {};
@@ -31,6 +32,8 @@ function init (options) {
   _.extend(api, options);
 
   _.log('aplazame.init', api);
+
+  if( api.publicKey ) events.emit('ready');
 }
 
 module.exports = init;

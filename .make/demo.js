@@ -1,8 +1,9 @@
+/* global process */
 'use strict';
 
 module.exports = function (nitro) {
 
-  nitro.task('demo-clear', function (target) {
+  nitro.task('demo-clear', function (_target) {
     nitro.dir('public').remove();
   });
 
@@ -10,7 +11,7 @@ module.exports = function (nitro) {
       nitro.load('demo/{,**/}*.js').process('eslint');
   });
 
-  nitro.task('demo-assets', function (target) {
+  nitro.task('demo-assets', function (_target) {
 
     nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
 
@@ -34,13 +35,24 @@ module.exports = function (nitro) {
 
   nitro.task('demo-js', function (target) {
 
-    nitro.dir('demo').load('demo-simulator.js', { sourceMap: target === 'dev' && 'inline' })
-      .process('browserify')
-      .write('public/simulator');
+    var dev = target === 'dev';
+        // branch = process.env.DRONE_BRANCH || process.env.GIT_BRANCH || ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim();
 
-    nitro.dir('demo').load('demo-article.js', { sourceMap: target === 'dev' && 'inline' })
+    nitro.dir('demo/scripts').load('demo-simulator.js', { sourceMap: target === 'dev' && 'inline' })
       .process('browserify')
-      .write('public');
+      .write('public/scripts/simulator');
+
+    nitro.dir('demo/scripts').load('demo-article.js', { sourceMap: target === 'dev' && 'inline' })
+      .process('browserify')
+      .write('public/scripts');
+
+    nitro.file.copy('demo/scripts/demo-article-require.js', 'public/scripts/demo-article-require.js');
+
+    nitro.file.write('public/scripts/demo-require.js', nitro.template(nitro.file.read('demo/scripts/demo-require.js'))({
+      dev: dev
+    }) );
+
+    // nitro.file.copy('demo/scripts/demo-require.js', 'public/scripts/demo-require.js');
 
   });
 
@@ -49,7 +61,7 @@ module.exports = function (nitro) {
     var template = nitro.template,
         file = nitro.file;
 
-    template.cmd('with', function (scope, expression, content, otherwise) {
+    template.cmd('with', function (scope, expression, content, _otherwise) {
       var parts = expression.split('as'),
           o = {};
 
@@ -58,7 +70,7 @@ module.exports = function (nitro) {
       return content( scope.new(o) );
     });
 
-    template.cmd('json', function (scope, expression, content, otherwise) {
+    template.cmd('json', function (scope, expression, _content, _otherwise) {
       return JSON.stringify( scope.eval(expression), null, '\t' );
     }, true);
 
@@ -96,12 +108,12 @@ module.exports = function (nitro) {
             }
             return ( article.price*article.discount_rate/10000 - (article.discount || 0) )*( 1 + article.tax_rate/10000 );
           },
-          discountAmount: function (article) {
+          discountAmount: function (_article) {
             return checkout.order.total_amount - parseInt( checkout.order.articles.reduce(function (prev, article) {
               return prev + article.quantity*indexData.articleAmount( article, true );
             }, 0) + indexData.shippingAmount() );
           },
-          totalAmount: function (articles) {
+          totalAmount: function (_articles) {
             return checkout.order.total_amount;
           },
           amount2string: function (amount) {
@@ -122,12 +134,14 @@ module.exports = function (nitro) {
     file.write('public/demo-success.html', renderIndex( indexData.new({ result: { closed: true, success: true } }) ) );
     file.write('public/demo-cancel.html', renderIndex( indexData.new({ result: { closed: true, success: false } }) ) );
 
+    file.write('public/require.html', template( file.read('demo/require.html') )( indexData ) );
+
     file.write('public/playground.html', template( file.read('demo/playground.html') )( indexData ) );
 
     file.write('public/simulator/index.html', template( file.read('demo/demo-simulator.html') )( indexData.new({ baseHref: '/simulator/' }) ) );
   });
 
-  nitro.task('demo-dev', ['demo-lintjs', 'demo-clear', 'demo-assets', 'demo-js', 'demo-sass:dev', 'demo-templates:dev']);
+  nitro.task('demo-dev', ['demo-lintjs:dev', 'demo-clear:dev', 'demo-assets:dev', 'demo-js:dev', 'demo-sass:dev', 'demo-templates:dev']);
 
   nitro.task('demo', ['demo-lintjs', 'demo-clear', 'demo-assets', 'demo-js', 'demo-sass', 'demo-templates']);
 

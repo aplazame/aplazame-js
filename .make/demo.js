@@ -35,8 +35,8 @@ module.exports = function (nitro) {
 
   nitro.task('demo-js', function (target) {
 
-    var dev = target === 'dev';
-        // branch = process.env.DRONE_BRANCH || process.env.GIT_BRANCH || ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim();
+    var dev = target === 'dev',
+        branch = process.env.DRONE_BRANCH || process.env.GIT_BRANCH || ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim();
 
     nitro.dir('demo/scripts').load('demo-simulator.js', { sourceMap: target === 'dev' && 'inline' })
       .process('browserify')
@@ -49,7 +49,8 @@ module.exports = function (nitro) {
     nitro.file.copy('demo/scripts/demo-article-require.js', 'public/scripts/demo-article-require.js');
 
     nitro.file.write('public/scripts/demo-require.js', nitro.template(nitro.file.read('demo/scripts/demo-require.js'))({
-      dev: dev
+      dev: dev,
+      release: branch === 'release'
     }) );
 
     // nitro.file.copy('demo/scripts/demo-require.js', 'public/scripts/demo-require.js');

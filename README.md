@@ -186,7 +186,7 @@ window.launchCheckout = function () {
 requirejs.config({
     // baseUrl: 'scripts',
     paths: {
-      aplazame: 'https//aplazame.com/static/aplazame.js'
+      aplazame: 'https://aplazame.com/static/aplazame.js'
     }
 });
 

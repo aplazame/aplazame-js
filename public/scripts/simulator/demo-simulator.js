@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* globals aplazame */
 
-var _ = require('../src/tools/tools');
+var _ = require('../../src/tools/tools');
 
 _.template.lookup();
 
@@ -43,7 +43,7 @@ form.addEventListener('submit', function (e) {
   });
 });
 
-},{"../src/tools/tools":44}],2:[function(require,module,exports){
+},{"../../src/tools/tools":44}],2:[function(require,module,exports){
 /**
  * https://github.com/gre/bezier-easing
  * BezierEasing - use bezier curve for transition easing function
@@ -537,227 +537,210 @@ module.exports = {
 
 },{}],8:[function(require,module,exports){
 
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-      // AMD. Register as an anonymous module.
-      define(factory);
-  } else if (typeof module === 'object' && module.exports) {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory();
+function runHandler (fn, deferred, x, fulfilled) {
+  if( typeof fn === 'function' ) {
+    try {
+      deferred.resolve( fn(x) );
+    } catch(reason) {
+      deferred.reject( reason );
+    }
   } else {
-    // Browser globals (root is window)
-    root.Parole = factory();
+    deferred[ fulfilled ? 'resolve' : 'reject' ](x);
   }
-}(this, function () {
+}
 
-  function runHandler (fn, deferred, x, fulfilled) {
-    if( typeof fn === 'function' ) {
-      try {
-        deferred.resolve( fn(x) );
-      } catch(reason) {
-        deferred.reject( reason );
+function resolvePromise (p, x, fulfilled) {
+  if( p.resolved ) {
+    return;
+  }
+  p.resolved = true;
+
+  p.result = x;
+  p.fulfilled = fulfilled || false;
+
+  var queue = p.queue.splice(0);
+  p.queue = null;
+
+  setTimeout(function () {
+    for( var i = 0, n = queue.length ; i < n ; i++ ) {
+      runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+    }
+  }, 0);
+}
+
+function runThenable (then, p, x) {
+  var executed = false;
+  try {
+    then.call(x, function (value) {
+      if( executed ) return;
+      executed = true;
+      xThen(p, value, true);
+    }, function (reason) {
+      if( executed ) return;
+      executed = true;
+      xThen(p, reason, false);
+    });
+  } catch(err) {
+    if( executed ) return;
+    xThen(p, err, false);
+  }
+}
+
+function xThen (p, x, fulfilled) {
+  var then;
+
+  if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+    try {
+      then = x.then;
+
+      if( fulfilled && typeof then === 'function' ) {
+        runThenable(then, p, x);
+      } else {
+        resolvePromise(p, x, fulfilled);
       }
-    } else {
-      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+    } catch (reason) {
+      resolvePromise(p, reason, false);
     }
+  } else {
+    resolvePromise(p, x, fulfilled);
+  }
+}
+
+function resolveProcedure (p, x, fulfilled) {
+  if( p.resolving ) return;
+  p.resolving = true;
+
+  if( x === p.promise ) {
+    fulfilled = false;
+    x = new TypeError('A promise can not be resolved by itself');
   }
 
-  function resolvePromise (p, x, fulfilled) {
-    if( p.resolved ) {
-      return;
-    }
-    p.resolved = true;
+  xThen(p, x, fulfilled);
+}
 
-    p.result = x;
-    p.fulfilled = fulfilled || false;
+function Parole (resolver) {
+  if( !(this instanceof Parole) ) {
+    return new Parole(resolver);
+  }
 
-    var queue = p.queue.splice(0);
-    p.queue = null;
+  if( typeof resolver !== 'function' ) {
+    throw new TypeError('Promise resolver ' + resolver + ' is not a function');
+  }
 
+  var p = {
+    queue: [],
+    promise: this
+  };
+
+  this.__promise = p;
+
+  try {
+    resolver(function (value) {
+      resolveProcedure(p, value, true);
+    }, function (reason) {
+      resolveProcedure(p, reason, false);
+    });
+  } catch (reason) {
+    resolveProcedure(p, reason, false);
+  }
+
+}
+
+Parole.prototype.then = function (onFulfilled, onRejected) {
+  var p = this.__promise,
+      deferred = Parole.defer();
+
+  if( p.queue ) {
+    p.queue.push([onFulfilled, onRejected, deferred]);
+  } else {
     setTimeout(function () {
-      for( var i = 0, n = queue.length ; i < n ; i++ ) {
-        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
-      }
+      runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
     }, 0);
   }
 
-  function runThenable (then, p, x) {
-    var executed = false;
-    try {
-      then.call(x, function (value) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, value, true);
-      }, function (reason) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, reason, false);
-      });
-    } catch(err) {
-      if( executed ) return;
-      xThen(p, err, false);
-    }
+  return deferred.promise;
+};
+
+Parole.prototype.catch = function (onRejected) {
+  return this.then(null, onRejected);
+};
+
+// Promise methods
+
+function each (iterable, handler) {
+  for( var i = 0, n = iterable.length; i < n ; i++ ) {
+    handler(iterable[i], i);
   }
+}
 
-  function xThen (p, x, fulfilled) {
-    var then;
+Parole.defer = function () {
+  var deferred = {};
+  deferred.promise = new Parole(function (resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+};
 
-    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
-      try {
-        then = x.then;
+Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
 
-        if( fulfilled && typeof then === 'function' ) {
-          runThenable(then, p, x);
-        } else {
-          resolvePromise(p, x, fulfilled);
+Parole.resolve = function (value) {
+  return new Parole(function (resolve) {
+    resolve(value);
+  });
+};
+
+Parole.reject = function (value) {
+  return new Parole(function (resolve, reject) {
+    reject(value);
+  });
+};
+
+Parole.all = function (iterable) {
+  return new Parole(function (resolve, reject) {
+    var pending = iterable.length,
+        results = [];
+    each(iterable, function (_promise, i) {
+
+      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+        results[i] = result;
+        if( --pending === 0 ) {
+          resolve(results);
         }
-      } catch (reason) {
-        resolvePromise(p, reason, false);
+      }, function (reason) {
+        if( pending !== -1 ) {
+          pending === -1;
+          reject(reason);
+        }
+      });
+    });
+  });
+};
+
+Parole.race = function (iterable) {
+  return new Parole(function (resolve, reject) {
+    var done = false;
+
+    each(iterable, function (_promise) {
+      if( done ) {
+        return;
       }
-    } else {
-      resolvePromise(p, x, fulfilled);
-    }
-  }
-
-  function resolveProcedure (p, x, fulfilled) {
-    if( p.resolving ) return;
-    p.resolving = true;
-
-    if( x === p.promise ) {
-      fulfilled = false;
-      x = new TypeError('A promise can not be resolved by itself');
-    }
-
-    xThen(p, x, fulfilled);
-  }
-
-  function Parole (resolver) {
-    if( !(this instanceof Parole) ) {
-      return new Parole(resolver);
-    }
-
-    if( typeof resolver !== 'function' ) {
-      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
-    }
-
-    var p = {
-      queue: [],
-      promise: this
-    };
-
-    this.__promise = p;
-
-    try {
-      resolver(function (value) {
-        resolveProcedure(p, value, true);
-      }, function (reason) {
-        resolveProcedure(p, reason, false);
-      });
-    } catch (reason) {
-      resolveProcedure(p, reason, false);
-    }
-
-  }
-
-  Parole.prototype.then = function (onFulfilled, onRejected) {
-    var p = this.__promise,
-        deferred = Parole.defer();
-
-    if( p.queue ) {
-      p.queue.push([onFulfilled, onRejected, deferred]);
-    } else {
-      setTimeout(function () {
-        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
-      }, 0);
-    }
-
-    return deferred.promise;
-  };
-
-  Parole.prototype.catch = function (onRejected) {
-    return this.then(null, onRejected);
-  };
-
-  // Promise methods
-
-  function each (iterable, handler) {
-    for( var i = 0, n = iterable.length; i < n ; i++ ) {
-      handler(iterable[i], i);
-    }
-  }
-
-  Parole.defer = function () {
-    var deferred = {};
-    deferred.promise = new Parole(function (resolve, reject) {
-      deferred.resolve = resolve;
-      deferred.reject = reject;
-    });
-    return deferred;
-  };
-
-  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
-
-  Parole.resolve = function (value) {
-    return new Parole(function (resolve) {
-      resolve(value);
-    });
-  };
-
-  Parole.reject = function (value) {
-    return new Parole(function (resolve, reject) {
-      reject(value);
-    });
-  };
-
-  Parole.all = function (iterable) {
-    return new Parole(function (resolve, reject) {
-      var pending = iterable.length,
-          results = [];
-      each(iterable, function (_promise, i) {
-
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-          results[i] = result;
-          if( --pending === 0 ) {
-            resolve(results);
-          }
-        }, function (reason) {
-          if( pending !== -1 ) {
-            pending === -1;
-            reject(reason);
-          }
-        });
-      });
-    });
-  };
-
-  Parole.race = function (iterable) {
-    return new Parole(function (resolve, reject) {
-      var done = false;
-
-      each(iterable, function (_promise) {
-        if( done ) {
-          return;
+      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+        if( !done ) {
+          done = true;
+          resolve(result);
         }
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-          if( !done ) {
-            done = true;
-            resolve(result);
-          }
-        }, function (reason) {
-          if( !done ) {
-            done = true;
-            reject(reason);
-          }
-        });
+      }, function (reason) {
+        if( !done ) {
+          done = true;
+          reject(reason);
+        }
       });
     });
-  };
+  });
+};
 
-  return Parole;
-
-}));
+module.exports = Parole;
 
 },{}],9:[function(require,module,exports){
 var arrayShift = [].shift;
@@ -1085,9 +1068,9 @@ var _dom = {
     toggle = toggle === undefined ? !classListHas(el, className) : toggle;
 
     if( toggle ) {
-      classListRemove(el, className);
-    } else {
       classListAdd(el, className);
+    } else {
+      classListRemove(el, className);
     }
     return toggle;
   },

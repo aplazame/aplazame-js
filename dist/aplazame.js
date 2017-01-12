@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.386';
+module.exports = '0.0.387';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -16,122 +16,104 @@ var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div cla
 },{}],7:[function(require,module,exports){
 module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num"><%= choice.num_instalments %></em>    <span>&nbsp;<%= choice.num_instalments === 1 ? \'cuota\' : \'cuotas\' %></span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
 },{}],8:[function(require,module,exports){
-(function (root, factory) {
 
-  if (typeof define === 'function' && define.amd) {
-      // AMD. Register as an anonymous module.
-      define(factory);
-  } else if (typeof module === 'object' && module.exports) {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory();
+function extend (dest, src) {
+  for( var key in src ) {
+    dest[key] = src[key];
+  }
+  return dest;
+}
+
+function Event (name) {
+  this.name = name;
+}
+
+Event.prototype.preventDefault = function () {
+  this.defaultPrevented = true;
+};
+
+function addHandler (listeners, eventName, handler, useCapture) {
+  if( !listeners[eventName] ) {
+    listeners[eventName] = [];
+  }
+
+  if( useCapture ) {
+    listeners[eventName].unshift(handler);
   } else {
-    // Browser globals (root is window)
-    root.Azazel = factory();
+    listeners[eventName].push(handler);
   }
+}
 
-})(this, function () {
-	'use strict';
+function removeHandler (listeners, handler) {
+  var found = listeners.indexOf(handler);
+  if( found >= 0 ) listeners.splice(found, 1);
+}
 
-  function extend (dest, src) {
-    for( var key in src ) {
-      dest[key] = src[key];
-    }
-    return dest;
+function removeOnce( listeners, handler ) {
+  for( var key in listeners ) {
+    removeHandler(listeners[key], handler);
   }
+  delete handler.__run_once;
+}
 
-  function Event (name) {
-    this.name = name;
+function extendMethods (evt, target, prefix) {
+  target[prefix + 'on'] = evt.on.bind(evt);
+  target[prefix + 'once'] = evt.once.bind(evt);
+  target[prefix + 'off'] = evt.off.bind(evt);
+  target[prefix + 'emit'] = evt.emit.bind(evt);
+}
+
+function Azazel (target, prefix) {
+  this.listeners = {};
+  if( target ) {
+    extendMethods(this, target, prefix || '');
   }
+}
 
-  Event.prototype.preventDefault = function () {
-    this.defaultPrevented = true;
-  };
+extend(Azazel.prototype, {
+  on: function (eventName, handler, useCapture) {
+    var listeners = this.listeners;
+    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
+      addHandler(listeners, eventName, handler, useCapture);
+    });
+  },
+  once: function (eventName, handler, useCapture) {
+    handler.__run_once = true;
+    var listeners = this.listeners;
+    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
+      addHandler(listeners, eventName, handler, useCapture);
+    });
+  },
+  emit: function (eventName, params, thisArg) {
+    var listeners = this.listeners;
+    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
+      if( !listeners[eventName] ) return;
 
-  function addHandler (listeners, eventName, handler, useCapture) {
-    if( !listeners[eventName] ) {
-      listeners[eventName] = [];
-    }
+      var event = new Event(eventName),
+          args = [event].concat(params),
+          _listeners = listeners[eventName];
 
-    if( useCapture ) {
-      listeners[eventName].unshift(handler);
-    } else {
-      listeners[eventName].push(handler);
-    }
-  }
-
-  function removeHandler (listeners, handler) {
-    var found = listeners.indexOf(handler);
-    if( found >= 0 ) listeners.splice(found, 1);
-  }
-
-  function removeOnce( listeners, handler ) {
-    for( var key in listeners ) {
-      removeHandler(listeners[key], handler);
-    }
-    delete handler.__run_once;
-  }
-
-  function extendMethods (evt, target, prefix) {
-    target[prefix + 'on'] = evt.on.bind(evt);
-    target[prefix + 'once'] = evt.once.bind(evt);
-    target[prefix + 'off'] = evt.off.bind(evt);
-    target[prefix + 'emit'] = evt.emit.bind(evt);
-  }
-
-  function Azazel (target, prefix) {
-    this.listeners = {};
-    if( target ) {
-      extendMethods(this, target, prefix || '');
-    }
-  }
-
-  extend(Azazel.prototype, {
-    on: function (eventName, handler, useCapture) {
-      var listeners = this.listeners;
-      ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-        addHandler(listeners, eventName, handler, useCapture);
-      });
-    },
-    once: function (eventName, handler, useCapture) {
-      handler.__run_once = true;
-      var listeners = this.listeners;
-      ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-        addHandler(listeners, eventName, handler, useCapture);
-      });
-    },
-    emit: function (eventName, params, thisArg) {
-      var listeners = this.listeners;
-      ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-        if( !listeners[eventName] ) return;
-
-        var event = new Event(eventName),
-            args = [event].concat(params),
-            _listeners = listeners[eventName];
-
-        for( var i = 0, n = _listeners.length; i < n; i++ ) {
-          _listeners[i].apply(thisArg, args);
-          if( _listeners[i].__run_once ) {
-            removeOnce(listeners, _listeners[i]);
-            i--;
-            n--;
-          }
-          if( event.defaultPrevented ) return;
+      for( var i = 0, n = _listeners.length; i < n; i++ ) {
+        _listeners[i].apply(thisArg, args);
+        if( _listeners[i].__run_once ) {
+          removeOnce(listeners, _listeners[i]);
+          i--;
+          n--;
         }
-      });
-    },
-    off: function (eventName, handler) {
-      var listeners = this.listeners;
-      ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-        if( !listeners[eventName] ) return;
-        removeHandler(listeners[eventName], handler );
-      });
-    }
-  });
-
-  return Azazel;
+        if( event.defaultPrevented ) return;
+      }
+    });
+  },
+  off: function (eventName, handler) {
+    var listeners = this.listeners;
+    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
+      if( !listeners[eventName] ) return;
+      removeHandler(listeners[eventName], handler );
+    });
+  }
 });
+
+module.exports = Azazel;
 
 },{}],9:[function(require,module,exports){
 /**
@@ -872,227 +854,210 @@ module.exports = {
 
 },{}],16:[function(require,module,exports){
 
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-      // AMD. Register as an anonymous module.
-      define(factory);
-  } else if (typeof module === 'object' && module.exports) {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory();
+function runHandler (fn, deferred, x, fulfilled) {
+  if( typeof fn === 'function' ) {
+    try {
+      deferred.resolve( fn(x) );
+    } catch(reason) {
+      deferred.reject( reason );
+    }
   } else {
-    // Browser globals (root is window)
-    root.Parole = factory();
+    deferred[ fulfilled ? 'resolve' : 'reject' ](x);
   }
-}(this, function () {
+}
 
-  function runHandler (fn, deferred, x, fulfilled) {
-    if( typeof fn === 'function' ) {
-      try {
-        deferred.resolve( fn(x) );
-      } catch(reason) {
-        deferred.reject( reason );
+function resolvePromise (p, x, fulfilled) {
+  if( p.resolved ) {
+    return;
+  }
+  p.resolved = true;
+
+  p.result = x;
+  p.fulfilled = fulfilled || false;
+
+  var queue = p.queue.splice(0);
+  p.queue = null;
+
+  setTimeout(function () {
+    for( var i = 0, n = queue.length ; i < n ; i++ ) {
+      runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+    }
+  }, 0);
+}
+
+function runThenable (then, p, x) {
+  var executed = false;
+  try {
+    then.call(x, function (value) {
+      if( executed ) return;
+      executed = true;
+      xThen(p, value, true);
+    }, function (reason) {
+      if( executed ) return;
+      executed = true;
+      xThen(p, reason, false);
+    });
+  } catch(err) {
+    if( executed ) return;
+    xThen(p, err, false);
+  }
+}
+
+function xThen (p, x, fulfilled) {
+  var then;
+
+  if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+    try {
+      then = x.then;
+
+      if( fulfilled && typeof then === 'function' ) {
+        runThenable(then, p, x);
+      } else {
+        resolvePromise(p, x, fulfilled);
       }
-    } else {
-      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+    } catch (reason) {
+      resolvePromise(p, reason, false);
     }
+  } else {
+    resolvePromise(p, x, fulfilled);
+  }
+}
+
+function resolveProcedure (p, x, fulfilled) {
+  if( p.resolving ) return;
+  p.resolving = true;
+
+  if( x === p.promise ) {
+    fulfilled = false;
+    x = new TypeError('A promise can not be resolved by itself');
   }
 
-  function resolvePromise (p, x, fulfilled) {
-    if( p.resolved ) {
-      return;
-    }
-    p.resolved = true;
+  xThen(p, x, fulfilled);
+}
 
-    p.result = x;
-    p.fulfilled = fulfilled || false;
+function Parole (resolver) {
+  if( !(this instanceof Parole) ) {
+    return new Parole(resolver);
+  }
 
-    var queue = p.queue.splice(0);
-    p.queue = null;
+  if( typeof resolver !== 'function' ) {
+    throw new TypeError('Promise resolver ' + resolver + ' is not a function');
+  }
 
+  var p = {
+    queue: [],
+    promise: this
+  };
+
+  this.__promise = p;
+
+  try {
+    resolver(function (value) {
+      resolveProcedure(p, value, true);
+    }, function (reason) {
+      resolveProcedure(p, reason, false);
+    });
+  } catch (reason) {
+    resolveProcedure(p, reason, false);
+  }
+
+}
+
+Parole.prototype.then = function (onFulfilled, onRejected) {
+  var p = this.__promise,
+      deferred = Parole.defer();
+
+  if( p.queue ) {
+    p.queue.push([onFulfilled, onRejected, deferred]);
+  } else {
     setTimeout(function () {
-      for( var i = 0, n = queue.length ; i < n ; i++ ) {
-        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
-      }
+      runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
     }, 0);
   }
 
-  function runThenable (then, p, x) {
-    var executed = false;
-    try {
-      then.call(x, function (value) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, value, true);
-      }, function (reason) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, reason, false);
-      });
-    } catch(err) {
-      if( executed ) return;
-      xThen(p, err, false);
-    }
+  return deferred.promise;
+};
+
+Parole.prototype.catch = function (onRejected) {
+  return this.then(null, onRejected);
+};
+
+// Promise methods
+
+function each (iterable, handler) {
+  for( var i = 0, n = iterable.length; i < n ; i++ ) {
+    handler(iterable[i], i);
   }
+}
 
-  function xThen (p, x, fulfilled) {
-    var then;
+Parole.defer = function () {
+  var deferred = {};
+  deferred.promise = new Parole(function (resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+};
 
-    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
-      try {
-        then = x.then;
+Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
 
-        if( fulfilled && typeof then === 'function' ) {
-          runThenable(then, p, x);
-        } else {
-          resolvePromise(p, x, fulfilled);
+Parole.resolve = function (value) {
+  return new Parole(function (resolve) {
+    resolve(value);
+  });
+};
+
+Parole.reject = function (value) {
+  return new Parole(function (resolve, reject) {
+    reject(value);
+  });
+};
+
+Parole.all = function (iterable) {
+  return new Parole(function (resolve, reject) {
+    var pending = iterable.length,
+        results = [];
+    each(iterable, function (_promise, i) {
+
+      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+        results[i] = result;
+        if( --pending === 0 ) {
+          resolve(results);
         }
-      } catch (reason) {
-        resolvePromise(p, reason, false);
+      }, function (reason) {
+        if( pending !== -1 ) {
+          pending === -1;
+          reject(reason);
+        }
+      });
+    });
+  });
+};
+
+Parole.race = function (iterable) {
+  return new Parole(function (resolve, reject) {
+    var done = false;
+
+    each(iterable, function (_promise) {
+      if( done ) {
+        return;
       }
-    } else {
-      resolvePromise(p, x, fulfilled);
-    }
-  }
-
-  function resolveProcedure (p, x, fulfilled) {
-    if( p.resolving ) return;
-    p.resolving = true;
-
-    if( x === p.promise ) {
-      fulfilled = false;
-      x = new TypeError('A promise can not be resolved by itself');
-    }
-
-    xThen(p, x, fulfilled);
-  }
-
-  function Parole (resolver) {
-    if( !(this instanceof Parole) ) {
-      return new Parole(resolver);
-    }
-
-    if( typeof resolver !== 'function' ) {
-      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
-    }
-
-    var p = {
-      queue: [],
-      promise: this
-    };
-
-    this.__promise = p;
-
-    try {
-      resolver(function (value) {
-        resolveProcedure(p, value, true);
-      }, function (reason) {
-        resolveProcedure(p, reason, false);
-      });
-    } catch (reason) {
-      resolveProcedure(p, reason, false);
-    }
-
-  }
-
-  Parole.prototype.then = function (onFulfilled, onRejected) {
-    var p = this.__promise,
-        deferred = Parole.defer();
-
-    if( p.queue ) {
-      p.queue.push([onFulfilled, onRejected, deferred]);
-    } else {
-      setTimeout(function () {
-        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
-      }, 0);
-    }
-
-    return deferred.promise;
-  };
-
-  Parole.prototype.catch = function (onRejected) {
-    return this.then(null, onRejected);
-  };
-
-  // Promise methods
-
-  function each (iterable, handler) {
-    for( var i = 0, n = iterable.length; i < n ; i++ ) {
-      handler(iterable[i], i);
-    }
-  }
-
-  Parole.defer = function () {
-    var deferred = {};
-    deferred.promise = new Parole(function (resolve, reject) {
-      deferred.resolve = resolve;
-      deferred.reject = reject;
-    });
-    return deferred;
-  };
-
-  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
-
-  Parole.resolve = function (value) {
-    return new Parole(function (resolve) {
-      resolve(value);
-    });
-  };
-
-  Parole.reject = function (value) {
-    return new Parole(function (resolve, reject) {
-      reject(value);
-    });
-  };
-
-  Parole.all = function (iterable) {
-    return new Parole(function (resolve, reject) {
-      var pending = iterable.length,
-          results = [];
-      each(iterable, function (_promise, i) {
-
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-          results[i] = result;
-          if( --pending === 0 ) {
-            resolve(results);
-          }
-        }, function (reason) {
-          if( pending !== -1 ) {
-            pending === -1;
-            reject(reason);
-          }
-        });
-      });
-    });
-  };
-
-  Parole.race = function (iterable) {
-    return new Parole(function (resolve, reject) {
-      var done = false;
-
-      each(iterable, function (_promise) {
-        if( done ) {
-          return;
+      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+        if( !done ) {
+          done = true;
+          resolve(result);
         }
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-          if( !done ) {
-            done = true;
-            resolve(result);
-          }
-        }, function (reason) {
-          if( !done ) {
-            done = true;
-            reject(reason);
-          }
-        });
+      }, function (reason) {
+        if( !done ) {
+          done = true;
+          reject(reason);
+        }
       });
     });
-  };
+  });
+};
 
-  return Parole;
-
-}));
+module.exports = Parole;
 
 },{}],17:[function(require,module,exports){
 var arrayShift = [].shift;
@@ -1420,9 +1385,9 @@ var _dom = {
     toggle = toggle === undefined ? !classListHas(el, className) : toggle;
 
     if( toggle ) {
-      classListRemove(el, className);
-    } else {
       classListAdd(el, className);
+    } else {
+      classListRemove(el, className);
     }
     return toggle;
   },
@@ -1959,11 +1924,25 @@ module.exports = function (scroll) {
 arguments[4][15][0].apply(exports,arguments)
 },{"dup":15}],44:[function(require,module,exports){
 (function (global){
+/* global define */
 
 require('./sandbox')(function () {
   'use strict';
 
-  var aplazame = require('./core/core');
+  function once (fn) {
+    var result;
+    return function () {
+      if( fn ) {
+        result = fn.apply(this, arguments);
+        fn = null;
+      }
+      return result;
+    };
+  }
+
+  var aplazame = require('./core/core'),
+      api = require('./core/api'),
+      events = require('./core/events');
 
   aplazame.checkout = require('./apps/checkout');
   aplazame.button = require('./apps/button');
@@ -1989,27 +1968,32 @@ require('./sandbox')(function () {
 
   global.aplazame = aplazame;
 
-  require('./loaders/data-aplazame')(global.aplazame);
-  aplazame._.ready(function () {
-    var buttonsLookup = require('./loaders/data-button')(aplazame),
-        widgetsLookup = require('./loaders/data-simulator')(aplazame),
-        cb = require('./core/api').callback;
+  events.on('ready', once(function () {
+    require('./loaders/data-button')(aplazame);
+    require('./loaders/data-simulator')(aplazame);
+  }));
+  require('./loaders/data-aplazame')(aplazame);
 
-    if( cb ) {
-      if(  typeof global[cb] !== 'function' ) {
+  if (typeof define === 'function' && define.amd) {
+    define([], function () {
+      return aplazame;
+    });
+  }
+
+  aplazame._.ready(function () {
+    if( api.callback ) {
+      if(  typeof global[api.callback] !== 'function' ) {
         throw new Error('callback should be a global function');
       }
-      global[cb](aplazame);
-      buttonsLookup();
-      widgetsLookup();
-    }
 
+      global[api.callback](aplazame);
+    }
   });
 
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":45,"./apps/checkout":47,"./apps/http-service":48,"./apps/modal":50,"./apps/simulator":51,"./core/api":53,"./core/core":54,"./loaders/data-aplazame":56,"./loaders/data-button":57,"./loaders/data-simulator":58,"./sandbox":59,"./tools/log":66}],45:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":45,"./apps/checkout":47,"./apps/http-service":48,"./apps/modal":50,"./apps/simulator":51,"./core/api":53,"./core/core":54,"./core/events":55,"./loaders/data-aplazame":57,"./loaders/data-button":58,"./loaders/data-simulator":59,"./sandbox":60,"./tools/log":67}],45:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -2162,7 +2146,7 @@ button.check = function (options, callback) {
 
 module.exports = button;
 
-},{"../core/api-http":52,"../tools/tools":69}],46:[function(require,module,exports){
+},{"../core/api-http":52,"../tools/tools":70}],46:[function(require,module,exports){
 'use strict';
 
 function checkoutNormalizer(checkout, location, api) {
@@ -2441,7 +2425,7 @@ function checkout (options) {
 
 module.exports = checkout;
 
-},{"../core/api":53,"../tools/css-hack":63,"../tools/tools":69,"./checkout-normalizer":46,"./loading-svg":49,"http-browser":10}],48:[function(require,module,exports){
+},{"../core/api":53,"../tools/css-hack":64,"../tools/tools":70,"./checkout-normalizer":46,"./loading-svg":49,"http-browser":10}],48:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -2479,7 +2463,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":69,"http-browser":10}],49:[function(require,module,exports){
+},{"../tools/tools":70,"http-browser":10}],49:[function(require,module,exports){
 
 module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' +
 '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' +
@@ -2618,7 +2602,7 @@ _.onMessage('modal', function (e, message) {
 
 module.exports = modal;
 
-},{"../../.tmp/aplazame-version":1,"../core/api":53,"../tools/css-hack":63,"../tools/tools":69}],51:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../core/api":53,"../tools/css-hack":64,"../tools/tools":70}],51:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -2695,7 +2679,7 @@ function simulator (amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":52,"../tools/tools":69,"parole":16}],52:[function(require,module,exports){
+},{"../core/api-http":52,"../tools/tools":70,"parole":16}],52:[function(require,module,exports){
 'use strict';
 
 var apzVersion = require('../../.tmp/aplazame-version'),
@@ -2744,7 +2728,7 @@ _.each(['post', 'put', 'patch'], function (method) {
 
 module.exports = apiHttp;
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":69,"./api":53,"http-browser":10}],53:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":70,"./api":53,"http-browser":10}],53:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -2769,11 +2753,17 @@ module.exports = {
   version: require('../../.tmp/aplazame-version')
 };
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":69,"./api-http":52,"./init":55}],55:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":70,"./api-http":52,"./init":56}],55:[function(require,module,exports){
+
+var Events = require('azazel');
+module.exports = new Events();
+
+},{"azazel":8}],56:[function(require,module,exports){
 'use strict';
 
 var api = require('./api'),
-    _ = require('../tools/tools');
+    _ = require('../tools/tools'),
+    events = require('./events');
 
 function init (options) {
   options = options || {};
@@ -2803,11 +2793,13 @@ function init (options) {
   _.extend(api, options);
 
   _.log('aplazame.init', api);
+
+  if( api.publicKey ) events.emit('ready');
 }
 
 module.exports = init;
 
-},{"../tools/tools":69,"./api":53}],56:[function(require,module,exports){
+},{"../tools/tools":70,"./api":53,"./events":55}],57:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -2815,7 +2807,9 @@ module.exports = function (aplazame) {
   var _ = aplazame._,
       script = _.currentScript,
       dataAplazame = script.getAttribute('data-aplazame'),
-      options = script.src && (/\?/.test(script.src) ? _.deserialize(script.src.match(/(.*?)\?(.*)/)[2]) : {}) || {};
+      options = script.src && (/[?#]/.test(script.src) ? _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) : {}) || {};
+
+  // console.log('currentScript', script.src, script.src && /[?#]/.test(script.src), _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) );
 
   if( options.sandbox ) {
     options.sandbox = options.sandbox === 'true' || options.sandbox === '1';
@@ -2876,7 +2870,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -2930,7 +2924,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"parole":16}],58:[function(require,module,exports){
+},{"parole":16}],59:[function(require,module,exports){
 'use strict';
 
 module.exports = function (aplazame) {
@@ -3071,7 +3065,7 @@ module.exports = function (aplazame) {
     this.el = el;
     this.el.src = url;
 
-    new Events (this);
+    new Events(this);
 
     this.onload = function () {
       this.emit('load', null, this);
@@ -3323,7 +3317,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"../../.tmp/simulator/templates/modal-instalments.tmpl":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":53,"azazel":8,"parole":16}],59:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/modal-instalments.tmpl":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":53,"azazel":8,"parole":16}],60:[function(require,module,exports){
 'use strict';
 
 function _errorData(err) {
@@ -3347,7 +3341,7 @@ module.exports = function (func) {
   }
 };
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -3411,7 +3405,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -3595,7 +3589,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":12}],62:[function(require,module,exports){
+},{"nitro-tools/extend":12}],63:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -3614,7 +3608,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 
 
 var importantCSS = function (css) {
@@ -3666,7 +3660,7 @@ var importantCSS = function (css) {
 
 module.exports = cssHack;
 
-},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],64:[function(require,module,exports){
+},{"../../.tmp/css-hacks/blur":2,"../../.tmp/css-hacks/logo":3,"../../.tmp/css-hacks/modal":4,"../../.tmp/css-hacks/overlay":5}],65:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -3707,7 +3701,7 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
@@ -3759,7 +3753,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":61}],66:[function(require,module,exports){
+},{"./browser-tools":62}],67:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -3788,7 +3782,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false;
@@ -3833,7 +3827,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -3872,7 +3866,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -3895,4 +3889,4 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":60,"./browser-tools":61,"./colors":62,"./deserialize":64,"./live-dom":65,"./log":66,"./message-listener":67,"./template":68,"nitro-tools/lists":13,"nitro-tools/path":14,"vanilla-tools":24}]},{},[44]);
+},{"./amount-price":61,"./browser-tools":62,"./colors":63,"./deserialize":65,"./live-dom":66,"./log":67,"./message-listener":68,"./template":69,"nitro-tools/lists":13,"nitro-tools/path":14,"vanilla-tools":24}]},{},[44]);

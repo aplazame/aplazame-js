@@ -38,13 +38,74 @@
     <div class="sections container-md">
 
       
+      <section class="section-box">
+
+        <div class="section-title">
+          <h3>Artículo</h3>
+        </div>
+
+
+        
+          <article class="row article-sample">
+            <div class="col-sm-offset-3 col-sm-6 col-md-offset-0 img-wrapper">
+              <img src="https://i.imgur.com/CZ5UPbl.jpg" alt="N°5 EAU PREMIERE SPRAY"/>
+            </div>
+            <form class="col-md-6 details">
+              <div class="label">N°5 EAU PREMIERE SPRAY</div>
+              <p class="description">A decidedly lighter, fresher, softer interpretation of N°5. . . a silky-smooth harmony of notes that reveals the delicate facet of the now and forever fragrance. The modern and airy interpretation of N°5 debuts in the iconic Classic Bottle to instantly elevate the N°5 experience.</p>
+
+              <div class="price">
+                <div class="qty-ctrl">
+                  <button type="button" class="minus" disabled>-</button>
+                  <input type="text" name="qty" value="1"></input>
+                  <button type="button" class="plus">+</button>
+                </div>
+                <div class=price-wrapper></div>
+                <div class="price" itemprop="price" content="2900" data-price-set="1.5" data-price-unboxed="0.8">29.00€</div>
+              </div>
+
+              <div class="article-type-choices">
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="unboxed"></input>
+                  <div class="type-label">Unboxed</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="retail" checked></input>
+                  <div class="type-label">Retail</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="set"></input>
+                  <div class="type-label">Set</div>
+                </label>
+              </div>
+
+              <hr/>
+              <br/>
+
+              <div class="text-right">
+                <div data-aplazame-simulator data-view="product"
+                      data-amount="2900"
+                      data-price="form.details [itemprop='price']"
+                      data-qty="form.details input[name='qty']"></div>
+              </div>
+              <!-- <div class="text-right">
+                <div data-aplazame-simulator data-view="product"
+                      data-amount="2900"
+                      data-location=".article-sample .details .price:after"></div>
+              </div> -->
+
+            </form>
+          </article>
+        
+      </section>
+      
 
       <section class="section-box cart-list">
 
         
-          
-            <div class="alert alert-brand">Pago completado!</div>
-          
+          <div class="section-title">
+            <h3>Carrito de compra</h3>
+          </div>
         
 
         <article>
@@ -126,6 +187,19 @@
       </section>
 
       
+        <!-- <div class="pay-with-aplazame"> -->
+        <div class="row"></div>
+          <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="130140000" onclick="loadCheckout();">
+            <span>Pagar con&nbsp;</span><!--
+            --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
+          </button>
+
+          </div>
+
+        </div>
+      
 
       <br/>
       <br/>
@@ -141,14 +215,16 @@
       </div>
     </footer>
 
-    <script type="text/javascript" src="https://aplazame.com/static/aplazame.js"
+    <script data-main="scripts/demo-require" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.2/require.js"></script>
+
+    <!-- <script type="text/javascript" src="https://aplazame.com/static/aplazame.js"
             data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
             data-sandbox="true"
             data-callback="apzReady"
             
             
             >
-    </script>
+    </script> -->
 
     <script>
       window.apzReady = function () {
@@ -160,8 +236,8 @@
       <script type="text/javascript" src="dist/aplazame.js?build=1484215015733&sandbox=true&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba&callback=apzReady"></script>
     -->
 
-    <script type="text/javascript" src="/scripts/demo-article.js?build=1484215015733"></script>
-    <script type="text/x-javascript-example">
+    <!-- <script type="text/javascript" src="/scripts/demo-article-require.js?build=1484215015733" defer></script> -->
+    <!-- <script type="text/x-javascript-example">
       // example of checkout loading
       aplazame.checkout({
 	"toc": true,
@@ -267,7 +343,7 @@
 		}
 	}
 });
-    </script>
+    </script> -->
     
   </body>
 </html>

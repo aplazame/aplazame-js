@@ -40,7 +40,7 @@ module.exports = function (nitro) {
 
     nitro.dir('demo/scripts').load('demo-simulator.js', { sourceMap: target === 'dev' && 'inline' })
       .process('browserify')
-      .write('public/scripts/simulator');
+      .write('public/scripts');
 
     nitro.dir('demo/scripts').load('demo-article.js', { sourceMap: target === 'dev' && 'inline' })
       .process('browserify')

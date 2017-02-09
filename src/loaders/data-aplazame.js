@@ -13,7 +13,7 @@ function safeScript (script) {
       found = script;
   }, null);
 
-  console.log('safeScript IE');
+  console.log('safeScript IE', script.src);
 
   return script;
 }

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.401';
+module.exports = '0.0.402';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -2802,6 +2802,13 @@ module.exports = init;
 },{"../tools/tools":70,"./api":53,"./events":55}],57:[function(require,module,exports){
 'use strict';
 
+function findFirst( list, iteratee ) {
+  for( var i = 0, n = list.length ; i < n ; i++ ) {
+    if( iteratee(list[i]) ) return list[i];
+  }
+  return null;
+}
+
 function safeScript (script) {
   if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
     return script;
@@ -2809,13 +2816,12 @@ function safeScript (script) {
   if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
     return script;
 
-  script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {
-    if( found ) return found;
+  script = findFirst(document.querySelectorAll('script'), function (script) {
     if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
       return script;
   });
 
-  console.log('safeScript IE', script.src);
+  console.log('safeScript IE', script ? script.src : 'missing');
 
   return script;
 }

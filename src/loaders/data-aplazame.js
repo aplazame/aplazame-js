@@ -1,5 +1,12 @@
 'use strict';
 
+function findFirst( list, iteratee ) {
+  for( var i = 0, n = list.length ; i < n ; i++ ) {
+    if( iteratee(list[i]) ) return list[i];
+  }
+  return null;
+}
+
 function safeScript (script) {
   if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
     return script;
@@ -7,13 +14,12 @@ function safeScript (script) {
   if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
     return script;
 
-  script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {
-    if( found ) return found;
+  script = findFirst(document.querySelectorAll('script'), function (script) {
     if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
       return script;
   });
 
-  console.log('safeScript IE', script.src);
+  console.log('safeScript IE', script ? script.src : 'missing');
 
   return script;
 }

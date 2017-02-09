@@ -4,7 +4,7 @@ function safeScript (script) {
   if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
     return script;
 
-  if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
+  if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
     return script;
 
   script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {

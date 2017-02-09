@@ -11,7 +11,7 @@ function safeScript (script) {
     if( found ) return found;
     if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
       return script;
-  }, null);
+  });
 
   console.log('safeScript IE', script.src);
 

@@ -1,12 +1,12 @@
 'use strict';
 
 function safeScript (script) {
-  if( script.href.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
+  if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
     return script;
 
-  return [].reduce.call( document.querySelectorAll('script'), function (found, script) {
+  script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {
     if( found ) return found;
-    if( script.href.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
+    if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
       found = script;
   }, null);
 }

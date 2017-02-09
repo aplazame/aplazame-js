@@ -1,20 +1,20 @@
 'use strict';
 
-function safeScript (script) {
-  if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
-    return script;
-
-  script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {
-    if( found ) return found;
-    if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
-      found = script;
-  }, null);
-}
+// function safeScript (script) {
+//   if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
+//     return script;
+//
+//   script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {
+//     if( found ) return found;
+//     if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
+//       found = script;
+//   }, null);
+// }
 
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      script = safeScript(_.currentScript),
+      script = _.currentScript,
       dataAplazame = script.getAttribute('data-aplazame'),
       options = script.src && (/[?#]/.test(script.src) ? _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) : {}) || {};
 

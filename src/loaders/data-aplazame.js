@@ -9,7 +9,7 @@ function safeScript (script) {
 
   script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {
     if( found ) return found;
-    if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
+    if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
       return script;
   }, null);
 

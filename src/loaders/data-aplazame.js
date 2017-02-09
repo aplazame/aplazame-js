@@ -12,6 +12,10 @@ function safeScript (script) {
     if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
       found = script;
   }, null);
+
+  console.log('safeScript IE');
+
+  return script;
 }
 
 module.exports = function (aplazame) {

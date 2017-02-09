@@ -21,7 +21,7 @@ function safeScript (script) {
 
   console.log('safeScript IE', script ? script.src : 'missing');
 
-  return script;
+  return script || document.querySelector('script[data-aplazame]');
 }
 
 module.exports = function (aplazame) {

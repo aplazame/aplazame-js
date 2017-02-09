@@ -10,10 +10,8 @@ function safeScript (script) {
   script = [].reduce.call( document.querySelectorAll('script'), function (found, script) {
     if( found ) return found;
     if( script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
-      found = script;
+      return script;
   }, null);
-
-  console.log('safeScript IE', script.src);
 
   return script;
 }

@@ -52,8 +52,6 @@ function parsePrice (price) {
   if( /\d+/.test(price) ) {
     return Number( price.replace(/[^\d]+/g, '') + '00' );
   }
-
-  console.warn('price data mismatch', price);
 }
 
 module.exports = {

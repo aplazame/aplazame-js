@@ -5,7 +5,8 @@ var api = require('../core/api'),
     checkoutNormalizer = require('./checkout-normalizer'),
     http = require('http-browser'),
     cssHack = require('../tools/css-hack'),
-    isApp = typeof navigator !== 'undefined' && navigator.app;
+    isApp = typeof navigator !== 'undefined' && navigator.app,
+    log = require('../tools/log');
 
 function getBaseCheckout(options) {
   var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
@@ -222,7 +223,7 @@ function checkout (options) {
       // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
-      console.log('Aplazame ' + reason);
+      log('Aplazame ' + reason);
 
       _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
       loadingText.innerHTML = '<div class="text-error">Error cargando pasarela de pago</div><br/><div><a href="mailto:soporte@aplazame.com?subject=' + encodeURI('Checkout error: ' + reason) + '">soporte@aplazame.com</a></div>';

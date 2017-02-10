@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.404';
+module.exports = '0.0.405';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -2207,7 +2207,8 @@ var api = require('../core/api'),
     checkoutNormalizer = require('./checkout-normalizer'),
     http = require('http-browser'),
     cssHack = require('../tools/css-hack'),
-    isApp = typeof navigator !== 'undefined' && navigator.app;
+    isApp = typeof navigator !== 'undefined' && navigator.app,
+    log = require('../tools/log');
 
 function getBaseCheckout(options) {
   var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
@@ -2424,7 +2425,7 @@ function checkout (options) {
       // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
-      console.log('Aplazame ' + reason);
+      log('Aplazame ' + reason);
 
       _.removeClass(tmpOverlay.querySelector('.logo-aplazame'), 'animate');
       loadingText.innerHTML = '<div class="text-error">Error cargando pasarela de pago</div><br/><div><a href="mailto:soporte@aplazame.com?subject=' + encodeURI('Checkout error: ' + reason) + '">soporte@aplazame.com</a></div>';
@@ -2437,7 +2438,7 @@ function checkout (options) {
 
 module.exports = checkout;
 
-},{"../core/api":53,"../tools/css-hack":64,"../tools/tools":70,"./checkout-normalizer":46,"./loading-svg":49,"http-browser":10}],48:[function(require,module,exports){
+},{"../core/api":53,"../tools/css-hack":64,"../tools/log":67,"../tools/tools":70,"./checkout-normalizer":46,"./loading-svg":49,"http-browser":10}],48:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
@@ -2621,7 +2622,8 @@ var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
     $q = require('parole'),
     cache = [],
-    requestsCache = {};
+    requestsCache = {},
+    log = require('../tools/log');
 
 function simulator (amount, _options, callback, onError) {
 
@@ -2676,12 +2678,12 @@ function simulator (amount, _options, callback, onError) {
       return result;
     }, function (response) {
       if( response.status === 403 ) {
-        console.log('Aplazame[error]: Permiso denegado usando la clave pública: ' + response.config.publicKey);
-        console.info('Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
+        log('Aplazame[error]: Permiso denegado usando la clave pública', response.config.publicKey,
+          'Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
       } else if( _.key(response, 'data.error.fields.amount.0') ) {
-        console.log('Aplazame[error]: ' + response.data.error.fields.amount[0]);
+        log('Aplazame[error]: ' + response.data.error.fields.amount[0]);
       } else if( _.key(response, 'data.error.message') ) {
-        console.log('Aplazame[error]: ' + response.data.error.message);
+        log('Aplazame[error]: ' + response.data.error.message);
       }
       (onError || _.noop)(response);
     });
@@ -2691,7 +2693,7 @@ function simulator (amount, _options, callback, onError) {
 
 module.exports = simulator;
 
-},{"../core/api-http":52,"../tools/tools":70,"parole":16}],52:[function(require,module,exports){
+},{"../core/api-http":52,"../tools/log":67,"../tools/tools":70,"parole":16}],52:[function(require,module,exports){
 'use strict';
 
 var apzVersion = require('../../.tmp/aplazame-version'),
@@ -2833,8 +2835,6 @@ function safeScript (script) {
       return script;
   });
 
-  console.log('safeScript IE', script ? script.src : 'missing');
-
   return script || document.querySelector('script[data-aplazame]');
 }
 
@@ -2919,11 +2919,9 @@ module.exports = function (aplazame) {
     var btns = element.querySelectorAll('[data-aplazame-button]');
 
     if( btns.length ) {
-      // console.log('.btn(s)', btns);
       var promises = [];
 
       _.each(btns, function (btn) {
-        // console.log('.btn', arguments, btns);
         var btnId = btn.getAttribute('data-aplazame-button'),
             btnParams = {
               selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
@@ -2968,18 +2966,19 @@ module.exports = function (aplazame) {
       Events = require('azazel'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
-      each = Array.prototype.forEach;
+      each = Array.prototype.forEach,
+      log = require('../tools/log');
 
   function getQty (qtySelector) {
     if( !_.isString(qtySelector) ) {
-      console.warn('warning: data-qty should be an string. pe: form#article .final-price ');
+      log('warning: data-qty should be an string. pe: form#article .final-price ');
       return 1;
     }
     var qtyElement;
     try {
       qtyElement = document.querySelector(qtySelector);
     } catch(err) {
-      console.warn(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
+      log(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
       return 1;
     }
 
@@ -3026,14 +3025,13 @@ module.exports = function (aplazame) {
       //   document.querySelector(priceSelector);
       // } catch(err) {
       //   priceSelector = null;
-      //   console.warn(err.message);
       // }
       if( qtySelector ) {
         try{
           document.querySelector(qtySelector);
         } catch(err) {
           qtySelector = null;
-          console.warn(err.message);
+          log(err.message);
         }
       }
     } else {
@@ -3043,7 +3041,7 @@ module.exports = function (aplazame) {
         qtySelector = _.find(cmsQtySelector, matchSelector);
         autoDiscovered = true;
 
-        _.log('auto-discovered price selector', priceSelector, qtySelector);
+        log('auto-discovered price selector', priceSelector, qtySelector);
       }
     }
 
@@ -3106,7 +3104,6 @@ module.exports = function (aplazame) {
     };
 
     _.onMessage('simulator', function (e, message) {
-      // console.log('message.simulator', e, message);
       if( e.source === el.contentWindow ) {
         iframe.emit('message:' + message.event, [message], this);
       }
@@ -3124,10 +3121,9 @@ module.exports = function (aplazame) {
       mobile: isMobile.matches
     }, data || {});
     if( this.el.contentWindow ) {
-      // console.log('iframe message', eventName, _data, this);
       this.el.contentWindow.postMessage(_data, '*');
     } else {
-      console.warn('iframe contentWindow missing', this);
+      log('iframe contentWindow missing', this);
     }
   };
 
@@ -3215,7 +3211,6 @@ module.exports = function (aplazame) {
       if( message && message.simulatorId && message.simulatorId !== id ) {
         return;
       }
-      // console.log(e, meta, message);
       widget.render();
     });
 
@@ -3268,7 +3263,6 @@ module.exports = function (aplazame) {
       detectedAmount = meta.getAmount();
       if( detectedAmount && meta.amount !== detectedAmount ) {
         updateData = true;
-        // console.log(widgetWrapper, meta.amount, meta.getAmount() );
         meta.amount = meta.getAmount();
       }
     } else {
@@ -3277,7 +3271,6 @@ module.exports = function (aplazame) {
       updateData = true;
       if( meta.getAmount.qtySelector ) {
         meta.qty = getQty(meta.getAmount.qtySelector) || 1;
-        // console.debug('new watcher');
         meta.watchQty = setInterval(function () {
           if( !document.body.contains(widgetWrapper) ) {
             clearInterval(meta.watchQty);
@@ -3351,31 +3344,19 @@ module.exports = function (aplazame) {
 
 };
 
-},{"../../.tmp/simulator/templates/modal-instalments.tmpl":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":53,"azazel":8,"parole":16}],60:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/modal-instalments.tmpl":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":53,"../tools/log":67,"azazel":8,"parole":16}],60:[function(require,module,exports){
 'use strict';
 
-function _errorData(err) {
-  (console.info || console.log)('%c[non blocking error] %caplazame.js\n\n', 'font-weight: bold; color: #267BBD;', 'color: #267BBD;');
-
-  var filename = err.fileName ? err.fileName.lastIndexOf('/') : '<not defined>';
-  var str = '%cname: %c' + err.name +
-          '\n%cError: %c' + err.message +
-          '\n%cFile: %c' + filename;
-
-  console.log(str, 'font-weight: bold;', 'color: #e74c3c;', 'font-weight: bold;', 'font-weight: normal; color: #e74c3c;', 'font-weight: bold;', 'font-weight: normal;');
-  if( err.stack ) {
-    console.log('%c' + err.stack, 'background-color: #ffffee; line-height: 2;');
-  }
-}
+var log = require('./tools/log');
 
 module.exports = function (func) {
   try{ func(); }
   catch(err) {
-    _errorData(err);
+    log('[error]', err);
   }
 };
 
-},{}],61:[function(require,module,exports){
+},{"./tools/log":67}],61:[function(require,module,exports){
 
 function thousands(amount) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -3430,8 +3411,6 @@ function parsePrice (price) {
   if( /\d+/.test(price) ) {
     return Number( price.replace(/[^\d]+/g, '') + '00' );
   }
-
-  console.warn('price data mismatch', price);
 }
 
 module.exports = {
@@ -3661,8 +3640,6 @@ var importantCSS = function (css) {
             modal: importantCSS(require('../../.tmp/css-hacks/modal'))
           };
 
-      // console.log('cssHacks', hacks);
-
       return function hack (hackName) {
         if( !cache[hackName] ) {
           var style = document.createElement('style');
@@ -3808,8 +3785,6 @@ function log () {
       clean: caller_line.slice(index + 2, caller_line.length)
     }
   });
-
-  // console.log.apply(console, arguments);
 }
 
 log.history = [];
@@ -3819,7 +3794,8 @@ module.exports = log;
 },{}],68:[function(require,module,exports){
 
 var messageTarget = {},
-    showLogs = false;
+    showLogs = false,
+    log = require('./log');
 
 window.addEventListener('message', function (e) {
   var message = e.data,
@@ -3830,7 +3806,7 @@ window.addEventListener('message', function (e) {
   }
 
   if( showLogs && !e.used ) {
-    console.log('message', e, listeners);
+    log('message', e, listeners);
   }
 
   if( !e.used ) {
@@ -3861,7 +3837,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],69:[function(require,module,exports){
+},{"./log":67}],69:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});

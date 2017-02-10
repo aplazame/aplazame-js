@@ -1660,8 +1660,6 @@ function parsePrice (price) {
   if( /\d+/.test(price) ) {
     return Number( price.replace(/[^\d]+/g, '') + '00' );
   }
-
-  console.warn('price data mismatch', price);
 }
 
 module.exports = {
@@ -1986,8 +1984,6 @@ function log () {
       clean: caller_line.slice(index + 2, caller_line.length)
     }
   });
-
-  // console.log.apply(console, arguments);
 }
 
 log.history = [];
@@ -1997,7 +1993,8 @@ module.exports = log;
 },{}],42:[function(require,module,exports){
 
 var messageTarget = {},
-    showLogs = false;
+    showLogs = false,
+    log = require('./log');
 
 window.addEventListener('message', function (e) {
   var message = e.data,
@@ -2008,7 +2005,7 @@ window.addEventListener('message', function (e) {
   }
 
   if( showLogs && !e.used ) {
-    console.log('message', e, listeners);
+    log('message', e, listeners);
   }
 
   if( !e.used ) {
@@ -2039,7 +2036,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{}],43:[function(require,module,exports){
+},{"./log":41}],43:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});

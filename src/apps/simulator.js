@@ -4,7 +4,8 @@ var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
     $q = require('parole'),
     cache = [],
-    requestsCache = {};
+    requestsCache = {},
+    log = require('../tools/log');
 
 function simulator (amount, _options, callback, onError) {
 
@@ -59,12 +60,12 @@ function simulator (amount, _options, callback, onError) {
       return result;
     }, function (response) {
       if( response.status === 403 ) {
-        console.log('Aplazame[error]: Permiso denegado usando la clave pública: ' + response.config.publicKey);
-        console.info('Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
+        log('Aplazame[error]: Permiso denegado usando la clave pública', response.config.publicKey,
+          'Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
       } else if( _.key(response, 'data.error.fields.amount.0') ) {
-        console.log('Aplazame[error]: ' + response.data.error.fields.amount[0]);
+        log('Aplazame[error]: ' + response.data.error.fields.amount[0]);
       } else if( _.key(response, 'data.error.message') ) {
-        console.log('Aplazame[error]: ' + response.data.error.message);
+        log('Aplazame[error]: ' + response.data.error.message);
       }
       (onError || _.noop)(response);
     });

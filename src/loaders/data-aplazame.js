@@ -19,8 +19,6 @@ function safeScript (script) {
       return script;
   });
 
-  console.log('safeScript IE', script ? script.src : 'missing');
-
   return script || document.querySelector('script[data-aplazame]');
 }
 

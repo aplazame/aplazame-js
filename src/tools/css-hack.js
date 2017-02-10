@@ -16,8 +16,6 @@ var importantCSS = function (css) {
             modal: importantCSS(require('../../.tmp/css-hacks/modal'))
           };
 
-      // console.log('cssHacks', hacks);
-
       return function hack (hackName) {
         if( !cache[hackName] ) {
           var style = document.createElement('style');

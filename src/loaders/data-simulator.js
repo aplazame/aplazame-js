@@ -7,18 +7,19 @@ module.exports = function (aplazame) {
       Events = require('azazel'),
       api = require('../core/api'),
       isMobile = window.matchMedia('( max-width: 767px )'),
-      each = Array.prototype.forEach;
+      each = Array.prototype.forEach,
+      log = require('../tools/log');
 
   function getQty (qtySelector) {
     if( !_.isString(qtySelector) ) {
-      console.warn('warning: data-qty should be an string. pe: form#article .final-price ');
+      log('warning: data-qty should be an string. pe: form#article .final-price ');
       return 1;
     }
     var qtyElement;
     try {
       qtyElement = document.querySelector(qtySelector);
     } catch(err) {
-      console.warn(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
+      log(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
       return 1;
     }
 
@@ -65,14 +66,13 @@ module.exports = function (aplazame) {
       //   document.querySelector(priceSelector);
       // } catch(err) {
       //   priceSelector = null;
-      //   console.warn(err.message);
       // }
       if( qtySelector ) {
         try{
           document.querySelector(qtySelector);
         } catch(err) {
           qtySelector = null;
-          console.warn(err.message);
+          log(err.message);
         }
       }
     } else {
@@ -82,7 +82,7 @@ module.exports = function (aplazame) {
         qtySelector = _.find(cmsQtySelector, matchSelector);
         autoDiscovered = true;
 
-        _.log('auto-discovered price selector', priceSelector, qtySelector);
+        log('auto-discovered price selector', priceSelector, qtySelector);
       }
     }
 
@@ -145,7 +145,6 @@ module.exports = function (aplazame) {
     };
 
     _.onMessage('simulator', function (e, message) {
-      // console.log('message.simulator', e, message);
       if( e.source === el.contentWindow ) {
         iframe.emit('message:' + message.event, [message], this);
       }
@@ -163,10 +162,9 @@ module.exports = function (aplazame) {
       mobile: isMobile.matches
     }, data || {});
     if( this.el.contentWindow ) {
-      // console.log('iframe message', eventName, _data, this);
       this.el.contentWindow.postMessage(_data, '*');
     } else {
-      console.warn('iframe contentWindow missing', this);
+      log('iframe contentWindow missing', this);
     }
   };
 
@@ -254,7 +252,6 @@ module.exports = function (aplazame) {
       if( message && message.simulatorId && message.simulatorId !== id ) {
         return;
       }
-      // console.log(e, meta, message);
       widget.render();
     });
 
@@ -307,7 +304,6 @@ module.exports = function (aplazame) {
       detectedAmount = meta.getAmount();
       if( detectedAmount && meta.amount !== detectedAmount ) {
         updateData = true;
-        // console.log(widgetWrapper, meta.amount, meta.getAmount() );
         meta.amount = meta.getAmount();
       }
     } else {
@@ -316,7 +312,6 @@ module.exports = function (aplazame) {
       updateData = true;
       if( meta.getAmount.qtySelector ) {
         meta.qty = getQty(meta.getAmount.qtySelector) || 1;
-        // console.debug('new watcher');
         meta.watchQty = setInterval(function () {
           if( !document.body.contains(widgetWrapper) ) {
             clearInterval(meta.watchQty);

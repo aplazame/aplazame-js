@@ -12,11 +12,9 @@ module.exports = function (aplazame) {
     var btns = element.querySelectorAll('[data-aplazame-button]');
 
     if( btns.length ) {
-      // console.log('.btn(s)', btns);
       var promises = [];
 
       _.each(btns, function (btn) {
-        // console.log('.btn', arguments, btns);
         var btnId = btn.getAttribute('data-aplazame-button'),
             btnParams = {
               selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',

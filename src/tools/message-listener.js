@@ -1,6 +1,7 @@
 
 var messageTarget = {},
-    showLogs = false;
+    showLogs = false,
+    log = require('./log');
 
 window.addEventListener('message', function (e) {
   var message = e.data,
@@ -11,7 +12,7 @@ window.addEventListener('message', function (e) {
   }
 
   if( showLogs && !e.used ) {
-    console.log('message', e, listeners);
+    log('message', e, listeners);
   }
 
   if( !e.used ) {

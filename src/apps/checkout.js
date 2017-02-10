@@ -4,7 +4,8 @@ var api = require('../core/api'),
     _ = require('../tools/tools'),
     checkoutNormalizer = require('./checkout-normalizer'),
     http = require('http-browser'),
-    cssHack = require('../tools/css-hack');
+    cssHack = require('../tools/css-hack'),
+    isApp = typeof navigator !== 'undefined' && navigator.app;
 
 function getBaseCheckout(options) {
   var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
@@ -56,6 +57,11 @@ function checkout (options) {
     delete options.merchant.onSuccess;
     delete options.merchant.onError;
     delete options.merchant.onDismiss;
+  }
+
+  if( isApp ) {
+    options.meta = options.meta || {};
+    options.meta.is_app = true;
   }
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
@@ -140,6 +146,12 @@ function checkout (options) {
             break;
           case 'loading-text':
             loadingText.textContent = message.text;
+            break;
+          case 'open-link':
+            if( navigator.app )
+              navigator.app.loadUrl(message.href, { openExternal: true });
+            else
+              window.open(message.href, '_system');
             break;
           case 'drop-blur':
             _.removeClass(document.body, 'aplazame-blur');

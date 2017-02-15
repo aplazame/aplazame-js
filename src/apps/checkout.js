@@ -149,7 +149,7 @@ function checkout (options) {
             loadingText.textContent = message.text;
             break;
           case 'open-link':
-            if( navigator.app )
+            if( isApp )
               navigator.app.loadUrl(message.href, { openExternal: true });
             else
               window.open(message.href, '_system');

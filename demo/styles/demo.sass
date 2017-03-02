@@ -36,7 +36,8 @@ a
     color: darken($color-brand, 20)
 
 hr
-  border: 1px solid lighten($grey-medium, 20)
+  border-top: 1px solid lighten($grey-medium, 20)
+  border-bottom: 0
 
 h2.demo
   font-size: 1.4rem
@@ -167,6 +168,8 @@ table.table
 
     > article
       padding: units(1)
+      @media #{$screen-md-up}
+        padding: units(2)
 
 @import header
 

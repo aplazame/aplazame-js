@@ -22,11 +22,17 @@ module.exports = function (nitro) {
     console.log('[[ current branch ]]', process.env.DRONE_BRANCH || process.env.GIT_BRANCH || require('git-rev-sync').branch() );
   });
 
+  nitro.task('externalIntegrations', function () {
+
+    nitro.file.copy('external-integrations/shopify.js', 'dist/shopify.js');
+
+  });
+
   // main tasks
 
-  nitro.task('build', ['git.branch', 'clear:build', 'css-hacks', 'widgets', 'js', 'demo', 'loading']);
+  nitro.task('build', ['git.branch', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets', 'js', 'demo', 'loading']);
 
-  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev'], function () {
+  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev'], function () {
 
     if( !nitro.file.exists('public/dist') ) {
       nitro.symlink('public/dist', '../dist');

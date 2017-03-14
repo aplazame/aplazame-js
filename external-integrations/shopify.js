@@ -30,6 +30,8 @@ var Shopify = Shopify || {};
         part = part.split('=');
         params[toCamelCase(part[0])] = part[1];
       });
+
+      return params;
     }
 
     var currentScript = document.currentScript || currentScriptFallback(),

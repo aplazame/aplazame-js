@@ -37,6 +37,8 @@ module.exports = function (nitro) {
 
     nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist');
     nitro.load('widgets/modal/modal.js').process('browserify').write('dist');
+
+    nitro.file.copy('widgets/shopify.js', 'dist/widgets/shopify.js');
   });
 
   nitro.task('widgets.html', function (target) {

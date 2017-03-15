@@ -124,10 +124,10 @@ module.exports = function (nitro) {
           },
           formatCurrency: function (amount, symbol) {
             if( amount < 0 ) {
-              return '-' + indexData.formatCurrency(-amount);
+              return '-' + indexData.formatCurrency(-amount, symbol);
             }
-            if( symbol === 'EUR' ) return indexData.amount2string(amount, '.') + '€';
-            return '$' + indexData.amount2string(amount, ',');
+            if( symbol === 'EUR' ) return indexData.amount2string(amount, ',') + '€';
+            return '$' + indexData.amount2string(amount, '.');
           }
         });
 

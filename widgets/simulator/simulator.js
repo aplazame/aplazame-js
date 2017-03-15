@@ -61,6 +61,7 @@ var main = document.getElementById('main'), currentMessage,
         choice: currentMessage.$$choice,
         options: currentMessage.options,
         amount: currentMessage.amount,
+        currency: currentMessage.currency,
         preferences: currentMessage.options.widget.preferences,
         isMobile: currentMessage.isMobile
       });

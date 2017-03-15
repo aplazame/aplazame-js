@@ -2,10 +2,15 @@
 
   <span class="aplazame-widget-from">desde&nbsp;</span><!--
 
-  --><strong class="aplazame-widget-amount">
-    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--
-    --><span class="aplazame-widget-currency">€</span>
-  </strong><!--
+  --><strong class="aplazame-widget-amount"><!--
+    <% if( currency === 'EUR' ) { %>
+    --><span class="aplazame-widget-price"><%= getAmount(choice.amount, ',', '.') %></span><!--
+    --><span class="aplazame-widget-currency">€</span><!--
+    <% } else { %>
+    --><span class="aplazame-widget-currency">$</span><!--
+    --><span class="aplazame-widget-price"><%= getAmount(choice.amount, '.', ',') %></span><!--
+    <% } %>
+  --></strong><!--
 
   --><sub class="aplazame-widget-per-month">/mes</sub><!--
 

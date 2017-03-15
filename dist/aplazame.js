@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.411';
+module.exports = '0.0.412';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(3px);filter:blur(3px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(3px);filter:blur(3px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -14,7 +14,10 @@ module.exports = function anonymous(obj
 var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="card-content">    <header class="aplazame"></header>    <section class="info">     Elige el número de meses y la cuota que más te convengan   </section>    <div class="choices-wrapper">     '); for( var i = choices.length - 1 ; i >= 0 ; i-- ) { p.push('     <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">       <div class="wrapper">         <div class="num-instalments">           <span>', choices[i].num_instalments ,'</span>&nbsp;<span>', months(choices[i].num_instalments) ,'</span>         </div>         <div class="amount">           <span class="amount-amount">', getAmount(choices[i].amount) ,'</span><!--           --><span class="amount-currency">€</span><!--           --><span class="amount-per-month">/mes</span></div>       </div>     </button>     '); } p.push('   </div>    <section class="tae">TAE máximo: ', getAmount(choices[0].annual_equivalent) ,'%</section>    <section class="how-it-works">     <header>¿Cómo funciona?</header>     <div class="info-wrapper">       <div class="info">         <h3>Elige Aplazame</h3>         <p>en la tienda, cuando vayas a pagar el pedido.</p>       </div>       <div class="info">         <h3>Decide cómo quieres pagar</h3>         <p>Hasta en ', selectedChoice.num_instalments ,' ', selectedChoice.num_instalments > 1 ? 'cuotas' : 'cuota' ,', pagando con tarjeta.</p>       </div>       <div class="info">         <h3>Disfruta de tu compra</h3>         <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>       </div>     </div>   </section>  </div>  <div class="cta">   <div class="col-sm-6 button-wrapper">     <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>   </div>   <div class="col-sm-6 button-wrapper">     <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>   </div> </div>');}return p.join('');
 };
 },{}],7:[function(require,module,exports){
-module.exports = '<div class="aplazame-widget-instalments">  <span class="aplazame-widget-from">desde&nbsp;</span><!--  --><strong class="aplazame-widget-amount">    <span class="aplazame-widget-price"><%= getAmount(choice.amount) %></span><!--    --><span class="aplazame-widget-currency">€</span>  </strong><!--  --><sub class="aplazame-widget-per-month">/mes</sub><!--  --><span class="aplazame-widget-instalments-wrapper">    <span>&nbsp;en&nbsp;</span>    <em class="aplazame-widget-instalments-num"><%= choice.num_instalments %></em>    <span>&nbsp;<%= choice.num_instalments === 1 ? \'cuota\' : \'cuotas\' %></span>  </span></div><style rel="stylesheet"><%= options.widget.styles %></style>';
+module.exports = function anonymous(obj
+/**/) {
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="aplazame-widget-instalments">    <span class="aplazame-widget-from">desde&nbsp;</span><!--    --><strong class="aplazame-widget-amount"><!--     '); if( currency === 'EUR' ) { p.push('     --><span class="aplazame-widget-price">', getAmount(choice.amount, ',', '.') ,'</span><!--     --><span class="aplazame-widget-currency">€</span><!--     '); } else { p.push('     --><span class="aplazame-widget-currency">$</span><!--     --><span class="aplazame-widget-price">', getAmount(choice.amount, '.', ',') ,'</span><!--     '); } p.push('   --></strong><!--    --><sub class="aplazame-widget-per-month">/mes</sub><!--    --><span class="aplazame-widget-instalments-wrapper">     <span>&nbsp;en&nbsp;</span>     <em class="aplazame-widget-instalments-num">', choice.num_instalments ,'</em>     <span>&nbsp;', choice.num_instalments === 1 ? 'cuota' : 'cuotas' ,'</span>   </span>  </div>  <style rel="stylesheet">', options.widget.styles ,'</style>');}return p.join('');
+};
 },{}],8:[function(require,module,exports){
 
 function extend (dest, src) {
@@ -2637,7 +2640,8 @@ function simulator (amount, _options, callback, onError) {
 
   var options = {
         params: {
-          amount: amount
+          amount: amount,
+          currency: _options.currency || 'EUR'
         }
       },
       hash = amount + ',' + JSON.stringify(options);
@@ -3151,6 +3155,7 @@ module.exports = function (aplazame) {
       widget.render = function () {
         widget.message('choices', {
           amount: meta.amount,
+          currency: meta.currency,
           choice: meta.choices.reduce(maxInstalments, null),
           choices: meta.choices,
           options: meta.options
@@ -3162,7 +3167,6 @@ module.exports = function (aplazame) {
       });
 
     } else {
-      _.template.put('widget-raw', require('../../.tmp/simulator/templates/widget-raw') );
       widget = { el: document.createElement('div') };
       new Events(widget);
 
@@ -3172,9 +3176,10 @@ module.exports = function (aplazame) {
 
       widget.render = function () {
         widget.el.style.opacity = null;
-        widget.el.innerHTML = _.template('widget-raw', {
+        widget.el.innerHTML = require('../../.tmp/simulator/templates/widget-raw.tmpl')({
           getAmount: _.getAmount,
           amount: meta.amount,
+          currency: meta.currency,
           choice: meta.choices.reduce(maxInstalments, null),
           choices: meta.choices,
           options: meta.options
@@ -3306,6 +3311,7 @@ module.exports = function (aplazame) {
 
         meta.choices = _choices;
         meta.options = _options;
+        meta.currency = widgetWrapper.getAttribute('data-currency') || 'EUR';
 
         meta.widget = meta.widget || getWidget(meta);
 
@@ -3344,7 +3350,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"../../.tmp/simulator/templates/modal-instalments.tmpl":6,"../../.tmp/simulator/templates/widget-raw":7,"../core/api":53,"../tools/log":67,"azazel":8,"parole":16}],60:[function(require,module,exports){
+},{"../../.tmp/simulator/templates/modal-instalments.tmpl":6,"../../.tmp/simulator/templates/widget-raw.tmpl":7,"../core/api":53,"../tools/log":67,"azazel":8,"parole":16}],60:[function(require,module,exports){
 'use strict';
 
 var log = require('./tools/log');
@@ -3358,15 +3364,17 @@ module.exports = function (func) {
 
 },{"./tools/log":67}],61:[function(require,module,exports){
 
-function thousands(amount) {
+function thousands(amount, groupSeparator) {
   if( /\d{3}\d+/.test(amount) ) {
-    return thousands(amount.replace(/(\d{3}?)(\.|$)/, '.$&'));
+    return thousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
   }
   return amount;
 }
 
-function getAmount (amount) {
+function getAmount (amount, decimalsSeparator, groupSeparator) {
   var prefix = '';
+  decimalsSeparator = decimalsSeparator || ',';
+  groupSeparator = groupSeparator || '.';
 
   if( amount < 0 ) {
     prefix = '-';
@@ -3381,7 +3389,7 @@ function getAmount (amount) {
     return '0,' + amount;
   }
   return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
-    return thousands(main) + ',' + tail;
+    return thousands(main, groupSeparator) + decimalsSeparator + tail;
   });
 }
 

@@ -1607,15 +1607,17 @@ module.exports = function (scroll) {
 arguments[4][7][0].apply(exports,arguments)
 },{"dup":7}],36:[function(require,module,exports){
 
-function thousands(amount) {
+function thousands(amount, groupSeparator) {
   if( /\d{3}\d+/.test(amount) ) {
-    return thousands(amount.replace(/(\d{3}?)(\.|$)/, '.$&'));
+    return thousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
   }
   return amount;
 }
 
-function getAmount (amount) {
+function getAmount (amount, decimalsSeparator, groupSeparator) {
   var prefix = '';
+  decimalsSeparator = decimalsSeparator || ',';
+  groupSeparator = groupSeparator || '.';
 
   if( amount < 0 ) {
     prefix = '-';
@@ -1630,7 +1632,7 @@ function getAmount (amount) {
     return '0,' + amount;
   }
   return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
-    return thousands(main) + ',' + tail;
+    return thousands(main, groupSeparator) + decimalsSeparator + tail;
   });
 }
 

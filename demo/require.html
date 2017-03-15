@@ -65,11 +65,6 @@
                       data-price="form.details [itemprop='price']"
                       data-qty="form.details input[name='qty']"></div>
               </div>
-              <!-- <div class="text-right">
-                <div data-aplazame-simulator data-view="product"
-                      data-amount="${article.price}"
-                      data-location=".article-sample .details .price:after"></div>
-              </div> -->
 
             </form>
           </article>
@@ -170,30 +165,12 @@
 
     <script data-main="scripts/demo-require" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.2/require.js"></script>
 
-    <!-- <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
-            data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
-            data-sandbox="true"
-            data-callback="apzReady"
-            $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com"{/}
-            $if{ dev }data-static-url="/dist/"{/}
-            $if{ git.branch !== 'release' }data-checkout-url="https://dev.aplazame.com/static/"{/}>
-    </script> -->
-
     <script>
       window.apzReady = function () {
         console.log('hello, aplazame callback!', arguments);
       };
     </script>
 
-    <!-- alt version using url params:
-      <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
-    -->
-
-    <!-- <script type="text/javascript" src="/scripts/demo-article-require.js?build=${build}" defer></script> -->
-    <!-- <script type="text/x-javascript-example">
-      // example of checkout loading
-      aplazame.checkout($json{checkout});
-    </script> -->
     $if{dev}
       <script type="application/javascript">
         var head= document.getElementsByTagName('head')[0];

@@ -123,7 +123,6 @@ module.exports = function (nitro) {
             return parseInt(amount/100) + decimalsSeparator + ( cents < 10 ? '0' : '' ) + cents;
           },
           formatCurrency: function (amount, symbol) {
-            console.log('currency', this);
             if( amount < 0 ) {
               return '-' + indexData.formatCurrency(-amount);
             }

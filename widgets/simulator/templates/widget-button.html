@@ -18,12 +18,12 @@
         <span class="from">Desde&nbsp;</span><!--
 
         --><strong class="amount"><!--
-          <% if( options.widget.currency === 'EUR' ) { %>
-          --><span class="price"><%= getAmount(choice.amount, '.') %></span><!--
+          <% if( currency === 'EUR' ) { %>
+          --><span class="price"><%= getAmount(choice.amount, ',', '.') %></span><!--
           --><span class="currency">€</span><!--
           <% } else { %>
           --><span class="currency">$</span><!--
-          --><span class="price"><%= getAmount(choice.amount, ',') %></span><!--
+          --><span class="price"><%= getAmount(choice.amount, '.', ',') %></span><!--
           <% } %>
         --></strong><!--
 

@@ -3,12 +3,12 @@
   <span class="aplazame-widget-from">desde&nbsp;</span><!--
 
   --><strong class="aplazame-widget-amount"><!--
-    <% if( options.widget.currency === 'EUR' ) { %>
-    --><span class="aplazame-widget-price"><%= getAmount(choice.amount, '.') %></span><!--
+    <% if( currency === 'EUR' ) { %>
+    --><span class="aplazame-widget-price"><%= getAmount(choice.amount, ',', '.') %></span><!--
     --><span class="aplazame-widget-currency">€</span><!--
     <% } else { %>
     --><span class="aplazame-widget-currency">$</span><!--
-    --><span class="aplazame-widget-price"><%= getAmount(choice.amount, ',') %></span><!--
+    --><span class="aplazame-widget-price"><%= getAmount(choice.amount, '.', ',') %></span><!--
     <% } %>
   --></strong><!--
 

@@ -15,7 +15,8 @@ module.exports = function (nitro) {
 
     nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
 
-    nitro.file.copy('demo/checkout.json', 'public/checkout.json');
+    nitro.file.copy('demo/checkout-ES.json', 'public/checkout-ES.json');
+    nitro.file.copy('demo/checkout-MX.json', 'public/checkout-MX.json');
 
   });
 
@@ -81,7 +82,7 @@ module.exports = function (nitro) {
         dev = target === 'dev',
         branch = ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim(),
         renderIndex = template( file.read('demo/index.html') ),
-        checkout = file.readJSON('./demo/checkout.json'),
+        checkout = file.readJSON('./demo/checkout-ES.json'),
         indexData = nitro.tools.scope({
           dev: dev, pkg: pkg,
           git: {
@@ -117,23 +118,37 @@ module.exports = function (nitro) {
           totalAmount: function (_articles) {
             return checkout.order.total_amount;
           },
-          amount2string: function (amount) {
+          amount2string: function (amount, decimalsSeparator, _groupSeparator) {
             var cents = amount%100;
-            return parseInt(amount/100) + '.' + ( cents < 10 ? '0' : '' ) + cents;
+            return parseInt(amount/100) + decimalsSeparator + ( cents < 10 ? '0' : '' ) + cents;
           },
-          toEUR: function (amount) {
+          formatCurrency: function (amount, symbol) {
+            console.log('currency', this);
             if( amount < 0 ) {
-              return '-' + indexData.toEUR(-amount);
+              return '-' + indexData.formatCurrency(-amount);
             }
-            return indexData.amount2string(amount) + '€';
+            if( symbol === 'EUR' ) return indexData.amount2string(amount, '.') + '€';
+            return '$' + indexData.amount2string(amount, ',');
           }
         });
 
     template.put('head', file.read('demo/head.html') );
 
-    file.write('public/index.html', renderIndex( indexData ) );
-    file.write('public/demo-success.html', renderIndex( indexData.new({ result: { closed: true, success: true } }) ) );
-    file.write('public/demo-cancel.html', renderIndex( indexData.new({ result: { closed: true, success: false } }) ) );
+    (function (scope) {
+
+      file.write('public/index.html', renderIndex( scope ) );
+      file.write('public/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
+      file.write('public/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+
+    })(indexData.new({ country: 'ES', currency: 'EUR' }));
+
+    (function (scope) {
+
+      file.write('public/mx/index.html', renderIndex( scope ) );
+      file.write('public/mx/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
+      file.write('public/mx/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+
+    })(indexData.new({ country: 'MX', currency: 'MXN' }));
 
     file.write('public/require.html', template( file.read('demo/require.html') )( indexData ) );
 

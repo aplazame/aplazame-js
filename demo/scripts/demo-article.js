@@ -3,6 +3,9 @@
 
 aplazame._.ready(function () {
 
+  var country = document.body.getAttribute('data-country');
+  var choices = document.querySelectorAll('.article-type-choices .article-type input');
+
   function amount2string (amount) {
     var cents = amount%100;
     return parseInt(amount/100) + '.' + ( cents < 10 ? '0' : '' ) + cents;
@@ -15,14 +18,10 @@ aplazame._.ready(function () {
     return amount2string(amount) + '€';
   }
 
-  var price = document.querySelector('[itemprop="price"]'),
-      // priceCents = price ? Number( price.getAttribute('content') ) : 0,
-      choices = document.querySelectorAll('.article-type-choices .article-type input');
-
   // console.log('price', price);
 
   [].forEach.call(choices, function (choice) {
-    choice.addEventListener('change', function (e) {
+    choice.addEventListener('change', function (_e) {
       var price = document.querySelector('[itemprop="price"]'),
           factor = Number( price.getAttribute('data-price-' + this.value) ) || 1;
 
@@ -33,37 +32,40 @@ aplazame._.ready(function () {
     });
   });
 
+  if( document.querySelector('article.article-sample') ) (function () {
 
-  var qtyCtrl = document.querySelector('.qty-ctrl'),
-      qtyInput = qtyCtrl.querySelector('input'),
-      qtyMinus = qtyCtrl.querySelector('button.minus'),
-      qtyPlus = qtyCtrl.querySelector('button.plus');
+    var qtyCtrl = document.querySelector('.qty-ctrl'),
+        qtyInput = qtyCtrl.querySelector('input'),
+        qtyMinus = qtyCtrl.querySelector('button.minus'),
+        qtyPlus = qtyCtrl.querySelector('button.plus');
 
-  qtyMinus.setAttribute('disabled', 'disabled');
+    qtyMinus.setAttribute('disabled', 'disabled');
 
-  qtyMinus.addEventListener('click', function () {
-    var newValue = Number(qtyInput.value) - 1;
+    qtyMinus.addEventListener('click', function () {
+      var newValue = Number(qtyInput.value) - 1;
 
-    if( newValue < 1 ) {
-      newValue = 1;
-    }
+      if( newValue < 1 ) {
+        newValue = 1;
+      }
 
-    qtyInput.value = '' + newValue;
+      qtyInput.value = '' + newValue;
 
-    if( newValue === 1 ) {
-      qtyMinus.setAttribute('disabled', 'disabled');
-    }
-  });
+      if( newValue === 1 ) {
+        qtyMinus.setAttribute('disabled', 'disabled');
+      }
+    });
 
-  qtyPlus.addEventListener('click', function () {
-    qtyInput.value = '' + ( Number(qtyInput.value) + 1 );
-    qtyMinus.removeAttribute('disabled');
-  });
+    qtyPlus.addEventListener('click', function () {
+      qtyInput.value = '' + ( Number(qtyInput.value) + 1 );
+      qtyMinus.removeAttribute('disabled');
+    });
+
+  })();
 
   // checkout launching
 
   var params = {
-    'checkout-json': 'checkout.json'
+    'checkout-json': 'checkout-' + country + '.json'
   };
 
   if( location.search ) {
@@ -80,7 +82,7 @@ aplazame._.ready(function () {
   var http = require('http-browser'),
       checkoutData = http(params['checkout-json']);
 
-  function randOrderId (timeout) {
+  function randOrderId () {
     return 'test-' + new Date().getTime();
   }
 
@@ -104,8 +106,10 @@ aplazame._.ready(function () {
         }
       }
 
-      if( aplazame.info().api.host === 'https://api-dev.aplazame.com/' ) {
-        data.merchant.confirmation_url = data.merchant.confirmation_url.replace('//demo.aplazame.com/', '//demo-dev.aplazame.com/');
+      console.log('aplazame.info()', aplazame.info() );
+
+      if( aplazame.info().api.host === 'https://api-dev.aplazame.com' ) {
+        data.merchant.confirmation_url = 'https://demo-dev.aplazame.com/confirm';
       }
 
       if( !orderId ) {

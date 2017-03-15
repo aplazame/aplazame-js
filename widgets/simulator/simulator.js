@@ -44,6 +44,8 @@ var main = document.getElementById('main'), currentMessage,
             template: tmplModalInstalments({
               selectedChoice: currentMessage.$$choice,
               choices: currentMessage.choices,
+              currency: currentMessage.currency,
+              country: currentMessage.country,
               getAmount: _.getAmount,
               months: function (m) {
                 return m > 1 ? 'meses' : 'mes';

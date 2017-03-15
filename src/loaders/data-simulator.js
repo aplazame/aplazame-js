@@ -192,6 +192,7 @@ module.exports = function (aplazame) {
       widget.render = function () {
         widget.message('choices', {
           amount: meta.amount,
+          currency: meta.currency,
           choice: meta.choices.reduce(maxInstalments, null),
           choices: meta.choices,
           options: meta.options
@@ -203,7 +204,6 @@ module.exports = function (aplazame) {
       });
 
     } else {
-      _.template.put('widget-raw', require('../../.tmp/simulator/templates/widget-raw') );
       widget = { el: document.createElement('div') };
       new Events(widget);
 
@@ -213,9 +213,10 @@ module.exports = function (aplazame) {
 
       widget.render = function () {
         widget.el.style.opacity = null;
-        widget.el.innerHTML = _.template('widget-raw', {
+        widget.el.innerHTML = require('../../.tmp/simulator/templates/widget-raw.tmpl')({
           getAmount: _.getAmount,
           amount: meta.amount,
+          currency: meta.currency,
           choice: meta.choices.reduce(maxInstalments, null),
           choices: meta.choices,
           options: meta.options
@@ -347,6 +348,7 @@ module.exports = function (aplazame) {
 
         meta.choices = _choices;
         meta.options = _options;
+        meta.currency = widgetWrapper.getAttribute('data-currency') || 'EUR';
 
         meta.widget = meta.widget || getWidget(meta);
 

@@ -19,7 +19,8 @@ function simulator (amount, _options, callback, onError) {
 
   var options = {
         params: {
-          amount: amount
+          amount: amount,
+          currency: _options.currency || 'EUR'
         }
       },
       hash = amount + ',' + JSON.stringify(options);

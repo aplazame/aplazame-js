@@ -193,6 +193,7 @@ module.exports = function (aplazame) {
         widget.message('choices', {
           amount: meta.amount,
           currency: meta.currency,
+          country: meta.country,
           choice: meta.choices.reduce(maxInstalments, null),
           choices: meta.choices,
           options: meta.options
@@ -217,6 +218,7 @@ module.exports = function (aplazame) {
           getAmount: _.getAmount,
           amount: meta.amount,
           currency: meta.currency,
+          country: meta.country,
           choice: meta.choices.reduce(maxInstalments, null),
           choices: meta.choices,
           options: meta.options
@@ -236,6 +238,8 @@ module.exports = function (aplazame) {
             template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
               selectedChoice: meta.choices.reduce(maxInstalments, null),
               choices: meta.choices,
+              currency: meta.currency,
+              country: meta.country,
               getAmount: _.getAmount,
               months: function (m) {
                 return m > 1 ? 'meses' : 'mes';
@@ -349,6 +353,7 @@ module.exports = function (aplazame) {
         meta.choices = _choices;
         meta.options = _options;
         meta.currency = widgetWrapper.getAttribute('data-currency') || 'EUR';
+        meta.country = widgetWrapper.getAttribute('data-country') || 'ES';
 
         meta.widget = meta.widget || getWidget(meta);
 

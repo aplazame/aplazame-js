@@ -13,16 +13,21 @@
         <div class="num-instalments">
           <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>
         </div>
-        <div class="amount">
-          <span class="amount-amount"><%= getAmount(choices[i].amount) %></span><!--
+        <div class="amount"><!--
+          <% if( currency === 'EUR' )  { %>
+          --><span class="amount-amount"><%= getAmount(choices[i].amount, ',', '.') %></span><!--
           --><span class="amount-currency">€</span><!--
+          <% } else { %>
+          --><span class="amount-currency">$</span><!--
+          --><span class="amount-amount"><%= getAmount(choices[i].amount, '.', ',') %></span><!--
+          <% } %>
           --><span class="amount-per-month">/mes</span></div>
       </div>
     </button>
     <% } %>
   </div>
 
-  <section class="tae">TAE máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>
+  <section class="tae"><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(choices[0].annual_equivalent) %>%</section>
 
   <section class="how-it-works">
     <header>¿Cómo funciona?</header>

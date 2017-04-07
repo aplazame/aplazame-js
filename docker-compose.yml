@@ -1,0 +1,15 @@
+version: "2.1"
+
+services:
+  application:
+    build:
+      context: ./
+    env_file:
+      - ./.env
+    ports:
+      - 80:8080
+      - 12321:12321
+    volumes:
+      - ./demo:/project/demo
+      - ./src:/project/src
+      - ./widgets:/project/widgets

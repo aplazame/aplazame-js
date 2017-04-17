@@ -60,10 +60,6 @@ module.exports = function (aplazame) {
       options.sandbox = script.getAttribute('data-sandbox');
     }
 
-    if( script.getAttribute('data-analytics') ) {
-      options.analytics = script.getAttribute('data-analytics');
-    }
-
     if( script.getAttribute('data-static-url') ) {
       options.staticUrl = script.getAttribute('data-static-url');
     }

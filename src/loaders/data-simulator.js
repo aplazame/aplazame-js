@@ -345,6 +345,10 @@ module.exports = function (aplazame) {
         meta.widget.emit('choices.updating');
       }
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
+        if ( widgetWrapper.getAttribute('data-options') ) {
+          _options = _.merge( _options, JSON.parse( widgetWrapper.getAttribute('data-options') ) );
+        }
+
         _options.widget = _options.widget || {};
         if( _options.widget.disabled ) {
           return;

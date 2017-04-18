@@ -28,6 +28,25 @@ function getAmount (amount, decimalsSeparator, groupSeparator) {
   });
 }
 
+function getPrice (amount, currency) {
+  var prefix = '', suffix = '', decimalsSeparator, groupSeparator;
+
+  switch (currency) {
+    case 'EUR':
+      suffix = ' €';
+      decimalsSeparator = ',';
+      groupSeparator = '.';
+      break;
+    case 'MXN':
+      prefix = '$ ';
+      decimalsSeparator = '.';
+      groupSeparator = ',';
+      break;
+  }
+
+  return prefix + getAmount(amount, decimalsSeparator, groupSeparator) + suffix;
+}
+
 function parsePrice (price) {
   var matched = price.match(/((\d+[,. ])*)(\d+)/),
       main, tail;
@@ -58,5 +77,6 @@ function parsePrice (price) {
 
 module.exports = {
 	getAmount: getAmount,
+	getPrice: getPrice,
 	parsePrice: parsePrice
 };

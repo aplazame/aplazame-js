@@ -1,0 +1,27 @@
+<div class="apz-price_widget apz-price_widget--number <%= preferences.wide ? 'apz-price_widget--wide' : '' %>">
+  <div class="apz-price_widget-box" style="background-color: <%= preferences.box_color %>;color: <%= preferences.box_text_color %>;"><!--
+  <% if( preferences.title ) { %>
+  --><span class="apz-price_widget-title">Consíguelo a plazos </span><!--
+  <% } %>
+  --><span>
+    <span class="apz-price_widget-amount"><span id="amount"><%= getPrice(choices[preferredNumInstalments - 1].amount, currency) %></span>/mes</span> en
+      <span class="apz-price_widget-stepper" style="background-color: <%= preferences.box_text_color %>;color: <%= preferences.box_color %>;">
+        <button class="apz-price_widget-stepper-button" id="decreaseNumInstalments">-</button>
+        <span class="apz-price_widget-stepper-value" id="preferredNumInstalments"><%= preferredNumInstalments %></span>
+        <button class="apz-price_widget-stepper-button" id="increaseNumInstalments">+</button>
+        <!--<% if( isMobile ) { %>-->
+        <!--<select class="apz-price_widget-stepper-select" id="numInstalments">-->
+          <!--<% for ( var i = 0, n = choices.length ; i < n ; i++ ) { %>-->
+          <!--<option value="<%= choices[i].num_instalments %>" <%= choices[i].num_instalments == preferredNumInstalments ? 'selected' : '' %>><%= choices[i].num_instalments %></option>-->
+          <!--<% } %>-->
+        <!--</select>-->
+        <!--<% } %>-->
+      </span>
+      cuotas
+    </span>
+
+    <% if( preferences.branding ) { %>
+      <span class="apz-price_widget-branding"> con <span class="apz-price_widget-logo"><%= logo %></span></span>
+    <% } %>
+  </div>
+</div>

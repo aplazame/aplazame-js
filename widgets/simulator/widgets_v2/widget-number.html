@@ -1,11 +1,11 @@
-<div class="apz-price_widget apz-price_widget--number <%= preferences.wide ? 'apz-price_widget--wide' : '' %>" data-action="showInfo">
-  <div class="apz-price_widget-box" style="background-color: <%= preferences.box_color %>;color: <%= preferences.box_text_color %>;"><!--
+<div class="apz-price_widget apz-price_widget--number <%= preferences.align === 'fill' ? 'apz-price_widget--wide' : '' %>" data-action="showInfo">
+  <div class="apz-price_widget-box" style="background-color: <%= preferences.bg_color %>;color: <%= preferences.box_text_color %>;"><!--
   <% if( preferences.title ) { %>
   --><span class="apz-price_widget-title">Consíguelo a plazos </span><!--
   <% } %>
   --><span>
     <span class="apz-price_widget-amount"><span id="amount"><%= getPrice(choice.amount, currency) %></span>/mes</span> en
-      <span class="apz-price_widget-stepper" style="background-color: <%= preferences.box_text_color %>;color: <%= preferences.box_color %>;">
+      <span class="apz-price_widget-stepper" style="background-color: <%= preferences.box_text_color %>;color: <%= preferences.bg_color %>;">
         <button class="apz-price_widget-stepper-button" id="decreaseNumInstalments">-</button>
         <span class="apz-price_widget-stepper-value" id="selectedNumInstalments"><%= selectedNumInstalments %></span>
         <button class="apz-price_widget-stepper-button apz-is-disabled" id="increaseNumInstalments">+</button>

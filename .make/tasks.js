@@ -46,7 +46,7 @@ module.exports = function (nitro) {
     nitro.watch('widgets')
       .when('{,**/}*.js', 'widgets.js:dev')
       .when('{,**/}modal-*.html', 'widgets.js:dev')
-      .when(['{,**/}*.html', '!{,**/}modal-*.html'], 'widgets.html:dev')
+      .when(['{,**/}*.html', '!{,**/}modal-*.html'], ['widgets.html:dev', 'widgets.js:dev'])
       .when('{,**/}*.{sass,scss}', 'widgets.sass:dev')
       .when('widgets/assets/**', 'widgets.assets:dev');
 

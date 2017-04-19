@@ -1,0 +1,13 @@
+<div class="apz-price_widget apz-price_widget--button <%= preferences.wide ? 'apz-price_widget--wide' : '' %>"
+  style="color: <%= preferences.text_color %>;"><!--
+  <% if( preferences.title ) { %>
+  --><span class="apz-price_widget-title">Consíguelo a plazos </span><!--
+  <% } %>
+  --><a href="" data-action="showInfo" class="apz-price_widget-box" style="background-color: <%= preferences.box_color %>;color: <%= preferences.box_text_color %>;"><!--
+    --><span><%= preferences.title ? 'desde' : 'Desde' %> </span><!--
+    --><span class="apz-price_widget-amount"><%= getPrice(choice.amount, currency) %>/mes</span><!--
+  --></a>
+  <% if( preferences.branding ) { %>
+    <span class="apz-price_widget-branding"> con <span class="apz-price_widget-logo"><%= logo %></span></span>
+  <% } %>
+</div>

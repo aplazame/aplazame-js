@@ -154,6 +154,8 @@ module.exports = function (nitro) {
     file.write('public/playground.html', template( file.read('demo/playground.html') )( indexData ) );
 
     file.write('public/simulator/index.html', template( file.read('demo/demo-simulator.html') )( indexData.new({ baseHref: '/simulator/' }) ) );
+
+    file.write('public/widgets.html', template( file.read('demo/widgets.html') )( indexData ) );
   });
 
   nitro.task('demo-dev', ['demo-lintjs:dev', 'demo-clear:dev', 'demo-assets:dev', 'demo-js:dev', 'demo-sass:dev', 'demo-templates:dev']);

@@ -54,6 +54,8 @@ var main = document.getElementById('main'), currentMessage,
     renderWidget = function () {
       _.removeClass(main, 'loading');
       var widgetSettings = currentMessage.options.widget;
+      var min = currentMessage.choices[0].num_instalments;
+      var max = currentMessage.choices[currentMessage.choices.length - 1].num_instalments;
 
       var tmplWidget;
       switch (widgetSettings.type) {
@@ -82,7 +84,7 @@ var main = document.getElementById('main'), currentMessage,
         options: currentMessage.options,
         amount: currentMessage.amount,
         currency: currentMessage.currency,
-        preferredNumInstalments: 2,
+        selectedNumInstalments: max,
         preferences: widgetSettings.preferences,
         logo: require('../../.tmp/simulator/templates/logo.tmpl')({}),
         isMobile: currentMessage.isMobile
@@ -108,24 +110,23 @@ var main = document.getElementById('main'), currentMessage,
 
       switch (widgetSettings.type) {
         case 'number':
-          var min = 1;
-          var max = 12;
-
           var decreaseNumInstalmentsElement = document.getElementById('decreaseNumInstalments');
           var increaseNumInstalmentsElement = document.getElementById('increaseNumInstalments');
-          var preferredNumInstalmentsElement = document.getElementById('preferredNumInstalments');
+          var selectedNumInstalmentsElement = document.getElementById('selectedNumInstalments');
           var amount = document.getElementById('amount');
 
           decreaseNumInstalmentsElement.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
 
-            updateNumber(Number( preferredNumInstalmentsElement.textContent ) - 1)
+            updateNumber(Number( selectedNumInstalmentsElement.textContent ) - 1)
           });
 
           increaseNumInstalmentsElement.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
 
-            updateNumber(Number( preferredNumInstalmentsElement.textContent ) + 1)
+            updateNumber(Number( selectedNumInstalmentsElement.textContent ) + 1)
           });
 
           var updateNumber = function (num_instalments) {
@@ -133,22 +134,25 @@ var main = document.getElementById('main'), currentMessage,
               return;
             }
             if (num_instalments == min) {
-              preferredNumInstalmentsElement.disabled = true;
+              selectedNumInstalmentsElement.disabled = true;
               _.addClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
             } else {
-              preferredNumInstalmentsElement.disabled = false;
+              selectedNumInstalmentsElement.disabled = false;
               _.removeClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
             }
             if (num_instalments == max) {
-              preferredNumInstalmentsElement.disabled = true;
+              selectedNumInstalmentsElement.disabled = true;
               _.addClass(increaseNumInstalmentsElement, 'apz-is-disabled');
             } else {
-              preferredNumInstalmentsElement.disabled = false;
+              selectedNumInstalmentsElement.disabled = false;
               _.removeClass(increaseNumInstalmentsElement, 'apz-is-disabled');
             }
 
-            preferredNumInstalmentsElement.textContent = num_instalments;
-            amount.textContent = _.getPrice(currentMessage.choices[num_instalments - 1].amount, currentMessage.currency);
+            selectedNumInstalmentsElement.textContent = num_instalments;
+            var selectedChoice = _.find(currentMessage.choices, function (choice) {
+              return choice.num_instalments == num_instalments;
+            });
+            amount.textContent = _.getPrice(selectedChoice.amount, currentMessage.currency);
           };
           break;
       }

@@ -6,7 +6,7 @@
   --><span class="apz-price_widget-select_wrapper">
     <select class="apz-price_widget-box apz-price_widget-select" style="background-color: <%= preferences.box_color %>;color: <%= preferences.box_text_color %>;">
       <% for ( var i = 0, n = choices.length ; i < n ; i++ ) { %>
-      <option <%= choices[i].num_instalments == preferredNumInstalments ? 'selected' : '' %>><span class="apz-price_widget-amount"><%= getPrice(choices[i].amount, currency) %>/mes</span> en <%= choices[i].num_instalments %> <%= choices[i].num_instalments > 1 ? 'cuotas' : 'cuota' %></option>
+      <option <%= choices[i].num_instalments == selectedNumInstalments ? 'selected' : '' %>><span class="apz-price_widget-amount"><%= getPrice(choices[i].amount, currency) %>/mes</span> en <%= choices[i].num_instalments %> <%= choices[i].num_instalments > 1 ? 'cuotas' : 'cuota' %></option>
       <% } %>
     </select>
     <span class="caret" style="color: <%= preferences.box_text_color %>;"></span>

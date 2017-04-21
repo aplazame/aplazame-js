@@ -27,7 +27,7 @@ function init (options) {
 
   _.extend(api, options);
 
-  _.log('aplazame.init', api);
+  _.log('aplazame.init', options, api);
 
   if( api.publicKey ) events.emit('ready');
 }

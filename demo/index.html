@@ -175,7 +175,7 @@
             data-sandbox="true"
             data-callback="apzReady"
             $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com"{/}
-            $if{ dev }data-static-url="/dist/"{:}$if{ git.branch !== 'release' }data-api-host="https://dev.aplazame.com/static/"{/}{/}
+            $if{ dev }data-static-url="/dist/"{:}$if{ git.branch !== 'release' }data-static-host="https://dev.aplazame.com/static/"{/}{/}
             $if{ git.branch !== 'release' }data-checkout-url="https://dev.aplazame.com/static/"{/}>
     </script>
 

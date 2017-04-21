@@ -146,11 +146,12 @@ module.exports = function (aplazame) {
 
     _.onMessage('simulator', function (e, message) {
       if( e.source === el.contentWindow ) {
+        console.log('simulator message', e, message);
         iframe.emit('message:' + message.event, [message], this);
       }
     });
 
-    this.on('message:resize', function (_e, message) {
+    this.on('message:resize', function (message) {
       el.style.height = message.height + 'px';
     });
   }
@@ -205,7 +206,7 @@ module.exports = function (aplazame) {
           });
         };
 
-        widget.on('choices.updating', function (_e) {
+        widget.on('choices.updating', function () {
           widget.message('loading');
         });
         break;
@@ -213,7 +214,7 @@ module.exports = function (aplazame) {
         widget = { el: document.createElement('div') };
         new Events(widget);
 
-        widget.on('choices.updating', function (_e) {
+        widget.on('choices.updating', function () {
           widget.el.style.opacity = 0.5;
         });
 
@@ -258,7 +259,7 @@ module.exports = function (aplazame) {
 
     widget.render();
 
-    widget.on('message:require.choices choices.update', function (_e, message) {
+    widget.on('message:require.choices choices.update', function (message) {
       if( message && message.simulatorId && message.simulatorId !== id ) {
         return;
       }

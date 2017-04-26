@@ -11,5 +11,6 @@ services:
       - 12321:12321
     volumes:
       - ./demo:/project/demo
+      - ./external-integrations:/project/external-integrations
       - ./src:/project/src
       - ./widgets:/project/widgets

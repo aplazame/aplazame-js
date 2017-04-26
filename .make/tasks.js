@@ -54,6 +54,10 @@ module.exports = function (nitro) {
       .when('{,**/}*.html', ['demo-templates:dev', 'loading:dev'])
       .when('{,**/}*.{sass,scss}', ['demo-sass:dev']);
 
+    nitro.watch('external-integrations')
+      .when('{,**/}*.js', ['lint', 'externalIntegrations'])
+    ;
+
     nitro.watch('.make', function () {
       nitro.import('.make');
     });

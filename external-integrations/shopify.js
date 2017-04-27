@@ -1,10 +1,4 @@
-var Shopify = Shopify || {};
-
-(function(Shopify){
-    function getMetaPropertyByName(name){
-      return document.head.querySelector("meta[property='"+name+"']").content;
-    }
-  
+(function(Shopify, meta){
     function findFirst( list, iteratee ) {
       for( var i = 0, n = list.length ; i < n ; i++ ) {
         if( iteratee(list[i]) ) return list[i];
@@ -37,8 +31,22 @@ var Shopify = Shopify || {};
       return params;
     }
 
+    function widget(_data){
+        var widget = document.createElement('div');
+        widget.setAttribute('data-aplazame-simulator', '');
+
+        for (var key in _data) {
+            if (_data.hasOwnProperty(key)) {
+              widget.setAttribute('data-' + key, _data[key]);
+            }
+        }
+
+        return widget;
+    }
+
     var currentScript = document.currentScript || currentScriptFallback(),
         aplazameParams = getCurrentScriptParams(currentScript),
+        currency = window.ShopifyAnalytics.meta.currency,
         aplazame = {
         script: document.createElement('script'),
         key: aplazameParams.publicKey,
@@ -53,55 +61,45 @@ var Shopify = Shopify || {};
     };
 
     var page = {
-        type: undefined,
         widget: document.querySelector('div[data-aplazame-simulator]'),
         current: function(){
-          return page.type = window.location.pathname.split('/')[1];
+          return window.location.pathname.split('/')[1];
         }
-    };
-
-    var widgetSetter = function(_data){
-        if(page.widget === null){
-            // Widget container element...
-            page.widget = document.createElement('div');
-            page.widget.setAttribute('data-aplazame-simulator', '');
-            page.widget.setAttribute('data-amount', _data.price);
-            page.widget.setAttribute('data-currency', _data.currency);
-            page.widget.setAttribute('data-country', _data.country);
-            // This param should be set just on cart & checkout
-            if(page.type == 'cart' || page.type == 'checkout')
-                page.widget.setAttribute('data-qty',_data.quantity);
-        }
-
-        return page.widget;
     };
 
     if(Shopify){
 
         var printer = function(_parent,_data){
-            // Set widget data and append it
-            if(widgetSetter(_data) !== null)
-                document.getElementById(_parent).appendChild(page.widget);
-            // Aplazame script setter
+            page.widget = page.widget || widget(_data);
+            document.querySelector(_parent).appendChild(page.widget);
             aplazame.setter();
         };
 
-        // This switch anticipates which page the user is visiting and how to get the data...
+        if (meta.page) {
+            switch (meta.page.pageType) {
+                case 'product':
+                    printer('#ProductPrice',{
+                      price: '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]',
+                      currency: currency,
+                      country: aplazameParams.country,
+                      qty: 'input[name="quantity"]'
+                    });
+                    return;
+            }
+        }
 
         switch(page.current()){
-            case 'collections':
-                printer('',{ price: 0, currency: aplazameParams.currency, country: aplazameParams.country });
-            break;
-            case 'products':
-                printer('ProductPrice',{ price: getMetaPropertyByName('og:price:amount'), currency: aplazameParams.currency, country: aplazameParams.country });
-            break;
             case 'cart':
-                printer('',{ price: 0, currency: aplazameParams.currency, country: aplazameParams.country });
-            break;
+                printer('.cart__subtotal',{ price: '.cart__subtotal', currency: currency, country: aplazameParams.country });
+                return;
             case 'checkout': // only premium
-                printer('',{ price: 0, currency: aplazameParams.currency, country: aplazameParams.country });
-            break;
+                printer('.payment-due__price',{ price: '.payment-due__price', currency: currency, country: aplazameParams.country });
+                return;
+        }
+
+        if (Shopify.checkout) {
+            printer('.payment-due__price',{ price: '.payment-due__price', currency: currency, country: aplazameParams.country });
         }
     }
 
-}(Shopify));
+}(Shopify, meta));

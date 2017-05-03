@@ -30,7 +30,7 @@ build: install tests
 dev: git.hooks install
 	node make dev
 
-live: git.hooks install
+live: git.hooks build
 	node make live
 
 master.increaseVersion:

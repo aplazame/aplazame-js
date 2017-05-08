@@ -1,14 +1,39 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = function anonymous(obj
 /**/) {
-var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="card-content">    <header class="aplazame"></header>    <section class="info">     Elige el número de meses y la cuota que más te convengan   </section>    <div class="choices-wrapper">     '); for( var i = choices.length - 1 ; i >= 0 ; i-- ) { p.push('     <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">       <div class="wrapper">         <div class="num-instalments">           <span>', choices[i].num_instalments ,'</span>&nbsp;<span>', months(choices[i].num_instalments) ,'</span>         </div>         <div class="amount"><!--           '); if( currency === 'EUR' )  { p.push('           --><span class="amount-amount">', getAmount(choices[i].amount, ',', '.') ,'</span><!--           --><span class="amount-currency">€</span><!--           '); } else { p.push('           --><span class="amount-currency">$</span><!--           --><span class="amount-amount">', getAmount(choices[i].amount, '.', ',') ,'</span><!--           '); } p.push('           --><span class="amount-per-month">/mes</span></div>       </div>     </button>     '); } p.push('   </div>    <section class="tae">', country === 'MX' ? 'CAT' : 'TAE' ,' máximo: ', getAmount(choices[0].annual_equivalent) ,'%</section>    <section class="how-it-works">     <header>¿Cómo funciona?</header>     <div class="info-wrapper">       <div class="info">         <h3>Elige Aplazame</h3>         <p>en la tienda, cuando vayas a pagar el pedido.</p>       </div>       <div class="info">         <h3>Decide cómo quieres pagar</h3>         <p>Hasta en ', selectedChoice.num_instalments ,' ', selectedChoice.num_instalments > 1 ? 'cuotas' : 'cuota' ,', pagando con tarjeta.</p>       </div>       <div class="info">         <h3>Disfruta de tu compra</h3>         <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>       </div>     </div>   </section>  </div>  <div class="cta">   <div class="col-sm-6 button-wrapper">     <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>   </div>   <div class="col-sm-6 button-wrapper">     <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>   </div> </div>');}return p.join('');
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<svg viewBox="0 0 400 104" xmlns="http://www.w3.org/2000/svg">   <g fill="currentColor" fill-rule="evenodd">     <path d="M145.177 58.236v-2.948c0-.274-.137-.41-.41-.41h-5.486c-5.074 0-7.13 1.438-7.13 4.456 0 2.743 1.988 4.113 5.76 4.113 4.456 0 7.267-1.714 7.267-5.21m9.6 7.474c0 2.057-1.646 3.566-3.84 3.566-1.37 0-2.468-.48-3.223-1.577l-1.097-1.648h-.068c-1.92 2.263-5.28 3.635-9.737 3.635-7.818 0-12-3.702-12-10.01 0-7.132 5.005-10.56 13.165-10.56h6.788c.274 0 .41-.137.41-.412v-.823c0-3.84-2.192-6.1-7.403-6.1-2.332 0-4.595.684-6.035 1.37-.686.273-1.372.41-1.99.41-1.85 0-3.154-1.233-3.154-3.152 0-1.1.55-2.332 1.922-3.018 2.125-1.234 5.554-2.263 10.078-2.263 9.396 0 13.852 4.663 13.852 12.82v10.424c0 1.715.206 2.4.685 3.29l1.03 1.783c.41.755.617 1.51.617 2.264M181.27 58.442c.48-1.44.686-3.428.686-6.034s-.206-4.594-.685-6.033c-1.028-3.155-3.222-4.39-6.103-4.39-2.947 0-5.142 1.235-6.17 4.39-.48 1.44-.686 3.427-.686 6.033 0 2.606.208 4.594.688 6.034 1.028 3.154 3.222 4.388 6.17 4.388 2.88 0 5.075-1.234 6.102-4.388m-20.64 19.13V39.587c0-2.538 1.578-4.045 3.84-4.045 2.263 0 3.498 1.372 3.84 3.497h.07c1.577-2.262 4.25-3.908 8.913-3.908 5.487 0 9.6 3.153 11.314 8.364.823 2.537 1.167 5.21 1.167 8.914 0 3.703-.344 6.376-1.167 8.914-1.714 5.21-5.827 8.365-11.314 8.365-4.662 0-7.472-1.782-8.913-3.908h-.07v11.793c0 2.537-1.577 4.046-3.84 4.046-2.262 0-3.84-1.51-3.84-4.047M205.44 69.346c-6.72 0-9.052-3.36-9.052-9.67V26.01c0-2.537 1.578-4.046 3.84-4.046 2.195 0 3.84 1.51 3.84 4.046v33.05c0 2.332.756 3.154 2.676 3.43 2.26.272 3.222 1.644 3.222 3.36 0 1.987-1.234 3.496-3.977 3.496h-.55zM234.382 58.236v-2.948c0-.274-.137-.41-.41-.41h-5.486c-5.075 0-7.13 1.438-7.13 4.456 0 2.743 1.987 4.113 5.758 4.113 4.456 0 7.268-1.714 7.268-5.21m9.6 7.474c0 2.057-1.646 3.566-3.84 3.566-1.37 0-2.468-.48-3.223-1.577l-1.098-1.648h-.068c-1.92 2.263-5.28 3.635-9.737 3.635-7.817 0-12-3.702-12-10.01 0-7.132 5.007-10.56 13.166-10.56h6.79c.272 0 .41-.137.41-.412v-.823c0-3.84-2.195-6.1-7.406-6.1-2.33 0-4.594.684-6.035 1.37-.684.273-1.37.41-1.987.41-1.852 0-3.155-1.233-3.155-3.152 0-1.1.55-2.332 1.92-3.018 2.126-1.234 5.555-2.263 10.08-2.263 9.395 0 13.85 4.663 13.85 12.82v10.424c0 1.715.207 2.4.686 3.29l1.028 1.783c.413.755.62 1.51.62 2.264M251.887 68.934c-2.126 0-3.497-1.303-3.497-3.36 0-1.508.823-2.88 2.4-4.732l15.222-18.1v-.138h-13.164c-2.194 0-3.497-1.44-3.497-3.36s1.304-3.36 3.498-3.36h19.473c2.126 0 3.5 1.303 3.5 3.36 0 1.508-.757 2.88-2.402 4.8l-15.016 18.034v.136h13.92c2.194 0 3.497 1.44 3.497 3.36s-1.304 3.36-3.5 3.36h-20.433zM300.74 58.236v-2.948c0-.274-.136-.41-.41-.41h-5.485c-5.076 0-7.13 1.438-7.13 4.456 0 2.743 1.986 4.113 5.758 4.113 4.457 0 7.268-1.714 7.268-5.21m9.6 7.474c0 2.057-1.644 3.566-3.84 3.566-1.37 0-2.467-.48-3.222-1.577l-1.097-1.648h-.067c-1.92 2.263-5.28 3.635-9.736 3.635-7.82 0-12-3.702-12-10.01 0-7.132 5.005-10.56 13.165-10.56h6.788c.274 0 .41-.137.41-.412v-.823c0-3.84-2.193-6.1-7.404-6.1-2.332 0-4.594.684-6.034 1.37-.687.273-1.372.41-1.99.41-1.85 0-3.153-1.233-3.153-3.152 0-1.1.548-2.332 1.918-3.018 2.127-1.234 5.556-2.263 10.08-2.263 9.396 0 13.852 4.663 13.852 12.82v10.424c0 1.715.205 2.4.686 3.29l1.027 1.783c.412.755.618 1.51.618 2.264M316.06 39.586c0-2.537 1.577-4.045 3.84-4.045s3.497 1.44 3.84 3.43h.068c1.44-2.058 4.32-3.84 8.708-3.84 3.908 0 7.063 1.576 9.05 4.39h.07c2.536-2.745 5.828-4.39 10.56-4.39 7.678 0 11.998 5.21 11.998 12.273v17.83c0 2.535-1.576 4.043-3.838 4.043-2.264 0-3.84-1.508-3.84-4.044V49.186c0-4.25-2.127-7.2-6.24-7.2-3.978 0-6.31 2.95-6.31 7.2v16.046c0 2.536-1.576 4.044-3.84 4.044-2.26 0-3.838-1.508-3.838-4.044V49.186c0-4.25-2.127-7.2-6.24-7.2-3.977 0-6.31 2.95-6.31 7.2v16.046c0 2.536-1.575 4.044-3.84 4.044-2.26 0-3.838-1.508-3.838-4.044V39.586zM391.702 45.895c-.892-2.675-3.36-4.253-6.445-4.253-3.156 0-5.623 1.578-6.514 4.252-.274.823-.412 1.647-.412 2.812 0 .274.14.41.413.41l12.96.002c.272 0 .41-.138.41-.413 0-1.164-.138-1.988-.41-2.81m-19.955 14.604c-.686-2.127-1.165-4.663-1.165-8.092 0-3.428.41-6.034 1.097-8.16 1.852-5.758 6.925-9.12 13.508-9.12 6.787 0 11.725 3.498 13.577 9.12.685 2.196 1.096 4.8 1.096 7.956 0 1.575-.958 2.672-2.672 2.672h-18.445c-.274 0-.412.14-.412.413 0 .96.207 1.782.48 2.535 1.098 3.22 3.704 5.005 7.475 5.005 2.812 0 4.663-.822 6.788-2.26.893-.618 1.783-1.1 2.813-1.1 1.988.002 3.222 1.372 3.222 3.224 0 1.303-.55 2.194-1.578 3.016-2.95 2.4-6.582 3.978-11.93 3.978-7.063 0-12-3.43-13.852-9.19M93.828 37.74c1.84-2.72 1.123-6.42-1.6-8.262-2.722-1.84-6.422-1.123-8.262 1.6-3.95 5.848-9.155 10.56-15.12 13.888L52.842 4.164C51.985 2 49.883.468 47.38.432 45.12.42 42.895 1.648 41.828 4.09L27.195 39.184c3.393 2.08 7.096 3.633 10.984 4.585l8.97-21.522 10.615 27.06c-3.38.823-6.883 1.254-10.445 1.254-14.49 0-28.076-7.12-36.338-19.043-1.873-2.702-5.58-3.375-8.28-1.503-2.703 1.87-3.374 5.58-1.504 8.28C11.684 53.43 28.928 62.464 47.32 62.464c5.074 0 10.052-.687 14.822-1.993l15.42 39.32c1.207 3.074 4.672 4.558 7.714 3.366 3.06-1.2 4.567-4.652 3.367-7.713l-15.42-39.316c8.166-4.25 15.284-10.508 20.605-18.386zM13.806 71.3c-1.267 3.033.167 6.517 3.2 7.783 3.02 1.26 6.513-.158 7.783-3.204l4.363-10.467c-3.806-1.172-7.484-2.71-10.983-4.584L13.806 71.3z"/>   </g> </svg>');}return p.join('');
 };
 },{}],2:[function(require,module,exports){
 module.exports = function anonymous(obj
 /**/) {
-var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="aplazame-widget-button align-', preferences.align ,'">   <button type="button" data-action="showInfo"           class="', brightness(preferences.bg_color) ,' ', preferences.branding ? '' : 'no-logo' ,'"           style=" background: ', preferences.bg_color ,'; color: ', preferences.text_color ,'; fill: ', preferences.text_color ,'">      <div class="align-wrapper">       '); if( preferences.branding ) { p.push('         <div class="logo">           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" height="100%" width="100%" version="1.1">             <path class="dropshadow" style="baseline-shift:baseline;block-progression:tb;color:#000000;direction:ltr;text-indent:0;text-align:start;enable-background:accumulate;text-transform:none;" d="m49.45,1.9068a5.8933,5.8933,0,0,0,-0.55244,0.12276,5.8933,5.8933,0,0,0,-0.3683,0.06138,5.8933,5.8933,0,0,0,-0.18415,0.06138,5.8933,5.8933,0,0,0,-0.12276,0.06138,5.8933,5.8933,0,0,0,-1.4732,0.67521,5.8933,5.8933,0,0,0,-0.12276,0.12277,5.8933,5.8933,0,0,0,-2.3325,3.3147l-13.75,32.962c3.3033,2.0483,6.9615,3.6193,10.865,4.5423l8.4708-20.256,9.2688,23.694c-2.9404,0.67972-5.9953,1.0435-9.146,1.0435-13.813,0-25.916-6.9098-33.208-17.433a5.7487,5.7487,0,0,0,-5.464,-2.516,5.7487,5.7487,0,0,0,-3.9897,9.084c9.3636,13.512,25.015,22.343,42.661,22.343,4.6171,0,9.1087-0.64524,13.381-1.7801l14.118,36.032a5.8933,5.8933,0,1,0,10.927,-4.358l-14.057-35.909c7.3552-3.8999,13.645-9.5362,18.353-16.328a5.7553,5.7553,0,0,0,-9.4529,-6.5679c-3.4226,4.9365-7.9036,9.0865-13.136,12.092l-14.424-36.89a5.8933,5.8933,0,0,0,-0.43,-0.9207,5.8933,5.8933,0,0,0,-0.061,-0.1228,5.8933,5.8933,0,0,0,-0.553,-0.8594,5.8933,5.8933,0,0,0,-0.061,-0.1227,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.123,-0.1228,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.122,-0.1228,5.8933,5.8933,0,0,0,-0.369,-0.2455,5.8933,5.8933,0,0,0,-0.614,-0.3683,5.8933,5.8933,0,0,0,-0.429,-0.1842,5.8933,5.8933,0,0,0,-0.123,-0.0613,5.8933,5.8933,0,0,0,-0.43,-0.1228,5.8933,5.8933,0,0,0,-0.552,-0.1842,5.8933,5.8933,0,0,0,-1.1663,-0.12276,5.8933,5.8933,0,0,0,-0.61383,0zm-26.027,54.508-4.603,11.048a5.8933,5.8933,0,1,0,10.865,4.5423l4.6037-11.11c-3.8107-1.1281-7.4419-2.602-10.865-4.4809z"/>            <path style="baseline-shift:baseline;block-progression:tb;color:#000000;direction:ltr;text-indent:0;text-align:start;enable-background:accumulate;text-transform:none;" d="m49.45,1.9068a5.8933,5.8933,0,0,0,-0.55244,0.12276,5.8933,5.8933,0,0,0,-0.3683,0.06138,5.8933,5.8933,0,0,0,-0.18415,0.06138,5.8933,5.8933,0,0,0,-0.12276,0.06138,5.8933,5.8933,0,0,0,-1.4732,0.67521,5.8933,5.8933,0,0,0,-0.12276,0.12277,5.8933,5.8933,0,0,0,-2.3325,3.3147l-13.75,32.962c3.3033,2.0483,6.9615,3.6193,10.865,4.5423l8.4708-20.256,9.2688,23.694c-2.9404,0.67972-5.9953,1.0435-9.146,1.0435-13.813,0-25.916-6.9098-33.208-17.433a5.7487,5.7487,0,0,0,-5.464,-2.516,5.7487,5.7487,0,0,0,-3.9897,9.084c9.3636,13.512,25.015,22.343,42.661,22.343,4.6171,0,9.1087-0.64524,13.381-1.7801l14.118,36.032a5.8933,5.8933,0,1,0,10.927,-4.358l-14.057-35.909c7.3552-3.8999,13.645-9.5362,18.353-16.328a5.7553,5.7553,0,0,0,-9.4529,-6.5679c-3.4226,4.9365-7.9036,9.0865-13.136,12.092l-14.424-36.89a5.8933,5.8933,0,0,0,-0.43,-0.9207,5.8933,5.8933,0,0,0,-0.061,-0.1228,5.8933,5.8933,0,0,0,-0.553,-0.8594,5.8933,5.8933,0,0,0,-0.061,-0.1227,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.123,-0.1228,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.122,-0.1228,5.8933,5.8933,0,0,0,-0.369,-0.2455,5.8933,5.8933,0,0,0,-0.614,-0.3683,5.8933,5.8933,0,0,0,-0.429,-0.1842,5.8933,5.8933,0,0,0,-0.123,-0.0613,5.8933,5.8933,0,0,0,-0.43,-0.1228,5.8933,5.8933,0,0,0,-0.552,-0.1842,5.8933,5.8933,0,0,0,-1.1663,-0.12276,5.8933,5.8933,0,0,0,-0.61383,0zm-26.027,54.508-4.603,11.048a5.8933,5.8933,0,1,0,10.865,4.5423l4.6037-11.11c-3.8107-1.1281-7.4419-2.602-10.865-4.4809z"/>           </svg>         </div>       '); } p.push('        <div class="text-wrapper">          <span class="from">Desde&nbsp;</span><!--          --><strong class="amount"><!--           '); if( currency === 'EUR' ) { p.push('           --><span class="price">', getAmount(choice.amount, ',', '.') ,'</span><!--           --><span class="currency">€</span><!--           '); } else { p.push('           --><span class="currency">$</span><!--           --><span class="price">', getAmount(choice.amount, '.', ',') ,'</span><!--           '); } p.push('         --></strong><!--          --><sub class="per-month">/mes</sub>        </div>     </div>    </button> </div>');}return p.join('');
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="card-content">    <header class="aplazame"></header>    <section class="info">     Elige el número de meses y la cuota que más te convengan   </section>    <div class="choices-wrapper">     '); for( var i = choices.length - 1 ; i >= 0 ; i-- ) { p.push('     <button ng-repeat="choice in choices" type="button" class="choice" ng-click="selectChoice(choice)" ng-class="{ active: choice === currentChoice }">       <div class="wrapper">         <div class="num-instalments">           <span>', choices[i].num_instalments ,'</span>&nbsp;<span>', months(choices[i].num_instalments) ,'</span>         </div>         <div class="amount"><!--           '); if( currency === 'EUR' )  { p.push('           --><span class="amount-amount">', getAmount(choices[i].amount, ',', '.') ,'</span><!--           --><span class="amount-currency">€</span><!--           '); } else { p.push('           --><span class="amount-currency">$</span><!--           --><span class="amount-amount">', getAmount(choices[i].amount, '.', ',') ,'</span><!--           '); } p.push('           --><span class="amount-per-month">/mes</span></div>       </div>     </button>     '); } p.push('   </div>    <section class="tae">', country === 'MX' ? 'CAT' : 'TAE' ,' máximo: ', getAmount(choices[0].annual_equivalent) ,'%</section>    <section class="how-it-works">     <header>¿Cómo funciona?</header>     <div class="info-wrapper">       <div class="info">         <h3>Elige Aplazame</h3>         <p>en la tienda, cuando vayas a pagar el pedido.</p>       </div>       <div class="info">         <h3>Decide cómo quieres pagar</h3>         <p>Hasta en ', selectedChoice.num_instalments ,' ', selectedChoice.num_instalments > 1 ? 'cuotas' : 'cuota' ,', pagando con tarjeta.</p>       </div>       <div class="info">         <h3>Disfruta de tu compra</h3>         <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>       </div>     </div>   </section>  </div>  <div class="cta">   <div class="col-sm-6 button-wrapper">     <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>   </div>   <div class="col-sm-6 button-wrapper">     <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>   </div> </div>');}return p.join('');
 };
 },{}],3:[function(require,module,exports){
+module.exports = function anonymous(obj
+/**/) {
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="aplazame-widget-button align-', preferences.align ,'">   <button type="button" data-action="showInfo"           class="', brightness(preferences.bg_color) ,' ', preferences.branding ? '' : 'no-logo' ,'"           style=" background: ', preferences.bg_color ,'; color: ', preferences.text_color ,'; fill: ', preferences.text_color ,'">      <div class="align-wrapper">       '); if( preferences.branding ) { p.push('         <div class="logo">           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" height="100%" width="100%" version="1.1">             <path class="dropshadow" style="baseline-shift:baseline;block-progression:tb;color:#000000;direction:ltr;text-indent:0;text-align:start;enable-background:accumulate;text-transform:none;" d="m49.45,1.9068a5.8933,5.8933,0,0,0,-0.55244,0.12276,5.8933,5.8933,0,0,0,-0.3683,0.06138,5.8933,5.8933,0,0,0,-0.18415,0.06138,5.8933,5.8933,0,0,0,-0.12276,0.06138,5.8933,5.8933,0,0,0,-1.4732,0.67521,5.8933,5.8933,0,0,0,-0.12276,0.12277,5.8933,5.8933,0,0,0,-2.3325,3.3147l-13.75,32.962c3.3033,2.0483,6.9615,3.6193,10.865,4.5423l8.4708-20.256,9.2688,23.694c-2.9404,0.67972-5.9953,1.0435-9.146,1.0435-13.813,0-25.916-6.9098-33.208-17.433a5.7487,5.7487,0,0,0,-5.464,-2.516,5.7487,5.7487,0,0,0,-3.9897,9.084c9.3636,13.512,25.015,22.343,42.661,22.343,4.6171,0,9.1087-0.64524,13.381-1.7801l14.118,36.032a5.8933,5.8933,0,1,0,10.927,-4.358l-14.057-35.909c7.3552-3.8999,13.645-9.5362,18.353-16.328a5.7553,5.7553,0,0,0,-9.4529,-6.5679c-3.4226,4.9365-7.9036,9.0865-13.136,12.092l-14.424-36.89a5.8933,5.8933,0,0,0,-0.43,-0.9207,5.8933,5.8933,0,0,0,-0.061,-0.1228,5.8933,5.8933,0,0,0,-0.553,-0.8594,5.8933,5.8933,0,0,0,-0.061,-0.1227,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.123,-0.1228,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.122,-0.1228,5.8933,5.8933,0,0,0,-0.369,-0.2455,5.8933,5.8933,0,0,0,-0.614,-0.3683,5.8933,5.8933,0,0,0,-0.429,-0.1842,5.8933,5.8933,0,0,0,-0.123,-0.0613,5.8933,5.8933,0,0,0,-0.43,-0.1228,5.8933,5.8933,0,0,0,-0.552,-0.1842,5.8933,5.8933,0,0,0,-1.1663,-0.12276,5.8933,5.8933,0,0,0,-0.61383,0zm-26.027,54.508-4.603,11.048a5.8933,5.8933,0,1,0,10.865,4.5423l4.6037-11.11c-3.8107-1.1281-7.4419-2.602-10.865-4.4809z"/>            <path style="baseline-shift:baseline;block-progression:tb;color:#000000;direction:ltr;text-indent:0;text-align:start;enable-background:accumulate;text-transform:none;" d="m49.45,1.9068a5.8933,5.8933,0,0,0,-0.55244,0.12276,5.8933,5.8933,0,0,0,-0.3683,0.06138,5.8933,5.8933,0,0,0,-0.18415,0.06138,5.8933,5.8933,0,0,0,-0.12276,0.06138,5.8933,5.8933,0,0,0,-1.4732,0.67521,5.8933,5.8933,0,0,0,-0.12276,0.12277,5.8933,5.8933,0,0,0,-2.3325,3.3147l-13.75,32.962c3.3033,2.0483,6.9615,3.6193,10.865,4.5423l8.4708-20.256,9.2688,23.694c-2.9404,0.67972-5.9953,1.0435-9.146,1.0435-13.813,0-25.916-6.9098-33.208-17.433a5.7487,5.7487,0,0,0,-5.464,-2.516,5.7487,5.7487,0,0,0,-3.9897,9.084c9.3636,13.512,25.015,22.343,42.661,22.343,4.6171,0,9.1087-0.64524,13.381-1.7801l14.118,36.032a5.8933,5.8933,0,1,0,10.927,-4.358l-14.057-35.909c7.3552-3.8999,13.645-9.5362,18.353-16.328a5.7553,5.7553,0,0,0,-9.4529,-6.5679c-3.4226,4.9365-7.9036,9.0865-13.136,12.092l-14.424-36.89a5.8933,5.8933,0,0,0,-0.43,-0.9207,5.8933,5.8933,0,0,0,-0.061,-0.1228,5.8933,5.8933,0,0,0,-0.553,-0.8594,5.8933,5.8933,0,0,0,-0.061,-0.1227,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.123,-0.1228,5.8933,5.8933,0,0,0,-0.307,-0.3069,5.8933,5.8933,0,0,0,-0.122,-0.1228,5.8933,5.8933,0,0,0,-0.369,-0.2455,5.8933,5.8933,0,0,0,-0.614,-0.3683,5.8933,5.8933,0,0,0,-0.429,-0.1842,5.8933,5.8933,0,0,0,-0.123,-0.0613,5.8933,5.8933,0,0,0,-0.43,-0.1228,5.8933,5.8933,0,0,0,-0.552,-0.1842,5.8933,5.8933,0,0,0,-1.1663,-0.12276,5.8933,5.8933,0,0,0,-0.61383,0zm-26.027,54.508-4.603,11.048a5.8933,5.8933,0,1,0,10.865,4.5423l4.6037-11.11c-3.8107-1.1281-7.4419-2.602-10.865-4.4809z"/>           </svg>         </div>       '); } p.push('        <div class="text-wrapper">          <span class="from">Desde&nbsp;</span><!--          --><strong class="amount"><!--           '); if( currency === 'EUR' ) { p.push('           --><span class="price">', getAmount(choice.amount, ',', '.') ,'</span><!--           --><span class="currency">€</span><!--           '); } else { p.push('           --><span class="currency">$</span><!--           --><span class="price">', getAmount(choice.amount, '.', ',') ,'</span><!--           '); } p.push('         --></strong><!--          --><sub class="per-month">/mes</sub>        </div>     </div>    </button> </div>');}return p.join('');
+};
+},{}],4:[function(require,module,exports){
+module.exports = function anonymous(obj
+/**/) {
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="apz-price_widget apz-price_widget--button ', preferences.align === 'fill' ? 'apz-price_widget--wide' : '' ,'"   style="color: ', preferences.text_color ,';"><!--   '); if( preferences.title ) { p.push('   --><span class="apz-price_widget-title">Consíguelo a plazos </span><!--   '); } p.push('   --><a href="" data-action="showInfo" class="apz-price_widget-box" style="background-color: ', preferences.bg_color ,';color: ', preferences.box_text_color ,';"><!--     --><span>', preferences.title ? 'desde' : 'Desde' ,' </span><!--     --><span class="apz-price_widget-amount">', getPrice(choice.amount, currency) ,'/mes</span><!--   --></a>   '); if( preferences.branding ) { p.push('     <span class="apz-price_widget-branding"> con <span class="apz-price_widget-logo">', logo ,'</span></span>   '); } p.push(' </div>');}return p.join('');
+};
+},{}],5:[function(require,module,exports){
+module.exports = function anonymous(obj
+/**/) {
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="apz-price_widget apz-price_widget--number ', preferences.align === 'fill' ? 'apz-price_widget--wide' : '' ,'" data-action="showInfo">   <div class="apz-price_widget-box" style="background-color: ', preferences.bg_color ,';color: ', preferences.box_text_color ,';"><!--   '); if( preferences.title ) { p.push('   --><span class="apz-price_widget-title">Consíguelo a plazos </span><!--   '); } p.push('   --><span>     <span class="apz-price_widget-amount"><span id="amount">', getPrice(choice.amount, currency) ,'</span>/mes</span> en       <span class="apz-price_widget-stepper" style="background-color: ', preferences.box_text_color ,';color: ', preferences.bg_color ,';">         <button class="apz-price_widget-stepper-button" id="decreaseNumInstalments">-</button>         <span class="apz-price_widget-stepper-value" id="selectedNumInstalments">', selectedNumInstalments ,'</span>         <button class="apz-price_widget-stepper-button apz-is-disabled" id="increaseNumInstalments">+</button>       </span>       cuotas     </span>      '); if( preferences.branding ) { p.push('       <span class="apz-price_widget-branding"> con <span class="apz-price_widget-logo">', logo ,'</span></span>     '); } p.push('   </div> </div>');}return p.join('');
+};
+},{}],6:[function(require,module,exports){
+module.exports = function anonymous(obj
+/**/) {
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="apz-price_widget apz-price_widget--plain ', preferences.align === 'fill' ? 'apz-price_widget--wide' : '' ,'"   style="color: ', preferences.text_color ,';"><!--   '); if( preferences.title ) { p.push('   --><span class="apz-price_widget-title">Consíguelo a plazos </span><!--   '); } p.push('   --><span class="apz-price_widget-amount_wrapper"><!--       --><span>', preferences.title ? 'desde' : 'Desde' ,' </span><!--       --><span class="apz-price_widget-amount">', getPrice(choice.amount, currency) ,'/mes</span><!--   --></span>   '); if( preferences.branding ) { p.push('   <span class="apz-price_widget-branding"> con <span class="apz-price_widget-logo">', logo ,'</span></span>   '); } p.push(' </div>');}return p.join('');
+};
+},{}],7:[function(require,module,exports){
+module.exports = function anonymous(obj
+/**/) {
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div class="apz-price_widget apz-price_widget--select ', preferences.align === 'fill' ? 'apz-price_widget--wide' : '' ,'"   style="color: ', preferences.text_color ,';"><!--   '); if( preferences.title ) { p.push('   --><span class="apz-price_widget-title">Consíguelo a plazos </span><!--   '); } p.push('   --><span class="apz-price_widget-select_wrapper">     <select class="apz-price_widget-box apz-price_widget-select" style="background-color: ', preferences.bg_color ,';color: ', preferences.box_text_color ,';">       '); for ( var i = 0, n = choices.length ; i < n ; i++ ) { p.push('       <option ', choices[i].num_instalments == selectedNumInstalments ? 'selected' : '' ,'><span class="apz-price_widget-amount">', getPrice(choices[i].amount, currency) ,'/mes</span> en ', choices[i].num_instalments ,' ', choices[i].num_instalments > 1 ? 'cuotas' : 'cuota' ,'</option>       '); } p.push('     </select>     <span class="caret" style="color: ', preferences.box_text_color ,';"></span>   </span>    '); if( preferences.branding ) { p.push('     <span class="apz-price_widget-branding"> con <span class="apz-price_widget-logo">', logo ,'</span></span>   '); } p.push(' </div>');}return p.join('');
+};
+},{}],8:[function(require,module,exports){
 /**
  * https://github.com/gre/bezier-easing
  * BezierEasing - use bezier curve for transition easing function
@@ -114,7 +139,7 @@ module.exports = function bezier (mX1, mY1, mX2, mY2) {
   };
 };
 
-},{}],4:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 var arrayShift = [].shift;
 
@@ -133,7 +158,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],5:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 
 var RE_$$ = /^\$\$/,
     arrayShift = [].shift,
@@ -200,7 +225,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":4,"./type":8}],6:[function(require,module,exports){
+},{"./_extend":9,"./type":13}],11:[function(require,module,exports){
 
 var type = require('./type'),
     arrSome = Array.prototype.some,
@@ -428,7 +453,7 @@ module.exports = {
   }
 };
 
-},{"./type":8}],7:[function(require,module,exports){
+},{"./type":13}],12:[function(require,module,exports){
 
 var RE_dotsBack = /[^\/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
@@ -455,7 +480,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],8:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 function _isType (type) {
@@ -500,214 +525,229 @@ module.exports = {
   }
 };
 
-},{}],9:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
-function runHandler (fn, deferred, x, fulfilled) {
-  if( typeof fn === 'function' ) {
-    try {
-      deferred.resolve( fn(x) );
-    } catch(reason) {
-      deferred.reject( reason );
-    }
+(function (root, factory) {
+  if( typeof exports === 'object' && typeof module !== 'undefined' ) {
+    // CommonJS
+    module.exports = factory();
+  } else if( typeof define === 'function' && define.amd ) {
+      // AMD. Register as an anonymous module.
+      define([], factory);
   } else {
-    deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+      // Browser globals
+      root.Parole = factory();
   }
-}
+})(this, function () {
 
-function resolvePromise (p, x, fulfilled) {
-  if( p.resolved ) {
-    return;
-  }
-  p.resolved = true;
-
-  p.result = x;
-  p.fulfilled = fulfilled || false;
-
-  var queue = p.queue.splice(0);
-  p.queue = null;
-
-  setTimeout(function () {
-    for( var i = 0, n = queue.length ; i < n ; i++ ) {
-      runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
-    }
-  }, 0);
-}
-
-function runThenable (then, p, x) {
-  var executed = false;
-  try {
-    then.call(x, function (value) {
-      if( executed ) return;
-      executed = true;
-      xThen(p, value, true);
-    }, function (reason) {
-      if( executed ) return;
-      executed = true;
-      xThen(p, reason, false);
-    });
-  } catch(err) {
-    if( executed ) return;
-    xThen(p, err, false);
-  }
-}
-
-function xThen (p, x, fulfilled) {
-  var then;
-
-  if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
-    try {
-      then = x.then;
-
-      if( fulfilled && typeof then === 'function' ) {
-        runThenable(then, p, x);
-      } else {
-        resolvePromise(p, x, fulfilled);
+  function runHandler (fn, deferred, x, fulfilled) {
+    if( typeof fn === 'function' ) {
+      try {
+        deferred.resolve( fn(x) );
+      } catch(reason) {
+        deferred.reject( reason );
       }
-    } catch (reason) {
-      resolvePromise(p, reason, false);
+    } else {
+      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
     }
-  } else {
-    resolvePromise(p, x, fulfilled);
-  }
-}
-
-function resolveProcedure (p, x, fulfilled) {
-  if( p.resolving ) return;
-  p.resolving = true;
-
-  if( x === p.promise ) {
-    fulfilled = false;
-    x = new TypeError('A promise can not be resolved by itself');
   }
 
-  xThen(p, x, fulfilled);
-}
+  function resolvePromise (p, x, fulfilled) {
+    if( p.resolved ) {
+      return;
+    }
+    p.resolved = true;
 
-function Parole (resolver) {
-  if( !(this instanceof Parole) ) {
-    return new Parole(resolver);
-  }
+    p.result = x;
+    p.fulfilled = fulfilled || false;
 
-  if( typeof resolver !== 'function' ) {
-    throw new TypeError('Promise resolver ' + resolver + ' is not a function');
-  }
+    var queue = p.queue.splice(0);
+    p.queue = null;
 
-  var p = {
-    queue: [],
-    promise: this
-  };
-
-  this.__promise = p;
-
-  try {
-    resolver(function (value) {
-      resolveProcedure(p, value, true);
-    }, function (reason) {
-      resolveProcedure(p, reason, false);
-    });
-  } catch (reason) {
-    resolveProcedure(p, reason, false);
-  }
-
-}
-
-Parole.prototype.then = function (onFulfilled, onRejected) {
-  var p = this.__promise,
-      deferred = Parole.defer();
-
-  if( p.queue ) {
-    p.queue.push([onFulfilled, onRejected, deferred]);
-  } else {
     setTimeout(function () {
-      runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      for( var i = 0, n = queue.length ; i < n ; i++ ) {
+        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+      }
     }, 0);
   }
 
-  return deferred.promise;
-};
-
-Parole.prototype.catch = function (onRejected) {
-  return this.then(null, onRejected);
-};
-
-// Promise methods
-
-function each (iterable, handler) {
-  for( var i = 0, n = iterable.length; i < n ; i++ ) {
-    handler(iterable[i], i);
+  function runThenable (then, p, x) {
+    var executed = false;
+    try {
+      then.call(x, function (value) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, value, true);
+      }, function (reason) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, reason, false);
+      });
+    } catch(err) {
+      if( executed ) return;
+      xThen(p, err, false);
+    }
   }
-}
 
-Parole.defer = function () {
-  var deferred = {};
-  deferred.promise = new Parole(function (resolve, reject) {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-  return deferred;
-};
+  function xThen (p, x, fulfilled) {
+    var then;
 
-Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
+    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+      try {
+        then = x.then;
 
-Parole.resolve = function (value) {
-  return new Parole(function (resolve) {
-    resolve(value);
-  });
-};
-
-Parole.reject = function (value) {
-  return new Parole(function (resolve, reject) {
-    reject(value);
-  });
-};
-
-Parole.all = function (iterable) {
-  return new Parole(function (resolve, reject) {
-    var pending = iterable.length,
-        results = [];
-    each(iterable, function (_promise, i) {
-
-      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-        results[i] = result;
-        if( --pending === 0 ) {
-          resolve(results);
+        if( fulfilled && typeof then === 'function' ) {
+          runThenable(then, p, x);
+        } else {
+          resolvePromise(p, x, fulfilled);
         }
-      }, function (reason) {
-        if( pending !== -1 ) {
-          pending === -1;
-          reject(reason);
-        }
-      });
-    });
-  });
-};
-
-Parole.race = function (iterable) {
-  return new Parole(function (resolve, reject) {
-    var done = false;
-
-    each(iterable, function (_promise) {
-      if( done ) {
-        return;
+      } catch (reason) {
+        resolvePromise(p, reason, false);
       }
-      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-        if( !done ) {
-          done = true;
-          resolve(result);
-        }
+    } else {
+      resolvePromise(p, x, fulfilled);
+    }
+  }
+
+  function resolveProcedure (p, x, fulfilled) {
+    if( p.resolving ) return;
+    p.resolving = true;
+
+    if( x === p.promise ) {
+      fulfilled = false;
+      x = new TypeError('A promise can not be resolved by itself');
+    }
+
+    xThen(p, x, fulfilled);
+  }
+
+  function Parole (resolver) {
+    if( !(this instanceof Parole) ) {
+      return new Parole(resolver);
+    }
+
+    if( typeof resolver !== 'function' ) {
+      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
+    }
+
+    var p = {
+      queue: [],
+      promise: this
+    };
+
+    this.__promise = p;
+
+    try {
+      resolver(function (value) {
+        resolveProcedure(p, value, true);
       }, function (reason) {
-        if( !done ) {
-          done = true;
-          reject(reason);
-        }
+        resolveProcedure(p, reason, false);
+      });
+    } catch (reason) {
+      resolveProcedure(p, reason, false);
+    }
+
+  }
+
+  Parole.prototype.then = function (onFulfilled, onRejected) {
+    var p = this.__promise,
+        deferred = Parole.defer();
+
+    if( p.queue ) {
+      p.queue.push([onFulfilled, onRejected, deferred]);
+    } else {
+      setTimeout(function () {
+        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      }, 0);
+    }
+
+    return deferred.promise;
+  };
+
+  Parole.prototype.catch = function (onRejected) {
+    return this.then(null, onRejected);
+  };
+
+  // Promise methods
+
+  function each (iterable, handler) {
+    for( var i = 0, n = iterable.length; i < n ; i++ ) {
+      handler(iterable[i], i);
+    }
+  }
+
+  Parole.defer = function () {
+    var deferred = {};
+    deferred.promise = new Parole(function (resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+    return deferred;
+  };
+
+  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
+
+  Parole.resolve = function (value) {
+    return new Parole(function (resolve) {
+      resolve(value);
+    });
+  };
+
+  Parole.reject = function (value) {
+    return new Parole(function (resolve, reject) {
+      reject(value);
+    });
+  };
+
+  Parole.all = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var pending = iterable.length,
+          results = [];
+      each(iterable, function (_promise, i) {
+
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          results[i] = result;
+          if( --pending === 0 ) {
+            resolve(results);
+          }
+        }, function (reason) {
+          if( pending !== -1 ) {
+            pending === -1;
+            reject(reason);
+          }
+        });
       });
     });
-  });
-};
+  };
 
-module.exports = Parole;
+  Parole.race = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var done = false;
 
-},{}],10:[function(require,module,exports){
+      each(iterable, function (_promise) {
+        if( done ) {
+          return;
+        }
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          if( !done ) {
+            done = true;
+            resolve(result);
+          }
+        }, function (reason) {
+          if( !done ) {
+            done = true;
+            reject(reason);
+          }
+        });
+      });
+    });
+  };
+
+  return Parole;
+
+});
+
+},{}],15:[function(require,module,exports){
 var arrayShift = [].shift;
 
 module.exports = function extend () {
@@ -725,7 +765,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],11:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 
 // require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
@@ -734,14 +774,14 @@ require('./browser-polyfills/event-listener');
 require('./browser-polyfills/match-media');
 require('./browser-polyfills/matches-selector');
 
-},{"./browser-polyfills/date":12,"./browser-polyfills/dom-closest":13,"./browser-polyfills/event-listener":14,"./browser-polyfills/match-media":15,"./browser-polyfills/matches-selector":16}],12:[function(require,module,exports){
+},{"./browser-polyfills/date":17,"./browser-polyfills/dom-closest":18,"./browser-polyfills/event-listener":19,"./browser-polyfills/match-media":20,"./browser-polyfills/matches-selector":21}],17:[function(require,module,exports){
 
 if (!Date.now) {
   Date.now = function now() {
     return new Date().getTime();
   };
 }
-},{}],13:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 if( !Element.prototype.closest ) {
   Element.prototype.closest = function (selector) {
@@ -756,7 +796,7 @@ if( !Element.prototype.closest ) {
     return el;
   };
 }
-},{}],14:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 
 if( !Element.prototype.addEventListener ) {
   if( Element.prototype.attachEvent ) {
@@ -770,13 +810,13 @@ if( !Element.prototype.addEventListener ) {
     throw 'Browser not compatible with element events';
   }
 }
-},{}],15:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (root) {
   'use strict';
 
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
-},{}],16:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
@@ -788,7 +828,7 @@ if( !Element.prototype.matchesSelector ) {
 }
 
 
-},{}],17:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 
 var extend = require('./extend');
 
@@ -866,7 +906,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":11,"./deferred/animate":18,"./deferred/wait":19,"./dom":20,"./events":22,"./extend":23,"./fn/debounce":24,"./fn/once":25,"./fn/ready":26,"./fn/template":27,"./key":28,"./normalize":29,"./path":30,"./scope":31,"./scroll/bundle":34,"./type":36,"parole":9}],18:[function(require,module,exports){
+},{"./browser-polyfills":16,"./deferred/animate":23,"./deferred/wait":24,"./dom":25,"./events":27,"./extend":28,"./fn/debounce":29,"./fn/once":30,"./fn/ready":31,"./fn/template":32,"./key":33,"./normalize":34,"./path":35,"./scope":36,"./scroll/bundle":39,"./type":41,"parole":14}],23:[function(require,module,exports){
 
 var Parole = require('parole'),
     beizerEasing = require('bezier-easing'),
@@ -974,7 +1014,7 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":3,"parole":9}],19:[function(require,module,exports){
+},{"bezier-easing":8,"parole":14}],24:[function(require,module,exports){
 
 var Parole = require('parole'),
 	wait = function (delay, callback) {
@@ -999,7 +1039,7 @@ var Parole = require('parole'),
 
 module.exports = wait;
 
-},{"parole":9}],20:[function(require,module,exports){
+},{"parole":14}],25:[function(require,module,exports){
 
 var classListEnabled = !!document.createElement('div').classList;
 
@@ -1109,7 +1149,7 @@ var _dom = {
 
 module.exports = _dom;
 
-},{}],21:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 
 'use strict';
 
@@ -1123,7 +1163,7 @@ module.exports = function (expression) {
   };
 };
 
-},{}],22:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 
 module.exports = {
   on: function (el, eventName, handler, useCapture) {
@@ -1152,7 +1192,7 @@ module.exports = {
   }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 
 var arrayShift = [].shift,
     type = require('./type');
@@ -1218,7 +1258,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":10,"./type":36}],24:[function(require,module,exports){
+},{"./_extend":15,"./type":41}],29:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   timeslot = timeslot || 80;
@@ -1241,7 +1281,7 @@ function debounce (fn, timeslot) {
 
 module.exports = debounce;
 
-},{}],25:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 function once (fn, nextValue) {
   var result, hasNextValue = arguments.length > 1;
@@ -1257,7 +1297,7 @@ function once (fn, nextValue) {
 
 module.exports = once;
 
-},{}],26:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var readyListeners = [],
     initReady = function () {
       var listeners = readyListeners;
@@ -1282,7 +1322,7 @@ function ready (callback) {
 
 module.exports = ready;
 
-},{}],27:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -1320,7 +1360,7 @@ template.lookup = function () {
 };
 
 module.exports = template;
-},{}],28:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var type = require('./type');
 
 function _key (o, _key, value){
@@ -1368,7 +1408,7 @@ module.exports = {
   keys: Object.keys
 };
 
-},{"./type":36}],29:[function(require,module,exports){
+},{"./type":41}],34:[function(require,module,exports){
 
 var normalize = {
   isTouchDevice: 'ontouchstart' in document.documentElement,
@@ -1389,7 +1429,7 @@ var normalize = {
 
 module.exports = normalize;
 
-},{"./dom":20}],30:[function(require,module,exports){
+},{"./dom":25}],35:[function(require,module,exports){
 var RE_dotsBack = /[^\/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
 
@@ -1414,7 +1454,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],31:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 var evalExpression = require('./eval');
@@ -1444,7 +1484,7 @@ Scope.prototype.eval = function ( expression, thisArg ) {
 
 module.exports = Scope;
 
-},{"./eval":21}],32:[function(require,module,exports){
+},{"./eval":26}],37:[function(require,module,exports){
 
 function getScrollRoot () {
   var html = document.documentElement, body = document.body;
@@ -1489,7 +1529,7 @@ ready(function () {
 
 module.exports = scroll;
 
-},{"./fn/ready":26}],33:[function(require,module,exports){
+},{"./fn/ready":31}],38:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -1537,7 +1577,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../deferred/animate":18,"parole":9}],34:[function(require,module,exports){
+},{"../deferred/animate":23,"parole":14}],39:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -1545,7 +1585,7 @@ require('./top-class')(scroll);
 require('./animate')(scroll);
 
 module.exports = scroll;
-},{"../scroll":32,"./animate":33,"./top-class":35}],35:[function(require,module,exports){
+},{"../scroll":37,"./animate":38,"./top-class":40}],40:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -1568,9 +1608,9 @@ module.exports = function (scroll) {
 
 };
 
-},{"../dom":20,"../fn/ready":26}],36:[function(require,module,exports){
-arguments[4][8][0].apply(exports,arguments)
-},{"dup":8}],37:[function(require,module,exports){
+},{"../dom":25,"../fn/ready":31}],41:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"dup":13}],42:[function(require,module,exports){
 
 function thousands(amount, groupSeparator) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -1599,6 +1639,25 @@ function getAmount (amount, decimalsSeparator, groupSeparator) {
   return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
     return thousands(main, groupSeparator) + decimalsSeparator + tail;
   });
+}
+
+function getPrice (amount, currency) {
+  var prefix = '', suffix = '', decimalsSeparator, groupSeparator;
+
+  switch (currency) {
+    case 'EUR':
+      suffix = ' €';
+      decimalsSeparator = ',';
+      groupSeparator = '.';
+      break;
+    case 'MXN':
+      prefix = '$ ';
+      decimalsSeparator = '.';
+      groupSeparator = ',';
+      break;
+  }
+
+  return prefix + getAmount(amount, decimalsSeparator, groupSeparator) + suffix;
 }
 
 function parsePrice (price) {
@@ -1631,10 +1690,11 @@ function parsePrice (price) {
 
 module.exports = {
 	getAmount: getAmount,
+	getPrice: getPrice,
 	parsePrice: parsePrice
 };
 
-},{}],38:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -1818,7 +1878,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":5}],39:[function(require,module,exports){
+},{"nitro-tools/extend":10}],44:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -1837,7 +1897,7 @@ module.exports = {
   brightness: brightness
 };
 
-},{}],40:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -1878,7 +1938,7 @@ function deserialize (querystring, decode) {
 
 module.exports = deserialize;
 
-},{}],41:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 var suscriptors = [],
@@ -1930,7 +1990,7 @@ module.exports = {
   }
 };
 
-},{"./browser-tools":38}],42:[function(require,module,exports){
+},{"./browser-tools":43}],47:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -1957,7 +2017,7 @@ log.history = [];
 
 module.exports = log;
 
-},{}],43:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false,
@@ -2003,7 +2063,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{"./log":42}],44:[function(require,module,exports){
+},{"./log":47}],49:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -2042,7 +2102,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],45:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -2065,15 +2125,11 @@ _.noop = function (value) { return value; };
 
 module.exports = _;
 
-},{"./amount-price":37,"./browser-tools":38,"./colors":39,"./deserialize":40,"./live-dom":41,"./log":42,"./message-listener":43,"./template":44,"nitro-tools/lists":6,"nitro-tools/path":7,"vanilla-tools":17}],46:[function(require,module,exports){
+},{"./amount-price":42,"./browser-tools":43,"./colors":44,"./deserialize":45,"./live-dom":46,"./log":47,"./message-listener":48,"./template":49,"nitro-tools/lists":11,"nitro-tools/path":12,"vanilla-tools":22}],51:[function(require,module,exports){
 
 var _ = require('../../src/tools/tools'),
     each = Array.prototype.forEach,
     waitingForData;
-
-
-var tmplModalInstalments = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
-    tmplWidget = require('../../.tmp/simulator/templates/widget-button.tmpl');
 
 function emitSize () {
   setTimeout(function () {
@@ -2109,7 +2165,7 @@ var main = document.getElementById('main'), currentMessage,
             card: {
               className: 'modal-instalments-info'
             },
-            template: tmplModalInstalments({
+            template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
               selectedChoice: currentMessage.$$choice,
               choices: currentMessage.choices,
               currency: currentMessage.currency,
@@ -2125,14 +2181,40 @@ var main = document.getElementById('main'), currentMessage,
     },
     renderWidget = function () {
       _.removeClass(main, 'loading');
+      var widgetSettings = currentMessage.options.widget;
+      var min = currentMessage.choices[0].num_instalments;
+      var max = currentMessage.choices[currentMessage.choices.length - 1].num_instalments;
+
+      var tmplWidget;
+      switch (widgetSettings.type) {
+        case 'button2':
+          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-button.tmpl');
+          break;
+        case 'number':
+          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-number.tmpl');
+          break;
+        case 'plain':
+          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-plain.tmpl');
+          break;
+        case 'select':
+          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-select.tmpl');
+          break;
+        default:
+          tmplWidget = require('../../.tmp/simulator/widgets_v1/widget-button.tmpl');
+      }
+
       main.innerHTML = tmplWidget({
         getAmount: _.getAmount,
+        getPrice: _.getPrice,
         brightness: _.brightness,
         choice: currentMessage.$$choice,
+        choices: currentMessage.choices,
         options: currentMessage.options,
         amount: currentMessage.amount,
         currency: currentMessage.currency,
-        preferences: currentMessage.options.widget.preferences,
+        selectedNumInstalments: max,
+        preferences: widgetSettings.preferences,
+        logo: require('../../.tmp/simulator/templates/logo.tmpl')({}),
         isMobile: currentMessage.isMobile
       });
       emitSize();
@@ -2152,6 +2234,56 @@ var main = document.getElementById('main'), currentMessage,
         });
 
       } );
+
+
+      switch (widgetSettings.type) {
+        case 'number':
+          var decreaseNumInstalmentsElement = document.getElementById('decreaseNumInstalments');
+          var increaseNumInstalmentsElement = document.getElementById('increaseNumInstalments');
+          var selectedNumInstalmentsElement = document.getElementById('selectedNumInstalments');
+          var amount = document.getElementById('amount');
+
+          decreaseNumInstalmentsElement.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            updateNumber(Number( selectedNumInstalmentsElement.textContent ) - 1)
+          });
+
+          increaseNumInstalmentsElement.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            updateNumber(Number( selectedNumInstalmentsElement.textContent ) + 1)
+          });
+
+          var updateNumber = function (num_instalments) {
+            if (num_instalments < min || num_instalments > max) {
+              return;
+            }
+            if (num_instalments == min) {
+              selectedNumInstalmentsElement.disabled = true;
+              _.addClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
+            } else {
+              selectedNumInstalmentsElement.disabled = false;
+              _.removeClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
+            }
+            if (num_instalments == max) {
+              selectedNumInstalmentsElement.disabled = true;
+              _.addClass(increaseNumInstalmentsElement, 'apz-is-disabled');
+            } else {
+              selectedNumInstalmentsElement.disabled = false;
+              _.removeClass(increaseNumInstalmentsElement, 'apz-is-disabled');
+            }
+
+            selectedNumInstalmentsElement.textContent = num_instalments;
+            var selectedChoice = _.find(currentMessage.choices, function (choice) {
+              return choice.num_instalments == num_instalments;
+            });
+            amount.textContent = _.getPrice(selectedChoice.amount, currentMessage.currency);
+          };
+          break;
+      }
     },
     onMessage = {
       choices: function (message) {
@@ -2200,4 +2332,4 @@ function requireData () {
 
 requireData();
 
-},{"../../.tmp/simulator/templates/modal-instalments.tmpl":1,"../../.tmp/simulator/templates/widget-button.tmpl":2,"../../src/tools/tools":45}]},{},[46]);
+},{"../../.tmp/simulator/templates/logo.tmpl":1,"../../.tmp/simulator/templates/modal-instalments.tmpl":2,"../../.tmp/simulator/widgets_v1/widget-button.tmpl":3,"../../.tmp/simulator/widgets_v2/widget-button.tmpl":4,"../../.tmp/simulator/widgets_v2/widget-number.tmpl":5,"../../.tmp/simulator/widgets_v2/widget-plain.tmpl":6,"../../.tmp/simulator/widgets_v2/widget-select.tmpl":7,"../../src/tools/tools":50}]},{},[51]);

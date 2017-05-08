@@ -1,7 +1,10 @@
 var Shopify = Shopify || {};
 
 (function(Shopify){
-
+    function getMetaPropertyByName(name){
+      return document.head.querySelector("meta[property='"+name+"']").content;
+    }
+  
     function findFirst( list, iteratee ) {
       for( var i = 0, n = list.length ; i < n ; i++ ) {
         if( iteratee(list[i]) ) return list[i];
@@ -89,8 +92,8 @@ var Shopify = Shopify || {};
             case 'collections':
                 printer('',{ price: 0, currency: aplazameParams.currency, country: aplazameParams.country });
             break;
-            case 'product':
-                printer('',{ price: 0, currency: aplazameParams.currency, country: aplazameParams.country });
+            case 'products':
+                printer('ProductPrice',{ price: getMetaPropertyByName('og:price:amount'), currency: aplazameParams.currency, country: aplazameParams.country });
             break;
             case 'cart':
                 printer('',{ price: 0, currency: aplazameParams.currency, country: aplazameParams.country });

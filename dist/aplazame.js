@@ -1,13 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.414';
+module.exports = '0.0.415';
 },{}],2:[function(require,module,exports){
-module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
+module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
-module.exports = '@keyframes aplazame-logo-smile{0%{transform:rotate(0deg);}90%{transform:rotate(2turn)}to{transform:rotate(2turn)}}@keyframes aplazame-logo-short{0%{transform:rotate(0deg)}30%{transform:rotate(0deg)}90%{transform:rotate(1turn)}to{transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%{transform:rotate(1turn)}90%{transform:rotate(1turn)}to{transform:rotate(1turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#5d666b}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}';
+module.exports = '@-webkit-keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@-webkit-keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#5d666b}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:1.5s;animation-duration:1.5s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.logo-aplazame.animate .smile{-webkit-animation-name:aplazame-logo-smile;animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{-webkit-animation-name:aplazame-logo-large;animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{-webkit-animation-name:aplazame-logo-short;animation-name:aplazame-logo-short}';
 },{}],4:[function(require,module,exports){
 module.exports = '.aplazame-modal{height:100%;height:100vh;position:relative;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
 },{}],5:[function(require,module,exports){
-module.exports = '@keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{transform:translateZ(0);animation-duration:.6s;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{animation-direction:reverse}';
+module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
 },{}],6:[function(require,module,exports){
 module.exports = function anonymous(obj
 /**/) {
@@ -20,103 +20,105 @@ var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('<div cla
 };
 },{}],8:[function(require,module,exports){
 
-function extend (dest, src) {
-  for( var key in src ) {
-    dest[key] = src[key];
-  }
-  return dest;
-}
-
-function Event (name) {
-  this.name = name;
-}
-
-Event.prototype.preventDefault = function () {
-  this.defaultPrevented = true;
-};
-
-function addHandler (listeners, eventName, handler, useCapture) {
-  if( !listeners[eventName] ) {
-    listeners[eventName] = [];
-  }
-
-  if( useCapture ) {
-    listeners[eventName].unshift(handler);
+(function (root, factory) {
+  if( typeof exports === 'object' && typeof module !== 'undefined' ) {
+    // CommonJS
+    module.exports = factory(root);
+  } else if( typeof define === 'function' && define.amd ) {
+    // AMD. Register as an anonymous module.
+    define([], function () { return factory(root); });
   } else {
-    listeners[eventName].push(handler);
+    // Browser globals
+    root.Azazel = factory(root);
   }
-}
+})(this, function (root) {
 
-function removeHandler (listeners, handler) {
-  var found = listeners.indexOf(handler);
-  if( found >= 0 ) listeners.splice(found, 1);
-}
+  function addHandler (listeners, eventName, handler, useCapture) {
+    if( !listeners[eventName] ) {
+      listeners[eventName] = [];
+    }
 
-function removeOnce( listeners, handler ) {
-  for( var key in listeners ) {
-    removeHandler(listeners[key], handler);
+    if( useCapture ) {
+      listeners[eventName].unshift(handler);
+    } else {
+      listeners[eventName].push(handler);
+    }
   }
-  delete handler.__run_once;
-}
 
-function extendMethods (evt, target, prefix) {
-  target[prefix + 'on'] = evt.on.bind(evt);
-  target[prefix + 'once'] = evt.once.bind(evt);
-  target[prefix + 'off'] = evt.off.bind(evt);
-  target[prefix + 'emit'] = evt.emit.bind(evt);
-}
-
-function Azazel (target, prefix) {
-  this.listeners = {};
-  if( target ) {
-    extendMethods(this, target, prefix || '');
+  function removeHandler (listeners, handler) {
+    var found = listeners.indexOf(handler);
+    if( found >= 0 ) listeners.splice(found, 1);
   }
-}
 
-extend(Azazel.prototype, {
-  on: function (eventName, handler, useCapture) {
+  function removeOnce( listeners, handler ) {
+    for( var key in listeners ) {
+      removeHandler(listeners[key], handler);
+    }
+    delete handler.__run_once;
+  }
+
+  function extendMethods (evt, target, prefix) {
+    target[prefix + 'on'] = evt.on.bind(evt);
+    target[prefix + 'once'] = evt.once.bind(evt);
+    target[prefix + 'off'] = evt.off.bind(evt);
+    target[prefix + 'emit'] = evt.emit.bind(evt);
+  }
+
+  function Azazel (target, prefix) {
+    if( this === root ) {
+      new Azazel(target);
+      return target;
+    }
+    this.listeners = {};
+    if( target ) {
+      extendMethods(this, target, prefix || '');
+    }
+  }
+
+  Azazel.prototype.on = function (eventName, handler, useCapture) {
     var listeners = this.listeners;
     ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
       addHandler(listeners, eventName, handler, useCapture);
     });
-  },
-  once: function (eventName, handler, useCapture) {
+  };
+
+  Azazel.prototype.once = function (eventName, handler, useCapture) {
     handler.__run_once = true;
     var listeners = this.listeners;
     ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
       addHandler(listeners, eventName, handler, useCapture);
     });
-  },
-  emit: function (eventName, params, thisArg) {
+  };
+
+  Azazel.prototype.emit = function (eventName, params, thisArg) {
     var listeners = this.listeners;
     ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
       if( !listeners[eventName] ) return;
 
-      var event = new Event(eventName),
-          args = [event].concat(params),
-          _listeners = listeners[eventName];
+      var _listeners = listeners[eventName];
 
       for( var i = 0, n = _listeners.length; i < n; i++ ) {
-        _listeners[i].apply(thisArg, args);
+        _listeners[i].apply(thisArg, params);
         if( _listeners[i].__run_once ) {
           removeOnce(listeners, _listeners[i]);
           i--;
           n--;
         }
-        if( event.defaultPrevented ) return;
       }
     });
-  },
-  off: function (eventName, handler) {
+  };
+
+  Azazel.prototype.off = function (eventName, handler) {
     var listeners = this.listeners;
     ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
       if( !listeners[eventName] ) return;
       removeHandler(listeners[eventName], handler );
     });
-  }
-});
+  };
 
-module.exports = Azazel;
+  return Azazel;
+
+});
 
 },{}],9:[function(require,module,exports){
 /**
@@ -857,210 +859,225 @@ module.exports = {
 
 },{}],16:[function(require,module,exports){
 
-function runHandler (fn, deferred, x, fulfilled) {
-  if( typeof fn === 'function' ) {
-    try {
-      deferred.resolve( fn(x) );
-    } catch(reason) {
-      deferred.reject( reason );
-    }
+(function (root, factory) {
+  if( typeof exports === 'object' && typeof module !== 'undefined' ) {
+    // CommonJS
+    module.exports = factory();
+  } else if( typeof define === 'function' && define.amd ) {
+      // AMD. Register as an anonymous module.
+      define([], factory);
   } else {
-    deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+      // Browser globals
+      root.Parole = factory();
   }
-}
+})(this, function () {
 
-function resolvePromise (p, x, fulfilled) {
-  if( p.resolved ) {
-    return;
-  }
-  p.resolved = true;
-
-  p.result = x;
-  p.fulfilled = fulfilled || false;
-
-  var queue = p.queue.splice(0);
-  p.queue = null;
-
-  setTimeout(function () {
-    for( var i = 0, n = queue.length ; i < n ; i++ ) {
-      runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
-    }
-  }, 0);
-}
-
-function runThenable (then, p, x) {
-  var executed = false;
-  try {
-    then.call(x, function (value) {
-      if( executed ) return;
-      executed = true;
-      xThen(p, value, true);
-    }, function (reason) {
-      if( executed ) return;
-      executed = true;
-      xThen(p, reason, false);
-    });
-  } catch(err) {
-    if( executed ) return;
-    xThen(p, err, false);
-  }
-}
-
-function xThen (p, x, fulfilled) {
-  var then;
-
-  if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
-    try {
-      then = x.then;
-
-      if( fulfilled && typeof then === 'function' ) {
-        runThenable(then, p, x);
-      } else {
-        resolvePromise(p, x, fulfilled);
+  function runHandler (fn, deferred, x, fulfilled) {
+    if( typeof fn === 'function' ) {
+      try {
+        deferred.resolve( fn(x) );
+      } catch(reason) {
+        deferred.reject( reason );
       }
-    } catch (reason) {
-      resolvePromise(p, reason, false);
+    } else {
+      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
     }
-  } else {
-    resolvePromise(p, x, fulfilled);
-  }
-}
-
-function resolveProcedure (p, x, fulfilled) {
-  if( p.resolving ) return;
-  p.resolving = true;
-
-  if( x === p.promise ) {
-    fulfilled = false;
-    x = new TypeError('A promise can not be resolved by itself');
   }
 
-  xThen(p, x, fulfilled);
-}
+  function resolvePromise (p, x, fulfilled) {
+    if( p.resolved ) {
+      return;
+    }
+    p.resolved = true;
 
-function Parole (resolver) {
-  if( !(this instanceof Parole) ) {
-    return new Parole(resolver);
-  }
+    p.result = x;
+    p.fulfilled = fulfilled || false;
 
-  if( typeof resolver !== 'function' ) {
-    throw new TypeError('Promise resolver ' + resolver + ' is not a function');
-  }
+    var queue = p.queue.splice(0);
+    p.queue = null;
 
-  var p = {
-    queue: [],
-    promise: this
-  };
-
-  this.__promise = p;
-
-  try {
-    resolver(function (value) {
-      resolveProcedure(p, value, true);
-    }, function (reason) {
-      resolveProcedure(p, reason, false);
-    });
-  } catch (reason) {
-    resolveProcedure(p, reason, false);
-  }
-
-}
-
-Parole.prototype.then = function (onFulfilled, onRejected) {
-  var p = this.__promise,
-      deferred = Parole.defer();
-
-  if( p.queue ) {
-    p.queue.push([onFulfilled, onRejected, deferred]);
-  } else {
     setTimeout(function () {
-      runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      for( var i = 0, n = queue.length ; i < n ; i++ ) {
+        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+      }
     }, 0);
   }
 
-  return deferred.promise;
-};
-
-Parole.prototype.catch = function (onRejected) {
-  return this.then(null, onRejected);
-};
-
-// Promise methods
-
-function each (iterable, handler) {
-  for( var i = 0, n = iterable.length; i < n ; i++ ) {
-    handler(iterable[i], i);
+  function runThenable (then, p, x) {
+    var executed = false;
+    try {
+      then.call(x, function (value) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, value, true);
+      }, function (reason) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, reason, false);
+      });
+    } catch(err) {
+      if( executed ) return;
+      xThen(p, err, false);
+    }
   }
-}
 
-Parole.defer = function () {
-  var deferred = {};
-  deferred.promise = new Parole(function (resolve, reject) {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-  return deferred;
-};
+  function xThen (p, x, fulfilled) {
+    var then;
 
-Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
+    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+      try {
+        then = x.then;
 
-Parole.resolve = function (value) {
-  return new Parole(function (resolve) {
-    resolve(value);
-  });
-};
-
-Parole.reject = function (value) {
-  return new Parole(function (resolve, reject) {
-    reject(value);
-  });
-};
-
-Parole.all = function (iterable) {
-  return new Parole(function (resolve, reject) {
-    var pending = iterable.length,
-        results = [];
-    each(iterable, function (_promise, i) {
-
-      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-        results[i] = result;
-        if( --pending === 0 ) {
-          resolve(results);
+        if( fulfilled && typeof then === 'function' ) {
+          runThenable(then, p, x);
+        } else {
+          resolvePromise(p, x, fulfilled);
         }
-      }, function (reason) {
-        if( pending !== -1 ) {
-          pending === -1;
-          reject(reason);
-        }
-      });
-    });
-  });
-};
-
-Parole.race = function (iterable) {
-  return new Parole(function (resolve, reject) {
-    var done = false;
-
-    each(iterable, function (_promise) {
-      if( done ) {
-        return;
+      } catch (reason) {
+        resolvePromise(p, reason, false);
       }
-      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-        if( !done ) {
-          done = true;
-          resolve(result);
-        }
+    } else {
+      resolvePromise(p, x, fulfilled);
+    }
+  }
+
+  function resolveProcedure (p, x, fulfilled) {
+    if( p.resolving ) return;
+    p.resolving = true;
+
+    if( x === p.promise ) {
+      fulfilled = false;
+      x = new TypeError('A promise can not be resolved by itself');
+    }
+
+    xThen(p, x, fulfilled);
+  }
+
+  function Parole (resolver) {
+    if( !(this instanceof Parole) ) {
+      return new Parole(resolver);
+    }
+
+    if( typeof resolver !== 'function' ) {
+      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
+    }
+
+    var p = {
+      queue: [],
+      promise: this
+    };
+
+    this.__promise = p;
+
+    try {
+      resolver(function (value) {
+        resolveProcedure(p, value, true);
       }, function (reason) {
-        if( !done ) {
-          done = true;
-          reject(reason);
-        }
+        resolveProcedure(p, reason, false);
+      });
+    } catch (reason) {
+      resolveProcedure(p, reason, false);
+    }
+
+  }
+
+  Parole.prototype.then = function (onFulfilled, onRejected) {
+    var p = this.__promise,
+        deferred = Parole.defer();
+
+    if( p.queue ) {
+      p.queue.push([onFulfilled, onRejected, deferred]);
+    } else {
+      setTimeout(function () {
+        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      }, 0);
+    }
+
+    return deferred.promise;
+  };
+
+  Parole.prototype.catch = function (onRejected) {
+    return this.then(null, onRejected);
+  };
+
+  // Promise methods
+
+  function each (iterable, handler) {
+    for( var i = 0, n = iterable.length; i < n ; i++ ) {
+      handler(iterable[i], i);
+    }
+  }
+
+  Parole.defer = function () {
+    var deferred = {};
+    deferred.promise = new Parole(function (resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+    return deferred;
+  };
+
+  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
+
+  Parole.resolve = function (value) {
+    return new Parole(function (resolve) {
+      resolve(value);
+    });
+  };
+
+  Parole.reject = function (value) {
+    return new Parole(function (resolve, reject) {
+      reject(value);
+    });
+  };
+
+  Parole.all = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var pending = iterable.length,
+          results = [];
+      each(iterable, function (_promise, i) {
+
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          results[i] = result;
+          if( --pending === 0 ) {
+            resolve(results);
+          }
+        }, function (reason) {
+          if( pending !== -1 ) {
+            pending === -1;
+            reject(reason);
+          }
+        });
       });
     });
-  });
-};
+  };
 
-module.exports = Parole;
+  Parole.race = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var done = false;
+
+      each(iterable, function (_promise) {
+        if( done ) {
+          return;
+        }
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          if( !done ) {
+            done = true;
+            resolve(result);
+          }
+        }, function (reason) {
+          if( !done ) {
+            done = true;
+            reject(reason);
+          }
+        });
+      });
+    });
+  };
+
+  return Parole;
+
+});
 
 },{}],17:[function(require,module,exports){
 var arrayShift = [].shift;
@@ -2192,9 +2209,38 @@ function checkoutNormalizer(checkout, location, api) {
     location.replace(checkout.merchant.checkout_url || '/');
   };
 
-  if (checkout.customer && checkout.customer.birthday) {
-    // Strip time from value
-    checkout.customer.birthday = checkout.customer.birthday.split('T')[0];
+  if (checkout.customer) {
+    if (checkout.customer.birthday) {
+      // Strip time from value
+      checkout.customer.birthday = checkout.customer.birthday.split('T')[0];
+    }
+
+    switch (checkout.customer.type) {
+      case 'existing':
+        checkout.customer.type = 'e';
+        break;
+      case 'guess':
+        checkout.customer.type = 'g';
+        break;
+      case 'new':
+        checkout.customer.type = 'n';
+        break;
+    }
+
+    switch (checkout.customer.gender) {
+      case 'unknown':
+        checkout.customer.gender = 0;
+        break;
+      case 'male':
+        checkout.customer.gender = 1;
+        break;
+      case 'female':
+        checkout.customer.gender = 2;
+        break;
+      case 'not_applicable':
+        checkout.customer.gender = 3;
+        break;
+    }
   }
 
   return checkout;
@@ -2804,13 +2850,9 @@ function init (options) {
     options.sandbox = options.sandbox === 'true';
   }
 
-  if( typeof options.analytics === 'string' ) {
-    options.analytics = options.analytics === 'true';
-  }
-
   _.extend(api, options);
 
-  _.log('aplazame.init', api);
+  _.log('aplazame.init', options, api);
 
   if( api.publicKey ) events.emit('ready');
 }
@@ -2839,7 +2881,7 @@ function safeScript (script) {
       return script;
   });
 
-  return script || document.querySelector('script[data-aplazame]');
+  return script || document.querySelector('script[data-aplazame]') || document.createElement('script');
 }
 
 module.exports = function (aplazame) {
@@ -2878,10 +2920,6 @@ module.exports = function (aplazame) {
 
     if( script.getAttribute('data-sandbox') ) {
       options.sandbox = script.getAttribute('data-sandbox');
-    }
-
-    if( script.getAttribute('data-analytics') ) {
-      options.analytics = script.getAttribute('data-analytics');
     }
 
     if( script.getAttribute('data-static-url') ) {
@@ -3109,11 +3147,12 @@ module.exports = function (aplazame) {
 
     _.onMessage('simulator', function (e, message) {
       if( e.source === el.contentWindow ) {
+        console.log('simulator message', e, message);
         iframe.emit('message:' + message.event, [message], this);
       }
     });
 
-    this.on('message:resize', function (_e, message) {
+    this.on('message:resize', function (message) {
       el.style.height = message.height + 'px';
     });
   }
@@ -3149,74 +3188,79 @@ module.exports = function (aplazame) {
     var widget,
         id = getWidget.serial;
 
-    if( meta.options.widget.type === 'button' ) {
-      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + id );
+    switch ( meta.options.widget.type ) {
+      case 'button':
+      case 'button2':
+      case 'number':
+      case 'plain':
+      case 'select':
+        widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + id );
 
-      widget.render = function () {
-        widget.message('choices', {
-          amount: meta.amount,
-          currency: meta.currency,
-          country: meta.country,
-          choice: meta.choices.reduce(maxInstalments, null),
-          choices: meta.choices,
-          options: meta.options
+        widget.render = function () {
+          widget.message('choices', {
+            amount: meta.amount,
+            currency: meta.currency,
+            country: meta.country,
+            choice: meta.choices.reduce(maxInstalments, null),
+            choices: meta.choices,
+            options: meta.options
+          });
+        };
+
+        widget.on('choices.updating', function () {
+          widget.message('loading');
         });
-      };
+        break;
+      default:
+        widget = { el: document.createElement('div') };
+        new Events(widget);
 
-      widget.on('choices.updating', function (_e) {
-        widget.message('loading');
-      });
-
-    } else {
-      widget = { el: document.createElement('div') };
-      new Events(widget);
-
-      widget.on('choices.updating', function (_e) {
-        widget.el.style.opacity = 0.5;
-      });
-
-      widget.render = function () {
-        widget.el.style.opacity = null;
-        widget.el.innerHTML = require('../../.tmp/simulator/templates/widget-raw.tmpl')({
-          getAmount: _.getAmount,
-          amount: meta.amount,
-          currency: meta.currency,
-          country: meta.country,
-          choice: meta.choices.reduce(maxInstalments, null),
-          choices: meta.choices,
-          options: meta.options
+        widget.on('choices.updating', function () {
+          widget.el.style.opacity = 0.5;
         });
-      };
 
-      widget.el.addEventListener('click', function () {
-        window.postMessage({
-          aplazame: 'modal',
-          event: 'open',
-          name: 'instalments',
-          data: {
-            size: 'lg',
-            card: {
-              className: 'modal-instalments-info'
-            },
-            template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
-              selectedChoice: meta.choices.reduce(maxInstalments, null),
-              choices: meta.choices,
-              currency: meta.currency,
-              country: meta.country,
-              getAmount: _.getAmount,
-              months: function (m) {
-                return m > 1 ? 'meses' : 'mes';
-              }
-            })
-          }
-        }, '*');
+        widget.render = function () {
+          widget.el.style.opacity = null;
+          widget.el.innerHTML = require('../../.tmp/simulator/templates/widget-raw.tmpl')({
+            getAmount: _.getAmount,
+            amount: meta.amount,
+            currency: meta.currency,
+            country: meta.country,
+            choice: meta.choices.reduce(maxInstalments, null),
+            choices: meta.choices,
+            options: meta.options
+          });
+        };
 
-      });
+        widget.el.addEventListener('click', function () {
+          window.postMessage({
+            aplazame: 'modal',
+            event: 'open',
+            name: 'instalments',
+            data: {
+              size: 'lg',
+              card: {
+                className: 'modal-instalments-info'
+              },
+              template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
+                selectedChoice: meta.choices.reduce(maxInstalments, null),
+                choices: meta.choices,
+                currency: meta.currency,
+                country: meta.country,
+                getAmount: _.getAmount,
+                months: function (m) {
+                  return m > 1 ? 'meses' : 'mes';
+                }
+              })
+            }
+          }, '*');
+
+        });
     }
 
     widget.render();
 
-    widget.on('message:require.choices choices.update', function (_e, message) {
+    widget.on('message:require.choices choices.update', function (message) {
       if( message && message.simulatorId && message.simulatorId !== id ) {
         return;
       }
@@ -3308,6 +3352,10 @@ module.exports = function (aplazame) {
         meta.widget.emit('choices.updating');
       }
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
+        if ( widgetWrapper.getAttribute('data-options') ) {
+          _options = _.merge( _options, JSON.parse( widgetWrapper.getAttribute('data-options') ) );
+        }
+
         _options.widget = _options.widget || {};
         if( _options.widget.disabled ) {
           return;
@@ -3398,6 +3446,25 @@ function getAmount (amount, decimalsSeparator, groupSeparator) {
   });
 }
 
+function getPrice (amount, currency) {
+  var prefix = '', suffix = '', decimalsSeparator, groupSeparator;
+
+  switch (currency) {
+    case 'EUR':
+      suffix = ' €';
+      decimalsSeparator = ',';
+      groupSeparator = '.';
+      break;
+    case 'MXN':
+      prefix = '$ ';
+      decimalsSeparator = '.';
+      groupSeparator = ',';
+      break;
+  }
+
+  return prefix + getAmount(amount, decimalsSeparator, groupSeparator) + suffix;
+}
+
 function parsePrice (price) {
   var matched = price.match(/((\d+[,. ])*)(\d+)/),
       main, tail;
@@ -3428,6 +3495,7 @@ function parsePrice (price) {
 
 module.exports = {
 	getAmount: getAmount,
+	getPrice: getPrice,
 	parsePrice: parsePrice
 };
 

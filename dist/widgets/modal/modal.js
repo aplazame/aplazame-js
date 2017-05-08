@@ -5,6 +5,7 @@ module.exports = function (_) {
   var modalsContainer = _.create('div', { className: 'modals-container with-overlay' }),
       // body = document.body,
       // every = Array.prototype.every,
+      mobile = window.matchMedia('(max-width: 600px)'),
       containerAttrs = function () {
         var lastNoSM;
         var noSM = true,
@@ -48,12 +49,17 @@ module.exports = function (_) {
     _.triggerEvent(modalsContainer, 'modals:close');
   });
 
-  function Modal (options, onClose) {
+  function Modal (_options, onClose) {
+
+    var $m = this;
+
     var body = document.body;
 
     document.activeElement.blur();
 
-    options = options || {};
+    var options = Object.create(_options || {}),
+        previousStandalone = modalsContainer.classList.contains('standalone-mobile');
+
     options.card = options.card || {};
     // if( options.size ) {
     //   options.card.className = ( options.card.className || '' ) + ( options.card.className ? ' ' : '' ) + 'size-' + options.size;
@@ -72,6 +78,10 @@ module.exports = function (_) {
       body.classList.add('modal-opened');
 
       _.tmpClass(modalsContainer, 'opening-wrapper', _.animate.time(modalsContainer) );
+    }
+
+    if( options.standaloneMobile ) {
+      modalsContainer.classList.add('standalone-mobile');
     }
 
     options.init = options.init || _.noop;
@@ -98,15 +108,39 @@ module.exports = function (_) {
 
     containerAttrs();
 
+    var adjustCTA = function () {
+          var heightCloseButton = m.firstChild.classList.contains('close-button') ? m.firstChild.clientHeight : 0;
+          m.style.paddingBottom = ( _(m,'.cta').clientHeight + heightCloseButton ) + 'px';
+        },
+        onResize = options.size !== 'sm' ? function (enabled) {
+          if( mobile.matches && enabled !== false ) {
+            adjustCTA();
+            _.on(m, 'DOMSubtreeModified', adjustCTA);
+          } else {
+            getCard().style.paddingBottom = null;
+            _.off(m, 'DOMSubtreeModified', adjustCTA);
+          }
+        } : _.noop;
+
     var getCard = function () {
           return _(m, '.card');
         },
         modalStatus = 'iddle',
         renderModal = function (tmpl) {
+          onResize(false);
+          _.off(window, 'resize', onResize);
           getCard().innerHTML = tmpl;
           _.tmpClass(m, 'is-opening', function () {
-            return _.animate.time(getCard());
+            return _.animate.time( getCard() );
           });
+          if( _(m,'.cta') ) {
+            _.on(window, 'resize', onResize);
+            onResize();
+          }
+          setTimeout(function () {
+            options.init(m);
+            modalStatus = 'rendered';
+          }, 0);
         },
         onMouseMove = function () {
           modalsContainer.classList.remove('parallax');
@@ -130,20 +164,19 @@ module.exports = function (_) {
       if( options.template.then ) {
         options.template.then(function (tmpl) {
           renderModal(tmpl);
-          options.init(m);
-          modalStatus = 'rendered';
         });
       } else {
         renderModal(options.template);
-        options.init(m);
-        modalStatus = 'rendered';
       }
     }
 
 
     var closeModal = function (cb) {
       var body = document.body;
-      
+
+      onResize(false);
+      _.off(window, 'resize', onResize);
+
       if( modalStatus === 'closing' ) {
         return;
       }
@@ -169,6 +202,9 @@ module.exports = function (_) {
         modalsContainer.removeEventListener('mousemove', onMouseMove);
         _.off(modalsContainer, 'modals:close', closeModal);
         containerAttrs();
+        if( !previousStandalone ) {
+          modalsContainer.classList.remove('standalone-mobile');
+        }
       });
 
       if( modalsContainer.children.length === 1 ) {
@@ -186,9 +222,11 @@ module.exports = function (_) {
     };
     _.on(modalsContainer, 'modals:close', closeModal);
 
-    var lastPress;
+    var lastPress, pressingDown;
     _.on(m, 'mousedown', function (e) {
       if( e.target === m ) {
+        pressingDown = true;
+
         if( options.onPressDown instanceof Function ) {
           options.onPressDown(e);
           if( e.defaultPrevented ) {
@@ -208,7 +246,11 @@ module.exports = function (_) {
 
     _.on(m, 'mouseup', function (e) {
       if( e.target === m ) {
+        if( !pressingDown ) {
+          return;
+        }
         var elapsed = Date.now() - lastPress;
+        pressingDown = false;
 
         if( options.onPressRelease instanceof Function ) {
           options.onPressRelease(e);
@@ -220,18 +262,16 @@ module.exports = function (_) {
           }
         }
         closeModal();
-        // setTimeout(closeModal, ( lastPress && elapsed < 80 && elapsed >= 150 ) ? 0 : 150 - elapsed );
+
       } else if( e.target.closest('.card') ) {
         m.classList.remove('pressing-down');
 
         var index = [].indexOf.call(modalsContainer.children, m);
         if( index + 1 < modalsContainer.children.length ) {
-          // console.log('close parallax');
           for( var i = index + 1, len = modalsContainer.children.length ; i < len ; i++ ) {
             _.triggerEvent(modalsContainer.children[i], 'modal:close');
           }
           _.attr(modalsContainer, 'data-num', index + 1 );
-          // console.log('left', index + 1);
         }
       }
     });
@@ -249,11 +289,23 @@ module.exports = function (_) {
     this.close = closeModal;
 
     if( options.closeButton ) {
-      var closeButton = _.create('div', { className: 'close-button' });
-      closeButton.appendChild( _.create('div', { className: 'button', textContent: typeof options.closeButton === 'string' ? options.closeButton : 'Cerrar' }) );
-
-      m.insertBefore(closeButton, getCard() );
-      _.on(closeButton, 'click', this.close );
+      m.insertBefore( (function () {
+        var closeButton = _.create('div', { className: 'close-button' });
+        closeButton.appendChild( _.create('div', { className: 'button', textContent: typeof options.closeButton === 'string' ? options.closeButton : 'Cerrar' }) );
+        _.on(closeButton, 'click', $m.close );
+        return closeButton;
+      })(), getCard() );
+    } else if( m.previousElementSibling && m.previousElementSibling.firstChild && m.previousElementSibling.firstChild.classList && m.previousElementSibling.firstChild.classList.contains('close-button') ) {
+      m.insertBefore( (function (previousButton) {
+        var closeButton = _.create('div', { className: 'close-button' });
+        closeButton.appendChild( _.create('div', { className: 'button', textContent: previousButton.textContent }) );
+        _.on(closeButton, 'click', function () {
+          $m.close(function () {
+            _.triggerEvent(previousButton, 'click');
+          });
+        });
+        return closeButton;
+      })(m.previousElementSibling.firstChild), getCard() );
     }
   }
 
@@ -759,210 +811,225 @@ module.exports = {
 
 },{}],8:[function(require,module,exports){
 
-function runHandler (fn, deferred, x, fulfilled) {
-  if( typeof fn === 'function' ) {
-    try {
-      deferred.resolve( fn(x) );
-    } catch(reason) {
-      deferred.reject( reason );
-    }
+(function (root, factory) {
+  if( typeof exports === 'object' && typeof module !== 'undefined' ) {
+    // CommonJS
+    module.exports = factory();
+  } else if( typeof define === 'function' && define.amd ) {
+      // AMD. Register as an anonymous module.
+      define([], factory);
   } else {
-    deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+      // Browser globals
+      root.Parole = factory();
   }
-}
+})(this, function () {
 
-function resolvePromise (p, x, fulfilled) {
-  if( p.resolved ) {
-    return;
-  }
-  p.resolved = true;
-
-  p.result = x;
-  p.fulfilled = fulfilled || false;
-
-  var queue = p.queue.splice(0);
-  p.queue = null;
-
-  setTimeout(function () {
-    for( var i = 0, n = queue.length ; i < n ; i++ ) {
-      runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
-    }
-  }, 0);
-}
-
-function runThenable (then, p, x) {
-  var executed = false;
-  try {
-    then.call(x, function (value) {
-      if( executed ) return;
-      executed = true;
-      xThen(p, value, true);
-    }, function (reason) {
-      if( executed ) return;
-      executed = true;
-      xThen(p, reason, false);
-    });
-  } catch(err) {
-    if( executed ) return;
-    xThen(p, err, false);
-  }
-}
-
-function xThen (p, x, fulfilled) {
-  var then;
-
-  if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
-    try {
-      then = x.then;
-
-      if( fulfilled && typeof then === 'function' ) {
-        runThenable(then, p, x);
-      } else {
-        resolvePromise(p, x, fulfilled);
+  function runHandler (fn, deferred, x, fulfilled) {
+    if( typeof fn === 'function' ) {
+      try {
+        deferred.resolve( fn(x) );
+      } catch(reason) {
+        deferred.reject( reason );
       }
-    } catch (reason) {
-      resolvePromise(p, reason, false);
+    } else {
+      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
     }
-  } else {
-    resolvePromise(p, x, fulfilled);
-  }
-}
-
-function resolveProcedure (p, x, fulfilled) {
-  if( p.resolving ) return;
-  p.resolving = true;
-
-  if( x === p.promise ) {
-    fulfilled = false;
-    x = new TypeError('A promise can not be resolved by itself');
   }
 
-  xThen(p, x, fulfilled);
-}
+  function resolvePromise (p, x, fulfilled) {
+    if( p.resolved ) {
+      return;
+    }
+    p.resolved = true;
 
-function Parole (resolver) {
-  if( !(this instanceof Parole) ) {
-    return new Parole(resolver);
-  }
+    p.result = x;
+    p.fulfilled = fulfilled || false;
 
-  if( typeof resolver !== 'function' ) {
-    throw new TypeError('Promise resolver ' + resolver + ' is not a function');
-  }
+    var queue = p.queue.splice(0);
+    p.queue = null;
 
-  var p = {
-    queue: [],
-    promise: this
-  };
-
-  this.__promise = p;
-
-  try {
-    resolver(function (value) {
-      resolveProcedure(p, value, true);
-    }, function (reason) {
-      resolveProcedure(p, reason, false);
-    });
-  } catch (reason) {
-    resolveProcedure(p, reason, false);
-  }
-
-}
-
-Parole.prototype.then = function (onFulfilled, onRejected) {
-  var p = this.__promise,
-      deferred = Parole.defer();
-
-  if( p.queue ) {
-    p.queue.push([onFulfilled, onRejected, deferred]);
-  } else {
     setTimeout(function () {
-      runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      for( var i = 0, n = queue.length ; i < n ; i++ ) {
+        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+      }
     }, 0);
   }
 
-  return deferred.promise;
-};
-
-Parole.prototype.catch = function (onRejected) {
-  return this.then(null, onRejected);
-};
-
-// Promise methods
-
-function each (iterable, handler) {
-  for( var i = 0, n = iterable.length; i < n ; i++ ) {
-    handler(iterable[i], i);
+  function runThenable (then, p, x) {
+    var executed = false;
+    try {
+      then.call(x, function (value) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, value, true);
+      }, function (reason) {
+        if( executed ) return;
+        executed = true;
+        xThen(p, reason, false);
+      });
+    } catch(err) {
+      if( executed ) return;
+      xThen(p, err, false);
+    }
   }
-}
 
-Parole.defer = function () {
-  var deferred = {};
-  deferred.promise = new Parole(function (resolve, reject) {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-  return deferred;
-};
+  function xThen (p, x, fulfilled) {
+    var then;
 
-Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
+    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+      try {
+        then = x.then;
 
-Parole.resolve = function (value) {
-  return new Parole(function (resolve) {
-    resolve(value);
-  });
-};
-
-Parole.reject = function (value) {
-  return new Parole(function (resolve, reject) {
-    reject(value);
-  });
-};
-
-Parole.all = function (iterable) {
-  return new Parole(function (resolve, reject) {
-    var pending = iterable.length,
-        results = [];
-    each(iterable, function (_promise, i) {
-
-      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-        results[i] = result;
-        if( --pending === 0 ) {
-          resolve(results);
+        if( fulfilled && typeof then === 'function' ) {
+          runThenable(then, p, x);
+        } else {
+          resolvePromise(p, x, fulfilled);
         }
-      }, function (reason) {
-        if( pending !== -1 ) {
-          pending === -1;
-          reject(reason);
-        }
-      });
-    });
-  });
-};
-
-Parole.race = function (iterable) {
-  return new Parole(function (resolve, reject) {
-    var done = false;
-
-    each(iterable, function (_promise) {
-      if( done ) {
-        return;
+      } catch (reason) {
+        resolvePromise(p, reason, false);
       }
-      ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-        if( !done ) {
-          done = true;
-          resolve(result);
-        }
+    } else {
+      resolvePromise(p, x, fulfilled);
+    }
+  }
+
+  function resolveProcedure (p, x, fulfilled) {
+    if( p.resolving ) return;
+    p.resolving = true;
+
+    if( x === p.promise ) {
+      fulfilled = false;
+      x = new TypeError('A promise can not be resolved by itself');
+    }
+
+    xThen(p, x, fulfilled);
+  }
+
+  function Parole (resolver) {
+    if( !(this instanceof Parole) ) {
+      return new Parole(resolver);
+    }
+
+    if( typeof resolver !== 'function' ) {
+      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
+    }
+
+    var p = {
+      queue: [],
+      promise: this
+    };
+
+    this.__promise = p;
+
+    try {
+      resolver(function (value) {
+        resolveProcedure(p, value, true);
       }, function (reason) {
-        if( !done ) {
-          done = true;
-          reject(reason);
-        }
+        resolveProcedure(p, reason, false);
+      });
+    } catch (reason) {
+      resolveProcedure(p, reason, false);
+    }
+
+  }
+
+  Parole.prototype.then = function (onFulfilled, onRejected) {
+    var p = this.__promise,
+        deferred = Parole.defer();
+
+    if( p.queue ) {
+      p.queue.push([onFulfilled, onRejected, deferred]);
+    } else {
+      setTimeout(function () {
+        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
+      }, 0);
+    }
+
+    return deferred.promise;
+  };
+
+  Parole.prototype.catch = function (onRejected) {
+    return this.then(null, onRejected);
+  };
+
+  // Promise methods
+
+  function each (iterable, handler) {
+    for( var i = 0, n = iterable.length; i < n ; i++ ) {
+      handler(iterable[i], i);
+    }
+  }
+
+  Parole.defer = function () {
+    var deferred = {};
+    deferred.promise = new Parole(function (resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+    return deferred;
+  };
+
+  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
+
+  Parole.resolve = function (value) {
+    return new Parole(function (resolve) {
+      resolve(value);
+    });
+  };
+
+  Parole.reject = function (value) {
+    return new Parole(function (resolve, reject) {
+      reject(value);
+    });
+  };
+
+  Parole.all = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var pending = iterable.length,
+          results = [];
+      each(iterable, function (_promise, i) {
+
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          results[i] = result;
+          if( --pending === 0 ) {
+            resolve(results);
+          }
+        }, function (reason) {
+          if( pending !== -1 ) {
+            pending === -1;
+            reject(reason);
+          }
+        });
       });
     });
-  });
-};
+  };
 
-module.exports = Parole;
+  Parole.race = function (iterable) {
+    return new Parole(function (resolve, reject) {
+      var done = false;
+
+      each(iterable, function (_promise) {
+        if( done ) {
+          return;
+        }
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+          if( !done ) {
+            done = true;
+            resolve(result);
+          }
+        }, function (reason) {
+          if( !done ) {
+            done = true;
+            reject(reason);
+          }
+        });
+      });
+    });
+  };
+
+  return Parole;
+
+});
 
 },{}],9:[function(require,module,exports){
 var arrayShift = [].shift;
@@ -1858,6 +1925,25 @@ function getAmount (amount, decimalsSeparator, groupSeparator) {
   });
 }
 
+function getPrice (amount, currency) {
+  var prefix = '', suffix = '', decimalsSeparator, groupSeparator;
+
+  switch (currency) {
+    case 'EUR':
+      suffix = ' €';
+      decimalsSeparator = ',';
+      groupSeparator = '.';
+      break;
+    case 'MXN':
+      prefix = '$ ';
+      decimalsSeparator = '.';
+      groupSeparator = ',';
+      break;
+  }
+
+  return prefix + getAmount(amount, decimalsSeparator, groupSeparator) + suffix;
+}
+
 function parsePrice (price) {
   var matched = price.match(/((\d+[,. ])*)(\d+)/),
       main, tail;
@@ -1888,6 +1974,7 @@ function parsePrice (price) {
 
 module.exports = {
 	getAmount: getAmount,
+	getPrice: getPrice,
 	parsePrice: parsePrice
 };
 

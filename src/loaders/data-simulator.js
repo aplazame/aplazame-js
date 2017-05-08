@@ -146,11 +146,12 @@ module.exports = function (aplazame) {
 
     _.onMessage('simulator', function (e, message) {
       if( e.source === el.contentWindow ) {
+        console.log('simulator message', e, message);
         iframe.emit('message:' + message.event, [message], this);
       }
     });
 
-    this.on('message:resize', function (_e, message) {
+    this.on('message:resize', function (message) {
       el.style.height = message.height + 'px';
     });
   }
@@ -186,74 +187,79 @@ module.exports = function (aplazame) {
     var widget,
         id = getWidget.serial;
 
-    if( meta.options.widget.type === 'button' ) {
-      widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + id );
+    switch ( meta.options.widget.type ) {
+      case 'button':
+      case 'button2':
+      case 'number':
+      case 'plain':
+      case 'select':
+        widget = new Iframe( api.staticUrl + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + id );
 
-      widget.render = function () {
-        widget.message('choices', {
-          amount: meta.amount,
-          currency: meta.currency,
-          country: meta.country,
-          choice: meta.choices.reduce(maxInstalments, null),
-          choices: meta.choices,
-          options: meta.options
+        widget.render = function () {
+          widget.message('choices', {
+            amount: meta.amount,
+            currency: meta.currency,
+            country: meta.country,
+            choice: meta.choices.reduce(maxInstalments, null),
+            choices: meta.choices,
+            options: meta.options
+          });
+        };
+
+        widget.on('choices.updating', function () {
+          widget.message('loading');
         });
-      };
+        break;
+      default:
+        widget = { el: document.createElement('div') };
+        new Events(widget);
 
-      widget.on('choices.updating', function (_e) {
-        widget.message('loading');
-      });
-
-    } else {
-      widget = { el: document.createElement('div') };
-      new Events(widget);
-
-      widget.on('choices.updating', function (_e) {
-        widget.el.style.opacity = 0.5;
-      });
-
-      widget.render = function () {
-        widget.el.style.opacity = null;
-        widget.el.innerHTML = require('../../.tmp/simulator/templates/widget-raw.tmpl')({
-          getAmount: _.getAmount,
-          amount: meta.amount,
-          currency: meta.currency,
-          country: meta.country,
-          choice: meta.choices.reduce(maxInstalments, null),
-          choices: meta.choices,
-          options: meta.options
+        widget.on('choices.updating', function () {
+          widget.el.style.opacity = 0.5;
         });
-      };
 
-      widget.el.addEventListener('click', function () {
-        window.postMessage({
-          aplazame: 'modal',
-          event: 'open',
-          name: 'instalments',
-          data: {
-            size: 'lg',
-            card: {
-              className: 'modal-instalments-info'
-            },
-            template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
-              selectedChoice: meta.choices.reduce(maxInstalments, null),
-              choices: meta.choices,
-              currency: meta.currency,
-              country: meta.country,
-              getAmount: _.getAmount,
-              months: function (m) {
-                return m > 1 ? 'meses' : 'mes';
-              }
-            })
-          }
-        }, '*');
+        widget.render = function () {
+          widget.el.style.opacity = null;
+          widget.el.innerHTML = require('../../.tmp/simulator/templates/widget-raw.tmpl')({
+            getAmount: _.getAmount,
+            amount: meta.amount,
+            currency: meta.currency,
+            country: meta.country,
+            choice: meta.choices.reduce(maxInstalments, null),
+            choices: meta.choices,
+            options: meta.options
+          });
+        };
 
-      });
+        widget.el.addEventListener('click', function () {
+          window.postMessage({
+            aplazame: 'modal',
+            event: 'open',
+            name: 'instalments',
+            data: {
+              size: 'lg',
+              card: {
+                className: 'modal-instalments-info'
+              },
+              template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
+                selectedChoice: meta.choices.reduce(maxInstalments, null),
+                choices: meta.choices,
+                currency: meta.currency,
+                country: meta.country,
+                getAmount: _.getAmount,
+                months: function (m) {
+                  return m > 1 ? 'meses' : 'mes';
+                }
+              })
+            }
+          }, '*');
+
+        });
     }
 
     widget.render();
 
-    widget.on('message:require.choices choices.update', function (_e, message) {
+    widget.on('message:require.choices choices.update', function (message) {
       if( message && message.simulatorId && message.simulatorId !== id ) {
         return;
       }
@@ -345,6 +351,10 @@ module.exports = function (aplazame) {
         meta.widget.emit('choices.updating');
       }
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
+        if ( widgetWrapper.getAttribute('data-options') ) {
+          _options = _.merge( _options, JSON.parse( widgetWrapper.getAttribute('data-options') ) );
+        }
+
         _options.widget = _options.widget || {};
         if( _options.widget.disabled ) {
           return;

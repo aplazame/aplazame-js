@@ -30,7 +30,7 @@ module.exports = function (nitro) {
 
   nitro.task('widgets.js', function () {
     // nitro.file.write('.tmp/simulator/modal-info.js', 'module.exports = \'' + nitro.file.read('widgets/simulator/modal-info.html').replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
-    nitro.dir('widgets').load('{,**/}templates/*.html').each(function (f) {
+    nitro.dir('widgets').load('{,**/}{templates,widgets_v1,widgets_v2}/*.html').each(function (f) {
       nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.js') ), 'module.exports = \'' + f.src.replace(/\'/g, '\\\'').replace(/\n/g, '') + '\';' );
       nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.tmpl.js') ), 'module.exports = ' + compileTemplate( f.src ).toString() + ';' );
     });
@@ -49,7 +49,7 @@ module.exports = function (nitro) {
         });
 
     nitro.dir('widgets')
-      .load(['{,**/}*.html', '!{,**/}templates/*.html'])
+      .load(['{,**/}*.html', '!{,**/}{templates,widgets_v1,widgets_v2}/*.html'])
       .each(function (f) {
         f.setSrc( nitro.template(f.getSrc())(scope) );
       })

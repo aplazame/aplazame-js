@@ -3,7 +3,8 @@
 
 module.exports = function (nitro) {
 
-  var canClear = ['dist', '.tmp', 'public'];
+  var canClear = ['dist', '.tmp', 'public'],
+      branch = process.env.DRONE_BRANCH || process.env.GIT_BRANCH || require('git-rev-sync').branch();
 
   nitro.task('clear', function (target) {
     if( target === 'build' ) {
@@ -19,25 +20,23 @@ module.exports = function (nitro) {
   });
 
   nitro.task('git.branch', function () {
-    console.log('[[ current branch ]]', process.env.DRONE_BRANCH || process.env.GIT_BRANCH || require('git-rev-sync').branch() );
+    console.log('[[ current branch ]]', branch );
   });
 
   nitro.task('externalIntegrations', function () {
-
     nitro.file.copy('external-integrations/shopify.js', 'dist/shopify.js');
     nitro.file.copy('external-integrations/shopify.js', 'dist/widgets/shopify.js');
-
   });
 
   // main tasks
 
-  nitro.task('build', ['git.branch', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets', 'js', 'demo', 'loading']);
+  nitro.task('build', ['git.branch', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets', 'js', 'demo', 'loading'], function () {
+    if( branch !== 'release' && !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
+  });
 
   nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev'], function () {
 
-    if( !nitro.file.exists('public/dist') ) {
-      nitro.symlink('public/dist', '../dist');
-    }
+    if( !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
 
     nitro.watch('src')
       .when('{,**/}*.js', ['lint', 'js:dev'])
@@ -46,7 +45,7 @@ module.exports = function (nitro) {
     nitro.watch('widgets')
       .when('{,**/}*.js', 'widgets.js:dev')
       .when('{,**/}modal-*.html', 'widgets.js:dev')
-      .when(['{,**/}*.html', '!{,**/}modal-*.html'], 'widgets.html:dev')
+      .when(['{,**/}*.html', '!{,**/}modal-*.html'], ['widgets.html:dev', 'widgets.js:dev'])
       .when('{,**/}*.{sass,scss}', 'widgets.sass:dev')
       .when('widgets/assets/**', 'widgets.assets:dev');
 
@@ -57,7 +56,6 @@ module.exports = function (nitro) {
 
     nitro.watch('.make', function () {
       nitro.import('.make');
-      // nitro.tasks.run(['base-build', 'demo-dev']);
     });
 
     nitro.livereload(['public', 'dist'], { port: 12321 });

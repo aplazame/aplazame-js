@@ -19,7 +19,7 @@ function safeScript (script) {
       return script;
   });
 
-  return script || document.querySelector('script[data-aplazame]');
+  return script || document.querySelector('script[data-aplazame]') || document.createElement('script');
 }
 
 module.exports = function (aplazame) {
@@ -58,10 +58,6 @@ module.exports = function (aplazame) {
 
     if( script.getAttribute('data-sandbox') ) {
       options.sandbox = script.getAttribute('data-sandbox');
-    }
-
-    if( script.getAttribute('data-analytics') ) {
-      options.analytics = script.getAttribute('data-analytics');
     }
 
     if( script.getAttribute('data-static-url') ) {

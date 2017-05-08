@@ -25,13 +25,9 @@ function init (options) {
     options.sandbox = options.sandbox === 'true';
   }
 
-  if( typeof options.analytics === 'string' ) {
-    options.analytics = options.analytics === 'true';
-  }
-
   _.extend(api, options);
 
-  _.log('aplazame.init', api);
+  _.log('aplazame.init', options, api);
 
   if( api.publicKey ) events.emit('ready');
 }

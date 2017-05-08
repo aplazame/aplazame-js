@@ -171,4 +171,116 @@ describe('checkout normalizer', function () {
 
     assert.equal(checkout.customer.birthday, '2000-12-31');
   });
+
+  it('transform customer.type "existing" as "e" ', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        type: 'existing'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.type, 'e');
+  });
+
+  it('transform customer.type "guess" as "g" ', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        type: 'guess'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.type, 'g');
+  });
+
+  it('transform customer.type "new" as "n" ', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        type: 'new'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.type, 'n');
+  });
+
+  it('transform customer.gender "unknown" as "0" ', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        gender: 'unknown'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.gender, 0);
+  });
+
+  it('transform customer.gender "male" as "1" ', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        gender: 'male'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.gender, 1);
+  });
+
+  it('transform customer.gender "female" as "2" ', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        gender: 'female'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.gender, 2);
+  });
+
+  it('transform customer.gender "not_applicable" as "3" ', function() {
+    var checkout = {
+      merchant: {
+        success_url: '/success_url',
+        cancel_url: '/cancel_url'
+      },
+      customer: {
+        gender: 'not_applicable'
+      }
+    };
+
+    checkout = checkoutNormalizer(checkout, location, api);
+
+    assert.equal(checkout.customer.gender, 3);
+  });
 });

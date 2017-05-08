@@ -3,7 +3,7 @@ branches:
   - release
 
 build:
-  image: aplazame/nodejs-karma:phantomjs
+  image: aplazame/nodejs-karma:0.5.0
   environment:
     - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:

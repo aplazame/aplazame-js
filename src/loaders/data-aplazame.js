@@ -26,7 +26,7 @@ module.exports = function (aplazame) {
 
   var _ = aplazame._,
       script = safeScript(_.currentScript),
-      dataAplazame = script.getAttribute('data-aplazame'),
+      dataAplazame = script && script.getAttribute('data-aplazame'),
       options = script.src && (/[?#]/.test(script.src) ? _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) : {}) || {};
 
   if( options.sandbox ) {

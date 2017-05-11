@@ -58,15 +58,12 @@ require('./sandbox')(function () {
     if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
       return script;
 
-    if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
-      return script;
-
-    script = findFirst(document.querySelectorAll('script'), function (script) {
+    var is_aplazame_loader = function (script) {
       if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
         return script;
-    });
+    };
 
-    return script || document.querySelector('script[data-aplazame]') || document.createElement('script');
+    return is_aplazame_loader(script) || findFirst(document.querySelectorAll('script'), is_aplazame_loader) || script || document.querySelector('script[data-aplazame]') || document.createElement('script');
   }
 
   var options = require('./loaders/data-aplazame')(aplazame._, safeScript(aplazame._.currentScript));

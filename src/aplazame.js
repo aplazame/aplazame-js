@@ -59,7 +59,7 @@ require('./sandbox')(function () {
       return script;
 
     var is_aplazame_loader = function (script) {
-      if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
+      if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 )
         return script;
     };
 

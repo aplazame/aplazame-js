@@ -46,7 +46,29 @@ require('./sandbox')(function () {
     require('./loaders/data-button')(aplazame);
     require('./loaders/data-simulator')(aplazame);
   }));
-  require('./loaders/data-aplazame')(aplazame);
+
+  function findFirst( list, iteratee ) {
+    for( var i = 0, n = list.length ; i < n ; i++ ) {
+      if( iteratee(list[i]) ) return list[i];
+    }
+    return null;
+  }
+
+  function safeScript (script) {
+    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
+      return script;
+
+    var is_aplazame_loader = function (script) {
+      if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 )
+        return script;
+    };
+
+    return is_aplazame_loader(script) || findFirst(document.querySelectorAll('script'), is_aplazame_loader) || script || document.querySelector('script[data-aplazame]') || document.createElement('script');
+  }
+
+  var options = require('./loaders/data-aplazame')(aplazame._, safeScript(aplazame._.currentScript));
+
+  aplazame.init(options);
 
   if (typeof define === 'function' && define.amd) {
     define([], function () {

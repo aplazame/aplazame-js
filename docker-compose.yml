@@ -4,6 +4,9 @@ services:
   application:
     build:
       context: ./
+      args:
+        - GITHUB_TOKEN
+    entrypoint: make live
     env_file:
       - ./.env
     ports:

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.415';
+module.exports = '0.0.416';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -7,7 +7,7 @@ module.exports = '@-webkit-keyframes aplazame-logo-smile{0%{-webkit-transform:ro
 },{}],4:[function(require,module,exports){
 module.exports = '.aplazame-modal{height:100%;height:100vh;position:relative;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
 },{}],5:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
+module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:\'\';display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
 },{}],6:[function(require,module,exports){
 module.exports = function anonymous(obj
 /**/) {
@@ -1992,7 +1992,29 @@ require('./sandbox')(function () {
     require('./loaders/data-button')(aplazame);
     require('./loaders/data-simulator')(aplazame);
   }));
-  require('./loaders/data-aplazame')(aplazame);
+
+  function findFirst( list, iteratee ) {
+    for( var i = 0, n = list.length ; i < n ; i++ ) {
+      if( iteratee(list[i]) ) return list[i];
+    }
+    return null;
+  }
+
+  function safeScript (script) {
+    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
+      return script;
+
+    var is_aplazame_loader = function (script) {
+      if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 )
+        return script;
+    };
+
+    return is_aplazame_loader(script) || findFirst(document.querySelectorAll('script'), is_aplazame_loader) || script || document.querySelector('script[data-aplazame]') || document.createElement('script');
+  }
+
+  var options = require('./loaders/data-aplazame')(aplazame._, safeScript(aplazame._.currentScript));
+
+  aplazame.init(options);
 
   if (typeof define === 'function' && define.amd) {
     define([], function () {
@@ -2862,38 +2884,9 @@ module.exports = init;
 },{"../tools/tools":70,"./api":53,"./events":55}],57:[function(require,module,exports){
 'use strict';
 
-function findFirst( list, iteratee ) {
-  for( var i = 0, n = list.length ; i < n ; i++ ) {
-    if( iteratee(list[i]) ) return list[i];
-  }
-  return null;
-}
-
-function safeScript (script) {
-  if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
-    return script;
-
-  if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
-    return script;
-
-  script = findFirst(document.querySelectorAll('script'), function (script) {
-    if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.com') === 0 )
-      return script;
-  });
-
-  return script || document.querySelector('script[data-aplazame]') || document.createElement('script');
-}
-
-module.exports = function (aplazame) {
-
-  var _ = aplazame._,
-      script = safeScript(_.currentScript),
-      dataAplazame = script.getAttribute('data-aplazame'),
+module.exports = function (_, script) {
+  var dataAplazame = script.getAttribute('data-aplazame'),
       options = script.src && (/[?#]/.test(script.src) ? _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) : {}) || {};
-
-  if( options.sandbox ) {
-    options.sandbox = options.sandbox === 'true' || options.sandbox === '1';
-  }
 
   if( dataAplazame ) {
 
@@ -2909,41 +2902,37 @@ module.exports = function (aplazame) {
     } else {
       options.publicKey = dataAplazame;
     }
-
-    if( script.getAttribute('data-api-host') ) {
-      options.host = script.getAttribute('data-api-host');
-    }
-
-    if( script.getAttribute('data-version') ) {
-      options.version = script.getAttribute('data-version');
-    }
-
-    if( script.getAttribute('data-sandbox') ) {
-      options.sandbox = script.getAttribute('data-sandbox');
-    }
-
-    if( script.getAttribute('data-static-url') ) {
-      options.staticUrl = script.getAttribute('data-static-url');
-    }
-
-    if( script.getAttribute('data-checkout-url') ) {
-      options.checkoutUrl = script.getAttribute('data-checkout-url');
-    }
-
-    if( script.getAttribute('data-callback') ) {
-      // if( typeof global[script.getAttribute('data-callback')] !== 'function' ) {
-      //   throw new Error('callback should be a global function');
-      // }
-
-      options.callback = script.getAttribute('data-callback');
-      // _.ready(function () {
-      //   global[script.getAttribute('data-callback')](aplazame);
-      // });
-    }
   }
 
-  aplazame.init(options);
+  if( script.getAttribute('data-api-host') ) {
+    options.host = script.getAttribute('data-api-host');
+  }
 
+  if( script.getAttribute('data-version') ) {
+    options.version = script.getAttribute('data-version');
+  }
+
+  if( script.getAttribute('data-sandbox') ) {
+    options.sandbox = script.getAttribute('data-sandbox');
+  }
+
+  if( script.getAttribute('data-static-url') ) {
+    options.staticUrl = script.getAttribute('data-static-url');
+  }
+
+  if( script.getAttribute('data-checkout-url') ) {
+    options.checkoutUrl = script.getAttribute('data-checkout-url');
+  }
+
+  if( script.getAttribute('data-callback') ) {
+    options.callback = script.getAttribute('data-callback');
+  }
+
+  if( options.sandbox ) {
+    options.sandbox = options.sandbox === 'true' || options.sandbox === '1';
+  }
+
+  return options;
 };
 
 },{}],58:[function(require,module,exports){

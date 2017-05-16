@@ -7,6 +7,7 @@ build:
   environment:
     - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:
+    - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//g" bower.json'
     - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'make build'
     - 'ls -la'

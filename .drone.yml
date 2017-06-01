@@ -48,5 +48,4 @@ notify:
       success: false
       failure: true
       change: true
-    when:
       branch: master

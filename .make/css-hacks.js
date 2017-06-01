@@ -17,9 +17,8 @@ module.exports = function (nitro) {
         }
       })
       .each(function (f) {
-        // f.setSrc( 'module.exports = \'' + f.getSrc().replace(/([^\}])\}/, '$1;}').replace(/\'/g, '\\\'').replace(';', ' !important;').replace('!important !important', '!important') + '\';' );
-        f.setSrc( 'module.exports = \'' + f.getSrc().replace(/([^\}])\}/, '$1;}').replace(/\'/g, '\\\'') + '\';' );
-        f.setPath( f.getPath().replace(/\.css$/, '.js') );
+        f.src = 'module.exports = \'' + f.src.replace(/([^\}])\}/, '$1;}').replace(/\'/g, '\\\'') + '\';';
+        f.path = f.path.replace(/\.css$/, '.js');
       }).write('.tmp/css-hacks');
 
   });

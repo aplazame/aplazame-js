@@ -156,6 +156,9 @@ module.exports = function (nitro) {
     file.write('public/simulator/index.html', template( file.read('demo/demo-simulator.html') )( indexData.new({ baseHref: '/simulator/' }) ) );
 
     file.write('public/widgets.html', template( file.read('demo/widgets.html') )( indexData ) );
+
+    file.write('public/shopify/cart.html', template( file.read('demo/shopify/cart.html') )( indexData ) );
+    file.write('public/shopify/products/product.html', template( file.read('demo/shopify/product.html') )( indexData ) );
   });
 
   nitro.task('demo-dev', ['demo-lintjs:dev', 'demo-clear:dev', 'demo-assets:dev', 'demo-js:dev', 'demo-sass:dev', 'demo-templates:dev']);

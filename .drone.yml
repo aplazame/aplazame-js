@@ -48,15 +48,5 @@ notify:
       success: false
       failure: true
       change: true
-
-  email:
-    from: $$EMAIL_FROM
-    host: $$EMAIL_HOST
-    username: $$EMAIL_USERNAME
-    password: $$EMAIL_PASS
-    recipients:
-      - dev@aplazame.com
     when:
-      success: false
-      failure: true
-      change: true
+      branch: master

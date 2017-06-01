@@ -30,7 +30,7 @@ function log () {
   };
 
   history.push(l);
-  dumpSingleLog(l);
+  // dumpSingleLog(l);
 }
 
 log.dump = function () {

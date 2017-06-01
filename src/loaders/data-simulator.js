@@ -146,7 +146,7 @@ module.exports = function (aplazame) {
 
     _.onMessage('simulator', function (e, message) {
       if( e.source === el.contentWindow ) {
-        log('simulator message', e, message);
+        // log('simulator message', e, message);
         iframe.emit('message:' + message.event, [message], this);
       }
     });

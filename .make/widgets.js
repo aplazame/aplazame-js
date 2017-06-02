@@ -51,7 +51,7 @@ module.exports = function (nitro) {
     nitro.dir('widgets')
       .load(['{,**/}*.html', '!{,**/}{templates,widgets_v1,widgets_v2}/*.html'])
       .each(function (f) {
-        f.setSrc( nitro.template(f.getSrc())(scope) );
+        f.src = nitro.template(f.src)(scope);
       })
       .write('dist/widgets');
 

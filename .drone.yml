@@ -1,3 +1,5 @@
+debug: true
+
 build:
   image: aplazame/nodejs-karma:0.5.0
   environment:

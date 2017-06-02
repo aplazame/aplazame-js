@@ -1,4 +1,6 @@
-debug: true
+branches:
+  - master
+  - release
 
 build:
   image: aplazame/nodejs-karma:0.5.0

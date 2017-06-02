@@ -146,7 +146,7 @@ module.exports = function (aplazame) {
 
     _.onMessage('simulator', function (e, message) {
       if( e.source === el.contentWindow ) {
-        console.log('simulator message', e, message);
+        // log('simulator message', e, message);
         iframe.emit('message:' + message.event, [message], this);
       }
     });
@@ -318,6 +318,8 @@ module.exports = function (aplazame) {
         meta.amount = meta.getAmount();
       }
     } else {
+      // log('widget wrapper found', widgetWrapper);
+
       meta = { getAmount: amountGetter(widgetWrapper) };
       meta.amount = widgetWrapper.getAttribute('data-amount') ? Number(widgetWrapper.getAttribute('data-amount')) : meta.getAmount();
       updateData = true;
@@ -344,12 +346,17 @@ module.exports = function (aplazame) {
     if( meta.amount && meta.getAmount.qtySelector ) {
       meta.amount *= ( getQty(meta.getAmount.qtySelector) || 1 );
     }
+
+    if( updateData ) log('widget wrapper found', widgetWrapper, meta);
+
     if( meta.amount && updateData ) {
       // if( meta.widget && meta.widget.message ) {
       if( meta.widget ) {
         // meta.widget.message('loading');
         meta.widget.emit('choices.updating');
       }
+
+      log('calling api simulator', meta.amount, simulatorOptions);
       aplazame.simulator( meta.amount, simulatorOptions, function (_choices, _options) {
         if ( widgetWrapper.getAttribute('data-options') ) {
           _options = _.merge( _options, JSON.parse( widgetWrapper.getAttribute('data-options') ) );
@@ -370,6 +377,8 @@ module.exports = function (aplazame) {
         if( meta.widget && !document.body.contains(meta.widget.el) ) {
           placeWidget(meta.widget, widgetWrapper, widgetWrapper.getAttribute('data-location') || _options.widget.location );
         }
+
+        log('widget meta updated', meta );
 
         meta.widget.emit('choices.update');
       }, function () {

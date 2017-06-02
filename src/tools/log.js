@@ -38,6 +38,5 @@ log.dump = function () {
 };
 
 log.history = history;
-global.log = log;
 
 module.exports = log;

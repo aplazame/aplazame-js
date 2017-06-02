@@ -16,7 +16,8 @@ require('./sandbox')(function () {
 
   var aplazame = require('./core/core'),
       api = require('./core/api'),
-      events = require('./core/events');
+      events = require('./core/events'),
+      log = require('./tools/log');
 
   aplazame.checkout = require('./apps/checkout');
   aplazame.button = require('./apps/button');
@@ -31,7 +32,8 @@ require('./sandbox')(function () {
     };
   };
 
-  aplazame.log = require('./tools/log').dump;
+  aplazame.log = log;
+  aplazame.logs = log.dump;
 
   require('./apps/http-service');
 

@@ -396,9 +396,12 @@ module.exports = function (aplazame) {
   }
 
   function widgetsLookup () {
-    var promises = [];
+    var promises = [],
+        widgetWrappers = document.querySelectorAll('[data-aplazame-simulator]');
 
-    each.call(document.querySelectorAll('[data-aplazame-simulator]'), evalWidget );
+    log('widget wrappers found', widgetWrappers);
+
+    each.call(widgetWrappers, evalWidget );
 
     return promises.length ? $q.all(promises) : $q.resolve();
   }

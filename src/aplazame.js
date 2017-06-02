@@ -31,12 +31,7 @@ require('./sandbox')(function () {
     };
   };
 
-  aplazame.log = function () {
-    require('./tools/log').history.forEach(function (l) {
-      console.log(l.time);
-      console.log.apply(console, l.args);
-    });
-  };
+  aplazame.log = require('./tools/log').dump;
 
   require('./apps/http-service');
 

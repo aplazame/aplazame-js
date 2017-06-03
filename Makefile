@@ -14,7 +14,7 @@ bower-install:
 	@echo "running bower install"
 	@bower install --allow-root > /dev/null 2>&1
 
-install: bower-install
+install: git.hooks bower-install
 	@echo "running npm install"
 	@npm install > /dev/null 2>&1
 
@@ -29,10 +29,10 @@ build: install tests
 	@echo "running make build"
 	node make build
 
-dev: git.hooks install
+dev: install
 	node make dev
 
-live: git.hooks install
+live: install
 	node make live
 
 master.increaseVersion:

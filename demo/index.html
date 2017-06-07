@@ -181,7 +181,8 @@
 
     <script>
       window.apzReady = function () {
-        console.log('hello, aplazame callback!', arguments);
+        console.log('hello, aplazame callback!');
+        console.log.apply(console, arguments );
       };
     </script>
 

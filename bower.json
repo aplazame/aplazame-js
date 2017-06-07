@@ -1,27 +1,27 @@
 {
-	"name": "aplazame",
-	"version": "0.0.416",
-	"homepage": "https://github.com/aplazame/aplazame-js",
-	"authors": [
-		"Jesús Germade <jesus@aplazame.com>"
-	],
-	"description": "javascript sdk for aplazame.com api",
-	"main": "dist/aplazame.js",
-	"keywords": [
-		"aplazame",
-		"sdk",
-		"js",
-		"javascript"
-	],
-	"license": "GPL-3.0",
-	"ignore": [
-		"**/.*",
-		"node_modules",
-		"bower_components",
-		"test",
-		"tests"
-	],
-	"devDependencies": {
-		"ng-aplazame": "git@github.com:aplazame/ng-aplazame.git#0.2.128"
-	}
+  "name": "aplazame",
+  "version": "0.0.417",
+  "homepage": "https://github.com/aplazame/aplazame-js",
+  "authors": [
+    "Jesús Germade <jesus@aplazame.com>"
+  ],
+  "description": "javascript sdk for aplazame.com api",
+  "main": "dist/aplazame.js",
+  "keywords": [
+    "aplazame",
+    "sdk",
+    "js",
+    "javascript"
+  ],
+  "license": "GPL-3.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "ng-aplazame": "git@github.com:aplazame/ng-aplazame.git#0.2.128"
+  }
 }

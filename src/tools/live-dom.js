@@ -45,6 +45,7 @@ module.exports = {
     }
     if( handler instanceof Function ) {
       suscriptors.push(handler);
+      handler(document.body);
     }
   }
 };

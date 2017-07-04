@@ -38,7 +38,7 @@ module.exports = function (aplazame) {
     'form#product_addtocart_form .regular-price .price', // magento
     '#product-info .special-price .price', // magento
     '#product-info .regular-price .price', // magento
-    'form#buy_block #our_price_display', // prestashop
+    '#our_price_display', // prestashop
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price ins .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce

@@ -27,7 +27,10 @@ form.addEventListener('submit', function (e) {
   _.removeClass(resultsWrapper, 'hidden');
   _.addClass(results, 'hidden');
 
-  aplazame.simulator(currentAmount, { noCache: true }, function (choices) {
+  var now = new Date(),
+      payday = new Date( now.getFullYear(), now.getMonth(), now.getDate() + 20 ).getDate();
+
+  aplazame.simulator(currentAmount, { noCache: true, payday: payday }, function (choices) {
     console.log('simulator', currentAmount, choices);
     resultsWrapper.querySelector('.section-title > h3').innerHTML = 'Resultados';
     _.removeClass(results, 'hidden');

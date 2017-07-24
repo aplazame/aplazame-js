@@ -83,6 +83,7 @@ module.exports = function (nitro) {
         branch = ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim(),
         renderIndex = template( file.read('demo/index.html') ),
         checkout = file.readJSON('./demo/checkout-ES.json'),
+        demo_data = file.readYAML('./demo/demo-data.yml'),
         indexData = nitro.tools.scope({
           dev: dev, pkg: pkg,
           git: {
@@ -135,7 +136,9 @@ module.exports = function (nitro) {
 
     (function (scope) {
 
-      file.write('public/index.html', renderIndex( scope ) );
+      file.write('public/index.html', renderIndex( scope.new({ public_key: demo_data.public_key.demo_es }) ) );
+      file.write('public/clients/index.html', renderIndex( scope.new({ public_key: demo_data.public_key.clients_es }) ) );
+      file.write('public/clientes/index.html', renderIndex( scope.new({ public_key: demo_data.public_key.clients_es }) ) );
       file.write('public/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
       file.write('public/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
 
@@ -143,13 +146,15 @@ module.exports = function (nitro) {
 
     (function (scope) {
 
-      file.write('public/mx/index.html', renderIndex( scope ) );
+      file.write('public/mx/index.html', renderIndex( scope.new({ public_key: demo_data.public_key.demo_mx }) ) );
+      file.write('public/mx/clients/index.html', renderIndex( scope.new({ public_key: demo_data.public_key.clients_mx }) ) );
+      file.write('public/mx/clientes/index.html', renderIndex( scope.new({ public_key: demo_data.public_key.clients_mx }) ) );
       file.write('public/mx/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
       file.write('public/mx/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
 
     })(indexData.new({ country: 'MX', currency: 'MXN' }));
 
-    file.write('public/require.html', template( file.read('demo/require.html') )( indexData ) );
+    file.write('public/require.html', template( file.read('demo/require.html') )( indexData.new({ country: 'ES', currency: 'EUR', public_key: demo_data.public_key.demo_es }) ) );
 
     file.write('public/playground.html', template( file.read('demo/playground.html') )( indexData ) );
 

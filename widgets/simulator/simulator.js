@@ -26,6 +26,9 @@ function maxInstalments (prev, choice) {
 }
 
 var main = document.getElementById('main'), currentMessage,
+    tmplModalInstalments = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
+    tmplWidgetV2 = require('../../.tmp/simulator/templates/widget-v2.tmpl' ),
+    tmplWidgetV3 = require('../../.tmp/simulator/templates/widget-v3.tmpl' ),
     widgetActions = {
       showInfo: function () {
         parent.window.postMessage({
@@ -37,7 +40,7 @@ var main = document.getElementById('main'), currentMessage,
             card: {
               className: 'modal-instalments-info'
             },
-            template: require('../../.tmp/simulator/templates/modal-instalments.tmpl')({
+            template: tmplModalInstalments({
               selectedChoice: currentMessage.$$choice,
               choices: currentMessage.choices,
               currency: currentMessage.currency,
@@ -54,29 +57,23 @@ var main = document.getElementById('main'), currentMessage,
     renderWidget = function () {
       _.removeClass(main, 'loading');
       var widgetSettings = currentMessage.options.widget;
-      var min = currentMessage.choices[0].num_instalments;
+      // var min = currentMessage.choices[0].num_instalments;
       var max = currentMessage.choices[currentMessage.choices.length - 1].num_instalments;
 
-      var tmplWidget;
-      switch (widgetSettings.type) {
-        case 'button2':
-          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-button.tmpl');
-          break;
-        case 'number':
-          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-number.tmpl');
-          break;
-        case 'plain':
-          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-plain.tmpl');
-          break;
-        case 'select':
-          tmplWidget = require('../../.tmp/simulator/widgets_v2/widget-select.tmpl');
-          break;
-        default:
-          tmplWidget = require('../../.tmp/simulator/widgets_v1/widget-button.tmpl');
-      }
+      var tmplWidget = widgetSettings.preferences.version == 3 ? tmplWidgetV3 : tmplWidgetV2;
+
+      var decimals_separator = currentMessage.currency === 'EUR' ? ',' : '.';
+      var group_separator = currentMessage.currency === 'EUR' ? '.' : ',';
+
+      // widgetSettings.type = 'select';
+      widgetSettings.type = 'big-button';
 
       main.innerHTML = tmplWidget({
-        getAmount: _.getAmount,
+        $widget: widgetSettings,
+        preferences: widgetSettings.preferences,
+        getAmount: function (amount, _decimals_separator, _group_separator) {
+          return _.getAmount(amount, _decimals_separator || decimals_separator, _group_separator || group_separator);
+        },
         getPrice: _.getPrice,
         brightness: _.brightness,
         choice: currentMessage.$$choice,
@@ -85,9 +82,8 @@ var main = document.getElementById('main'), currentMessage,
         amount: currentMessage.amount,
         currency: currentMessage.currency,
         selectedNumInstalments: max,
-        preferences: widgetSettings.preferences,
         logo: require('../../.tmp/simulator/templates/logo.tmpl')({}),
-        isMobile: currentMessage.isMobile
+        isMobile: currentMessage.isMobile,
       });
       emitSize();
 
@@ -96,66 +92,61 @@ var main = document.getElementById('main'), currentMessage,
         element.addEventListener('click', function (e) {
           var action = element.getAttribute('data-action');
 
-          if( action !== undefined ) {
-            e.preventDefault();
-          }
-
-          if( widgetActions[action] ) {
-            widgetActions[action]();
-          }
+          if( action !== undefined ) e.preventDefault();
+          if( widgetActions[action] ) widgetActions[action]();
         });
 
       } );
 
 
-      switch (widgetSettings.type) {
-        case 'number':
-          var decreaseNumInstalmentsElement = document.getElementById('decreaseNumInstalments');
-          var increaseNumInstalmentsElement = document.getElementById('increaseNumInstalments');
-          var selectedNumInstalmentsElement = document.getElementById('selectedNumInstalments');
-          var amount = document.getElementById('amount');
-
-          decreaseNumInstalmentsElement.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            updateNumber(Number( selectedNumInstalmentsElement.textContent ) - 1)
-          });
-
-          increaseNumInstalmentsElement.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            updateNumber(Number( selectedNumInstalmentsElement.textContent ) + 1)
-          });
-
-          var updateNumber = function (num_instalments) {
-            if (num_instalments < min || num_instalments > max) {
-              return;
-            }
-            if (num_instalments == min) {
-              selectedNumInstalmentsElement.disabled = true;
-              _.addClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
-            } else {
-              selectedNumInstalmentsElement.disabled = false;
-              _.removeClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
-            }
-            if (num_instalments == max) {
-              selectedNumInstalmentsElement.disabled = true;
-              _.addClass(increaseNumInstalmentsElement, 'apz-is-disabled');
-            } else {
-              selectedNumInstalmentsElement.disabled = false;
-              _.removeClass(increaseNumInstalmentsElement, 'apz-is-disabled');
-            }
-
-            selectedNumInstalmentsElement.textContent = num_instalments;
-            var selectedChoice = _.find(currentMessage.choices, function (choice) {
-              return choice.num_instalments == num_instalments;
-            });
-            amount.textContent = _.getPrice(selectedChoice.amount, currentMessage.currency);
-          };
-          break;
-      }
+      // switch (widgetSettings.type) {
+      //   case 'number':
+      //     var decreaseNumInstalmentsElement = document.getElementById('decreaseNumInstalments');
+      //     var increaseNumInstalmentsElement = document.getElementById('increaseNumInstalments');
+      //     var selectedNumInstalmentsElement = document.getElementById('selectedNumInstalments');
+      //     var amount = document.getElementById('amount');
+      //
+      //     decreaseNumInstalmentsElement.addEventListener('click', function (e) {
+      //       e.preventDefault();
+      //       e.stopPropagation();
+      //
+      //       updateNumber(Number( selectedNumInstalmentsElement.textContent ) - 1)
+      //     });
+      //
+      //     increaseNumInstalmentsElement.addEventListener('click', function (e) {
+      //       e.preventDefault();
+      //       e.stopPropagation();
+      //
+      //       updateNumber(Number( selectedNumInstalmentsElement.textContent ) + 1)
+      //     });
+      //
+      //     var updateNumber = function (num_instalments) {
+      //       if (num_instalments < min || num_instalments > max) {
+      //         return;
+      //       }
+      //       if (num_instalments == min) {
+      //         selectedNumInstalmentsElement.disabled = true;
+      //         _.addClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
+      //       } else {
+      //         selectedNumInstalmentsElement.disabled = false;
+      //         _.removeClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
+      //       }
+      //       if (num_instalments == max) {
+      //         selectedNumInstalmentsElement.disabled = true;
+      //         _.addClass(increaseNumInstalmentsElement, 'apz-is-disabled');
+      //       } else {
+      //         selectedNumInstalmentsElement.disabled = false;
+      //         _.removeClass(increaseNumInstalmentsElement, 'apz-is-disabled');
+      //       }
+      //
+      //       selectedNumInstalmentsElement.textContent = num_instalments;
+      //       var selectedChoice = _.find(currentMessage.choices, function (choice) {
+      //         return choice.num_instalments == num_instalments;
+      //       });
+      //       amount.textContent = _.getPrice(selectedChoice.amount, currentMessage.currency);
+      //     };
+      //     break;
+      // }
     },
     onMessage = {
       choices: function (message) {

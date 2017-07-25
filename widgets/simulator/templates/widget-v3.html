@@ -14,6 +14,13 @@
       <option value="<%= choices[i].num_instalments %>" <%= choices[i].num_instalments == selectedNumInstalments ? 'selected' : '' %>><span class="apz-price_widget-amount"><%= getPrice(choices[i].amount, currency) %>/mes</span> en <%= choices[i].num_instalments %> <%= choices[i].num_instalments > 1 ? 'cuotas' : 'cuota' %></option>
       <% } %>
     </select>
+
+    <svg class="aplazame-widget-select-icon" version="1.1" viewBox="0 0 8 12" height="12" width="8">
+      <g fill="none" fill-opacity="1" fill-rule="evenodd" stroke="currentColor" stroke-width="1" stroke-opacity="1" transform="translate(0.7521047,0.5)">
+        <polyline points="0 2.5 3.21428571 0 6.5 2.5" />
+        <polyline points="0 11 3.21428571 8.5 6.5 11" transform="matrix(1,0,0,-1,0,19.5)" />
+      </g>
+    </svg>
     <% } %>
 
     <span class="aplazame-widget-from">desde&nbsp;</span><!--
@@ -23,9 +30,9 @@
     --></strong><!--
     --><sub class="aplazame-widget-per-month">/mes</sub><!--
     --><span class="aplazame-widget-instalments-wrapper">
-      <span>&nbsp;en&nbsp;</span>
-      <em class="aplazame-widget-instalments-num"><%= selectedNumInstalments %></em>
-      <span>&nbsp;cuotas</span>
+      <span>&nbsp;en&nbsp;</span><!--
+      --><em class="aplazame-widget-instalments-num"><%= selectedNumInstalments %></em><!--
+      --><span>&nbsp;cuotas</span>
     </span>
 
   </div>
@@ -61,3 +68,23 @@
   </div>
 
 </div>
+
+<style>
+  .aplazame-widget { color: <%= preferences.text_color %>; }
+
+  .aplazame-widget.aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget.aplazame-widget--type-button .aplazame-widget-instalments,
+  .aplazame-widget.aplazame-widget--type-select .aplazame-widget-instalments {
+    color: <%= preferences.btn_text_color %>;
+  }
+
+  .aplazame-widget.aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget.aplazame-widget--type-button .aplazame-widget-instalments::before,
+  .aplazame-widget.aplazame-widget--type-select .aplazame-widget-instalments::before {
+    background-color: <%= preferences.btn_bg_color %>;
+  }
+  .aplazame-widget.aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
+  .aplazame-widget.aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
+    background-color: <%= lighten(preferences.btn_bg_color, -5) %>;
+  }
+</style>

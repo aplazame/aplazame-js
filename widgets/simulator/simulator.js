@@ -66,7 +66,7 @@ var main = document.getElementById('main'), currentMessage,
       var group_separator = currentMessage.currency === 'EUR' ? '.' : ',';
 
       // widgetSettings.type = 'select';
-      widgetSettings.type = 'big-button';
+      // widgetSettings.type = 'big-button';
 
       main.innerHTML = tmplWidget({
         $widget: widgetSettings,
@@ -76,6 +76,7 @@ var main = document.getElementById('main'), currentMessage,
         },
         getPrice: _.getPrice,
         brightness: _.brightness,
+        lighten: _.lightenHEX,
         choice: currentMessage.$$choice,
         choices: currentMessage.choices,
         options: currentMessage.options,

@@ -8,7 +8,6 @@ _.extend(_,
   require('./browser-tools'),
   require('./amount-price'),
   {
-    liveDOM: require('./live-dom'),
     template: require('./template'),
     onMessage: require('./message-listener'),
     deserialize: require('./deserialize')

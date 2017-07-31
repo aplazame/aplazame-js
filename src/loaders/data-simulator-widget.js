@@ -1,7 +1,8 @@
 
 module.exports = function (aplazame) {
 
-  var _ = aplazame._;
+  var _ = aplazame._,
+      modal = require('../apps/modal');
 
   function maxInstalments (prev, choice) {
     if( prev === null ) {
@@ -47,28 +48,23 @@ module.exports = function (aplazame) {
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 
-    window.postMessage({
-      aplazame: 'modal',
-      event: 'open',
-      name: 'instalments',
-      data: {
-        size: 'lg',
-        card: {
-          className: 'modal-instalments-info'
-        },
-        template: _renderModalTemplate({
-          selectedChoice: choices.reduce(maxInstalments, null),
-          choices: choices,
-          data: data,
-          currency: widget.options.currency || 'EUR',
-          country: widget.country || 'ES',
-          getAmount: _.getAmount,
-          months: function (m) {
-            return m > 1 ? 'meses' : 'mes';
-          }
-        })
-      }
-    }, '*');
+    modal({
+      size: 'lg',
+      card: {
+        className: 'modal-instalments-info'
+      },
+      template: _renderModalTemplate({
+        selectedChoice: choices.reduce(maxInstalments, null),
+        choices: choices,
+        data: data,
+        currency: widget.options.currency || 'EUR',
+        country: widget.country || 'ES',
+        getAmount: _.getAmount,
+        months: function (m) {
+          return m > 1 ? 'meses' : 'mes';
+        }
+      })
+    });
   };
 
   return Widget;

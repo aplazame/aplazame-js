@@ -98,56 +98,6 @@ var main = document.getElementById('main'), currentMessage,
         });
 
       } );
-
-
-      // switch (widgetSettings.type) {
-      //   case 'number':
-      //     var decreaseNumInstalmentsElement = document.getElementById('decreaseNumInstalments');
-      //     var increaseNumInstalmentsElement = document.getElementById('increaseNumInstalments');
-      //     var selectedNumInstalmentsElement = document.getElementById('selectedNumInstalments');
-      //     var amount = document.getElementById('amount');
-      //
-      //     decreaseNumInstalmentsElement.addEventListener('click', function (e) {
-      //       e.preventDefault();
-      //       e.stopPropagation();
-      //
-      //       updateNumber(Number( selectedNumInstalmentsElement.textContent ) - 1)
-      //     });
-      //
-      //     increaseNumInstalmentsElement.addEventListener('click', function (e) {
-      //       e.preventDefault();
-      //       e.stopPropagation();
-      //
-      //       updateNumber(Number( selectedNumInstalmentsElement.textContent ) + 1)
-      //     });
-      //
-      //     var updateNumber = function (num_instalments) {
-      //       if (num_instalments < min || num_instalments > max) {
-      //         return;
-      //       }
-      //       if (num_instalments == min) {
-      //         selectedNumInstalmentsElement.disabled = true;
-      //         _.addClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
-      //       } else {
-      //         selectedNumInstalmentsElement.disabled = false;
-      //         _.removeClass(decreaseNumInstalmentsElement, 'apz-is-disabled');
-      //       }
-      //       if (num_instalments == max) {
-      //         selectedNumInstalmentsElement.disabled = true;
-      //         _.addClass(increaseNumInstalmentsElement, 'apz-is-disabled');
-      //       } else {
-      //         selectedNumInstalmentsElement.disabled = false;
-      //         _.removeClass(increaseNumInstalmentsElement, 'apz-is-disabled');
-      //       }
-      //
-      //       selectedNumInstalmentsElement.textContent = num_instalments;
-      //       var selectedChoice = _.find(currentMessage.choices, function (choice) {
-      //         return choice.num_instalments == num_instalments;
-      //       });
-      //       amount.textContent = _.getPrice(selectedChoice.amount, currentMessage.currency);
-      //     };
-      //     break;
-      // }
     },
     onMessage = {
       choices: function (message) {

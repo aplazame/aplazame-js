@@ -2,7 +2,8 @@
 
 module.exports = function (aplazame) {
 
-  var log = require('../tools/log'),
+  var _ = aplazame._,
+      // log = require('../tools/log'),
       $live = require('live-dom'),
       _amountGetter = require('./data-simulator-amount')(aplazame),
       Widget = require('./data-simulator-widget')(aplazame),
@@ -12,25 +13,6 @@ module.exports = function (aplazame) {
           if( listener === dom_listeners[i] ) dom_listeners.splice(i, 1);
         }
       },
-      _debounce = function (fn, debounce_duration) {
-        var debouncing = null;
-        debounce_duration = debounce_duration || 80;
-        return function () {
-          var _this = this, _args = arguments;
-          if( debouncing === null ) {
-            fn.apply(_this, _args);
-            debouncing = false;
-          } else {
-            if( debouncing ) clearTimeout(debouncing);
-            debouncing = setTimeout(function () {
-              debouncing = setTimeout(function () {
-                debouncing = null;
-              }, debounce_duration);
-              fn.apply(_this, _args);
-            }, debounce_duration);
-          }
-        };
-      },
       onNodeChanges = window.MutationObserver ? function (onNodeChanged) {
         new MutationObserver(function(mutations) {
           mutations.forEach( onNodeChanged );
@@ -39,7 +21,7 @@ module.exports = function (aplazame) {
         document.body.addEventListener('DOMSubtreeModified', onNodeChanged);
       };
 
-  onNodeChanges( _debounce(function () {
+  onNodeChanges( _.debounce(function () {
     dom_listeners.forEach(function (listener) {
       listener();
     });
@@ -51,9 +33,13 @@ module.exports = function (aplazame) {
         widget = new Widget(widget_el),
         amountGetter = _amountGetter(widget_el),
         current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
-        updateAmount = function (amount) {
+        current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
+        updateAmount = function (amount, qty) {
+          console.log('updateAmount', amount, qty);
           current_amount = amount;
-          aplazame.simulator( amount, simulator_options, function (_choices, _options) {
+          if( qty !== undefined ) current_qty = qty;
+          aplazame.simulator( amount*( qty === undefined ? current_qty : qty ), simulator_options, function (_choices, _options) {
+            if( qty !== undefined && qty !== current_qty ) return;
             widget.render(_choices, _options);
           });
         },
@@ -64,6 +50,13 @@ module.exports = function (aplazame) {
 
           if( amount !== current_amount ) updateAmount(amount);
         };
+
+    if( amountGetter.qtySelector ) setInterval(function () {
+      var qty = amountGetter.getQty(amountGetter.qtySelector) || 1;
+
+      if( qty === current_qty ) return;
+      updateAmount(current_amount, qty);
+    }, 200);
 
     dom_listeners.push(onDomChanges);
     updateAmount(current_amount);

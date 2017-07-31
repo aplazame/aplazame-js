@@ -47,7 +47,8 @@ function checkout (options) {
   try {
     options = checkoutNormalizer(options, location, _.copy(api));
     on.success = options.merchant.onSuccess;
-    on.error = options.merchant.onError;
+    on.pending = options.merchant.onPending;
+    on.cancel = options.merchant.onError;
     on.dismiss = options.merchant.onDismiss;
   } catch (e) {
     errorMessage = e.message;
@@ -56,6 +57,7 @@ function checkout (options) {
   if (options.merchant) {
     // All functions must be removed as them can't be serialized by postMessage
     delete options.merchant.onSuccess;
+    delete options.merchant.onPending;
     delete options.merchant.onError;
     delete options.merchant.onDismiss;
   }
@@ -201,17 +203,7 @@ function checkout (options) {
 
               _.onMessage.off('checkout', onMessage);
 
-              switch( message.result ) {
-                case 'success':
-                  on.success();
-                  break;
-                case 'cancel':
-                  on.error();
-                  break;
-                case 'dismiss':
-                  on.dismiss();
-                  break;
-              }
+              if( on[message.result] ) on[message.result]();
             }
             break;
         }

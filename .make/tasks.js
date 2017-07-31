@@ -48,8 +48,8 @@ module.exports = function (nitro) {
       .when('{,**/}*.sass', ['css-hacks', 'js:dev', 'loading:dev']);
 
     nitro.watch('widgets')
-      .when('{,**/}*.js', 'widgets.js:dev')
-      .when('{,**/}modal-*.html', 'widgets.js:dev')
+      .when('simulator/{,**/}*.js', ['widgets.js:dev', 'js:dev'])
+      .when('simulator/{,**/}templates/*.html', ['widgets.html:dev', 'widgets.js:dev', 'js:dev'])
       .when(['{,**/}*.html', '!{,**/}modal-*.html'], ['widgets.html:dev', 'widgets.js:dev'])
       .when('{,**/}*.{sass,scss}', 'widgets.sass:dev')
       .when('widgets/assets/**', 'widgets.assets:dev');

@@ -26,31 +26,13 @@ function maxInstalments (prev, choice) {
 }
 
 var main = document.getElementById('main'), currentMessage,
-    tmplModalInstalments = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
     tmplWidgetV2 = require('../../.tmp/simulator/templates/widget-v2.tmpl' ),
     tmplWidgetV3 = require('../../.tmp/simulator/templates/widget-v3.tmpl' ),
     widgetActions = {
       showInfo: function () {
         parent.window.postMessage({
-          aplazame: 'modal',
-          event: 'open',
-          name: 'instalments',
-          data: {
-            size: 'lg',
-            card: {
-              className: 'modal-instalments-info'
-            },
-            template: tmplModalInstalments({
-              selectedChoice: currentMessage.$$choice,
-              choices: currentMessage.choices,
-              currency: currentMessage.currency,
-              country: currentMessage.country,
-              getAmount: _.getAmount,
-              months: function (m) {
-                return m > 1 ? 'meses' : 'mes';
-              }
-            })
-          }
+          aplazame: 'widget',
+          event: 'showInfo',
         }, '*');
       }
     },

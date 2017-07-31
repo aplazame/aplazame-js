@@ -2,7 +2,16 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      modal = require('../apps/modal');
+      modal = require('../apps/modal'),
+      serial = 1,
+      widgetRaw = require('../../widgets/simulator/simulator-widget-raw'),
+      widgetV2 = require('../../widgets/simulator/simulator-widget-v2'),
+      widgetV3 = require('../../widgets/simulator/simulator-widget-v3'),
+      getWidgetHandler = function (type, version) {
+        return type === 'raw' ? widgetRaw : (version === 3 ? widgetV3 : widgetV2 );
+      },
+      amount_tools = require('../../src/tools/amount-price'),
+      color_tools = require('../../src/tools/colors');
 
   function maxInstalments (prev, choice) {
     if( prev === null ) {
@@ -13,6 +22,7 @@ module.exports = function (aplazame) {
   }
 
   function Widget (widget_el, options) {
+    this.id = serial++;
     this.el = widget_el;
     this.options = options || {};
   }
@@ -21,30 +31,52 @@ module.exports = function (aplazame) {
     if( !data.widget ) return;
 
     var widget = this,
-        widget_version = data.widget.preferences && data.widget.preferences.version || 2,
+        widget_version = data.widget.preferences && Number(data.widget.preferences.version) || 2,
         widget_type = data.widget.type;
 
-    widget.simulator = {
-      choices: choices,
-      data: data,
-    };
+    if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
+    else {
+      if( widget.type !== widget_type || widget_version !== widget.version ) {
+        widget.handler.unbind();
+        widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
+      }
+    }
 
-    console.log('widget.render', widget, widget_type, widget_version );
-    console.log('widget.choices', choices );
-    console.log('widget.data', data );
+    widget.type = widget_type;
+    widget.version = widget_version;
 
-    widget.el.style.height = '100px';
-    widget.el.style.backgroundColor = 'red';
+    if( widget.simulator ) {
+      widget.simulator.choice = (function (choices, num_instalments) {
 
-    _.on(widget.el, 'click', function () {
-      widget.showModalInfo();
-    });
+        var choice = choices[choices.length - 1];
+        choices.forEach(function (_choice) {
+          if( _choice.num_instalments === num_instalments ) choice = _choice;
+        });
+        return choice;
+
+      })(choices, widget.simulator.choice.num_instalments);
+    } else {
+      widget.simulator = {
+        $widget: widget,
+        choice: choices[choices.length - 1],
+        preferences: data.widget.preferences || {},
+        getAmount: amount_tools.getAmount,
+        getPrice: amount_tools.getPrice,
+        lighten: color_tools.lightenHEX,
+        currency: widget.currency,
+      };
+    }
+
+    widget.simulator.choices = choices;
+    widget.simulator.data = data;
+
+    widget.handler.render();
 
   };
 
-  Widget.prototype.showModalInfo = function () {
+  Widget.prototype.showInfo = function () {
     var widget = this,
-        _renderModalTemplate = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
+        _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 
@@ -53,7 +85,7 @@ module.exports = function (aplazame) {
       card: {
         className: 'modal-instalments-info'
       },
-      template: _renderModalTemplate({
+      template: _renderModalInfo({
         selectedChoice: choices.reduce(maxInstalments, null),
         choices: choices,
         data: data,

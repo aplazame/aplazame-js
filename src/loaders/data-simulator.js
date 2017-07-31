@@ -56,7 +56,7 @@ module.exports = function (aplazame) {
 
       if( qty === current_qty ) return;
       updateAmount(current_amount, qty);
-    }, 200);
+    }, 120);
 
     dom_listeners.push(onDomChanges);
     updateAmount(current_amount);

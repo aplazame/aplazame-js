@@ -11,6 +11,7 @@ module.exports = function (widget) {
 
   return {
     render: function () {
+      console.log('widget[raw].render');
       widget_el.innerHTML = renderWidget(widget.simulator);
 
       widget_el.addEventListener('click', onClick);

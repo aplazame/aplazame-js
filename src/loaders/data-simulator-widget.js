@@ -9,14 +9,14 @@ module.exports = function (aplazame) {
       // widgetV2 = require('../../widgets/simulator/simulator-widget-v2'),
       widgetV3 = require('../../widgets/simulator/simulator-widget-v3'),
       widgetIframe = require('./data-simulator-iframe')(aplazame),
-      getWidgetHandler = function (_type, version, preferences) {
+      getWidgetHandler = function (type, version, preferences) {
+        if( type === 'raw' ) return widgetRaw;
+
         if( version === 3 && !preferences.custom_styles || version === 2 ) {
           return widgetIframe;
         }
 
-        if( version === 3 ) return widgetV3;
-
-        return widgetRaw;
+        return widgetV3;
       },
       amount_tools = require('../tools/amount-price'),
       color_tools = require('../tools/colors');

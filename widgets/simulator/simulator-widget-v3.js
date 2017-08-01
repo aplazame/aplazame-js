@@ -81,19 +81,20 @@ module.exports = function (widget) {
   var handler = {
     render: function () {
       unbind();
+      var type = widget.simulator.type;
       widget_el.innerHTML = renderWidget(widget.simulator);
 
-      if( widget.type === 'select' ) {
+      if( type === 'select' ) {
         return widget_el.querySelector('select').addEventListener('change', selectChange);
       }
 
-      if( widget.type === 'big-button' ) {
+      if( type === 'big-button' ) {
         widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', decreaseNumInstalments);
         widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', increaseNumInstalments);
         return;
       }
 
-      if( widget.type === 'button' ) {
+      if( type === 'button' ) {
         click_el = widget_el.querySelector('.aplazame-widget-instalments');
       }
 

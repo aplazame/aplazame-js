@@ -17,7 +17,37 @@ module.exports = function (widget) {
             textSelector('.aplazame-widget-choice-button-value', choice.num_instalments );
           }
         });
+      },
+      // inIframe = function  () {
+      //   try {
+      //     return window.self !== window.top;
+      //   } catch (e) {
+      //     return true;
+      //   }
+      // },
+      styles_link = document.createElement('link'),
+      onReady = function () {
+        window.removeEventListener('load', onReady);
+        window.removeEventListener('DOMContentLoaded', onReady);
+
+        styles_link.rel = 'stylesheet';
+        styles_link.href = widget.simulator.static_url + 'widgets/simulator/widget-v3.css';
+        styles_link.onload = function () {
+          widget_el.style.display = null;
+        };
+
+        document.head.appendChild(styles_link);
       };
+
+
+  // if( !widget.simulator.custom_styles ) {
+    widget_el.style.display = 'none';
+    if( document.readyState === 'complete' ) onReady();
+    else {
+      window.addEventListener('load', onReady);
+      window.addEventListener('DOMContentLoaded', onReady);
+    }
+  // }
 
   function onClick () {
     widget.showInfo();
@@ -35,9 +65,22 @@ module.exports = function (widget) {
     selectNumInstalments(widget.simulator.choice.num_instalments - 1);
   }
 
+  function unbind () {
+    click_el.removeEventListener('click', onClick);
+    if( widget_el.querySelector('select') ) {
+      widget_el.querySelector('select').removeEventListener('change', selectChange);
+    }
+    if( widget_el.querySelector('.aplazame-widget-choice-button-increase') ) {
+      widget_el.querySelector('.aplazame-widget-choice-button-increase').removeEventListener('click', increaseNumInstalments);
+    }
+    if( widget_el.querySelector('.aplazame-widget-choice-button-decrease') ) {
+      widget_el.querySelector('.aplazame-widget-choice-button-decrease').removeEventListener('click', decreaseNumInstalments);
+    }
+  }
+
   var handler = {
     render: function () {
-      handler.unbind();
+      unbind();
       widget_el.innerHTML = renderWidget(widget.simulator);
 
       if( widget.type === 'select' ) {
@@ -56,17 +99,9 @@ module.exports = function (widget) {
 
       click_el.addEventListener('click', onClick);
     },
-    unbind: function () {
-      click_el.removeEventListener('click', onClick);
-      if( widget_el.querySelector('select') ) {
-        widget_el.querySelector('select').removeEventListener('change', selectChange);
-      }
-      if( widget_el.querySelector('.aplazame-widget-choice-button-increase') ) {
-        widget_el.querySelector('.aplazame-widget-choice-button-increase').removeEventListener('click', increaseNumInstalments);
-      }
-      if( widget_el.querySelector('.aplazame-widget-choice-button-decrease') ) {
-        widget_el.querySelector('.aplazame-widget-choice-button-decrease').removeEventListener('click', decreaseNumInstalments);
-      }
+    detach: function () {
+      document.head.removeChild(styles_link);
+      unbind();
     }
   };
 

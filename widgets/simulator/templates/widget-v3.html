@@ -9,18 +9,18 @@
   <div class="aplazame-widget-instalments" <% if( $widget.type !== 'select' && $widget.type !== 'big-button' ){ %> data-action="showInfo"<% } %>>
 
     <% if( $widget.type === 'select' ){ %>
-    <select>
-      <% for ( var i = 0, n = choices.length ; i < n ; i++ ) { %>
-      <option value="<%= choices[i].num_instalments %>" <%= choices[i] == choice ? 'selected' : '' %>><span class="apz-price_widget-amount"><%= getPrice(choices[i].amount, currency) %>/mes</span> en <%= choices[i].num_instalments %> <%= choices[i].num_instalments > 1 ? 'cuotas' : 'cuota' %></option>
-      <% } %>
-    </select>
-
     <svg class="aplazame-widget-select-icon" version="1.1" viewBox="0 0 8 12" height="12" width="8">
       <g fill="none" fill-opacity="1" fill-rule="evenodd" stroke="currentColor" stroke-width="1" stroke-opacity="1" transform="translate(0.7521047,0.5)">
         <polyline points="0 2.5 3.21428571 0 6.5 2.5" />
         <polyline points="0 11 3.21428571 8.5 6.5 11" transform="matrix(1,0,0,-1,0,19.5)" />
       </g>
     </svg>
+
+    <select>
+      <% for ( var i = 0, n = choices.length ; i < n ; i++ ) { %>
+      <option value="<%= choices[i].num_instalments %>" <%= choices[i] == choice ? 'selected' : '' %>><span class="apz-price_widget-amount"><%= getPrice(choices[i].amount, currency) %>/mes</span> en <%= choices[i].num_instalments %> <%= choices[i].num_instalments > 1 ? 'cuotas' : 'cuota' %></option>
+      <% } %>
+    </select>
     <% } %>
 
     <span class="aplazame-widget-from">desde&nbsp;</span><!--

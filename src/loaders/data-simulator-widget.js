@@ -4,6 +4,7 @@ module.exports = function (aplazame) {
   var _ = aplazame._,
       modal = require('../apps/modal'),
       serial = 1,
+      api = require('../core/api'),
       widgetRaw = require('../../widgets/simulator/simulator-widget-raw'),
       widgetV2 = require('../../widgets/simulator/simulator-widget-v2'),
       widgetV3 = require('../../widgets/simulator/simulator-widget-v3'),
@@ -26,6 +27,7 @@ module.exports = function (aplazame) {
     this.id = serial++;
     this.el = widget_el;
     this.options = options || {};
+    this.api = api;
   }
 
   Widget.prototype.render = function (choices, data) {
@@ -34,14 +36,6 @@ module.exports = function (aplazame) {
     var widget = this,
         widget_version = data.widget.preferences && Number(data.widget.preferences.version) || 2,
         widget_type = data.widget.type;
-
-    if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
-    else {
-      if( widget.type !== widget_type || widget_version !== widget.version ) {
-        widget.handler.unbind();
-        widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
-      }
-    }
 
     widget.type = widget_type;
     widget.version = widget_version;
@@ -65,11 +59,21 @@ module.exports = function (aplazame) {
         getPrice: amount_tools.getPrice,
         lighten: color_tools.lightenHEX,
         currency: widget.currency,
+        static_url: api.staticUrl,
+        custom_styles: data.widget.styles,
       };
     }
 
     widget.simulator.choices = choices;
     widget.simulator.data = data;
+
+    if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
+    else {
+      if( widget.type !== widget_type || widget_version !== widget.version ) {
+        widget.handler.unbind();
+        widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
+      }
+    }
 
     widget.handler.render();
 

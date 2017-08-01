@@ -10,10 +10,8 @@ module.exports = function (widget) {
   }
 
   return {
-    render: function (choices, data) {
-      widget_el.innerHTML = renderWidget({
-        choices: choices, data: data
-      });
+    render: function () {
+      widget_el.innerHTML = renderWidget(widget.simulator);
 
       widget_el.addEventListener('click', onClick);
     },

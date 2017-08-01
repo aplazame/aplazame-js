@@ -6,14 +6,20 @@ module.exports = function (aplazame) {
       serial = 1,
       api = require('../core/api'),
       widgetRaw = require('../../widgets/simulator/simulator-widget-raw'),
-      widgetV2 = require('../../widgets/simulator/simulator-widget-v2'),
+      // widgetV2 = require('../../widgets/simulator/simulator-widget-v2'),
       widgetV3 = require('../../widgets/simulator/simulator-widget-v3'),
       widgetIframe = require('./data-simulator-iframe')(aplazame),
-      getWidgetHandler = function (type, version) {
-        return type === 'raw' ? widgetRaw : (version === 3 ? widgetV3 : widgetV2 );
+      getWidgetHandler = function (_type, version, preferences) {
+        if( version === 3 && !preferences.custom_styles || version === 2 ) {
+          return widgetIframe;
+        }
+
+        if( version === 3 ) return widgetV3;
+
+        return widgetRaw;
       },
-      amount_tools = require('../../src/tools/amount-price'),
-      color_tools = require('../../src/tools/colors');
+      amount_tools = require('../tools/amount-price'),
+      color_tools = require('../tools/colors');
 
   function maxInstalments (prev, choice) {
     if( prev === null ) {
@@ -35,13 +41,25 @@ module.exports = function (aplazame) {
 
     var widget = this,
         widget_version = data.widget.preferences && Number(data.widget.preferences.version) || 2,
-        widget_type = data.widget.type;
+        widget_type = data.widget.type,
+        simulator_data = {
+          type: widget_type,
+          version: widget_version,
+          preferences: data.widget.preferences || {},
+          choice: choices[choices.length - 1],
+          currency: 'EUR',
+          static_url: api.staticUrl,
+          custom_styles: data.widget.styles,
+          choices: choices,
+          data: data,
+        };
 
     widget.type = widget_type;
     widget.version = widget_version;
+    widget.simulator_data = simulator_data;
 
     if( widget.simulator ) {
-      widget.simulator.choice = (function (choices, num_instalments) {
+      simulator_data.choice = (function (choices, num_instalments) {
 
         var choice = choices[choices.length - 1];
         choices.forEach(function (_choice) {
@@ -51,27 +69,20 @@ module.exports = function (aplazame) {
 
       })(choices, widget.simulator.choice.num_instalments);
     } else {
-      widget.simulator = {
-        $widget: widget,
-        choice: choices[choices.length - 1],
-        preferences: data.widget.preferences || {},
-        getAmount: amount_tools.getAmount,
-        getPrice: amount_tools.getPrice,
-        lighten: color_tools.lightenHEX,
-        currency: widget.currency,
-        static_url: api.staticUrl,
-        custom_styles: data.widget.styles,
-      };
+      simulator_data.choice = choices[choices.length - 1];
+      widget.simulator = Object.create(simulator_data);
+      widget.simulator.$widget = widget;
+      widget.simulator.getAmount = amount_tools.getAmount;
+      widget.simulator.getPrice = amount_tools.getPrice;
+      widget.simulator.lighten = color_tools.lightenHEX;
+      widget.simulator.brightness = color_tools.brightness;
     }
 
-    widget.simulator.choices = choices;
-    widget.simulator.data = data;
-
-    if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
+    if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
     else {
       if( widget.type !== widget_type || widget_version !== widget.version ) {
         widget.handler.unbind();
-        widget.handler = getWidgetHandler(widget_type, widget_version)(widget);
+        widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
       }
     }
 

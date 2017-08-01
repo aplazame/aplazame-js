@@ -35,12 +35,14 @@ module.exports = function (aplazame) {
         current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
         updateAmount = function (amount, qty) {
-          console.log('updateAmount', amount, qty);
+          // console.log('updateAmount', amount, qty);
           current_amount = amount;
           if( qty !== undefined ) current_qty = qty;
+          widget_el.style.opacity = 0.5;
           aplazame.simulator( amount*( qty === undefined ? current_qty : qty ), simulator_options, function (_choices, _options) {
             if( qty !== undefined && qty !== current_qty ) return;
             widget.render(_choices, _options);
+            widget_el.style.opacity = null;
           });
         },
         onDomChanges = function () {

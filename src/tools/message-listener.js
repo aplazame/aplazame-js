@@ -12,9 +12,7 @@ window.addEventListener('message', function (e) {
   var message = e.data,
       listeners = messageTarget[message.aplazame];
 
-  if( !listeners ) {
-    return;
-  }
+  if( !listeners ) return;
 
   if( showLogs && !e.used ) {
     log('message', e, listeners);

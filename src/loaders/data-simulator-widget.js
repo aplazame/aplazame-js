@@ -7,6 +7,7 @@ module.exports = function (aplazame) {
       widgetRaw = require('../../widgets/simulator/simulator-widget-raw'),
       widgetV2 = require('../../widgets/simulator/simulator-widget-v2'),
       widgetV3 = require('../../widgets/simulator/simulator-widget-v3'),
+      widgetIframe = require('./data-simulator-iframe')(aplazame),
       getWidgetHandler = function (type, version) {
         return type === 'raw' ? widgetRaw : (version === 3 ? widgetV3 : widgetV2 );
       },

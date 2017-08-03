@@ -6,7 +6,7 @@ function compileTemplate (tmpl) {
     'var p=[],print=function(){p.push.apply(p,arguments);};' +
 
     // Introduce the data as local variables using with(){}
-    'with(obj){p.push(\'' +
+    'with(obj){ try{p.push(\'' +
 
     // Convert the template into pure JavaScript
     tmpl.trim()
@@ -16,7 +16,7 @@ function compileTemplate (tmpl) {
       .replace(/\t=(.*?)%>/g, '\',$1,\'')
       .split('\t').join('\');')
       .split('%>').join('p.push(\'')
-      .split('\r').join('\\\'') + '\');}return p.join(\'\');');
+      .split('\r').join('\\\'') + '\'); }catch(err){console.log(\'error\', err);} }return p.join(\'\');');
 }
 
 module.exports = function (nitro) {
@@ -26,11 +26,12 @@ module.exports = function (nitro) {
     nitro.dir('widgets/assets').copy('dist/widgets/assets');
   });
 
-  var path = require('path');
+  var path = require('path'),
+      tinyhtml = require('tinyhtml');
 
   nitro.task('widgets.js', function () {
     // nitro.file.write('.tmp/simulator/modal-info.js', 'module.exports = \'' + nitro.file.read('widgets/simulator/modal-info.html').replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
-    nitro.dir('widgets').load('{,**/}{templates,widgets_v1,widgets_v2}/*.html').each(function (f) {
+    nitro.dir('widgets').load('{,**/}templates/*.html').each(function (f) {
       nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.js') ), 'module.exports = \'' + f.src.replace(/\'/g, '\\\'').replace(/\n/g, '') + '\';' );
       nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.tmpl.js') ), 'module.exports = ' + compileTemplate( f.src ).toString() + ';' );
     });
@@ -49,7 +50,7 @@ module.exports = function (nitro) {
         });
 
     nitro.dir('widgets')
-      .load(['{,**/}*.html', '!{,**/}{templates,widgets_v1,widgets_v2}/*.html'])
+      .load(['{,**/}*.html', '!{,**/}templates/*.html'])
       .each(function (f) {
         f.src = nitro.template(f.src)(scope);
       })

@@ -30,28 +30,33 @@ module.exports = function (nitro) {
 
   // main tasks
 
-  nitro.task('build', ['git.branch', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets', 'js', 'demo', 'loading'], function () {
-    if( branch !== 'release' && !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
+  nitro.task('public-dist', function () {
+    nitro.dir.copy('dist', 'public/dist');
   });
 
-  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev'], function () {
+  nitro.task('build', ['git.branch', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets', 'js', 'demo', 'loading', 'public-dist']);
 
-    if( !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
+  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev', 'public-dist'], function () {
+
+    // if( !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
+    // if( !nitro.file.exists('public/dist') ) nitro.dir.copy('dist', 'public/dist');
+
+    nitro.watch('dist', ['public-dist']);
 
     nitro.watch('src')
       .when('{,**/}*.js', ['lint', 'js:dev'])
       .when('{,**/}*.sass', ['css-hacks', 'js:dev', 'loading:dev']);
 
     nitro.watch('widgets')
-      .when('{,**/}*.js', 'widgets.js:dev')
-      .when('{,**/}modal-*.html', 'widgets.js:dev')
+      .when('simulator/{,**/}*.js', ['widgets.js:dev', 'js:dev'])
+      .when('simulator/{,**/}templates/*.html', ['widgets.html:dev', 'widgets.js:dev', 'js:dev'])
       .when(['{,**/}*.html', '!{,**/}modal-*.html'], ['widgets.html:dev', 'widgets.js:dev'])
       .when('{,**/}*.{sass,scss}', 'widgets.sass:dev')
       .when('widgets/assets/**', 'widgets.assets:dev');
 
     nitro.watch('demo')
       .when('{,**/}*.js', ['demo-lintjs', 'demo-js:dev'])
-      .when('{,**/}*.html', ['demo-templates:dev', 'loading:dev'])
+      .when('{,**/}*.{html,yml}', ['demo-templates:dev', 'loading:dev'])
       .when('{,**/}*.{sass,scss}', ['demo-sass:dev']);
 
     nitro.watch('.make', function () {

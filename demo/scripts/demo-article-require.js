@@ -2,7 +2,7 @@ require(['aplazame'], function (aplazame) {
 
   aplazame.init({
     sandbox: true,
-    publicKey: '12093289b594f50d3971e4719eedd5c314ceb6ba'
+    publicKey: document.body.getAttribute('data-public-key')
   });
 
   console.log('demo-article-require', arguments);
@@ -21,14 +21,12 @@ require(['aplazame'], function (aplazame) {
       return amount2string(amount) + '€';
     }
 
-    var price = document.querySelector('[itemprop="price"]'),
-        // priceCents = price ? Number( price.getAttribute('content') ) : 0,
-        choices = document.querySelectorAll('.article-type-choices .article-type input');
+    var choices = document.querySelectorAll('.article-type-choices .article-type input');
 
     // console.log('price', price);
 
     [].forEach.call(choices, function (choice) {
-      choice.addEventListener('change', function (e) {
+      choice.addEventListener('change', function (_e) {
         var price = document.querySelector('[itemprop="price"]'),
             factor = Number( price.getAttribute('data-price-' + this.value) ) || 1;
 
@@ -103,7 +101,7 @@ require(['aplazame'], function (aplazame) {
     // var http = require('http-browser'),
     //     checkoutData = http(params['checkout-json']);
 
-    function randOrderId (timeout) {
+    function randOrderId (_timeout) {
       return 'test-' + new Date().getTime();
     }
 

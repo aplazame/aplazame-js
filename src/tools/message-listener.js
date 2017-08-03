@@ -1,15 +1,18 @@
 
 var messageTarget = {},
     showLogs = false,
-    log = require('./log');
+    log = require('./log'),
+    _remove = function (list, iteratee, this_arg) {
+      for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+        if( iteratee.call(this_arg || list[i], list[i], i) ) list.splice(i, 1);
+      }
+    };
 
 window.addEventListener('message', function (e) {
   var message = e.data,
       listeners = messageTarget[message.aplazame];
 
-  if( !listeners ) {
-    return;
-  }
+  if( !listeners ) return;
 
   if( showLogs && !e.used ) {
     log('message', e, listeners);
@@ -34,10 +37,9 @@ function onMessage (target, handler, logs) {
 onMessage.off = function (target, handler) {
   if( typeof target === 'string' && handler instanceof Function ) {
     messageTarget[target] = messageTarget[target] || [];
-    var i = messageTarget[target].indexOf(handler);
-    if( i !== -1 ) {
-      messageTarget[target].splice(i,1);
-    }
+    _remove(messageTarget[target] || [], function (_handler) {
+      return _handler === handler;
+    });
   }
 };
 

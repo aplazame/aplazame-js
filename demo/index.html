@@ -171,7 +171,7 @@
     </footer>
 
     <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
-            data-aplazame="$if{ country === 'ES' }12093289b594f50d3971e4719eedd5c314ceb6ba{:}6d4d788b395a39c4b22a845595ea22509e032361{/}"
+            data-aplazame="${ public_key }"
             data-sandbox="true"
             data-callback="apzReady"
             $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com"{/}

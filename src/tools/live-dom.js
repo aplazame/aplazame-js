@@ -25,14 +25,23 @@ var suscriptors = [],
 function initLiveDOM () {
 
   require('./browser-tools').ready(function () {
-    document.body.addEventListener('DOMSubtreeModified', function (event) {
+    function nodeChanged (event) {
+      console.log('nodeChanged', event);
       if( waiting ) {
         lastTarget = event.target;
         return;
       }
       waitTimer();
       triggerListeners(event.target);
-    }, false);
+    }
+
+    if( window.MutationObserver ) {
+      new MutationObserver(function(mutations) {
+        mutations.forEach(nodeChanged);
+      }).observe(document.body, { childList: true, subtree: true });
+    } else {
+      document.body.addEventListener('DOMSubtreeModified', nodeChanged);
+    }
   });
 
 }

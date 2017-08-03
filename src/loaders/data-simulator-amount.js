@@ -2,9 +2,7 @@
 module.exports = function (aplazame) {
 
   var _ = aplazame._,
-      Events = require('azazel'),
-      log = require('../tools/log'),
-      $live = require('live-dom');
+      log = require('../tools/log');
 
   function getQty (qtySelector) {
     if( !_.isString(qtySelector) ) {

@@ -23,6 +23,16 @@ deploy:
       branch: master
 
   rsync:
+    user: ubuntu
+    host: demo.aplazame.org
+    source: public/
+    target: ~/www/js-demo
+    delete: true
+    recursive: true
+    when:
+      branch: demo
+
+  rsync:
     user: $$DEPLOY_USER
     host: aplazame.com
     target: $$DEPLOY_PATH

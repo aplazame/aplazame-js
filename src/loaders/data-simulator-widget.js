@@ -55,11 +55,13 @@ module.exports = function (aplazame) {
           version: widget_version,
           preferences: data.widget.preferences || {},
           choice: choices[choices.length - 1],
-          currency: 'EUR',
           static_url: api.staticUrl,
           custom_styles: data.widget.styles,
           choices: choices,
           data: data,
+          // options: widget.options,
+          currency: widget.options.currency,
+          country: widget.options.country,
         };
 
     widget.type = widget_type;
@@ -108,17 +110,16 @@ module.exports = function (aplazame) {
 
     modal({
       size: 'lg',
-      card: {
-        className: 'has-cta modal-instalments-info _v' + widget.version
-      },
+      card: { className: 'has-cta modal-instalments-info _v3' },
       template: _renderModalInfo({
         widget: widget,
         max_choice: choices.reduce(maxInstalments, null),
         max_tae_choice: choices.reduce(maxAnnualEquivalent, null),
         choices: choices,
         data: data,
-        currency: widget.options.currency || 'EUR',
-        country: widget.country || 'ES',
+        _options: widget.options,
+        currency: widget.options.currency,
+        country: widget.options.country,
         getAmount: _.getAmount,
         months: function (m) {
           return m > 1 ? 'meses' : 'mes';

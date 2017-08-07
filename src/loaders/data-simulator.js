@@ -30,7 +30,10 @@ module.exports = function (aplazame) {
   $live('[data-aplazame-simulator]', function (widget_el) {
 
     var simulator_options = { view: widget_el.getAttribute('data-view') || 'product' },
-        widget = new Widget(widget_el),
+        widget = new Widget(widget_el, {
+          currency:  widget_el.getAttribute('data-currency') || 'EUR',
+          country:  widget_el.getAttribute('data-country') || 'ES',
+        }),
         amountGetter = _amountGetter(widget_el),
         current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,

@@ -2,18 +2,16 @@
 
   <header class="aplazame"></header>
 
-  <% if( widget.version === 3 ) { %>
   <img src="/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">
-  <% } %>
 
   <section class="info">
     Elige la cuota que más te convenga
   </section>
 
   <div class="choices-wrapper">
-    <% for( var i = choices.length - 1 ; i >= 0 ; i-- ) { %>
-    <button type="button" class="choice<% if( widget.version === 3 && choices[i].annual_equivalent < max_tae_choice.annual_equivalent ) { %> _on_campaign<% } %>">
-      <% if( widget.version === 3 && choices[i].annual_equivalent < max_tae_choice.annual_equivalent ) { %>
+    <% for( var i = 0, n = choices.length; i < n ; i++ ) { %>
+    <button type="button" class="choice<% if( choices[i].annual_equivalent < max_tae_choice.annual_equivalent ) { %> _on_campaign<% } %>">
+      <% if( choices[i].annual_equivalent < max_tae_choice.annual_equivalent ) { %>
       <div class="tae-ribbon">
         <img src="/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
         <div><%= getAmount(choices[i].annual_equivalent) + '% TAE' %></div>
@@ -26,36 +24,38 @@
         <div class="amount"><!--
           <% if( currency === 'EUR' )  { %>
           --><span class="amount-amount"><%= getAmount(choices[i].amount, ',', '.') %></span><!--
-          --><span class="amount-currency">€</span><!--
+          --><span class="amount-currency">&nbsp;€</span><!--
           <% } else { %>
           --><span class="amount-currency">$</span><!--
           --><span class="amount-amount"><%= getAmount(choices[i].amount, '.', ',') %></span><!--
           <% } %>
           --><span class="amount-per-month">/mes</span>
         </div>
-        <% if( widget.version === 3 ) { %>
-        <div class="amount">
-          <span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
-          --><span class="amount-currency">&nbsp;€ entrada</span>
+        <div class="amount"><!--
+          <% if( currency === 'EUR' )  { %>
+            --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
+            --><span class="amount-currency">&nbsp;€</span><!--
+          <% } else { %>
+          --><span class="amount-currency">$</span><!--
+            --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
+          <% } %>
+        --><span>&nbsp;entrada</span>
         </div>
-        <% } %>
       </div>
     </button>
     <% } %>
-    <% if( widget.version === 3 ) { %>
     <img src="/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">
-    <% } %>
   </div>
 
-  <section class="tae"><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(max_tae_choice.annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente</section>
+  <section class="tae"><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(max_tae_choice.annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>
 
   <section class="how-it-works">
     <header>¿Cómo funciona?</header>
     <div class="info-wrapper">
       <div class="info">
         <h3>Elige Aplazame</h3>
-        <p>en la tienda, cuando vayas a pagar el pedido.</p>
-        <p>Puedes financiar compras de <%= getAmount(9900) %> € hasta <%= getAmount(data.max_credit_amount) %> €.</p>
+        <!-- <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras de <%= getAmount(9900) %> € hasta <%= parseInt(data.max_credit_amount/100) %> €.</p> -->
+        <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras hasta&nbsp;<span style="white-space: nowrap;"><%= currency === 'EUR' ? ( parseInt(data.max_credit_amount/100) + ' €' ) : ( '$' + parseInt(data.max_credit_amount/100) ) %></span>.</p>
       </div>
       <div class="info">
         <h3>Decide cómo quieres pagar</h3>

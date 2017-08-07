@@ -6,7 +6,7 @@ var message_listeners = {}, no_listeners = [], simulator_id = -1,
     color_tools = require('../../src/tools/colors'),
     widget = {
       id: simulator_id,
-      el: document.body,
+      el: document.body.querySelector('#main') || document.body,
       showInfo: function () {
         postMessage('widget:showInfo');
       }

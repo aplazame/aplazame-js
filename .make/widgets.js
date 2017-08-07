@@ -26,8 +26,8 @@ module.exports = function (nitro) {
     nitro.dir('widgets/assets').copy('dist/widgets/assets');
   });
 
-  var path = require('path'),
-      tinyhtml = require('tinyhtml');
+  var path = require('path');
+  // var tinyhtml = require('tinyhtml');
 
   nitro.task('widgets.js', function () {
     // nitro.file.write('.tmp/simulator/modal-info.js', 'module.exports = \'' + nitro.file.read('widgets/simulator/modal-info.html').replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
@@ -47,6 +47,7 @@ module.exports = function (nitro) {
         scope = nitro.tools.scope({
           dev: dev, pkg: pkg,
           version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
+          timestamp: new Date().getTime(),
         });
 
     nitro.dir('widgets')

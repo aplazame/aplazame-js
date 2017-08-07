@@ -3,8 +3,10 @@
 $path-fonts: '../assets/fonts'
 $path-images: '../assets/images'
 
+@import 'ng-aplazame/styles/core-no-styles'
+
 [data-aplazame-simulator]
-  @extend %clear-styles
+  @include all(initial)
   font-family: Montserrat, Arial
   font-size: 14px
 
@@ -17,7 +19,5 @@ $path-images: '../assets/images'
 //     text-align: left
 //   &.aplazame-widget--align-right
 //     text-align: right
-
-@import 'ng-aplazame/styles/core-no-styles'
 
 @import 'ng-aplazame/ng/components/widget-v3/widget-v3'

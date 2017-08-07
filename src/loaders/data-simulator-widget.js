@@ -29,6 +29,14 @@ module.exports = function (aplazame) {
     }
   }
 
+  function maxAnnualEquivalent (prev, choice) {
+    if( prev === null ) {
+      return choice;
+    } else {
+      return choice.annual_equivalent > prev.annual_equivalent ? choice : prev;
+    }
+  }
+
   function Widget (widget_el, options) {
     this.id = serial++;
     this.el = widget_el;
@@ -96,13 +104,17 @@ module.exports = function (aplazame) {
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 
+    console.log('widget.data', data);
+
     modal({
       size: 'lg',
       card: {
-        className: 'modal-instalments-info'
+        className: 'has-cta modal-instalments-info _v' + widget.version
       },
       template: _renderModalInfo({
-        selectedChoice: choices.reduce(maxInstalments, null),
+        widget: widget,
+        max_choice: choices.reduce(maxInstalments, null),
+        max_tae_choice: choices.reduce(maxAnnualEquivalent, null),
         choices: choices,
         data: data,
         currency: widget.options.currency || 'EUR',

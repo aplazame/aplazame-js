@@ -75,21 +75,21 @@
 </div>
 
 <style rel="stylesheet">
-  .aplazame-widget { color: <%= preferences.text_color %>; }
+  .aplazame-widget.aplazame-styles { color: <%= preferences.text_color %>; }
 
-  .aplazame-widget.aplazame-widget--type-big-button .aplazame-widget-container,
-  .aplazame-widget.aplazame-widget--type-button .aplazame-widget-instalments,
-  .aplazame-widget.aplazame-widget--type-select .aplazame-widget-instalments {
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments,
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments {
     color: <%= preferences.btn_text_color %>;
   }
 
-  .aplazame-widget.aplazame-widget--type-big-button .aplazame-widget-container,
-  .aplazame-widget.aplazame-widget--type-button .aplazame-widget-instalments::before,
-  .aplazame-widget.aplazame-widget--type-select .aplazame-widget-instalments::before {
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments::before,
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments::before {
     background-color: <%= preferences.btn_bg_color %>;
   }
-  .aplazame-widget.aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
-  .aplazame-widget.aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
+  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
     background-color: <%= lighten(preferences.btn_bg_color, -5) %>;
   }
 </style>

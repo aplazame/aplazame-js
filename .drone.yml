@@ -33,6 +33,16 @@ deploy:
       branch: demo
 
   rsync:
+    user: ubuntu
+    host: demo.aplazame.org
+    source: public/
+    target: ~/www/tmp/js-widget
+    delete: true
+    recursive: true
+    when:
+      branch: widget-v3
+
+  rsync:
     user: $$DEPLOY_USER
     host: aplazame.com
     target: $$DEPLOY_PATH

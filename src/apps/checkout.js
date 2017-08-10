@@ -134,7 +134,7 @@ function checkout (options) {
 
         switch( message.event ) {
           case 'merchant':
-            iframe.style.display = null;
+            iframe.style.display = _.remove_style;
             e.source.postMessage({
               checkout: options
             }, '*');

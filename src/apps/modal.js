@@ -61,7 +61,7 @@ _.onMessage('modal', function (e, message) {
       modal(message.data);
       break;
     case 'opening':
-      modal.iframe.style.display = null;
+      modal.iframe.style.display = _.remove_style;
       break;
     case 'opened':
       lastScrollTop = _.scrollTop();

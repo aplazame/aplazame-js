@@ -5,6 +5,7 @@ module.exports = function (widget) {
 
   var widget_el = widget.el,
       click_el = widget_el,
+      remove_style = / Trident\//.test(navigator.userAgent) ? '' : null,
       textSelector = function (selector, text) {
         if( widget_el.querySelector(selector) ) widget_el.querySelector(selector).textContent = text;
       },
@@ -33,7 +34,7 @@ module.exports = function (widget) {
         styles_link.rel = 'stylesheet';
         styles_link.href = widget.simulator.static_url + 'widgets/simulator/widget-v3.css';
         styles_link.onload = function () {
-          widget_el.style.display = null;
+          widget_el.style.display = remove_style;
         };
 
         document.head.appendChild(styles_link);
@@ -80,9 +81,12 @@ module.exports = function (widget) {
 
   var handler = {
     render: function () {
+      console.log('checkpoint');
       unbind();
       var type = widget.simulator.type;
       widget_el.innerHTML = renderWidget(widget.simulator);
+
+      console.log('checkpoint');
 
       if( type === 'select' ) {
         return widget_el.querySelector('select').addEventListener('change', selectChange);

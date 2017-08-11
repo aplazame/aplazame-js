@@ -30,6 +30,8 @@ form.addEventListener('submit', function (e) {
   var now = new Date(),
       payday = new Date( now.getFullYear(), now.getMonth(), now.getDate() + 20 ).getDate();
 
+  if( payday > 28 ) payday -= 28;
+
   aplazame.simulator(currentAmount, { noCache: true, payday: payday }, function (choices) {
     console.log('simulator', currentAmount, choices);
     resultsWrapper.querySelector('.section-title > h3').innerHTML = 'Resultados';

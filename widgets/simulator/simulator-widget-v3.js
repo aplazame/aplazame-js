@@ -41,14 +41,14 @@ module.exports = function (widget) {
       };
 
 
-  // if( !widget.simulator.custom_styles ) {
+  if( !widget.simulator.preferences.custom_styles || widget.type !== 'text' ) {
     widget_el.style.display = 'none';
     if( document.readyState === 'complete' ) onReady();
     else {
       window.addEventListener('load', onReady);
       window.addEventListener('DOMContentLoaded', onReady);
     }
-  // }
+  }
 
   function onClick () {
     widget.showInfo();
@@ -81,12 +81,10 @@ module.exports = function (widget) {
 
   var handler = {
     render: function () {
-      console.log('checkpoint');
+      console.log('widget', widget);
       unbind();
       var type = widget.simulator.type;
       widget_el.innerHTML = renderWidget(widget.simulator);
-
-      console.log('checkpoint');
 
       if( type === 'select' ) {
         return widget_el.querySelector('select').addEventListener('change', selectChange);

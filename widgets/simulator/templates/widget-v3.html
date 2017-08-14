@@ -74,6 +74,7 @@
 
 </div>
 
+<% if( !preferences.custom_styles || type !== 'text' ){ %>
 <style rel="stylesheet">
   .aplazame-widget.aplazame-styles { color: <%= preferences.text_color %>; }
 
@@ -93,3 +94,6 @@
     background-color: <%= lighten(preferences.btn_bg_color, -5) %>;
   }
 </style>
+<% } %>
+
+<style rel="stylesheet"><%= custom_styles %></style>

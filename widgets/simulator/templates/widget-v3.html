@@ -27,7 +27,7 @@
     --><strong class="aplazame-widget-amount"><!--
       <% if( currency === 'EUR' )  { %>
       --><span class="aplazame-widget-price"><%= getAmount(choice.amount, ',', '.') %></span><!--
-      --><span class="aplazame-widget-currency">&nbsp;€</span><!--
+      --><span class="aplazame-widget-currency">€</span><!--
       <% } else { %>
       --><span class="aplazame-widget-currency">$</span><!--
       --><span class="aplazame-widget-price"><%= getAmount(choice.amount, '.', ',') %></span><!--
@@ -35,10 +35,10 @@
     --></strong><!--
     --><sub class="aplazame-widget-per-month">/mes</sub><!--
     --><span class="aplazame-widget-instalments-wrapper"><!--
-    --><span>&nbsp;en&nbsp;</span><!--
+      --><span class="aplazame-widget-instalments-pre-in">&nbsp;en&nbsp;</span><!--
       --><em class="aplazame-widget-instalments-num"><%= choice.num_instalments %></em><!--
-      --><span>&nbsp;cuotas</span>
-    </span>
+      --><span class="aplazame-widget-instalments-post-instalments">&nbsp;cuotas</span><!--
+    --></span>
 
   </div>
 
@@ -95,5 +95,6 @@
   }
 </style>
 <% } %>
-
+<% if( preferences.custom_styles ){ %>
 <style rel="stylesheet"><%= custom_styles %></style>
+<% } %>

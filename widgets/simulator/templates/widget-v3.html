@@ -1,9 +1,9 @@
-<div class="aplazame-widget aplazame-styles aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %>">
+<div class="aplazame-widget aplazame-styles aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
 
   <div class="aplazame-widget-container">
 
   <% if( preferences.smart_title ) { %>
-    <div class="aplazame-widget-smart-title">Consíguelo sin intereses</div>
+    <div class="aplazame-widget-smart-title"><% if( choice.annual_equivalent === 0 ) { %>¡Consíguelo sin intereses!<% } else { %>Págalo a plazos<% } %></div>
   <% } %>
 
   <div class="aplazame-widget-instalments" <% if( type !== 'select' && type !== 'big-button' ){ %> data-action="showInfo"<% } %>>

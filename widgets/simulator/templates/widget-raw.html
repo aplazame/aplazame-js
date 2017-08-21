@@ -14,12 +14,12 @@
 
   --><sub class="aplazame-widget-per-month">/mes</sub><!--
 
-  --><span class="aplazame-widget-instalments-wrapper">
-    <span>&nbsp;en&nbsp;</span>
-    <em class="aplazame-widget-instalments-num"><%= choice.num_instalments %></em>
-    <span>&nbsp;<%= choice.num_instalments === 1 ? 'cuota' : 'cuotas' %></span>
-  </span>
+  --><span class="aplazame-widget-instalments-wrapper"><!--
+  --><span>&nbsp;en&nbsp;</span><!--
+    --><em class="aplazame-widget-instalments-num"><%= choice.num_instalments %></em><!--
+    --><span>&nbsp;<%= choice.num_instalments === 1 ? 'cuota' : 'cuotas' %></span><!--
+  --></span>
 
 </div>
 
-<style rel="stylesheet"><%= options.widget.styles %></style>
+<style rel="stylesheet"><%= custom_styles %></style>

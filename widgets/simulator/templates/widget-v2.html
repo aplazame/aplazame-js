@@ -18,9 +18,9 @@
         <span class="from">Desde&nbsp;</span><!--
 
         --><strong class="amount"><!--
-          <% if( currency === 'EUR' ) { %>
+          <% if( currency === 'EUR' )  { %>
           --><span class="price"><%= getAmount(choice.amount, ',', '.') %></span><!--
-          --><span class="currency">€</span><!--
+          --><span class="currency">&nbsp;€</span><!--
           <% } else { %>
           --><span class="currency">$</span><!--
           --><span class="price"><%= getAmount(choice.amount, '.', ',') %></span><!--

@@ -1,0 +1,23 @@
+// @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700')
+
+$path-fonts: '../assets/fonts'
+$path-images: '../assets/images'
+
+@import 'ng-aplazame/styles/core-no-styles'
+
+[data-aplazame-simulator]
+  @include all(initial)
+  font-family: Montserrat, Arial
+  font-size: 14px
+
+// .aplazame-widget
+//   all: initial
+//
+//   &.aplazame-widget--align-center
+//     text-align: center
+//   &.aplazame-widget--align-left
+//     text-align: left
+//   &.aplazame-widget--align-right
+//     text-align: right
+
+@import 'ng-aplazame/ng/components/widget-v3/widget-v3'

@@ -14,9 +14,13 @@ module.exports = function (aplazame) {
         }
       },
       onNodeChanges = window.MutationObserver ? function (onNodeChanged) {
-        new MutationObserver(function(mutations) {
-          mutations.forEach( onNodeChanged );
-        }).observe(document.body, { childList: true, subtree: true });
+        try{
+          new MutationObserver(function(mutations) {
+            mutations.forEach( onNodeChanged );
+          }).observe(document.body, { childList: true, subtree: true });
+        } catch(err) {
+          document.body.addEventListener('DOMSubtreeModified', onNodeChanged);
+        }
       } : function (onNodeChanged) {
         document.body.addEventListener('DOMSubtreeModified', onNodeChanged);
       };

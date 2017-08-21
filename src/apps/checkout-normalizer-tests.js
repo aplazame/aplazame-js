@@ -86,6 +86,7 @@ describe('checkout normalizer', function () {
     assert.equal(location.replace(), '/');
 
     delete checkout.merchant.onSuccess;
+    delete checkout.merchant.onPending;
     delete checkout.merchant.onError;
     delete checkout.merchant.onDismiss;
 

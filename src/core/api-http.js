@@ -20,6 +20,8 @@ var apzVersion = require('../../.tmp/aplazame-version'),
       return 'Bearer ' + config.publicKey;
     };
 
+http.config({ headers: { Accept: 'application/json' } });
+
 var apiHttp = {};
 
 _.each(['get', 'delete'], function (method) {

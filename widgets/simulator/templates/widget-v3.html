@@ -1,9 +1,9 @@
-<div class="aplazame-widget aplazame-styles aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %>">
+<div class="aplazame-widget aplazame-styles aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
 
   <div class="aplazame-widget-container">
 
   <% if( preferences.smart_title ) { %>
-    <div class="aplazame-widget-smart-title">Consíguelo sin intereses</div>
+    <div class="aplazame-widget-smart-title"><% if( choice.annual_equivalent === 0 ) { %>¡Consíguelo sin intereses!<% } else { %>Págalo a plazos<% } %></div>
   <% } %>
 
   <div class="aplazame-widget-instalments" <% if( type !== 'select' && type !== 'big-button' ){ %> data-action="showInfo"<% } %>>
@@ -27,7 +27,7 @@
     --><strong class="aplazame-widget-amount"><!--
       <% if( currency === 'EUR' )  { %>
       --><span class="aplazame-widget-price"><%= getAmount(choice.amount, ',', '.') %></span><!--
-      --><span class="aplazame-widget-currency">&nbsp;€</span><!--
+      --><span class="aplazame-widget-currency">€</span><!--
       <% } else { %>
       --><span class="aplazame-widget-currency">$</span><!--
       --><span class="aplazame-widget-price"><%= getAmount(choice.amount, '.', ',') %></span><!--
@@ -35,10 +35,10 @@
     --></strong><!--
     --><sub class="aplazame-widget-per-month">/mes</sub><!--
     --><span class="aplazame-widget-instalments-wrapper"><!--
-    --><span>&nbsp;en&nbsp;</span><!--
+      --><span class="aplazame-widget-instalments-pre-in">&nbsp;en&nbsp;</span><!--
       --><em class="aplazame-widget-instalments-num"><%= choice.num_instalments %></em><!--
-      --><span>&nbsp;cuotas</span>
-    </span>
+      --><span class="aplazame-widget-instalments-post-instalments">&nbsp;cuotas</span><!--
+    --></span>
 
   </div>
 
@@ -74,6 +74,7 @@
 
 </div>
 
+<% if( !preferences.custom_styles || type !== 'text' ){ %>
 <style rel="stylesheet">
   .aplazame-widget.aplazame-styles { color: <%= preferences.text_color %>; }
 
@@ -93,3 +94,7 @@
     background-color: <%= lighten(preferences.btn_bg_color, -5) %>;
   }
 </style>
+<% } %>
+<% if( preferences.custom_styles ){ %>
+<style rel="stylesheet"><%= custom_styles %></style>
+<% } %>

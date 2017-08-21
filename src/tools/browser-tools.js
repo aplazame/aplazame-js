@@ -133,6 +133,8 @@ function writeIframe (iframe, content) {
   iframeDoc.close();
 }
 
+var remove_style = / Trident\//.test(navigator.userAgent) ? '' : null;
+
 function getIFrame (iframeStyles) {
   var iframe = document.createElement('iframe');
   require('nitro-tools/extend').extend(iframe.style, iframeStyles || {});
@@ -140,7 +142,7 @@ function getIFrame (iframeStyles) {
   iframe.frameBorder = '0';
   // iframe.style.display = 'none';
   iframe.onload = function () {
-    iframe.style.display = null;
+    iframe.style.display = remove_style;
   };
   return iframe;
 }

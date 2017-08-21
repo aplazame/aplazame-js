@@ -1,5 +1,11 @@
 'use strict';
 
+function _locationReplaceFn ( location, href ) {
+  return function () {
+    location.replace(href);
+  };
+}
+
 function checkoutNormalizer(checkout, location, api) {
   checkout.origin = {
     host: location.host,
@@ -25,20 +31,18 @@ function checkoutNormalizer(checkout, location, api) {
   if (!checkout.merchant.onSuccess && !checkout.merchant.success_url) {
     throw new Error('success_url missing');
   }
-  checkout.merchant.onSuccess = checkout.merchant.onSuccess || function () {
-    location.replace(checkout.merchant.success_url);
-  };
+  checkout.merchant.onSuccess = checkout.merchant.onSuccess || _locationReplaceFn(location, checkout.merchant.success_url);
 
   if (!checkout.merchant.onError && !checkout.merchant.cancel_url) {
     throw new Error('cancel_url missing');
   }
-  checkout.merchant.onError = checkout.merchant.onError || function () {
-    location.replace(checkout.merchant.cancel_url);
-  };
+  checkout.merchant.onError = checkout.merchant.onError || _locationReplaceFn(location, checkout.merchant.cancel_url);
 
-  checkout.merchant.onDismiss = checkout.merchant.onDismiss || function () {
-    location.replace(checkout.merchant.checkout_url || '/');
-  };
+  checkout.merchant.onDismiss = checkout.merchant.onDismiss || _locationReplaceFn(location, checkout.merchant.checkout_url || '/');
+
+  if( !checkout.merchant.onPending ) {
+    checkout.merchant.onPending = checkout.merchant.pending_url ? _locationReplaceFn(location, checkout.merchant.pending_url) : checkout.merchant.onDismiss;
+  }
 
   if (checkout.customer) {
     if (checkout.customer.birthday) {

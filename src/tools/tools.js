@@ -8,6 +8,7 @@ _.extend(_,
   require('./browser-tools'),
   require('./amount-price'),
   {
+    remove_style: / Trident\//.test(navigator.userAgent) ? '' : null,
     template: require('./template'),
     onMessage: require('./message-listener'),
     deserialize: require('./deserialize')

@@ -22,6 +22,6 @@
     "tests"
   ],
   "devDependencies": {
-    "ng-aplazame": "git@github.com:aplazame/ng-aplazame.git#0.3.43"
+    "ng-aplazame": "git@github.com:aplazame/ng-aplazame.git#0.3.54"
   }
 }

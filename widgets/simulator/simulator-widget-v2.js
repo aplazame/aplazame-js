@@ -13,7 +13,7 @@ module.exports = function (widget) {
     render: function () {
       widget_el.innerHTML = renderWidget(widget.simulator);
 
-      widget_el.addEventListener('click', onClick);
+      (widget_el.querySelector('button') || widget_el).addEventListener('click', onClick);
     },
     unbind: function () {
       widget_el.removeEventListener('click', onClick);

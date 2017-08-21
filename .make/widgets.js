@@ -32,7 +32,11 @@ module.exports = function (nitro) {
   nitro.task('widgets.js', function () {
     // nitro.file.write('.tmp/simulator/modal-info.js', 'module.exports = \'' + nitro.file.read('widgets/simulator/modal-info.html').replace(/\'/, '\\\'').replace(/\n/g, '') + '\';' );
     nitro.dir('widgets').load('{,**/}templates/*.html').each(function (f) {
+      // var src = f.src.replace(/>([\s\S]*?)</g, function (_matched, content) { return '>' + content.trim(/^\s*|\s*$/g, '') + '<'; });
+      // console.log('widget tmpl', f.path, '\n' + src );
+
       nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.js') ), 'module.exports = \'' + f.src.replace(/\'/g, '\\\'').replace(/\n/g, '') + '\';' );
+      // nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.tmpl.js') ), 'module.exports = ' + compileTemplate( f.src.replace(/<!--[\s\S]*?-->/g, '') ).toString() + ';' );
       nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.tmpl.js') ), 'module.exports = ' + compileTemplate( f.src ).toString() + ';' );
     });
 

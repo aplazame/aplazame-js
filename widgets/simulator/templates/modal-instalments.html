@@ -14,7 +14,7 @@
       <% if( choices[i].annual_equivalent < max_tae_choice.annual_equivalent ) { %>
       <div class="tae-ribbon">
         <img src="/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
-        <div><%= getAmount(choices[i].annual_equivalent) + '% TAE' %></div>
+        <div><%= getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' %></div>
       </div>
       <% } %>
       <div class="wrapper">

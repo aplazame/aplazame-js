@@ -2,7 +2,7 @@
 
   <header class="aplazame"></header>
 
-  <img src="/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">
+  <img src="<%= static_url %>/widgets/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">
 
   <section class="info">
     Elige la cuota que más te convenga
@@ -13,7 +13,7 @@
     <button type="button" class="choice<% if( choices[i].annual_equivalent < max_tae_choice.annual_equivalent ) { %> _on_campaign<% } %>">
       <% if( choices[i].annual_equivalent < max_tae_choice.annual_equivalent ) { %>
       <div class="tae-ribbon">
-        <img src="/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
+        <img src="<%= static_url %>/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
         <div><%= getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' %></div>
       </div>
       <% } %>
@@ -44,7 +44,7 @@
       </div>
     </button>
     <% } %>
-    <img src="/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">
+    <img src="<%= static_url %>/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">
   </div>
 
   <section class="tae"><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(max_tae_choice.annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>

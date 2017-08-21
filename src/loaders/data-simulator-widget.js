@@ -117,6 +117,7 @@ module.exports = function (aplazame) {
         max_tae_choice: choices.reduce(maxAnnualEquivalent, null),
         choices: choices,
         data: data,
+        static_url: api.staticUrl,
         _options: widget.options,
         currency: widget.options.currency,
         country: widget.options.country,

@@ -49,26 +49,25 @@ module.exports = function (aplazame) {
 
     var widget = this,
         widget_version = data.widget.preferences && Number(data.widget.preferences.version) || 2,
-        widget_type = data.widget.type,
-        simulator_data = {
-          type: widget_type,
-          version: widget_version,
-          preferences: data.widget.preferences || {},
-          choice: choices[choices.length - 1],
-          static_url: api.staticUrl,
-          custom_styles: data.widget.styles,
-          choices: choices,
-          data: data,
-          // options: widget.options,
-          currency: widget.options.currency,
-          country: widget.options.country,
-        };
+        widget_type = data.widget.type;
 
     widget.type = widget_type;
     widget.version = widget_version;
+
+    var simulator_data = widget.simulator_data || {
+      type: widget_type,
+      version: widget_version,
+      preferences: data.widget.preferences || {},
+      static_url: api.staticUrl,
+      custom_styles: data.widget.styles,
+      data: data,
+      currency: widget.options.currency,
+      country: widget.options.country,
+    };
     widget.simulator_data = simulator_data;
 
     if( widget.simulator ) {
+      simulator_data.choices = choices;
       simulator_data.choice = (function (choices, num_instalments) {
 
         var choice = choices[choices.length - 1];
@@ -80,7 +79,12 @@ module.exports = function (aplazame) {
       })(choices, widget.simulator.choice.num_instalments);
     } else {
       simulator_data.choice = choices[choices.length - 1];
-      widget.simulator = Object.create(simulator_data);
+      // widget.simulator = Object.create(simulator_data);
+      widget.simulator = (function () {
+        function SimulatorData () {}
+        SimulatorData.prototype = simulator_data;
+        return new SimulatorData();
+      })();
       widget.simulator.$widget = widget;
       widget.simulator.getAmount = amount_tools.getAmount;
       widget.simulator.getPrice = amount_tools.getPrice;
@@ -97,7 +101,6 @@ module.exports = function (aplazame) {
     }
 
     widget.handler.render();
-
   };
 
   Widget.prototype.showInfo = function () {
@@ -105,8 +108,6 @@ module.exports = function (aplazame) {
         _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
         choices = widget.simulator.choices,
         data = widget.simulator.data;
-
-    console.log('widget.data', data);
 
     modal({
       size: 'lg',

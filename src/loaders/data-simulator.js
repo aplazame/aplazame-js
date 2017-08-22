@@ -4,32 +4,34 @@ module.exports = function (aplazame) {
 
   var _ = aplazame._,
       // log = require('../tools/log'),
+      // $live = require('../tools/live-dom'),
       $live = require('live-dom'),
       _amountGetter = require('./data-simulator-amount')(aplazame),
-      Widget = require('./data-simulator-widget')(aplazame),
-      dom_listeners = [],
-      _removeListener = function (listener) {
-        for( var i = dom_listeners.length - 1 ; i >= 0 ; i-- ) {
-          if( listener === dom_listeners[i] ) dom_listeners.splice(i, 1);
-        }
-      },
-      onNodeChanges = window.MutationObserver ? function (onNodeChanged) {
-        try{
-          new MutationObserver(function(mutations) {
-            mutations.forEach( onNodeChanged );
-          }).observe(document.body, { childList: true, subtree: true });
-        } catch(err) {
-          document.body.addEventListener('DOMSubtreeModified', onNodeChanged);
-        }
-      } : function (onNodeChanged) {
-        document.body.addEventListener('DOMSubtreeModified', onNodeChanged);
-      };
+      Widget = require('./data-simulator-widget')(aplazame);
 
-  onNodeChanges( _.debounce(function () {
-    dom_listeners.forEach(function (listener) {
-      listener();
-    });
-  }) );
+  // var dom_listeners = [],
+  //     _removeListener = function (listener) {
+  //       for( var i = dom_listeners.length - 1 ; i >= 0 ; i-- ) {
+  //         if( listener === dom_listeners[i] ) dom_listeners.splice(i, 1);
+  //       }
+  //     };
+  //     onNodeChanges = window.MutationObserver ? function (onNodeChanged) {
+  //       try{
+  //         new MutationObserver(function(mutations) {
+  //           mutations.forEach( onNodeChanged );
+  //         }).observe(document.body, { childList: true, subtree: true });
+  //       } catch(err) {
+  //         document.body.addEventListener('DOMSubtreeModified', onNodeChanged);
+  //       }
+  //     } : function (onNodeChanged) {
+  //       document.body.addEventListener('DOMSubtreeModified', onNodeChanged);
+  //     };
+  //
+  // onNodeChanges( _.debounce(function () {
+  //   dom_listeners.forEach(function (listener) {
+  //     listener();
+  //   });
+  // }) );
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
@@ -51,7 +53,8 @@ module.exports = function (aplazame) {
             if( qty !== undefined && qty !== current_qty ) return;
             if( _options.widget.disabled ) {
               if(qty_interval) clearInterval(qty_interval);
-              _removeListener(onDomChanges);
+              // _removeListener(onDomChanges);
+              $live.off(onDomChanges);
               return;
             }
             widget.render(_choices, _options);
@@ -59,7 +62,8 @@ module.exports = function (aplazame) {
           });
         },
         onDomChanges = function () {
-          if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
+          // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
+          if( !document.body.contains(widget_el) ) return $live.off(onDomChanges);
 
           var amount = amountGetter();
 
@@ -73,7 +77,9 @@ module.exports = function (aplazame) {
       updateAmount(current_amount, qty);
     }, 120);
 
-    dom_listeners.push(onDomChanges);
+    // dom_listeners.push(onDomChanges);
+    $live(onDomChanges);
+
     updateAmount(current_amount);
 
   });

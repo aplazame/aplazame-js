@@ -1786,9 +1786,9 @@
       "dev": true
     },
     "live-dom": {
-      "version": "1.6.2",
-      "from": "live-dom@1.6.2",
-      "resolved": "https://registry.npmjs.org/live-dom/-/live-dom-1.6.2.tgz"
+      "version": "1.6.5",
+      "from": "live-dom@1.6.5",
+      "resolved": "https://registry.npmjs.org/live-dom/-/live-dom-1.6.5.tgz"
     },
     "load-json-file": {
       "version": "1.1.0",

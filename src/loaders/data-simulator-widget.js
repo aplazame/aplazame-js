@@ -65,9 +65,9 @@ module.exports = function (aplazame) {
       country: widget.options.country,
     };
     widget.simulator_data = simulator_data;
+    simulator_data.choices = choices;
 
     if( widget.simulator ) {
-      simulator_data.choices = choices;
       simulator_data.choice = (function (choices, num_instalments) {
 
         var choice = choices[choices.length - 1];

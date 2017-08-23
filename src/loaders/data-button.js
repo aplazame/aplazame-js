@@ -1,50 +1,22 @@
 'use strict';
 
 module.exports = function (aplazame) {
-  var _ = aplazame._,
-      $q = require('parole');
 
-  function buttonsLookup (element) {
-    element = element || document;
-    if( !element.querySelectorAll ) {
-      return;
-    }
-    var btns = element.querySelectorAll('[data-aplazame-button]');
+  var $live = require('live-dom');
 
-    if( btns.length ) {
-      var promises = [];
+  $live('[data-aplazame-button]', function (btn) {
+    var btnId = btn.getAttribute('data-aplazame-button'),
+        btnParams = {
+          selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
+          parent: btn.getAttribute('data-parent'),
+          publicKey: btn.getAttribute('data-public-key'),
+          amount: btn.getAttribute('data-amount'),
+          currency: btn.getAttribute('data-currency') || undefined,
+          sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
+          country: btn.getAttribute('data-country') || undefined
+        };
 
-      _.each(btns, function (btn) {
-        var btnId = btn.getAttribute('data-aplazame-button'),
-            btnParams = {
-              selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
-              parent: btn.getAttribute('data-parent'),
-              publicKey: btn.getAttribute('data-public-key'),
-              amount: btn.getAttribute('data-amount'),
-              currency: btn.getAttribute('data-currency') || undefined,
-              sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
-              country: btn.getAttribute('data-country') || undefined
-            };
-
-        promises.push( aplazame.button(btnParams) );
-      });
-
-      if( promises.length ) {
-        return $q.all(promises);
-      } else {
-        return $q.resolve();
-      }
-    } else {
-      return $q.resolve();
-    }
-  }
-
-  _.ready(function () {
-    buttonsLookup().then(function () {
-      _.liveDOM.subscribe(buttonsLookup);
-    });
+    aplazame.button(btnParams);
   });
-
-  return buttonsLookup;
 
 };

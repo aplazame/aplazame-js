@@ -43,7 +43,8 @@ module.exports = function (aplazame) {
     'form#buy_block input[name="qty"]', // prestashop
     '#quantity_wanted', // prestashop
     'form#product-options-form button[data-id=qty]', // custom
-    '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]' // woocommerce
+    '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]', // woocommerce
+    'body.woocommerce-page form.cart input[name="quantity"]', // woocommerce
   ];
 
   function matchSelector (selector) {

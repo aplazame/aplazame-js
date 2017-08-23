@@ -36,6 +36,7 @@ module.exports = function (aplazame) {
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price ins .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce
+    'body.woocommerce-page .product-page-price .woocommerce-Price-amount', // woocommerce
     '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]' // Schema.org
   ],
   cmsQtySelector = [

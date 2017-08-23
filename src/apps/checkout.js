@@ -123,6 +123,7 @@ function checkout (options) {
             });
           };
 
+      iframe.id = 'aplazame-iframe-checkout';
       iframe.className = 'aplazame-modal';
 
       document.body.appendChild(iframe);

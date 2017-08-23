@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="utf-8">
+<title>DEMO - Aplazame</title>
+<base href="/simulator/" />
+
+<meta name="description" content="¿Quieres ver cómo funcionaría Aplazame en tu tienda? Te enseñamos en esta demo el mejor proceso de concesión de crédito online del mundo." />
+
+<!-- <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> -->
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0" />
+<meta name="theme-color" content="#688298" />
+
+<link rel="icon" sizes="192x192" href="/assets/images/favicon-192.png" />
+
+<link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon-512.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/favicon-144.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/favicon-144.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/favicon-72.png" />
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/favicon-57.png" />
+
+<link rel="stylesheet" href="/demo.css?build=1503448123842"/>
+
+<link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />
+
+
+</head>
+  <body>
+    <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
+    <header class="header">
+      <div class="container-md">
+        <a class="demo-link" href="/">Demo</a>
+        <a class="logo-link" href="/">
+          <img src="/dist/widgets/assets/images/logotipo-white.svg" alt="aplazame logo"/>
+        </a>
+      </div>
+    </header>
+
+    <div class="sections container-md">
+
+      <section class="section-box">
+
+        <div class="section-title">
+          <h3>Simulador de cuotas</h3>
+        </div>
+
+        <article>
+
+          <form class="row" data-submit="updateValues">
+
+            <div class="col-sm-6">
+              <div class="demo-input-wrapper">
+                <div class="demo-input-currency">€</div>
+                <input type="number" step="0.01" name="amount" class="demo-input" placeholder="cantidad a financiar" autofocus autocomplete="off" required></input>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <button type="submit" class="demo-btn">calcular</button>
+            </div>
+
+          </form>
+
+        </article>
+
+      </section>
+
+      <section class="section-box demo-simulator-section hidden">
+
+        <div class="section-title">
+          <h3>Resultados</h3>
+        </div>
+
+        <article class="demo-simulator-results hidden"></article>
+
+      </section>
+
+    </div>
+
+    <footer class="footer container-md">
+      <span class="no-wrap">&copy;&nbsp;Aplazame S.L.</span>
+    </footer>
+
+    <script type="application/x-template" data-template="results">
+      <table class="table demo-table">
+        <thead>
+          <tr>
+            <th class="demo-column-instalments">Plazos</th>
+            <th class="demo-column-tae">TAE</th>
+            <th class="demo-column-amount">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for ( var i = 0, n = choices.length ; i < n ; i++ ) { %><tr>
+            <td class="demo-column-instalments">
+              <span class="num-instalments"><%= choices[i].num_instalments %></span><!--
+              --><span class="months">&nbsp;<%= months(choices[i].num_instalments) %></span></td>
+            <td class="demo-column-tae">
+              <span class="tae"><%= choices[i].annual_equivalent/100 %>%<span>
+            </td>
+            <td class="demo-column-amount">
+              <div>
+                <span class="amount"><%= getAmount(choices[i].amount) %><span><!--
+                --><span class="currency">&nbsp;€<span class="per-month">/mes</span></span>
+              </div>
+              <div class="downpayment-amount"><%= getAmount(choices[i].downpayment_amount) %>€<span class="label">&nbsp;p. inicial</span></div>
+            </td>
+          </tr><% } %>
+        </tbody>
+      </table>
+    </script>
+
+    <script type="text/javascript" src="../dist/aplazame.js?sandbox=true"
+            data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
+            data-version="v1.2"
+            data-sandbox="true">
+    </script>
+    <script src="/scripts/demo-simulator.js?v=0.0.429"></script>
+
+  </body>
+</html>

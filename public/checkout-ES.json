@@ -1,0 +1,104 @@
+{
+  "toc": true,
+  "merchant": {
+    "confirmation_url": "/confirm",
+    "cancel_url": "/demo-cancel.html",
+    "success_url": "/demo-success.html"
+  },
+  "customer": {
+    "id": "140",
+    "email": "dev@aplazame.com",
+    "address": {
+      "phone": "616123456",
+      "alt_phone": "616001122",
+      "street": "Torre Picasso, Plaza Pablo Ruiz Picasso 1",
+      "address_addition": "Metro Santiago Bernabeu",
+      "city": "Madrid",
+      "state": "Madrid",
+      "country": "ES",
+      "zip": "28020"
+    },
+    "type": "e",
+    "gender": 0,
+    "first_name": "Valeria",
+    "last_name": "Hernández",
+    "date_joined": "2014-08-21T13:56:45+0000",
+    "last_login": "2014-08-27T19:57:56+0000"
+  },
+  "order": {
+    "id": "orderId-9a87a978ay98a7y9a87y",
+    "articles": [
+      {
+        "id": "acj00412f33f32231231",
+        "name": "RELOJ EN ORO BLANCO DE 18 QUILATES Y DIAMANTES",
+        "description": "Reloj en oro blanco de 18 quilates y diamantes. Pulsera en satén negro.Movimiento de cuarzo de alta precisión.",
+        "url": "http://www.chanel.com/es_ES/Relojeria/relojes_joyer%C3%ADa#reloj-en-oro-blanco-de-18-quilates-y-diamantes-J10211",
+        "image_url": "https://i.imgur.com/1nIay4X.jpg",
+        "quantity": 2,
+        "price": 3300,
+        "tax_rate": 2100,
+        "discount_rate": 200
+      },
+      {
+        "id": "f342465j7d32214124",
+        "name": "N°5 EAU PREMIERE SPRAY",
+        "description": "A decidedly lighter, fresher, softer interpretation of N°5. . . a silky-smooth harmony of notes that reveals the delicate facet of the now and forever fragrance. The modern and airy interpretation of N°5 debuts in the iconic Classic Bottle to instantly elevate the N°5 experience.",
+        "url": "http://www.chanel.com/en_US/fragrance-beauty/Fragrance-N%C2%B05-N%C2%B05-88145/sku/138083",
+        "image_url": "https://i.imgur.com/CZ5UPbl.jpg",
+        "quantity": 1,
+        "price": 2900,
+        "tax_rate": 2100
+      },
+      {
+        "id": "2r32r23r231231231r",
+        "name": "ILLUSION D'OMBRE",
+        "description": "This intensely shimmering long-wear eyeshadow offers true versatility. An innovative gel texture that is both soft and cushiony allows it to be worn as eyeshadow or eyeliner. Includes a specially designed shadow/liner brush, developed specifically for this unique formula.",
+        "url": "http://www.chanel.com/en_US/fragrance-beauty/Makeup-Eyeshadow-ILLUSION-D%27OMBRE-122567",
+        "image_url": "https://i.imgur.com/4j2ib6w.jpg",
+        "quantity": 1,
+        "price": 1300,
+        "tax_rate": 2100,
+        "discount_rate": 100
+      }
+    ],
+    "discount": 300,
+    "currency": "EUR",
+    "total_amount": 13014
+  },
+  "billing": {
+    "first_name": "Frank",
+    "last_name": "Costello",
+    "phone": "+34932671040",
+    "alt_phone": null,
+    "street": "Nuñez de Balboa, 120",
+    "address_addition": "",
+    "city": "Madrid",
+    "state": "Madrid",
+    "country": "ES",
+    "zip": "28006"
+  },
+  "shipping": {
+    "first_name": "Fernando",
+    "last_name": "Cabello",
+    "phone": "616123456",
+    "alt_phone": "616001122",
+    "street": "Torre Picasso, Plaza Pablo Ruiz Picasso 1",
+    "address_addition": "Metro Santiago Bernabeu",
+    "city": "Madrid",
+    "state": "Madrid",
+    "country": "ES",
+    "zip": "28020",
+    "price": 500,
+    "tax_rate": 2100,
+    "name": "SEUR",
+    "discount": 100
+  },
+  "meta": {
+    "source": {
+      "data": {
+        "ecommerce_version": "1.9.0.1"
+      },
+      "client_name": "ecommerce client"
+    }
+  }
+}

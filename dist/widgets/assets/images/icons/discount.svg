@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.3 (12072) - http://www.bohemiancoding.com/sketch -->
+    <title>discount</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="colored-icons" sketch:type="MSLayerGroup" transform="translate(-163.000000, -319.000000)" fill="#3FC593">
+            <g id="discount" transform="translate(163.000000, 319.000000)" sketch:type="MSShapeGroup">
+                <rect id="Rectangle-10483" fill-opacity="0.16" x="2.90909091" y="2.90909091" width="29.0909091" height="29.0909091" rx="21.8181818"></rect>
+                <path d="M1,14.5454545 L1,14.5454545 C1,22.02754 7.06387772,28.0909091 14.5454545,28.0909091 C22.02754,28.0909091 28.0909091,22.0270314 28.0909091,14.5454545 C28.0909091,7.06336909 22.0270314,1 14.5454545,1 C7.06336909,1 1,7.06387772 1,14.5454545 L1,14.5454545 Z M0,14.5454545 C0,6.51222182 6.51045553,0 14.5454545,0 C22.5786873,0 29.0909091,6.51045553 29.0909091,14.5454545 C29.0909091,22.5786873 22.5804536,29.0909091 14.5454545,29.0909091 C6.51222182,29.0909091 0,22.5804536 0,14.5454545 L0,14.5454545 Z" id="Shape"></path>
+                <g id="Rectangle-1807-+-Oval-152-+-Oval-152-Copy" transform="translate(9.000000, 9.000000)">
+                    <rect id="Rectangle-1807" transform="translate(6.109661, 5.946641) rotate(-135.000000) translate(-6.109661, -5.946641) " x="5.60966095" y="-1.86850362" width="1" height="15.6302891"></rect>
+                    <path d="M9.5,11 L9.5,11 C10.3284271,11 11,10.3284271 11,9.5 C11,8.67157288 10.3284271,8 9.5,8 C8.67157288,8 8,8.67157288 8,9.5 C8,10.3284271 8.67157288,11 9.5,11 L9.5,11 Z M9.5,12 L9.5,12 C8.11928813,12 7,10.8807119 7,9.5 C7,8.11928813 8.11928813,7 9.5,7 C10.8807119,7 12,8.11928813 12,9.5 C12,10.8807119 10.8807119,12 9.5,12 L9.5,12 Z" id="Shape"></path>
+                    <path d="M2.5,4 L2.5,4 C3.32842712,4 4,3.32842712 4,2.5 C4,1.67157288 3.32842712,1 2.5,1 C1.67157288,1 1,1.67157288 1,2.5 C1,3.32842712 1.67157288,4 2.5,4 L2.5,4 Z M2.5,5 L2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 L2.5,5 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

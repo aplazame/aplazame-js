@@ -2,7 +2,8 @@
 
 module.exports = function (aplazame) {
 
-  var $live = require('live-dom'),
+  var _ = aplazame._,
+      $live = require('live-dom'),
       _amountGetter = require('./data-simulator-amount')(aplazame),
       Widget = require('./data-simulator-widget')(aplazame);
 
@@ -34,14 +35,14 @@ module.exports = function (aplazame) {
             widget_el.style.opacity = null;
           });
         },
-        onDomChanges = function () {
+        onDomChanges = _.debounce(function () {
           // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
           if( !document.body.contains(widget_el) ) return $live.off(onDomChanges);
 
           var amount = amountGetter();
 
           if( amount !== current_amount ) updateAmount(amount);
-        };
+        });
 
     if( amountGetter.qtySelector ) qty_interval = setInterval(function () {
       var qty = amountGetter.getQty(amountGetter.qtySelector) || 1;

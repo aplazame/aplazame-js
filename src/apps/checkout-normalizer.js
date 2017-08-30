@@ -38,7 +38,7 @@ function checkoutNormalizer(checkout, location, api) {
   }
   checkout.merchant.onError = checkout.merchant.onError || _locationReplaceFn(location, checkout.merchant.cancel_url);
 
-  checkout.merchant.onDismiss = checkout.merchant.onDismiss || _locationReplaceFn(location, checkout.merchant.checkout_url || '/');
+  checkout.merchant.onDismiss = checkout.merchant.onDismiss || _locationReplaceFn(location, checkout.merchant.ko_redirect_url || checkout.merchant.checkout_url || '/');
 
   if( !checkout.merchant.onPending ) {
     checkout.merchant.onPending = checkout.merchant.pending_url ? _locationReplaceFn(location, checkout.merchant.pending_url) : checkout.merchant.onDismiss;

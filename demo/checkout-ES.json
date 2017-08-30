@@ -3,6 +3,7 @@
   "merchant": {
     "confirmation_url": "/confirm",
     "cancel_url": "/demo-cancel.html",
+    "ko_redirect_url": "/?ko-redirected",
     "success_url": "/demo-success.html"
   },
   "customer": {

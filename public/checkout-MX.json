@@ -4,6 +4,7 @@
     "checkout_url": "/mx/",
     "confirmation_url": "/confirm",
     "cancel_url": "/mx/demo-cancel.html",
+    "ko_url": "/mx/demo-cancel.html",
     "success_url": "/mx/demo-success.html"
   },
   "customer": {

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.436';
+module.exports = '0.0.437';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -2364,9 +2364,9 @@ module.exports = button;
 'use strict';
 
 function _locationReplaceFn ( location, href ) {
-  return function () {
+  return href ? function () {
     location.replace(href);
-  };
+  } : null;
 }
 
 function checkoutNormalizer(checkout, location, api) {
@@ -2379,64 +2379,70 @@ function checkoutNormalizer(checkout, location, api) {
 
   checkout.api = api;
 
-  if( !checkout.merchant ) {
+  var merchant = checkout.merchant;
+
+  if( !merchant ) {
     throw new Error('missing merchant parameters');
   }
 
-  if( !checkout.merchant.public_api_key && !api.publicKey ) {
+  if( !merchant.public_api_key && !api.publicKey ) {
     throw new Error('missing public key');
   }
 
   // We put public_api_key as soon as possible so we can track the merchant from our API and notify him about any issue.
-  checkout.merchant.public_api_key = checkout.merchant.public_api_key || api.publicKey;
-  checkout.merchant.sandbox = checkout.merchant.sandbox === undefined ? api.sandbox : checkout.merchant.sandbox;
+  merchant.public_api_key = merchant.public_api_key || api.publicKey;
+  merchant.sandbox = merchant.sandbox === undefined ? api.sandbox : merchant.sandbox;
 
-  if (!checkout.merchant.onSuccess && !checkout.merchant.success_url) {
+  if (!merchant.onSuccess && !merchant.success_url) {
     throw new Error('success_url missing');
   }
-  checkout.merchant.onSuccess = checkout.merchant.onSuccess || _locationReplaceFn(location, checkout.merchant.success_url);
+  merchant.onSuccess = merchant.onSuccess || _locationReplaceFn(location, merchant.success_url);
 
-  if (!checkout.merchant.onError && !checkout.merchant.cancel_url) {
+  if (!merchant.onError && !merchant.cancel_url) {
     throw new Error('cancel_url missing');
   }
-  checkout.merchant.onError = checkout.merchant.onError || _locationReplaceFn(location, checkout.merchant.cancel_url);
+  merchant.onError = merchant.onError || _locationReplaceFn(location, merchant.cancel_url);
 
-  checkout.merchant.onDismiss = checkout.merchant.onDismiss || _locationReplaceFn(location, checkout.merchant.checkout_url || '/');
+  merchant.onDismiss = merchant.onDismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
 
-  if( !checkout.merchant.onPending ) {
-    checkout.merchant.onPending = checkout.merchant.pending_url ? _locationReplaceFn(location, checkout.merchant.pending_url) : checkout.merchant.onDismiss;
+  merchant.onKO = merchant.onKO || _locationReplaceFn(location, merchant.ko_url) || merchant.onDismiss;
+
+  if( !merchant.onPending ) {
+    merchant.onPending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : merchant.onDismiss;
   }
 
-  if (checkout.customer) {
-    if (checkout.customer.birthday) {
+  var customer = checkout.customer;
+
+  if( customer ) {
+    if( customer.birthday ) {
       // Strip time from value
-      checkout.customer.birthday = checkout.customer.birthday.split('T')[0];
+      customer.birthday = customer.birthday.split('T')[0];
     }
 
-    switch (checkout.customer.type) {
+    switch ( customer.type ) {
       case 'existing':
-        checkout.customer.type = 'e';
+        customer.type = 'e';
         break;
       case 'guess':
-        checkout.customer.type = 'g';
+        customer.type = 'g';
         break;
       case 'new':
-        checkout.customer.type = 'n';
+        customer.type = 'n';
         break;
     }
 
-    switch (checkout.customer.gender) {
+    switch (customer.gender) {
       case 'unknown':
-        checkout.customer.gender = 0;
+        customer.gender = 0;
         break;
       case 'male':
-        checkout.customer.gender = 1;
+        customer.gender = 1;
         break;
       case 'female':
-        checkout.customer.gender = 2;
+        customer.gender = 2;
         break;
       case 'not_applicable':
-        checkout.customer.gender = 3;
+        customer.gender = 3;
         break;
     }
   }
@@ -2475,6 +2481,7 @@ function checkout (options) {
 
   var on = {},
       onError,
+      merchant,
       iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),
       errorLoading = false,
       errorMessage = false,
@@ -2494,21 +2501,24 @@ function checkout (options) {
   delete options.onError;
 
   try {
-    options = checkoutNormalizer(options, location, _.copy(api));
-    on.success = options.merchant.onSuccess;
-    on.pending = options.merchant.onPending;
-    on.cancel = options.merchant.onError;
-    on.dismiss = options.merchant.onDismiss;
+    options = checkoutNormalizer(options, location, _.copy(api) );
+    merchant = options ? options.merchant : null;
+    on.success = merchant.onSuccess;
+    on.pending = merchant.onPending;
+    on.cancel = merchant.onError;
+    on.ko = merchant.onKO;
+    on.dismiss = merchant.onDismiss;
   } catch (e) {
     errorMessage = e.message;
   }
 
-  if (options.merchant) {
+  if (merchant) {
     // All functions must be removed as them can't be serialized by postMessage
-    delete options.merchant.onSuccess;
-    delete options.merchant.onPending;
-    delete options.merchant.onError;
-    delete options.merchant.onDismiss;
+    delete merchant.onSuccess;
+    delete merchant.onPending;
+    delete merchant.onError;
+    delete merchant.onKO;
+    delete merchant.onDismiss;
   }
 
   if( isApp ) {

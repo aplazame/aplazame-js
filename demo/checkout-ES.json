@@ -2,7 +2,7 @@
   "toc": true,
   "merchant": {
     "confirmation_url": "/confirm",
-    "cancel_url": "/demo-cancel.html",
+    "ko_url": "/demo-cancel.html",
     "success_url": "/demo-success.html"
   },
   "customer": {

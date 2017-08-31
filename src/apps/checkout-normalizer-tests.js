@@ -88,6 +88,7 @@ describe('checkout normalizer', function () {
     delete checkout.merchant.onSuccess;
     delete checkout.merchant.onPending;
     delete checkout.merchant.onError;
+    delete checkout.merchant.onKO;
     delete checkout.merchant.onDismiss;
 
     assert.deepEqual(checkout, {

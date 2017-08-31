@@ -1,9 +1,9 @@
 'use strict';
 
 function _locationReplaceFn ( location, href ) {
-  return function () {
+  return href ? function () {
     location.replace(href);
-  };
+  } : null;
 }
 
 function checkoutNormalizer(checkout, location, api) {
@@ -39,9 +39,10 @@ function checkoutNormalizer(checkout, location, api) {
     throw new Error('cancel_url missing');
   }
   merchant.onError = merchant.onError || _locationReplaceFn(location, merchant.cancel_url);
-  merchant.onKO = merchant.onKO || _locationReplaceFn(location, merchant.ko_url || merchant.checkout_url || '/');
 
   merchant.onDismiss = merchant.onDismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
+
+  merchant.onKO = merchant.onKO || _locationReplaceFn(location, merchant.ko_url) || merchant.onDismiss;
 
   if( !merchant.onPending ) {
     merchant.onPending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : merchant.onDismiss;

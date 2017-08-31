@@ -1,9 +1,9 @@
 'use strict';
 
 function _locationReplaceFn ( location, href ) {
-  return function () {
+  return href ? function () {
     location.replace(href);
-  };
+  } : null;
 }
 
 function checkoutNormalizer(checkout, location, api) {
@@ -16,64 +16,70 @@ function checkoutNormalizer(checkout, location, api) {
 
   checkout.api = api;
 
-  if( !checkout.merchant ) {
+  var merchant = checkout.merchant;
+
+  if( !merchant ) {
     throw new Error('missing merchant parameters');
   }
 
-  if( !checkout.merchant.public_api_key && !api.publicKey ) {
+  if( !merchant.public_api_key && !api.publicKey ) {
     throw new Error('missing public key');
   }
 
   // We put public_api_key as soon as possible so we can track the merchant from our API and notify him about any issue.
-  checkout.merchant.public_api_key = checkout.merchant.public_api_key || api.publicKey;
-  checkout.merchant.sandbox = checkout.merchant.sandbox === undefined ? api.sandbox : checkout.merchant.sandbox;
+  merchant.public_api_key = merchant.public_api_key || api.publicKey;
+  merchant.sandbox = merchant.sandbox === undefined ? api.sandbox : merchant.sandbox;
 
-  if (!checkout.merchant.onSuccess && !checkout.merchant.success_url) {
+  if (!merchant.onSuccess && !merchant.success_url) {
     throw new Error('success_url missing');
   }
-  checkout.merchant.onSuccess = checkout.merchant.onSuccess || _locationReplaceFn(location, checkout.merchant.success_url);
+  merchant.onSuccess = merchant.onSuccess || _locationReplaceFn(location, merchant.success_url);
 
-  if (!checkout.merchant.onError && !checkout.merchant.cancel_url) {
+  if (!merchant.onError && !merchant.cancel_url) {
     throw new Error('cancel_url missing');
   }
-  checkout.merchant.onError = checkout.merchant.onError || _locationReplaceFn(location, checkout.merchant.cancel_url);
+  merchant.onError = merchant.onError || _locationReplaceFn(location, merchant.cancel_url);
 
-  checkout.merchant.onDismiss = checkout.merchant.onDismiss || _locationReplaceFn(location, checkout.merchant.checkout_url || '/');
+  merchant.onDismiss = merchant.onDismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
 
-  if( !checkout.merchant.onPending ) {
-    checkout.merchant.onPending = checkout.merchant.pending_url ? _locationReplaceFn(location, checkout.merchant.pending_url) : checkout.merchant.onDismiss;
+  merchant.onKO = merchant.onKO || _locationReplaceFn(location, merchant.ko_url) || merchant.onDismiss;
+
+  if( !merchant.onPending ) {
+    merchant.onPending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : merchant.onDismiss;
   }
 
-  if (checkout.customer) {
-    if (checkout.customer.birthday) {
+  var customer = checkout.customer;
+
+  if( customer ) {
+    if( customer.birthday ) {
       // Strip time from value
-      checkout.customer.birthday = checkout.customer.birthday.split('T')[0];
+      customer.birthday = customer.birthday.split('T')[0];
     }
 
-    switch (checkout.customer.type) {
+    switch ( customer.type ) {
       case 'existing':
-        checkout.customer.type = 'e';
+        customer.type = 'e';
         break;
       case 'guess':
-        checkout.customer.type = 'g';
+        customer.type = 'g';
         break;
       case 'new':
-        checkout.customer.type = 'n';
+        customer.type = 'n';
         break;
     }
 
-    switch (checkout.customer.gender) {
+    switch (customer.gender) {
       case 'unknown':
-        checkout.customer.gender = 0;
+        customer.gender = 0;
         break;
       case 'male':
-        checkout.customer.gender = 1;
+        customer.gender = 1;
         break;
       case 'female':
-        checkout.customer.gender = 2;
+        customer.gender = 2;
         break;
       case 'not_applicable':
-        checkout.customer.gender = 3;
+        customer.gender = 3;
         break;
     }
   }

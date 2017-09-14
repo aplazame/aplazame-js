@@ -22,6 +22,7 @@ require('./sandbox')(function () {
   aplazame.checkout = require('./apps/checkout');
   aplazame.button = require('./apps/button');
   aplazame.simulator = require('./apps/simulator');
+  aplazame.simulatorList = require('./apps/simulator-list');
   aplazame.modal = require('./apps/modal');
 
   aplazame.info = function () {

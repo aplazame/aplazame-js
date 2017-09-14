@@ -8,10 +8,7 @@ function simulatorList(product){
   var price = product.amount;
   var id = product.productId;
 
-  console.log(price , id);
-
   var options = simulatorOptions();
-
 
   // En funcion del ID del producto y de las opciones de la tienda obtenemos las campañas que aplican a cada mes
   var productCampaigns = getCampaignByMonth(id);
@@ -28,7 +25,7 @@ function simulatorList(product){
     if (i === 0){
       downpayment = options.d_deferred_rate*quota;
     } else {
-      downpayment = options.m_merchant*quota;
+      downpayment = options.downpayment_m*quota;
     }
 
     var output = {
@@ -60,7 +57,7 @@ function Poly(coeffs){
 function getCampaignByMonth(id){
       var filteredCampaign = [];
       var merchantInfo = simulatorCampaigns();
-      console.log(merchantInfo);
+
       for (var i = 1; i <= 12; i++){
         var bestCampaign = {
             annual_equivalent: merchantInfo.annual_equivalent,

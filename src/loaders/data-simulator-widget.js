@@ -115,7 +115,7 @@ module.exports = function (aplazame) {
       template: _renderModalInfo({
         widget: widget,
         max_choice: choices.reduce(maxInstalments, null),
-        max_tae_choice: choices.reduce(maxAnnualEquivalent, null),
+        merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
         choices: choices,
         data: data,
         static_url: api.staticUrl,

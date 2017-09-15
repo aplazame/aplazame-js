@@ -1,44 +1,60 @@
 'use strict';
 
 var simulatorCampaigns = require('./simulator-campaigns'),
-    simulatorOptions = require('./simulator-options');
+    simulatorOptions = require('./simulator-options'),
+    _ = require('../tools/tools'),
+    $q = require('parole');
 
-function simulatorList(product){
+function simulatorList(product, callback){
 
   var price = product.amount;
   var id = product.productId;
 
-  var options = simulatorOptions();
+  var getData = $q.all([
+    simulatorOptions(),
+    getCampaignByMonth(id)
+  ]);
 
-  // En funcion del ID del producto y de las opciones de la tienda obtenemos las campañas que aplican a cada mes
-  var productCampaigns = getCampaignByMonth(id);
+  return getData.then(function(results){
+    var options = results[0];
+    var productCampaigns = results[1];
+    var quotas = [];
+    for (var i = 0; i < 12; i++ ){
+      var poly = new Poly(productCampaigns[i].coeffs);
+      var downpayment;
+      var quota;
 
-  var quotas = [];
-  for (var i = 0; i < 12; i++ ){
-    var poly = new Poly(productCampaigns[i].coeffs);
-    var downpayment;
-    var quota;
+      productCampaigns[i].polynom = poly.jsFunction;
+      quota = productCampaigns[i].polynom(i+1) * price;
 
-    productCampaigns[i].polynom = poly.jsFunction;
-    quota = productCampaigns[i].polynom(i+1) * price;
+      if (i === 0){
+        downpayment = options.downpayment_deferred_rate/10000*quota;
+      } else {
+        downpayment = options.downpayment_m*quota;
+      }
 
-    if (i === 0){
-      downpayment = options.d_deferred_rate*quota;
-    } else {
-      downpayment = options.downpayment_m*quota;
+      var output = {
+        amount: quota,
+        annual_equivalent: productCampaigns[i].annual_equivalent,
+        downpayment_amount: downpayment,
+        num_instalments: i+1,
+      };
+      quotas.push(output);
+
     }
+    quotas = serializeQuotas(quotas);
+    (callback || _.noop)( quotas );
+    return quotas;
+  });
 
-    var output = {
-      instalment: i+1,
-      downpayment: downpayment,
-      quota: quota
-    };
-    quotas.push(output);
+}
 
-  }
-
-  return quotas;
-
+function serializeQuotas(quotas){
+  return quotas.map(function(quota){
+    quota.amount = Math.round(quota.amount*100);
+    quota.downpayment_amount = Math.round(quota.downpayment_amount*100);
+    return quota;
+  })
 }
 
 function Poly(coeffs){

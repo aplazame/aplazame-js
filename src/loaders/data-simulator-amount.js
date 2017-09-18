@@ -120,6 +120,8 @@ module.exports = function (aplazame) {
         }
       }
 
+      log('price read from', priceElement, amount );
+
       return amount && _.parsePrice( amount );
     } : function () {
       // return Number( widgetElement.getAttribute('data-amount') );

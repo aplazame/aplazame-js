@@ -18,7 +18,6 @@ module.exports = function (aplazame) {
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
         qty_interval,
         updateAmount = function (amount, qty) {
-          if( !amount ) return;
           // console.log('updateAmount', amount, qty);
           current_amount = amount;
           if( qty !== undefined ) current_qty = qty;

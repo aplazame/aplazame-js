@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.439';
+module.exports = '0.0.440';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -3180,7 +3180,7 @@ module.exports = function (aplazame) {
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce
     'body.woocommerce-page .product-page-price .woocommerce-Price-amount', // woocommerce
-    '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]' // Schema.org
+    '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]', // Schema.org
   ],
   cmsQtySelector = [
     'form#product_addtocart_form input[name="qty"]', // magento
@@ -3201,20 +3201,23 @@ module.exports = function (aplazame) {
         autoDiscovered = false;
 
     if( priceSelector ) {
-      // try{
-      //   document.querySelector(priceSelector);
-      // } catch(err) {
-      //   priceSelector = null;
-      // }
+      try{
+        document.querySelector(priceSelector);
+      } catch(err) {
+        priceSelector = null;
+        log('data-price: missing', err.message);
+      }
       if( qtySelector ) {
         try{
           document.querySelector(qtySelector);
         } catch(err) {
           qtySelector = null;
-          log(err.message);
+          log('data-qty: missing', err.message);
         }
       }
-    } else {
+    }
+
+    if( !priceSelector ) {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {
@@ -3495,6 +3498,7 @@ module.exports = function (aplazame) {
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
         qty_interval,
         updateAmount = function (amount, qty) {
+          if( !amount ) return;
           // console.log('updateAmount', amount, qty);
           current_amount = amount;
           if( qty !== undefined ) current_qty = qty;

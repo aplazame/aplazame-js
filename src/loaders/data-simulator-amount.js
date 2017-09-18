@@ -37,7 +37,7 @@ module.exports = function (aplazame) {
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce
     'body.woocommerce-page .product-page-price .woocommerce-Price-amount', // woocommerce
-    '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]' // Schema.org
+    '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]', // Schema.org
   ],
   cmsQtySelector = [
     'form#product_addtocart_form input[name="qty"]', // magento
@@ -58,20 +58,23 @@ module.exports = function (aplazame) {
         autoDiscovered = false;
 
     if( priceSelector ) {
-      // try{
-      //   document.querySelector(priceSelector);
-      // } catch(err) {
-      //   priceSelector = null;
-      // }
+      try{
+        document.querySelector(priceSelector);
+      } catch(err) {
+        priceSelector = null;
+        log('data-price: missing', err.message);
+      }
       if( qtySelector ) {
         try{
           document.querySelector(qtySelector);
         } catch(err) {
           qtySelector = null;
-          log(err.message);
+          log('data-qty: missing', err.message);
         }
       }
-    } else {
+    }
+
+    if( !priceSelector ) {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {

@@ -62,14 +62,14 @@ module.exports = function (aplazame) {
         document.querySelector(priceSelector);
       } catch(err) {
         priceSelector = null;
-        log.warn('data-price: missing', err.message);
+        log('data-price: missing', err.message);
       }
       if( qtySelector ) {
         try{
           document.querySelector(qtySelector);
         } catch(err) {
           qtySelector = null;
-          log.warn('data-qty: missing', err.message);
+          log('data-qty: missing', err.message);
         }
       }
     }
@@ -83,7 +83,7 @@ module.exports = function (aplazame) {
 
         log('auto-discovered price selector', priceSelector, qtySelector);
       } else {
-        log.warn('data-price failing', widgetElement.getAttribute('data-price'), widgetElement.getAttribute('data-price') !== null ? document.querySelector(widgetElement.getAttribute('data-price')) : 'data-price missing', _.find(cmsPriceSelector, matchSelector) );
+        log('data-price failing', widgetElement.getAttribute('data-price'), widgetElement.getAttribute('data-price') !== null ? document.querySelector(widgetElement.getAttribute('data-price')) : 'data-price missing', _.find(cmsPriceSelector, matchSelector) );
       }
     }
 

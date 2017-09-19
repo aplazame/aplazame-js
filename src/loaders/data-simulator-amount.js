@@ -103,7 +103,7 @@ module.exports = function (aplazame) {
             if( /[,.]/.test(amount) ) {
               return;
             }
-            matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).match(/[\d,.]+/);
+            matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).replace(/&nbsp;/g, '').match(/[\d,.]+/);
 
             if( matched ) {
               amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
@@ -112,7 +112,7 @@ module.exports = function (aplazame) {
             part = part.nextSibling;
           }
         } else if( priceElement.textContent ) {
-          amount = priceElement.textContent;
+          amount = (priceElement.textContent || '').replace(/&nbsp;/g, '');
         } else if( priceElement.getAttribute('content') ) {
           amount = priceElement.getAttribute('content');
         }

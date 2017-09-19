@@ -72,9 +72,7 @@ module.exports = function (aplazame) {
           log('data-qty: missing', err.message);
         }
       }
-    }
-
-    if( !priceSelector ) {
+    } else {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {

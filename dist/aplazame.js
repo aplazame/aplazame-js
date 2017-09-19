@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.444';
+module.exports = '0.0.445';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -3215,9 +3215,7 @@ module.exports = function (aplazame) {
           log('data-qty: missing', err.message);
         }
       }
-    }
-
-    if( !priceSelector ) {
+    } else {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {
@@ -3488,7 +3486,8 @@ module.exports = function (aplazame) {
 
   var $live = require('live-dom'),
       _amountGetter = require('./data-simulator-amount')(aplazame),
-      Widget = require('./data-simulator-widget')(aplazame);
+      Widget = require('./data-simulator-widget')(aplazame),
+      log = require('../tools/log');
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
@@ -3502,7 +3501,8 @@ module.exports = function (aplazame) {
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
         qty_interval,
         updateAmount = function (amount, qty) {
-          // console.log('updateAmount', amount, qty);
+          log('updateAmount', amount, qty);
+          if( !amount ) return;
           current_amount = amount;
           if( qty !== undefined ) current_qty = qty;
           widget_el.style.opacity = 0.5;
@@ -3543,7 +3543,7 @@ module.exports = function (aplazame) {
 
 };
 
-},{"./data-simulator-amount":61,"./data-simulator-widget":63,"live-dom":12}],65:[function(require,module,exports){
+},{"../tools/log":71,"./data-simulator-amount":61,"./data-simulator-widget":63,"live-dom":12}],65:[function(require,module,exports){
 'use strict';
 
 var log = require('./tools/log');

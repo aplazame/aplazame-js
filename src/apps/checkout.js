@@ -26,6 +26,7 @@ function checkout (options) {
 
   var on = {},
       onError,
+      merchant,
       iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),
       errorLoading = false,
       errorMessage = false,
@@ -45,21 +46,24 @@ function checkout (options) {
   delete options.onError;
 
   try {
-    options = checkoutNormalizer(options, location, _.copy(api));
-    on.success = options.merchant.onSuccess;
-    on.pending = options.merchant.onPending;
-    on.cancel = options.merchant.onError;
-    on.dismiss = options.merchant.onDismiss;
+    options = checkoutNormalizer(options, location, _.copy(api) );
+    merchant = options ? options.merchant : null;
+    on.success = merchant.onSuccess;
+    on.pending = merchant.onPending;
+    on.cancel = merchant.onError;
+    on.ko = merchant.onKO;
+    on.dismiss = merchant.onDismiss;
   } catch (e) {
     errorMessage = e.message;
   }
 
-  if (options.merchant) {
+  if (merchant) {
     // All functions must be removed as them can't be serialized by postMessage
-    delete options.merchant.onSuccess;
-    delete options.merchant.onPending;
-    delete options.merchant.onError;
-    delete options.merchant.onDismiss;
+    delete merchant.onSuccess;
+    delete merchant.onPending;
+    delete merchant.onError;
+    delete merchant.onKO;
+    delete merchant.onDismiss;
   }
 
   if( isApp ) {
@@ -123,6 +127,7 @@ function checkout (options) {
             });
           };
 
+      iframe.id = 'aplazame-checkout-iframe';
       iframe.className = 'aplazame-modal';
 
       document.body.appendChild(iframe);

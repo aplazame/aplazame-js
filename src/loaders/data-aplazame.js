@@ -24,10 +24,6 @@ module.exports = function (_, script) {
     options.host = script.getAttribute('data-api-host');
   }
 
-  if( script.getAttribute('data-version') ) {
-    options.version = script.getAttribute('data-version');
-  }
-
   if( script.getAttribute('data-sandbox') ) {
     options.sandbox = script.getAttribute('data-sandbox');
   }

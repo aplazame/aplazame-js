@@ -22,9 +22,8 @@ module.exports = function (aplazame) {
           log('updateAmount', amount, qty);
           if( !amount ) return;
           current_amount = amount;
-          if( qty !== undefined ) current_qty = qty;
           widget_el.style.opacity = 0.5;
-          aplazame.simulator( amount*( qty === undefined ? current_qty : qty ), simulator_options, function (_choices, _options) {
+          aplazame.simulator( amount*qty, simulator_options, function (_choices, _options) {
             if( _options.widget.disabled ) {
               if(qty_interval) clearInterval(qty_interval);
               // _removeListener(onDomChanges);
@@ -41,7 +40,7 @@ module.exports = function (aplazame) {
 
           var amount = amountGetter();
 
-          if( amount && amount !== current_amount ) updateAmount(amount);
+          if( amount && amount !== current_amount ) updateAmount(amount, current_qty);
         };
 
     if( amountGetter.qtySelector ) qty_interval = setInterval(function () {
@@ -54,7 +53,7 @@ module.exports = function (aplazame) {
     // dom_listeners.push(onDomChanges);
     $live(onDomChanges);
 
-    updateAmount(current_amount);
+    updateAmount(current_amount, current_qty);
 
   });
 

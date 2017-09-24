@@ -25,7 +25,6 @@ module.exports = function (aplazame) {
           if( qty !== undefined ) current_qty = qty;
           widget_el.style.opacity = 0.5;
           aplazame.simulator( amount*( qty === undefined ? current_qty : qty ), simulator_options, function (_choices, _options) {
-            if( qty !== undefined && qty !== current_qty ) return;
             if( _options.widget.disabled ) {
               if(qty_interval) clearInterval(qty_interval);
               // _removeListener(onDomChanges);

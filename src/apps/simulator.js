@@ -2,8 +2,6 @@
 
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
-    $q = require('parole'),
-    cache = [],
     requestsCache = {},
     log = require('../tools/log');
 
@@ -11,16 +9,11 @@ function simulator (amount, _options) {
   _options = _options || {};
 
   var options = {
-        params: {
-          amount: amount,
-          currency: _options.currency || 'EUR'
-        }
-      },
-      hash = amount + ',' + JSON.stringify(options);
-
-  if( requestsCache[hash] ) {
-    return requestsCache[hash];
-  }
+    params: {
+      amount: amount,
+      currency: _options.currency || 'EUR'
+    }
+  };
 
   if( _options.view ) {
     options.params.view = _options.view;
@@ -32,22 +25,20 @@ function simulator (amount, _options) {
     options.publicKey = _options.publicKey;
   }
 
-  var foundCached = _.find(cache, function (item) {
-    return item.amount === amount;
-  });
+  var hash = amount + ',' + JSON.stringify(options);
+  if( !_options.noCache && requestsCache[hash] ) {
+    return requestsCache[hash];
+  }
 
-  requestsCache[hash] = ( !_options.noCache && foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
-      var result = {
+  var request = apiHttp.get('instalment-plan-simulator', options )
+    .then(function (response) {
+      return {
         amount: amount,
         choices: response.data.choices[0].instalments,
         options: response.data.options,
         response: response
       };
-      cache.push(result);
-
-      return result;
-    }) )
-    .then(null, function (response) {
+    }, function (response) {
       if( response.status === 403 ) {
         log('Aplazame[error]: Permiso denegado usando la clave pública', response.config.publicKey,
           'Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
@@ -59,7 +50,11 @@ function simulator (amount, _options) {
       throw response;
     });
 
-  return requestsCache[hash];
+  if ( !_options.noCache ) {
+    return requestsCache[hash] = request;
+  }
+
+  return request;
 }
 
 module.exports = simulator;

@@ -25,7 +25,7 @@ function simulator (amount, _options) {
     options.publicKey = _options.publicKey;
   }
 
-  var hash = amount + ',' + JSON.stringify(options);
+  var hash = JSON.stringify(options);
   if( !_options.noCache && requestsCache[hash] ) {
     return requestsCache[hash];
   }

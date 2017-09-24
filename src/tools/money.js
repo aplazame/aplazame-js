@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 module.exports = function (amount, currency) {
   var _self = this;
 
@@ -6,7 +6,7 @@ module.exports = function (amount, currency) {
     amount: amount,
     currency: currency,
     equals: function (money) {
-      return (_self.amount === money.amount ) && (_self.currency === money.currency)
+      return (_self.amount === money.amount ) && (_self.currency === money.currency);
     }
-  }
+  };
 };

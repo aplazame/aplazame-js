@@ -21,9 +21,6 @@ function simulator (money, _options) {
   if( _options.payday ) {
     options.params.payday = _options.payday;
   }
-  if( _options.publicKey ) {
-    options.publicKey = _options.publicKey;
-  }
 
   var hash = JSON.stringify(options);
   if( !_options.noCache && requestsCache[hash] ) {

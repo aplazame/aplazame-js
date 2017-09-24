@@ -37,6 +37,10 @@ module.exports = function (aplazame) {
                 return;
               }
               widget.render(result.choices, result.options);
+            })
+            .then(function () {
+              widget_el.style.opacity = null;
+            }, function () {
               widget_el.style.opacity = null;
             });
         },

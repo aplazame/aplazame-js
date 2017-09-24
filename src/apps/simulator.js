@@ -51,7 +51,7 @@ function simulator (amount, _options) {
     });
 
   if ( !_options.noCache ) {
-    return requestsCache[hash] = request;
+    requestsCache[hash] = request;
   }
 
   return request;

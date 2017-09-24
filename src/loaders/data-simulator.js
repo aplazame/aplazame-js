@@ -15,15 +15,20 @@ module.exports = function (aplazame) {
           country:  widget_el.getAttribute('data-country') || 'ES',
         }),
         amountGetter = _amountGetter(widget_el),
-        current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
-        current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
         qty_interval,
-        updateAmount = function (amount, qty) {
-          log('updateAmount', amount, qty);
-          if( !amount ) return;
-          current_amount = amount;
+        getTotalAmount = function () {
+          var amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') );
+          var qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1;
+
+          return amount * qty;
+        },
+        last_amount = false,
+        updateAmount = function (amount) {
+          log('updateAmount', amount);
+          if( !amount || amount === last_amount) return;
+          last_amount = amount;
           widget_el.style.opacity = 0.5;
-          aplazame.simulator( amount*qty, simulator_options, function (_choices, _options) {
+          aplazame.simulator( amount, simulator_options, function (_choices, _options) {
             if( _options.widget.disabled ) {
               if(qty_interval) clearInterval(qty_interval);
               // _removeListener(onDomChanges);
@@ -38,23 +43,17 @@ module.exports = function (aplazame) {
           // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
           if( !document.body.contains(widget_el) ) return $live.off(onDomChanges);
 
-          var amount = amountGetter();
-
-          if( amount && amount !== current_amount ) updateAmount(amount, current_qty);
+          updateAmount(getTotalAmount());
         };
 
     if( amountGetter.qtySelector ) qty_interval = setInterval(function () {
-      var qty = amountGetter.getQty(amountGetter.qtySelector) || 1;
-
-      if( qty === current_qty ) return;
-      updateAmount(current_amount, qty);
+      updateAmount(getTotalAmount());
     }, 120);
 
     // dom_listeners.push(onDomChanges);
     $live(onDomChanges);
 
-    updateAmount(current_amount, current_qty);
-
+    updateAmount(getTotalAmount());
   });
 
 };

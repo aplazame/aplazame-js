@@ -7,9 +7,6 @@ var apzVersion = require('../../.tmp/aplazame-version'),
     renderAccept = _.template.compile('application/vnd.aplazame<% if(sandbox){ %>.sandbox<% } %>.v<%= version %>+json'),
     acceptHeader = function (config) {
       var _api = _.copy(api);
-      if( 'version' in config || 'apiVersion' in config ) {
-        _api.version = 'version' in config ? config.version : config.apiVersion;
-      }
       if( 'sandbox' in config ) {
         _api.sandbox = config.sandbox;
       }

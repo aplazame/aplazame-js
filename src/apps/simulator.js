@@ -7,15 +7,8 @@ var apiHttp = require('../core/api-http'),
     requestsCache = {},
     log = require('../tools/log');
 
-function simulator (amount, _options, callback, onError) {
-
-  if( _.isFunction(_options) ) {
-    onError = callback;
-    callback = _options;
-    _options = {};
-  } else {
-    _options = _options || {};
-  }
+function simulator (amount, _options) {
+  _options = _options || {};
 
   var options = {
         params: {
@@ -26,9 +19,7 @@ function simulator (amount, _options, callback, onError) {
       hash = amount + ',' + JSON.stringify(options);
 
   if( requestsCache[hash] ) {
-    return requestsCache[hash].then(function (result) {
-      (callback || _.noop)( result.choices, result.options );
-    });
+    return requestsCache[hash];
   }
 
   if( _options.view ) {
@@ -56,10 +47,7 @@ function simulator (amount, _options, callback, onError) {
 
       return result;
     }) )
-    .then(function (result) {
-      (callback || _.noop)( result.choices, result.options );
-      return result;
-    }, function (response) {
+    .then(null, function (response) {
       if( response.status === 403 ) {
         log('Aplazame[error]: Permiso denegado usando la clave pública', response.config.publicKey,
           'Revisa la configuración de Aplazame, para cualquier duda puedes escribir a hola@aplazame.com');
@@ -68,7 +56,7 @@ function simulator (amount, _options, callback, onError) {
       } else if( _.key(response, 'data.error.message') ) {
         log('Aplazame[error]: ' + response.data.error.message);
       }
-      (onError || _.noop)(response);
+      throw response;
     });
 
   return requestsCache[hash];

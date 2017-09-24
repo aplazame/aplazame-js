@@ -28,16 +28,17 @@ module.exports = function (aplazame) {
           if( !amount || amount === last_amount) return;
           last_amount = amount;
           widget_el.style.opacity = 0.5;
-          aplazame.simulator( amount, simulator_options, function (_choices, _options) {
-            if( _options.widget.disabled ) {
-              if(qty_interval) clearInterval(qty_interval);
-              // _removeListener(onDomChanges);
-              $live.off(onDomChanges);
-              return;
-            }
-            widget.render(_choices, _options);
-            widget_el.style.opacity = null;
-          });
+          aplazame.simulator( amount, simulator_options)
+            .then(function (result) {
+              if( result.options.widget.disabled ) {
+                if(qty_interval) clearInterval(qty_interval);
+                // _removeListener(onDomChanges);
+                $live.off(onDomChanges);
+                return;
+              }
+              widget.render(result.choices, result.options);
+              widget_el.style.opacity = null;
+            });
         },
         onDomChanges = function () {
           // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);

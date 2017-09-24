@@ -5,13 +5,13 @@ var apiHttp = require('../core/api-http'),
     requestsCache = {},
     log = require('../tools/log');
 
-function simulator (amount, _options) {
+function simulator (money, _options) {
   _options = _options || {};
 
   var options = {
     params: {
-      amount: amount,
-      currency: _options.currency || 'EUR'
+      amount: money.amount,
+      currency: money.currency,
     }
   };
 
@@ -33,7 +33,7 @@ function simulator (amount, _options) {
   var request = apiHttp.get('instalment-plan-simulator', options )
     .then(function (response) {
       return {
-        amount: amount,
+        money: money,
         choices: response.data.choices[0].instalments,
         options: response.data.options,
         response: response

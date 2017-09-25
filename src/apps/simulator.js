@@ -2,11 +2,18 @@
 
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
+    Money = require('../tools/money'),
     requestsCache = {},
     log = require('../tools/log');
 
 function simulator (money, _options) {
   _options = _options || {};
+
+  if( typeof money === 'number' ) money = new Money(money, 'EUR');
+  else if( !(money instanceof Money) ) {
+    if( !money.amount ) throw new Error('money should be a number or a Money object like');
+    else money = new Money(money.amount, money.currency);
+  }
 
   var options = {
     params: {

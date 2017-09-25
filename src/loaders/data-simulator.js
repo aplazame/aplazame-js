@@ -22,7 +22,7 @@ module.exports = function (aplazame) {
           var amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') );
           var qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1;
 
-          return Money(amount * qty, currency);
+          return new Money(amount * qty, currency);
         },
         last_money = false,
         updateAmount = function (money) {

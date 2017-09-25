@@ -21,7 +21,7 @@ function simulator (money,  options) {
   };
 
   if( options.view ) params.view =  options.view;
-  if(  options.payday ) params.payday =  options.payday;
+  if( options.payday ) params.payday = options.payday;
 
   var hash = JSON.stringify(params);
   if( !options.noCache && requests_cache[hash] ) return requests_cache[hash];

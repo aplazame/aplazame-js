@@ -3,11 +3,11 @@
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
     Money = require('../tools/money'),
-    requestsCache = {},
-    log = require('../tools/log');
+    log = require('../tools/log'),
+    requests_cache = {};
 
-function simulator (money, _options) {
-  _options = _options || {};
+function simulator (money,  options) {
+   options =  options || {};
 
   if( typeof money === 'number' ) money = new Money(money, 'EUR');
   else if( !(money instanceof Money) ) {
@@ -15,26 +15,18 @@ function simulator (money, _options) {
     else money = new Money(money.amount, money.currency);
   }
 
-  var options = {
-    params: {
-      amount: money.amount,
-      currency: money.currency,
-    }
+  var params = {
+    amount: money.amount,
+    currency: money.currency,
   };
 
-  if( _options.view ) {
-    options.params.view = _options.view;
-  }
-  if( _options.payday ) {
-    options.params.payday = _options.payday;
-  }
+  if( options.view ) params.view =  options.view;
+  if(  options.payday ) params.payday =  options.payday;
 
-  var hash = JSON.stringify(options);
-  if( !_options.noCache && requestsCache[hash] ) {
-    return requestsCache[hash];
-  }
+  var hash = JSON.stringify(params);
+  if( !options.noCache && requests_cache[hash] ) return requests_cache[hash];
 
-  var request = apiHttp.get('instalment-plan-simulator', options )
+  var request = apiHttp.get('instalment-plan-simulator', { params: params })
     .then(function (response) {
       return {
         money: money,
@@ -54,9 +46,7 @@ function simulator (money, _options) {
       throw response;
     });
 
-  if ( !_options.noCache ) {
-    requestsCache[hash] = request;
-  }
+  if( !options.noCache ) requests_cache[hash] = request;
 
   return request;
 }

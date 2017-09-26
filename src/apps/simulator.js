@@ -6,21 +6,18 @@ var apiHttp = require('../core/api-http'),
     log = require('../tools/log'),
     requests_cache = {};
 
-function simulator (money,  options) {
-   options =  options || {};
+function simulator (money, options) {
+  options = options || {};
 
-  if( typeof money === 'number' ) money = new Money(money, 'EUR');
-  else if( !(money instanceof Money) ) {
-    if( !money.amount ) throw new Error('money should be a number or a Money object like');
-    else money = new Money(money.amount, money.currency);
-  }
+  if( !money || !money.amount || !money.currency ) throw new Error('money should be a Money(like) object');
+  if( !(money instanceof Money) ) money = new Money(money.amount, money.currency);
 
   var params = {
     amount: money.amount,
     currency: money.currency,
   };
 
-  if( options.view ) params.view =  options.view;
+  if( options.view ) params.view = options.view;
   if( options.payday ) params.payday = options.payday;
 
   var hash = JSON.stringify(params);

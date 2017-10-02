@@ -26,7 +26,7 @@ deploy:
     user: ubuntu
     host: demo.aplazame.org
     source: public/
-    target: ~/www/js-demo
+    target: ~/www/demo-demo
     delete: true
     recursive: true
     when:

@@ -2,29 +2,11 @@
 
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
-    Money = require('../tools/money'),
     log = require('../tools/log'),
     requests_cache = {};
 
-function simulator (money, currency, options) {
-
-  if( typeof money !== 'number' ) {
-    if( !money || !money.amount || !money.currency ) throw new Error('money should be a Money(like) object');
-    money = new Money(money.amount, money.currency);
-    options = currency;
-  } else {
-    money = new Money(amount, currency);
-  }
-
+function simulator (params, options) {
   options = options || {};
-
-  var params = {
-    amount: money.amount,
-    currency: money.currency,
-  };
-
-  if( options.view ) params.view = options.view;
-  if( options.payday ) params.payday = options.payday;
 
   var hash = JSON.stringify(params);
   if( !options.noCache && requests_cache[hash] ) return requests_cache[hash];
@@ -32,7 +14,7 @@ function simulator (money, currency, options) {
   var request = apiHttp.get('instalment-plan-simulator', { params: params })
     .then(function (response) {
       return {
-        money: money,
+        params: params,
         choices: response.data.choices[0].instalments,
         options: response.data.options,
         response: response

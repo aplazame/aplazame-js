@@ -10,7 +10,7 @@ module.exports = function (aplazame) {
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
-    var simulator_options = { view: widget_el.getAttribute('data-view') || 'product' },
+    var view = widget_el.getAttribute('data-view') || 'product',
         currency = widget_el.getAttribute('data-currency') || 'EUR',
         widget = new Widget(widget_el, {
           currency:  currency,
@@ -31,7 +31,7 @@ module.exports = function (aplazame) {
           if( last_money && last_money.equals(money) ) return;
           last_money = money;
           widget_el.style.opacity = 0.5;
-          aplazame.simulator( money, simulator_options)
+          aplazame.simulator({ amount: money.amount, currency: money.currency, view: view })
             .then(function (result) {
               if( result.options.widget.disabled ) {
                 if(qty_interval) clearInterval(qty_interval);

@@ -34,7 +34,7 @@ form.addEventListener('submit', function (e) {
 
   if( payday > 28 ) payday -= 28;
 
-  aplazame.simulator({amount: currentAmount, currency: 'EUR'}, { noCache: true, payday: payday }).then(function (result) {
+  aplazame.simulator({amount: currentAmount, currency: 'EUR', payday: payday }, { noCache: true }).then(function (result) {
     var choices = result.choices;
     console.log('simulator', currentAmount, choices);
     resultsWrapper.querySelector('.section-title > h3').innerHTML = 'Resultados<a href="#explain">*</span>';

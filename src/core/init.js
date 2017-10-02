@@ -7,20 +7,6 @@ var api = require('./api'),
 function init (options) {
   options = options || {};
 
-  if( typeof options.version === 'string' ) {
-    var matchVersion = options.version.match(/^v?(\d)(\.(\d))?$/);
-
-    if( !matchVersion ) {
-      throw new Error('version mismatch, should be like \'v1.2\'');
-    }
-
-    options.version = Number(matchVersion[1]);
-
-    if( matchVersion[3] !== undefined ) {
-      options.checkoutVersion = Number(matchVersion[3]);
-    }
-  }
-
   if( typeof options.sandbox === 'string' ) {
     options.sandbox = options.sandbox === 'true';
   }

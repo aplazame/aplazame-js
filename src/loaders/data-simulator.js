@@ -4,7 +4,8 @@ module.exports = function (aplazame) {
 
   var $live = require('live-dom'),
       _amountGetter = require('./data-simulator-amount')(aplazame),
-      Widget = require('./data-simulator-widget')(aplazame);
+      Widget = require('./data-simulator-widget')(aplazame),
+      log = require('../tools/log');
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
@@ -18,7 +19,8 @@ module.exports = function (aplazame) {
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
         qty_interval,
         updateAmount = function (amount, qty) {
-          // console.log('updateAmount', amount, qty);
+          log('updateAmount', amount, qty);
+          if( !amount ) return;
           current_amount = amount;
           if( qty !== undefined ) current_qty = qty;
           widget_el.style.opacity = 0.5;

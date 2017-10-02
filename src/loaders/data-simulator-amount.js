@@ -37,7 +37,7 @@ module.exports = function (aplazame) {
     '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
     '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce
     'body.woocommerce-page .product-page-price .woocommerce-Price-amount', // woocommerce
-    '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]' // Schema.org
+    '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]', // Schema.org
   ],
   cmsQtySelector = [
     'form#product_addtocart_form input[name="qty"]', // magento
@@ -58,17 +58,18 @@ module.exports = function (aplazame) {
         autoDiscovered = false;
 
     if( priceSelector ) {
-      // try{
-      //   document.querySelector(priceSelector);
-      // } catch(err) {
-      //   priceSelector = null;
-      // }
+      try{
+        if( !document.querySelector(priceSelector) ) priceSelector = null;
+      } catch(err) {
+        priceSelector = null;
+        log('data-price: missing', err.message);
+      }
       if( qtySelector ) {
         try{
           document.querySelector(qtySelector);
         } catch(err) {
           qtySelector = null;
-          log(err.message);
+          log('data-qty: missing', err.message);
         }
       }
     } else {
@@ -79,6 +80,8 @@ module.exports = function (aplazame) {
         autoDiscovered = true;
 
         log('auto-discovered price selector', priceSelector, qtySelector);
+      } else {
+        log('data-price failing', widgetElement.getAttribute('data-price'), widgetElement.getAttribute('data-price') !== null ? document.querySelector(widgetElement.getAttribute('data-price')) : 'data-price missing', _.find(cmsPriceSelector, matchSelector) );
       }
     }
 
@@ -100,7 +103,7 @@ module.exports = function (aplazame) {
             if( /[,.]/.test(amount) ) {
               return;
             }
-            matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).match(/[\d,.]+/);
+            matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).replace(/&nbsp;/g, '').match(/[\d,.]+/);
 
             if( matched ) {
               amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
@@ -109,11 +112,13 @@ module.exports = function (aplazame) {
             part = part.nextSibling;
           }
         } else if( priceElement.textContent ) {
-          amount = priceElement.textContent;
+          amount = (priceElement.textContent || '').replace(/&nbsp;/g, '');
         } else if( priceElement.getAttribute('content') ) {
           amount = priceElement.getAttribute('content');
         }
       }
+
+      log('price read from', priceElement, amount );
 
       return amount && _.parsePrice( amount );
     } : function () {

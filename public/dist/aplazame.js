@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.446';
+module.exports = '0.0.447';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -2385,10 +2385,6 @@ function checkoutNormalizer(checkout, location, api) {
     throw new Error('missing merchant parameters');
   }
 
-  if( !merchant.public_api_key && !api.publicKey ) {
-    throw new Error('missing public key');
-  }
-
   // We put public_api_key as soon as possible so we can track the merchant from our API and notify him about any issue.
   merchant.public_api_key = merchant.public_api_key || api.publicKey;
   merchant.sandbox = merchant.sandbox === undefined ? api.sandbox : merchant.sandbox;
@@ -2954,9 +2950,6 @@ var apzVersion = require('../../.tmp/aplazame-version'),
     renderAccept = _.template.compile('application/vnd.aplazame<% if(sandbox){ %>.sandbox<% } %>.v<%= version %>+json'),
     acceptHeader = function (config) {
       var _api = _.copy(api);
-      if( 'version' in config || 'apiVersion' in config ) {
-        _api.version = 'version' in config ? config.version : config.apiVersion;
-      }
       if( 'sandbox' in config ) {
         _api.sandbox = config.sandbox;
       }
@@ -3003,7 +2996,6 @@ module.exports = {
   // host: 'https://api.aplazame.com/',
   staticUrl: 'https://aplazame.com/static/',
   version: 1,
-  checkoutVersion: 1,
   sandbox: false
 };
 
@@ -3034,20 +3026,6 @@ var api = require('./api'),
 
 function init (options) {
   options = options || {};
-
-  if( typeof options.version === 'string' ) {
-    var matchVersion = options.version.match(/^v?(\d)(\.(\d))?$/);
-
-    if( !matchVersion ) {
-      throw new Error('version mismatch, should be like \'v1.2\'');
-    }
-
-    options.version = Number(matchVersion[1]);
-
-    if( matchVersion[3] !== undefined ) {
-      options.checkoutVersion = Number(matchVersion[3]);
-    }
-  }
 
   if( typeof options.sandbox === 'string' ) {
     options.sandbox = options.sandbox === 'true';
@@ -3087,10 +3065,6 @@ module.exports = function (_, script) {
 
   if( script.getAttribute('data-api-host') ) {
     options.host = script.getAttribute('data-api-host');
-  }
-
-  if( script.getAttribute('data-version') ) {
-    options.version = script.getAttribute('data-version');
   }
 
   if( script.getAttribute('data-sandbox') ) {

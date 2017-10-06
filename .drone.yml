@@ -10,8 +10,21 @@ build:
 
 deploy:
   rsync:
-    user: $$DEPLOY_USER
-    host: dev.aplazame.com
+    user: ubuntu
+    host: 18.194.109.132
+    target: $$DEPLOY_PATH
+    delete: true
+    recursive: true
+    exclude:
+      - ".git"
+      - "node_modules"
+      - ".bower_components"
+    when:
+      branch: master
+
+  rsync:
+    user: san
+    host: 176.31.227.54
     target: $$DEPLOY_PATH
     delete: true
     recursive: true

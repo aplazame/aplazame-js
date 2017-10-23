@@ -2,63 +2,23 @@
 
 var apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
-    $q = require('parole'),
-    cache = [],
-    requestsCache = {},
-    log = require('../tools/log');
+    log = require('../tools/log'),
+    requests_cache = {};
 
-function simulator (amount, _options, callback, onError) {
+function simulator (params, options) {
+  options = options || {};
 
-  if( _.isFunction(_options) ) {
-    onError = callback;
-    callback = _options;
-    _options = {};
-  } else {
-    _options = _options || {};
-  }
+  var hash = JSON.stringify(params);
+  if( !options.noCache && requests_cache[hash] ) return requests_cache[hash];
 
-  var options = {
-        params: {
-          amount: amount,
-          currency: _options.currency || 'EUR'
-        }
-      },
-      hash = amount + ',' + JSON.stringify(options);
-
-  if( requestsCache[hash] ) {
-    return requestsCache[hash].then(function (result) {
-      (callback || _.noop)( result.choices, result.options );
-    });
-  }
-
-  if( _options.view ) {
-    options.params.view = _options.view;
-  }
-  if( _options.payday ) {
-    options.params.payday = _options.payday;
-  }
-  if( _options.publicKey ) {
-    options.publicKey = _options.publicKey;
-  }
-
-  var foundCached = _.find(cache, function (item) {
-    return item.amount === amount;
-  });
-
-  requestsCache[hash] = ( !_options.noCache && foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
-      var result = {
-        amount: amount,
+  var request = apiHttp.get('instalment-plan-simulator', { params: params })
+    .then(function (response) {
+      return {
+        params: params,
         choices: response.data.choices[0].instalments,
         options: response.data.options,
         response: response
       };
-      cache.push(result);
-
-      return result;
-    }) )
-    .then(function (result) {
-      (callback || _.noop)( result.choices, result.options );
-      return result;
     }, function (response) {
       if( response.status === 403 ) {
         log('Aplazame[error]: Permiso denegado usando la clave pública', response.config.publicKey,
@@ -68,10 +28,12 @@ function simulator (amount, _options, callback, onError) {
       } else if( _.key(response, 'data.error.message') ) {
         log('Aplazame[error]: ' + response.data.error.message);
       }
-      (onError || _.noop)(response);
+      throw response;
     });
 
-  return requestsCache[hash];
+  if( !options.noCache ) requests_cache[hash] = request;
+
+  return request;
 }
 
 module.exports = simulator;

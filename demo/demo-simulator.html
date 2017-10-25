@@ -88,6 +88,10 @@
       </table>
     </script>
 
+    <script type="application/x-template" data-template="results_footer">
+      * Ejemplo de financiación con APLAZAME para una cesta de <%= getAmount(amount) %>€ a <%= last_choice.num_instalments %> meses y que comienza a pagar a los 20 días desde la solicitud. Se solicita una entrada de <%= getAmount(last_choice.downpayment_amount) %>€ que el usuario debe pagar a través de su tarjeta en el momento en que realiza la operación. El importe a financiar es la diferencia entre el valor de la cesta y la entrada: <%= getAmount(amount - last_choice.downpayment_amount) %>€. Se solicitan <%= last_choice.num_instalments %> mensualidades de <%= getAmount(last_choice.amount) %>€. Comisión de apertura: <%= getAmount(last_choice.total_fees) %>€. TIN: 22,11% TAE: <%= getAmount(last_choice.annual_equivalent) %>%. Importe total adeudado: <%= getAmount(last_choice.amount*last_choice.num_instalments) %>€. Sujeto a la aprobación por parte de APLAZAME, S.L.
+    </script>
+
     <script type="text/javascript" src="../dist/aplazame.js?sandbox=true"
             data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
             data-version="v1.2"

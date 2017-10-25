@@ -40,12 +40,18 @@ form.addEventListener('submit', function (e) {
     _.removeClass(results, 'hidden');
     _.removeClass(resultsFooter, 'hidden');
 
-    results.innerHTML = _.template('results', {
+    var scope = {
+      amount: currentAmount,
       getAmount: _.getAmount,
       choices: choices,
+      last_choice: choices[choices.length - 1],
       months: function (m) {
         return m > 1 ? 'meses' : 'mes';
       }
-    });
+    };
+
+    results.innerHTML = _.template('results', scope);
+    resultsFooter.innerHTML = _.template('results_footer', scope);
+
   });
 });

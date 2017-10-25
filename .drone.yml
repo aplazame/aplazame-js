@@ -67,6 +67,8 @@ publish:
     secret_key: $$S3_SECRET_KEY
     source: dist/aplazame.js
     target: /aplazame.js
+    content_type:
+      ".js": application/javascript
     metadata:
       Cache-Control: "max-age: 3600"
     when:

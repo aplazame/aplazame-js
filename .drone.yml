@@ -58,6 +58,22 @@ deploy:
     when:
       branch: release
 
+publish:
+  s3_sync:
+    acl: public-read
+    region: "eu-central-1"
+    bucket: "cdn.aplazame.com"
+    access_key: $$S3_ACCESS_KEY
+    secret_key: $$S3_SECRET_KEY
+    source: dist/aplazame.com
+    target: /
+    metadata:
+      Cache-Control: "max-age: 3600"
+    when:
+      branch:
+        - master
+        - release
+
 notify:
   slack:
     webhook_url: $$SLACK_WEBHOOK_URL

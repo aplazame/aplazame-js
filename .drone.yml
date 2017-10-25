@@ -65,7 +65,7 @@ publish:
     bucket: "cdn.aplazame.com"
     access_key: $$S3_ACCESS_KEY
     secret_key: $$S3_SECRET_KEY
-    source: dist/aplazame.com
+    source: dist/aplazame.js
     target: /
     metadata:
       Cache-Control: "max-age: 3600"

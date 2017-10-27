@@ -65,10 +65,11 @@ publish:
     bucket: "cdn.aplazame.com"
     access_key: $$S3_ACCESS_KEY
     secret_key: $$S3_SECRET_KEY
-    source: dist/aplazame.min.js
+    source: dist/aplazame.js
     target: /aplazame.js
+    content_type:
+      ".js": "application/javascript; charset=utf-8"
     metadata:
-      Content-Type: "application/javascript; charset=utf-8"
       Cache-Control: "max-age: 3600"
       x-content-type-options: nosniff
     when:

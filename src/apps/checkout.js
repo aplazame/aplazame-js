@@ -106,7 +106,7 @@ function checkout (options) {
           }),
           postMessage = function (event_name, message, target) {
             message.aplazame = 'checkout';
-            message.event_name = event_name;
+            message.event = event_name;
             (target || iframe.contentWindow).postMessage(message, '*');
           },
           httpCheckout = function () {
@@ -139,7 +139,7 @@ function checkout (options) {
       }
 
       var onMessage = function (e, message) {
-        console.log('onMessage', message);
+        // console.log('onMessage', message);
 
         switch( message.event ) {
           case 'merchant':

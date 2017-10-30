@@ -113,7 +113,6 @@ function checkout (options) {
             var started = _.now();
             return http.apply(this, arguments).then(function (response) {
               response.config.start = started;
-              console.log('httpCheckout.then', response);
               postMessage('http-success', {
                 started: started,
                 elapsed: _.now() - started,
@@ -122,7 +121,6 @@ function checkout (options) {
               return response;
             }, function (response) {
               response.config.start = started;
-              console.log('httpCheckout.then', response);
               postMessage('http-error', {
                 started: started,
                 elapsed: _.now() - started,

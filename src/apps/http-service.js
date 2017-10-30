@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('../tools/tools'),
-    http = require('http-browser');
+    http = require('http-rest/browser');
 
 function processResponse(result, message, messageSrc, started) {
 

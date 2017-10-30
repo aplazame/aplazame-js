@@ -3,6 +3,8 @@
 require('./sandbox')(function () {
   'use strict';
 
+  require('http-rest/browser').usePromise(require('parole'));
+
   function once (fn) {
     var result;
     return function () {

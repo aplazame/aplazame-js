@@ -3,7 +3,7 @@
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     checkoutNormalizer = require('./checkout-normalizer'),
-    http = require('http-browser'),
+    http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
     isApp = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log');
@@ -96,7 +96,7 @@ function checkout (options) {
     }
   }, 200);
 
-  return http( iframeSrc ).then(function (response) {
+  return http( iframeSrc ).then(function (_iframe_response) {
       var iframe = _.getIFrame({
             top: 0,
             left: 0,
@@ -104,25 +104,28 @@ function checkout (options) {
             height: '0',
             background: 'transparent'
           }),
+          postMessage = function (event_name, message, target) {
+            message.aplazame = 'checkout';
+            message.event = event_name;
+            (target || iframe.contentWindow).postMessage(message, '*');
+          },
           httpCheckout = function () {
             var started = _.now();
             return http.apply(this, arguments).then(function (response) {
-              iframe.contentWindow.postMessage({
-                aplazame: 'checkout',
-                event: 'http-success',
+              response.config.start = started;
+              postMessage('http-success', {
                 started: started,
                 elapsed: _.now() - started,
-                response: http.plainResponse(response)
-              }, '*');
+                response: response
+              });
               return response;
             }, function (response) {
-              iframe.contentWindow.postMessage({
-                aplazame: 'checkout',
-                event: 'http-error',
+              response.config.start = started;
+              postMessage('http-error', {
                 started: started,
                 elapsed: _.now() - started,
-                response: http.plainResponse(response)
-              }, '*');
+                response: response
+              });
               throw response;
             });
           };
@@ -138,13 +141,14 @@ function checkout (options) {
       }
 
       var onMessage = function (e, message) {
+        // console.log('onMessage', message);
 
         switch( message.event ) {
           case 'merchant':
             iframe.style.display = _.remove_style;
-            e.source.postMessage({
+            postMessage('merchant-data', {
               checkout: options
-            }, '*');
+            }, e.source);
             break;
           case 'show-iframe':
             _.removeClass(iframe, 'hide');
@@ -171,7 +175,6 @@ function checkout (options) {
             }, 600);
             break;
           case 'confirm':
-          case 'success':
             _.log('aplazame.checkout:confirm', message);
 
             httpCheckout( options.merchant.confirmation_url, {
@@ -183,19 +186,15 @@ function checkout (options) {
                 checkout_token: message.data.checkout_token
               })
             }).then(function (response) {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
+              postMessage('confirmation', {
                 result: 'success',
-                response: http.plainResponse(response)
-              }, '*');
-            }, function () {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
+                response: response
+              }, e.source);
+            }, function (response) {
+              postMessage('confirmation', {
                 result: 'error',
-                response: http.plainResponse(response)
-              }, '*');
+                response: response
+              }, e.source);
             });
             // confirmation_url
             break;

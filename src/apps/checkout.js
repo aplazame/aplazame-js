@@ -3,7 +3,7 @@
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     checkoutNormalizer = require('./checkout-normalizer'),
-    http = require('http-browser'),
+    http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
     isApp = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log');
@@ -96,7 +96,7 @@ function checkout (options) {
     }
   }, 200);
 
-  return http( iframeSrc ).then(function (response) {
+  return http( iframeSrc ).then(function (_iframe_response) {
       var iframe = _.getIFrame({
             top: 0,
             left: 0,
@@ -112,17 +112,21 @@ function checkout (options) {
           httpCheckout = function () {
             var started = _.now();
             return http.apply(this, arguments).then(function (response) {
+              response.config.start = started;
+              console.log('httpCheckout.then', response);
               postMessage('http-success', {
                 started: started,
                 elapsed: _.now() - started,
-                response: http.plainResponse(response)
+                response: response
               });
               return response;
             }, function (response) {
+              response.config.start = started;
+              console.log('httpCheckout.then', response);
               postMessage('http-error', {
                 started: started,
                 elapsed: _.now() - started,
-                response: http.plainResponse(response)
+                response: response
               });
               throw response;
             });
@@ -186,12 +190,12 @@ function checkout (options) {
             }).then(function (response) {
               postMessage('confirmation', {
                 result: 'success',
-                response: http.plainResponse(response)
+                response: response
               }, e.source);
-            }, function () {
+            }, function (response) {
               postMessage('confirmation', {
                 result: 'error',
-                response: http.plainResponse(response)
+                response: response
               }, e.source);
             });
             // confirmation_url

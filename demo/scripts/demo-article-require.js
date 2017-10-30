@@ -98,7 +98,7 @@ require(['aplazame'], function (aplazame) {
 
     // console.log('params', location.search.replace(/^\?/, '').split('&')[0].match(/(.*?)\=(.*)/) );
 
-    // var http = require('http-browser'),
+    // var http = require('http-rest/browser'),
     //     checkoutData = http(params['checkout-json']);
 
     function randOrderId (_timeout) {

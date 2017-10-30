@@ -3,7 +3,7 @@
 var apzVersion = require('../../.tmp/aplazame-version'),
     _ = require('../tools/tools'),
     api = require('./api'),
-    http = require('http-browser'),
+    http = require('http-rest/browser'),
     renderAccept = _.template.compile('application/vnd.aplazame<% if(sandbox){ %>.sandbox<% } %>.v<%= version %>+json'),
     acceptHeader = function (config) {
       var _api = _.copy(api);

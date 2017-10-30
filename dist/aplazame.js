@@ -1,13 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.447';
+module.exports = '0.0.448';
 },{}],2:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;-webkit-animation-direction:reverse;animation-direction:reverse}}';
+module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@-webkit-keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#5d666b}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:1.5s;animation-duration:1.5s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.logo-aplazame.animate .smile{-webkit-animation-name:aplazame-logo-smile;animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{-webkit-animation-name:aplazame-logo-large;animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{-webkit-animation-name:aplazame-logo-short;animation-name:aplazame-logo-short}';
+module.exports = '@keyframes aplazame-logo-smile{0%{transform:rotate(0deg);}90%{transform:rotate(2turn)}to{transform:rotate(2turn)}}@keyframes aplazame-logo-short{0%{transform:rotate(0deg)}30%{transform:rotate(0deg)}90%{transform:rotate(1turn)}to{transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%{transform:rotate(1turn)}90%{transform:rotate(1turn)}to{transform:rotate(1turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#5d666b}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}';
 },{}],4:[function(require,module,exports){
 module.exports = '.aplazame-modal{height:100%;height:100vh;position:relative;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
 },{}],5:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{-webkit-animation-direction:reverse;animation-direction:reverse}';
+module.exports = '@keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{transform:translateZ(0);animation-duration:.6s;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{animation-direction:reverse}';
 },{}],6:[function(require,module,exports){
 module.exports = function anonymous(obj
 /**/) {
@@ -232,18 +232,90 @@ module.exports = function bezier (mX1, mY1, mX2, mY2) {
 };
 
 },{}],11:[function(require,module,exports){
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.$http = factory());
+}(this, (function () { 'use strict';
 
-// factory http
+var isType = function (type, o) {
+      return o ? typeof o === type : function (_o) {
+        return typeof _o === type;
+      };
+    };
 
-var Parole = require('parole'),
-    _ = require('nitro-tools/extend');
+function isObject (o) {
+  return o !== null && typeof o === 'object';
+}
 
-function resolveFunctions (o, args, thisArg) {
+var isArray = Array.isArray || function (o) {
+  return o instanceof Array;
+};
+
+var isString = isType('string');
+var isFunction = isType('function');
+
+function mapObject (o, iteratee, thisArg) {
+  var result = {};
   for( var key in o ) {
-    if( o[key] instanceof Function ) {
-      o[key] = o[key].apply(thisArg, args || []);
-    } else if( typeof o[key] === 'object' && o[key] !== null ) {
-      o[key] = resolveFunctions(o[key], args, thisArg);
+    result[key] = iteratee.call(thisArg, o[key], key);
+  }
+  return result;
+}
+
+function copy (src) {
+  if( isArray(src) ) {
+    return src.map(function (item) {
+      return copy(item);
+    });
+  }
+
+  if( isObject(src) ) {
+    return mapObject(src, function (item) {
+      return copy(item);
+    });
+  }
+
+  return src;
+}
+
+function extend (dest, src) {
+  dest = dest || {};
+  for( var key in src ) dest[key] = src[key];
+  return dest;
+}
+
+function _mergeArrays(dest, src, concatArrays) {
+  if( !concatArrays ) return src.map(copy);
+  [].push.apply(dest, src);
+  for( var i = 0, n = src.length ; i < n ; i++ ) {
+    dest.push( dest[i] ? merge(dest[i], src[i]) : copy(src[i]) );
+  }
+  return dest;
+}
+
+function merge (dest, src, concatArrays) {
+  if( typeof dest !== typeof src ) {
+    if( isArray(src) ) dest = [];
+    else if( typeof src === 'object' ) dest = {};
+    else return src;
+  }
+  if( isArray(src) ) return _mergeArrays(dest, src, concatArrays);
+  if( typeof src === 'object' ) {
+    for( var key in src ) {
+      dest[key] = merge(dest[key], src[key]);
+    }
+    return dest;
+  }
+  return src;
+}
+
+function resolveFunctions (o, args, this_arg) {
+  for( var key in o ) {
+    if( isFunction(o[key]) ) {
+      o[key] = o[key].apply(this_arg, args);
+    } else if( isObject(o[key]) ) {
+      o[key] = resolveFunctions(o[key], args, this_arg);
     }
   }
   return o;
@@ -259,224 +331,295 @@ function headerToTitleSlug(text) {
   return key;
 }
 
+function headersToTitleSlug(headers) {
+  var _headers = {};
+
+  for( var key in headers ) {
+    _headers[ headerToTitleSlug(key) ] = headers[key];
+  }
+
+  return _headers;
+}
+
 function headerToCamelCase(text) {
   var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([A-Z])/g, function (match, lower, upper) {
-    return lower + upper;
+  return key.replace(/([a-z])-([a-zA-Z])/g, function (match, lower, upper) {
+    return lower + upper.toUpperCase();
   });
 }
 
-var RE_contentType = /([^\/]+)\/([^+]+\+)?([^;]*)/;
-function parseContentType(contentType, text, xml) {
-  var matches = contentType && contentType.match(RE_contentType);
-  return matches && ( matches[3] === 'json' ? JSON.parse(text) : ( matches[3] === 'xml' ? xml : text ) );
+
+
+function serializeParams (params, previous_levels) {
+  var results = [];
+  previous_levels = previous_levels ||[];
+
+  for( var param in params ) {
+    if( typeof params[param] === 'object' ) [].push.apply( results, serializeParams(params[param], previous_levels.concat(param) ) );
+    else results.push( previous_levels.concat(param).reduce(function (key, param) {
+      return key + ( key ? ('[' + param + ']') : param );
+    }, '') + '=' + encodeURIComponent(params[param]) );
+  }
+  return results;
 }
 
-function _getHeaders (request) {
+var RE_contentType = /([^/]+)\/([^+]+\+)?([^;]*)/;
+function parseContentType(contentType) {
+  var matches = contentType && contentType.match(RE_contentType);
+  return matches ? matches[3] : 'text';
+}
+
+
+var arrayPush = Array.prototype.push;
+var arraySlice = Array.prototype.slice;
+
+function _sanitizePath(path, i, last) {
+  if( i > 0 ) path = path.replace(/^\.*\//, '');
+  if( !last ) path = path.replace(/\/$/, '');
+  return path.split(/\/+/);
+}
+
+function _joinPaths (paths) {
+  var last = paths.length - 1;
+  return paths.reduce(function (result, path, i) {
+
+    if( path === '.' ) return result;
+    if( /^\//.test(path) ) return _sanitizePath(path, 0, i === last );
+
+    path = path.replace(/\.\.\//g, function () {
+      result = result.slice(0, -1);
+      return '';
+    }).replace(/\.\//, '');
+
+    arrayPush.apply( result, _sanitizePath(path, i, i === last) );
+
+    return result;
+
+  }, []).join('/');
+}
+
+function _unraise (paths) {
+  var result = [];
+
+  paths.forEach(function (path) {
+    if( !path ) return;
+
+    // https://jsperf.com/array-prototype-push-apply-vs-concat/17
+    if( path instanceof Array ) arrayPush.apply(result, _unraise(path) );
+    else if( typeof path === 'string' ) result.push(path);
+    else throw new Error('paths parts should be Array or String');
+  });
+
+  return result;
+}
+
+function joinPaths () {
+  return _joinPaths( _unraise(arraySlice.call(arguments)) );
+}
+
+var http_defaults = {};
+var makeRequest = function () {};
+var Parole = typeof Promise !== 'undefined' ? Promise : function () {};
+
+function _plainOptions (_options_pile, method) {
+  var options_pile = _options_pile ? copy(_options_pile) : [];
+
+  var plain_options = {},
+      options = options_pile.shift();
+
+  while( options ) {
+    merge(plain_options, options);
+    options = options_pile.shift();
+  }
+
+  if(method) plain_options.method = method;
+
+  plain_options.url = joinPaths( _options_pile.reduce(function (paths, options) {
+    if( !options.url ) return paths;
+
+    if( options.url instanceof Function ) return paths.concat( options.url(plain_options) );
+
+    return paths.concat(options.url);
+  }, []) );
+
+  return plain_options;
+}
+
+function http$1 (url, _config, body) {
+
+  var config = _plainOptions([http_defaults, _config || {}]);
+
+  config = copy( isObject(url) ? url : config || {} );
+  config.url = url === config ? config.url : url;
+  config.method = config.method ? config.method.toUpperCase() : 'GET';
+  config.timestamp = new Date().getTime();
+  config.body = body || config.body;
+
+  if( !isString(config.url) ) throw new Error('url must be a string');
+
+  config = resolveFunctions(config, [config]);
+
+  if( config.params ) {
+    config.url += ( /\?/.test(config.url) ? '&' : '?' ) + serializeParams( config.params ).join('&');
+  }
+
+  var headers = copy(config.headers || {});
+
+  if( config.json && !config.body ) {
+    headers.contentType = headers.contentType || 'application/json';
+    config.body = JSON.stringify(config.json);
+  } else if( headers.contentType === 'application/json' && typeof config.body === 'object' ) {
+    config.body = JSON.stringify(config.json);
+  } else if( typeof config.body === 'object' &&
+      !Blob.prototype.isPrototypeOf(config.body) &&
+      !FormData.prototype.isPrototypeOf(config.body) ) {
+    config.body = JSON.stringify(config.body);
+    headers.contentType = headers.contentType || 'application/json';
+  } else if( !headers.contentType ) headers.contentType || 'application/json';
+
+  headers.accept = headers.accept || headers.contentType || 'application/json';
+
+  config.headers = headersToTitleSlug(headers);
+
+  var request = new Parole(function (resolve, reject) {
+    makeRequest(config, resolve, reject);
+  });
+
+  request.config = config;
+
+  return request;
+}
+
+http$1.responseData = function (response) {
+  return response.data;
+};
+
+function httpBase (target, options, options_pile) {
+  var requestMethod = function (method, hasData) {
+        return hasData ? function (url, data, _options) {
+          if( typeof url === 'object' ) { _options = data; data = url; url = null; }
+          _options = Object.create(_options || {});
+          if( url ) _options.url = url;
+          _options = _plainOptions( _options ? options_pile.concat(_options) : options_pile, method );
+          return http$1( _options.url, _options, data );
+        } : function (url, _options, params) {
+          if( typeof url === 'object' ) { params = _options; _options = url; url = null; }
+          _options = Object.create(_options || {});
+          if( url ) _options.url = url;
+          if( params ) _options.params = params;
+          _options = _plainOptions( _options ? options_pile.concat(_options) : options_pile, method );
+          return http$1( _options.url, _options );
+        };
+      };
+
+  return extend(target, {
+    head: requestMethod('head'),
+    get: requestMethod('get'),
+    post: requestMethod('post', true),
+    put: requestMethod('put', true),
+    patch: requestMethod('patch', true),
+    delete: requestMethod('delete'),
+    base: function (url, _options) {
+      var options = _options ? Object.create(_options) :{};
+      options.url = url;
+      return httpBase( requestMethod('get'), options, options_pile.concat(options) );
+    },
+    config: function (_options) {
+      if( options === undefined ) return _plainOptions( [http_defaults].concat(this.options_pile).concat(options) );
+      merge( options, _options );
+    },
+    responseData: http$1.responseData,
+  });
+}
+
+http$1.base = httpBase;
+httpBase(http$1, http_defaults, []);
+
+http$1.usePromise = function (P) { Parole = P; return http$1; };
+http$1.useRequest = function (request) {
+  if( !isFunction(request) ) throw new Error('request should be a function');
+  else makeRequest = request;
+  return http$1;
+};
+
+http$1.config = function (options) {
+  merge( http_defaults, options );
+  return http$1;
+};
+
+/* global ActiveXObject */
+
+var parseData = {
+  json: function (data) {
+    return JSON.parse(data);
+  }
+};
+
+function _getXMLHeaders (request) {
   var headers = {};
-  request.getAllResponseHeaders().replace(/\s*([^\:]+)\s*\:\s*([^\;\n]+)/g, function (match, key, value) {
-      headers[headerToCamelCase(key)] = value.trim();
+  request.getAllResponseHeaders().split('\n').forEach(function (headerLine) {
+    var matched = headerLine.match(/(.*?):(.*)/);
+    if( matched ) {
+      headers[headerToCamelCase(matched[1])] = matched[2].trim();
+    }
   });
 
   return headers;
 }
 
-function headersGetter (request) {
-  var headersCache;
-  return function () {
-    if( !headersCache ) {
-      headersCache = _getHeaders(request);
-    }
-    return headersCache;
-  };
-}
+function xmlRequest (config, resolve, reject) {
 
-function serializeParams (params) {
-  var result = '';
+  var request = null;
 
-  for( var param in params ) {
-    result += ( result ? '&' : '' ) + param + '=' + encodeURIComponent(params[param]);
+  try { // Firefox, Opera 8.0+, Safari
+    request = new XMLHttpRequest();
+  } catch (e) { // Internet Explorer
+    try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
+    catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
   }
-  return result;
-}
+  if( request === null ) { throw 'Browser does not support HTTP Request'; }
 
-function addHeadersToRequest (req, headers) {
-  for( var key in headers ) {
-    req.setRequestHeader( headerToTitleSlug(key), headers[key] );
-  }
-}
+  if( config.withCredentials || config.credentials === 'include' ) request.withCredentials = true;
 
-var defaultSettings = {};
+  request.onreadystatechange = function() {
+    if( request.readyState === 'complete' || request.readyState === 4 ) {
+      // var type = parseContentType( request.getResponseHeader('Content-Type') ),
+      var headers = _getXMLHeaders(request),
+          type = parseContentType( headers.contentType ),
+          response = {
+            config: config,
+            status: request.status,
+            statusText: request.statusText,
+            headers: headers,
+            data: type === 'xml' ? request.responseXML : (parseData[type] ? parseData[type](request.responseText) : request.responseText),
+          };
 
-http.config = function (settings) {
-  _.merge(defaultSettings, settings);
-  return http;
-};
-
-function http (url, config) {
-
-  if( config === undefined && typeof url === 'object' && url !== null ) {
-    config = url;
-    url = config.url;
-  } else {
-    config = config || {};
-    config.url = url;
-  }
-
-  config = _.merge(_.copy(defaultSettings),_.copy(config));
-  config = resolveFunctions( config, [config], null );
-  config.method = ( config.method || 'GET').toUpperCase();
-
-  if( typeof config.url !== 'string' ) {
-    throw new Error('url should be a string');
-  }
-
-  return new Parole(function (resolve, reject) {
-
-    var request = null;
-
-    try { // Firefox, Opera 8.0+, Safari
-        request = new XMLHttpRequest();
-    } catch (e) { // Internet Explorer
-        try { request = new ActiveXObject('Msxml2.XMLHTTP'); }  // jshint ignore:line
-        catch (er) { request = new ActiveXObject('Microsoft.XMLHTTP'); }  // jshint ignore:line
-    }
-    if( request === null ) { throw 'Browser does not support HTTP Request'; }
-
-    if( config.params ) {
-      url += ( /\?/.test(url) ? '&' : '?' ) + serializeParams( config.params );
-    }
-
-    request.open( config.method, url );
-
-    if( config.withCredentials ) {
-      request.withCredentials = true;
-    }
-
-    addHeadersToRequest(request, config.headers || {} );
-
-    request.config = config;
-    config.start = new Date().getTime();
-
-    request.onreadystatechange = function(){
-      if( request.readyState === 'complete' || request.readyState === 4 ) {
-        var response = {
-          config: config,
-          data: parseContentType(request.getResponseHeader('content-type'), request.responseText, request.responseXML),
-          status: request.status,
-          headers: headersGetter(request),
-          xhr: request
-        };
-        if( request.status >= 200 && request.status < 400 ) {
-          resolve( response );
-        } else {
-          reject( response );
-        }
-      }
-    };
-
-    if( config.contentType ) {
-
-      if( config.data && config.contentType === 'application/json' && typeof config.data !== 'string' ) {
-        config.data = JSON.stringify(config.data);
-      }
-
-    } else if( config.data instanceof FormData ) {
-      config.contentType = 'multipart/form-data';
-    } else if( typeof config.data === 'object' && config.data !== null ) {
-      config.contentType = 'application/json';
-      if( config.data ) {
-        config.data = JSON.stringify(config.data);
+      if( request.status >= 200 && request.status < 400 ) {
+        resolve( response );
+      } else {
+        reject( response );
       }
     }
+  };
 
-    if( config.contentType ) {
-      // addHeadersToRequest(request, { contentType: config.contentType });
-      request.setRequestHeader( 'Content-Type', config.contentType );
+  request.open(config.method, config.url, true);
+
+  if( config.headers ) {
+    for( var key in config.headers ) {
+      request.setRequestHeader( key, config.headers[key] );
     }
-
-    request.send( config.data );
-
-  });
-}
-
-http.serialize = serializeParams;
-
-http.noCache = function (url, config) {
-  url += ( /\?/.test(url) ? '&' : '?' ) + 't=' + new Date().getTime();
-  return http(url, config);
-};
-
-http.plainResponse = function (response) {
-  return {
-    config: response.config,
-    data: response.data,
-    status: response.status,
-    headers: response.headers()
-  };
-};
-
-['get', 'delete'].forEach(function (method) {
-  http[method] = function (url, config) {
-    return http(url, _.extend(_.copy(config || {}), {
-      method: method
-    }));
-  };
-});
-
-['post', 'put', 'patch'].forEach(function (method) {
-  http[method] = function (url, data, config) {
-    return http(url, _.extend(_.copy(config || {}), {
-      method: method,
-      data: data || {}
-    }));
-  };
-});
-
-// basePath
-
-function basePath (bp) {
-  if( /\/$/.test(bp) ) {
-    bp = bp.replace(/\/$/,'');
   }
-  return function (p) {
-    if( !p ) {
-      return bp;
-    }
-    return bp + ( /^\//.test(p) ? '' : '/' ) + p;
-  };
+
+  request.send( config.body );
 }
 
-http.base = function (url, baseConfig) {
-  var bp = basePath(url),
-      based = function () {
-        return based.get.apply(this, arguments);
-      };
+http$1.useRequest(xmlRequest);
 
-  baseConfig = baseConfig || {};
+return http$1;
 
-  ['get', 'delete'].forEach(function (method) {
-    based[method] = function (p, _config ) {
-      return http( bp(p), _.merge(_.copy(baseConfig), _config, { method: method }));
-    };
-  });
+})));
 
-  ['post', 'put', 'patch'].forEach(function (method) {
-    based[method] = function (p, data, _config ) {
-      return http( bp(p), _.merge(_.copy(baseConfig), _config, { method: method, data: data }) );
-    };
-  });
-
-  return based;
-};
-
-http.responseData = function (response) {
-  return response.data;
-};
-
-module.exports = http;
-
-},{"nitro-tools/extend":14,"parole":18}],12:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 (function (factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -2124,6 +2267,8 @@ arguments[4][17][0].apply(exports,arguments)
 require('./sandbox')(function () {
   'use strict';
 
+  require('http-rest/browser').usePromise(require('parole'));
+
   function once (fn) {
     var result;
     return function () {
@@ -2207,7 +2352,7 @@ require('./sandbox')(function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../.tmp/aplazame-version":1,"./apps/button":47,"./apps/checkout":49,"./apps/http-service":50,"./apps/modal":52,"./apps/simulator":53,"./core/api":55,"./core/core":56,"./core/events":57,"./loaders/data-aplazame":59,"./loaders/data-button":60,"./loaders/data-simulator":64,"./sandbox":65,"./tools/log":71}],47:[function(require,module,exports){
+},{"../.tmp/aplazame-version":1,"./apps/button":47,"./apps/checkout":49,"./apps/http-service":50,"./apps/modal":52,"./apps/simulator":53,"./core/api":55,"./core/core":56,"./core/events":57,"./loaders/data-aplazame":59,"./loaders/data-button":60,"./loaders/data-simulator":64,"./sandbox":65,"./tools/log":71,"http-rest/browser":11,"parole":18}],47:[function(require,module,exports){
 'use strict';
 
 var apiHttp = require('../core/api-http'),
@@ -2454,7 +2599,7 @@ module.exports = checkoutNormalizer;
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     checkoutNormalizer = require('./checkout-normalizer'),
-    http = require('http-browser'),
+    http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
     isApp = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log');
@@ -2547,7 +2692,7 @@ function checkout (options) {
     }
   }, 200);
 
-  return http( iframeSrc ).then(function (response) {
+  return http( iframeSrc ).then(function (_iframe_response) {
       var iframe = _.getIFrame({
             top: 0,
             left: 0,
@@ -2555,25 +2700,28 @@ function checkout (options) {
             height: '0',
             background: 'transparent'
           }),
+          postMessage = function (event_name, message, target) {
+            message.aplazame = 'checkout';
+            message.event = event_name;
+            (target || iframe.contentWindow).postMessage(message, '*');
+          },
           httpCheckout = function () {
             var started = _.now();
             return http.apply(this, arguments).then(function (response) {
-              iframe.contentWindow.postMessage({
-                aplazame: 'checkout',
-                event: 'http-success',
+              response.config.start = started;
+              postMessage('http-success', {
                 started: started,
                 elapsed: _.now() - started,
-                response: http.plainResponse(response)
-              }, '*');
+                response: response
+              });
               return response;
             }, function (response) {
-              iframe.contentWindow.postMessage({
-                aplazame: 'checkout',
-                event: 'http-error',
+              response.config.start = started;
+              postMessage('http-error', {
                 started: started,
                 elapsed: _.now() - started,
-                response: http.plainResponse(response)
-              }, '*');
+                response: response
+              });
               throw response;
             });
           };
@@ -2589,13 +2737,14 @@ function checkout (options) {
       }
 
       var onMessage = function (e, message) {
+        // console.log('onMessage', message);
 
         switch( message.event ) {
           case 'merchant':
             iframe.style.display = _.remove_style;
-            e.source.postMessage({
+            postMessage('merchant-data', {
               checkout: options
-            }, '*');
+            }, e.source);
             break;
           case 'show-iframe':
             _.removeClass(iframe, 'hide');
@@ -2622,7 +2771,6 @@ function checkout (options) {
             }, 600);
             break;
           case 'confirm':
-          case 'success':
             _.log('aplazame.checkout:confirm', message);
 
             httpCheckout( options.merchant.confirmation_url, {
@@ -2634,19 +2782,15 @@ function checkout (options) {
                 checkout_token: message.data.checkout_token
               })
             }).then(function (response) {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
+              postMessage('confirmation', {
                 result: 'success',
-                response: http.plainResponse(response)
-              }, '*');
-            }, function () {
-              e.source.postMessage({
-                aplazame: 'checkout',
-                event: 'confirmation',
+                response: response
+              }, e.source);
+            }, function (response) {
+              postMessage('confirmation', {
                 result: 'error',
-                response: http.plainResponse(response)
-              }, '*');
+                response: response
+              }, e.source);
             });
             // confirmation_url
             break;
@@ -2684,11 +2828,11 @@ function checkout (options) {
 
 module.exports = checkout;
 
-},{"../core/api":55,"../tools/css-hack":69,"../tools/log":71,"../tools/tools":74,"./checkout-normalizer":48,"./loading-svg":51,"http-browser":11}],50:[function(require,module,exports){
+},{"../core/api":55,"../tools/css-hack":69,"../tools/log":71,"../tools/tools":74,"./checkout-normalizer":48,"./loading-svg":51,"http-rest/browser":11}],50:[function(require,module,exports){
 'use strict';
 
 var _ = require('../tools/tools'),
-    http = require('http-browser');
+    http = require('http-rest/browser');
 
 function processResponse(result, message, messageSrc, started) {
 
@@ -2722,7 +2866,7 @@ _.onMessage('http', function (e, message) {
 
 module.exports = { ready: true };
 
-},{"../tools/tools":74,"http-browser":11}],51:[function(require,module,exports){
+},{"../tools/tools":74,"http-rest/browser":11}],51:[function(require,module,exports){
 
 module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' +
 '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' +
@@ -2946,7 +3090,7 @@ module.exports = simulator;
 var apzVersion = require('../../.tmp/aplazame-version'),
     _ = require('../tools/tools'),
     api = require('./api'),
-    http = require('http-browser'),
+    http = require('http-rest/browser'),
     renderAccept = _.template.compile('application/vnd.aplazame<% if(sandbox){ %>.sandbox<% } %>.v<%= version %>+json'),
     acceptHeader = function (config) {
       var _api = _.copy(api);
@@ -2988,7 +3132,7 @@ _.each(['post', 'put', 'patch'], function (method) {
 
 module.exports = apiHttp;
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":74,"./api":55,"http-browser":11}],55:[function(require,module,exports){
+},{"../../.tmp/aplazame-version":1,"../tools/tools":74,"./api":55,"http-rest/browser":11}],55:[function(require,module,exports){
 'use strict';
 
 module.exports = {

@@ -57,8 +57,9 @@ publish:
     content_type:
       ".js": "application/javascript; charset=utf-8"
     metadata:
-      Cache-Control: "max-age: 3600"
-      x-content-type-options: nosniff
+      Cache-Control: "max-age: no-cache"
+      x-content-type-options: "nosniff"
+      x-xss-protection: "1; mode=block"
     when:
       branch:
         - master

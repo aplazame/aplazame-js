@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.450';
+module.exports = '0.0.451';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -36,90 +36,86 @@ var p=[],print=function(){p.push.apply(p,arguments);};with(obj){ try{p.push('<di
     // Browser globals
     root.Azazel = factory(root);
   }
-})(this, function (root) {
+})(this, function () {
 
-  function addHandler (listeners, eventName, handler, useCapture) {
-    if( !listeners[eventName] ) {
-      listeners[eventName] = [];
-    }
-
-    if( useCapture ) {
-      listeners[eventName].unshift(handler);
-    } else {
-      listeners[eventName].push(handler);
+  function removeFromList ( list, iteratee ) {
+    if( !list ) return;
+    for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+      if( iteratee.call(null, list[i], i) ) list.splice(i, 1);
     }
   }
 
-  function removeHandler (listeners, handler) {
-    var found = listeners.indexOf(handler);
-    if( found >= 0 ) listeners.splice(found, 1);
-  }
+  function runAsArray( fn, args, this_arg, return_value ) {
+    var event_names = [].shift.call(args);
+    args = [].slice.call(args); // args should be Array type
+    if( typeof event_names === 'string' ) event_names = event_names.split(/\s+/);
 
-  function removeOnce( listeners, handler ) {
-    for( var key in listeners ) {
-      removeHandler(listeners[key], handler);
-    }
-    delete handler.__run_once;
-  }
-
-  function extendMethods (evt, target, prefix) {
-    target[prefix + 'on'] = evt.on.bind(evt);
-    target[prefix + 'once'] = evt.once.bind(evt);
-    target[prefix + 'off'] = evt.off.bind(evt);
-    target[prefix + 'emit'] = evt.emit.bind(evt);
-  }
-
-  function Azazel (target, prefix) {
-    if( this === root ) {
-      new Azazel(target);
-      return target;
-    }
-    this.listeners = {};
-    if( target ) {
-      extendMethods(this, target, prefix || '');
-    }
-  }
-
-  Azazel.prototype.on = function (eventName, handler, useCapture) {
-    var listeners = this.listeners;
-    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-      addHandler(listeners, eventName, handler, useCapture);
+    event_names.forEach(function (_event_name) {
+      fn.apply(this_arg, [_event_name].concat(args) );
     });
-  };
+    return return_value;
+  }
 
-  Azazel.prototype.once = function (eventName, handler, useCapture) {
-    handler.__run_once = true;
-    var listeners = this.listeners;
-    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-      addHandler(listeners, eventName, handler, useCapture);
-    });
-  };
+  function Azazel (host, prefix) {
 
-  Azazel.prototype.emit = function (eventName, params, thisArg) {
-    var listeners = this.listeners;
-    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-      if( !listeners[eventName] ) return;
+    host = host || this;
+    prefix = prefix || '';
 
-      var _listeners = listeners[eventName];
+    var listeners = {};
 
-      for( var i = 0, n = _listeners.length; i < n; i++ ) {
-        _listeners[i].apply(thisArg, params);
-        if( _listeners[i].__run_once ) {
-          removeOnce(listeners, _listeners[i]);
-          i--;
-          n--;
-        }
-      }
-    });
-  };
+    function on (event_name, listener, use_capture) {
+      if( !(listener instanceof Function ) ) throw new Error('listener should be a Function');
 
-  Azazel.prototype.off = function (eventName, handler) {
-    var listeners = this.listeners;
-    ( eventName instanceof Array ? eventName : eventName.split(/ +/) ).forEach(function (eventName) {
-      if( !listeners[eventName] ) return;
-      removeHandler(listeners[eventName], handler );
-    });
-  };
+      if( event_name instanceof Array ) return runAsArray(on, arguments, this, host );
+      if( typeof event_name !== 'string' ) throw new Error('event_name should be a string');
+      if( / /.test(event_name) ) return runAsArray(on, arguments, this, host );
+
+      listeners[event_name] = listeners[event_name] || [];
+      if( use_capture ) listeners[event_name].unshift(listener);
+      else listeners[event_name].push(listener);
+
+      return host;
+    }
+
+    function once (event_name, listener, use_capture) {
+      var once_fn = function () {
+        off(event_name, once_fn);
+        listener.apply(this, arguments);
+      };
+      once_fn.__once__ = listener;
+
+      return on(event_name, once_fn, use_capture);
+    }
+
+    function emit (event_name, args, this_arg) {
+      if( event_name instanceof Array ) return runAsArray(emit, arguments, this, host );
+      if( typeof event_name !== 'string' ) throw new Error('event_name should be a string');
+      if( / /.test(event_name) ) return runAsArray(emit, arguments, this, host );
+
+      if( !listeners[event_name] ) return host;
+
+      listeners[event_name].forEach(function (listener) {
+        listener.apply(this_arg, args || []);
+      });
+      return host;
+    }
+
+    function off (event_name, listener) {
+      if( event_name instanceof Array ) return runAsArray(off, arguments, this, host );
+      if( typeof event_name !== 'string' ) throw new Error('event_name should be a string');
+      if( / /.test(event_name) ) return runAsArray(off, arguments, this, host );
+
+      removeFromList(listeners[event_name], function (_listener) {
+        return _listener === listener || _listener.__once__ === listener;
+      });
+      return host;
+    }
+
+    host[prefix + 'on'] = on;
+    host[prefix + 'once'] = once;
+    host[prefix + 'emit'] = emit;
+    host[prefix + 'off'] = off;
+  }
 
   return Azazel;
 
@@ -382,8 +378,8 @@ function _sanitizePath(path, i, last) {
 function _joinPaths (paths) {
   var last = paths.length - 1;
   return paths.reduce(function (result, path, i) {
-
     if( path === '.' ) return result;
+    if( /^[a-z]+:\/\//.test(path) ) return [path];
     if( /^\//.test(path) ) return _sanitizePath(path, 0, i === last );
 
     path = path.replace(/\.\.\//g, function () {
@@ -778,6 +774,8 @@ return http$1;
         });
       };
     };
+
+    _live.ready = onReady;
 
     return _live;
   }
@@ -1417,7 +1415,6 @@ module.exports = function extend () {
 
 },{}],20:[function(require,module,exports){
 
-// require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
 require('./browser-polyfills/dom-closest');
 require('./browser-polyfills/event-listener');
@@ -1709,26 +1706,40 @@ var classListHas = classListEnabled ? function (el, className) {
       el.classList.remove(className);
     } : function (el, className) {
       el.className = el.className.replace(new RegExp('\\s*' + className + '\\s*','g'), ' ');
+    },
+    classListToggle = classListEnabled ? (function () {
+      var aux = document.createElement('span');
+      aux.classList.toggle('test', true);
+      aux.classList.toggle('test', true);
+
+      // IE does not support second parameter toggle
+      return aux.classList.contains('test') ? function (el, className, toggle) {
+        el.classList.toggle(className, toggle);
+      } : function (el, className, toggle) {
+        toggle = toggle === undefined ? !el.classList.contains(className) : toggle;
+        if( toggle ) el.classList.add(className);
+        else el.classList.remove(className);
+      };
+    })() : function (el, className) {
+      el.className = el.className.replace(new RegExp('\\s*' + className + '\\s*','g'), ' ');
     };
 
+function _formKey(o, key, value) {
+  var keys = key.replace(/\[(.*?)\]/g, '.$1').split('.'),
+      last_i = keys.length - 1;
+  keys.forEach(function (_key, i) {
+    if( i === last_i ) return o[_key] = value;
+    o[_key] = o[_key] || {};
+    o = o[_key];
+  });
+}
+
 var _dom = {
-  currentScript: document.currentScript || (function() {
-    var scripts = document.getElementsByTagName('script');
-    return scripts[scripts.length - 1];
-  })(),
+  classList: { add: classListAdd, remove: classListRemove, has: classListHas, toggle: classListToggle },
   addClass: classListAdd,
   removeClass: classListRemove,
   hasClass: classListHas,
-  toggleClass: function (el, className, toggle) {
-    toggle = toggle === undefined ? !classListHas(el, className) : toggle;
-
-    if( toggle ) {
-      classListAdd(el, className);
-    } else {
-      classListRemove(el, className);
-    }
-    return toggle;
-  },
+  toggleClass: classListToggle,
   create: function (tagName, attrs) {
     var el = document.createElement(tagName);
 
@@ -1784,18 +1795,32 @@ var _dom = {
     var data = {};
     [].forEach.call(form.elements, function (el) {
       if( el.name && !el.disabled ) {
-        if( el.type === 'radio' ) {
+        if( el.type === 'checkbox' ) {
+          _formKey(data, el.name, el.checked);
+        } else if( el.type === 'radio' ) {
           if( el.checked ) {
-            data[el.name] = el.value;
+            _formKey(data, el.name, el.value);
           }
         } else {
-          data[el.name] = el.value;
+          _formKey(data, el.name, el.value);
         }
       }
     });
     return data;
   }
 };
+
+function _currentScript () {
+ var scripts = document.getElementsByTagName('script');
+ return scripts[scripts.length - 1];
+}
+
+Object.defineProperty(_dom, 'currentScript', {
+  get: function () {
+    return document.currentScript || _currentScript();
+  },
+  set: function () {}
+});
 
 module.exports = _dom;
 
@@ -2136,50 +2161,59 @@ module.exports = Scope;
 
 },{"./eval":30}],41:[function(require,module,exports){
 
-function getScrollRoot () {
-  var html = document.documentElement, body = document.body;
+var html = document.documentElement, body = document.body, scroll_root = document.scrollingElement;
 
-  if( html.scrollTop ) return html;
-  if( body.scrollTop ) return body;
-
-  var cacheTop = ((typeof window.pageYOffset !== 'undefined') ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
-      root;
-
-  html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
-  // find root by checking which scrollTop has a value larger than the cache.
-  root = (html.scrollTop !== cacheTop) ? html : body;
-
-  root.scrollTop = cacheTop; // restore the window's scroll position to cached value
-
-  return root; // return the scrolling root element
+function setScrollRoot(scrolling_element) {
+  scroll_root = scrolling_element;
+  scroll.goto = setScrollTopRoot;
+  scroll.top = getScrollTopRoot;
 }
 
-var ready = require('./fn/ready'),
-    scrollRoot = { scrollTop: 0 },
-    scroll = {
-      root: scrollRoot,
-      on: function ( handler, useCapture ) {
-        return document.addEventListener('scroll', handler, useCapture);
-      },
-      off: function ( handler, useCapture ) {
-        return document.removeEventListener('scroll', handler, useCapture);
-      },
-      top: function () {
-        return scroll.root.scrollTop;
-      },
-      goto: function ( value ) {
-        scroll.root.scrollTop = value;
-      }
-    };
+function setScrollTopRoot (scroll_value) {
+  scroll_root.scrollTop = scroll_value;
+}
 
-ready(function () {
-  scrollRoot = getScrollRoot();
-  scroll.root = scrollRoot;
-});
+function getScrollTopRoot () {
+  return scroll_root.scrollTop;
+}
+
+function setScrollTopDiscover (scroll_value) {
+  if( scroll_value > 0 ) {
+    html.scrollTop = scroll_value;
+    body.scrollTop = scroll_value;
+    if( scroll_value === html.scrollTop ) setScrollRoot(html);
+    else if( scroll_value === body.scrollTop ) setScrollRoot(body);
+  } else {
+    html.scrollTop = 0;
+    body.scrollTop = 0;
+  }
+}
+
+function getScrollTopDiscover () {
+  if( body.scrollTop !== 0 ) {
+    setScrollRoot(body);
+    return body.scrollTop;
+  }
+  if( html.scrollTop !== 0 ) {
+    setScrollRoot(html);
+    return html.scrollTop;
+  }
+}
+
+var scroll = {
+  on: function ( handler, useCapture ) {
+    return document.addEventListener('scroll', handler, useCapture);
+  },
+  off: function ( handler, useCapture ) {
+    return document.removeEventListener('scroll', handler, useCapture);
+  },
+  top: scroll_root ? getScrollTopRoot : getScrollTopDiscover,
+  goto: scroll_root ? setScrollTopRoot : setScrollTopDiscover,
+};
 
 module.exports = scroll;
 
-},{"./fn/ready":35}],42:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -2318,22 +2352,29 @@ require('./sandbox')(function () {
   }
 
   function safeScript (script) {
-    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
-      return script;
+    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null ) return script;
 
-    var is_aplazame_loader = function (script) {
-      if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 )
+    var isAplazameLoader = function (script) {
+      if( script && script.src && (
+        script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 ||
+        script.src.trim().indexOf('https://cdn.aplazame.com/aplazame.js') === 0
+      ) ) {
         return script;
+      }
     };
 
-    return is_aplazame_loader(script) || findFirst(document.querySelectorAll('script'), is_aplazame_loader) || script || document.querySelector('script[data-aplazame]') || document.createElement('script');
+    return isAplazameLoader(script) ||
+           findFirst(document.querySelectorAll('script'), isAplazameLoader) ||
+           script || document.querySelector('script[data-aplazame]') ||
+           document.createElement('script');
   }
 
   var options = require('./loaders/data-aplazame')(aplazame._, safeScript(aplazame._.currentScript));
 
   aplazame.init(options);
 
-  if (typeof define === 'function' && define.amd) {
+  // support for requirejs like libraries
+  if( typeof define === 'function' && define.amd ) {
     define([], function () {
       return aplazame;
     });
@@ -2604,26 +2645,15 @@ var api = require('../core/api'),
     isApp = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log');
 
-function getBaseCheckout(options) {
-  var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
-
-  // Append trailing slash if not exists.
-  if (!/\/$/.test(baseCheckout)) {
-    baseCheckout += '/';
-  }
-
-  return baseCheckout;
-}
-
 function checkout (options) {
-
   options = options || {};
-  var baseCheckout = getBaseCheckout(options);
+
+  var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
       onError,
       merchant,
-      iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),
+      iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 't=' + new Date().getTime(),
       errorLoading = false,
       errorMessage = false,
       tmpOverlay = document.createElement('div'),
@@ -2704,26 +2734,6 @@ function checkout (options) {
             message.aplazame = 'checkout';
             message.event = event_name;
             (target || iframe.contentWindow).postMessage(message, '*');
-          },
-          httpCheckout = function () {
-            var started = _.now();
-            return http.apply(this, arguments).then(function (response) {
-              response.config.start = started;
-              postMessage('http-success', {
-                started: started,
-                elapsed: _.now() - started,
-                response: response
-              });
-              return response;
-            }, function (response) {
-              response.config.start = started;
-              postMessage('http-error', {
-                started: started,
-                elapsed: _.now() - started,
-                response: response
-              });
-              throw response;
-            });
           };
 
       iframe.id = 'aplazame-checkout-iframe';
@@ -2773,20 +2783,21 @@ function checkout (options) {
           case 'confirm':
             _.log('aplazame.checkout:confirm', message);
 
-            httpCheckout( options.merchant.confirmation_url, {
-              method: 'post',
-              contentType: 'application/json',
-              data: message.data,
+            var started = _.now();
+            http.post( options.merchant.confirmation_url, message.data, {
+              headers: { contentType: 'application/json' },
               params: _.extend(message.params || {}, {
                 order_id: message.data.checkout_token,
                 checkout_token: message.data.checkout_token
               })
             }).then(function (response) {
+              response.config.start = started;
               postMessage('confirmation', {
                 result: 'success',
                 response: response
               }, e.source);
             }, function (response) {
+              response.config.start = started;
               postMessage('confirmation', {
                 result: 'error',
                 response: response
@@ -2812,7 +2823,6 @@ function checkout (options) {
       _.onMessage('checkout', onMessage);
 
     }).catch(function (reason) {
-      // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
       log('Aplazame ' + reason);
@@ -2933,7 +2943,7 @@ function modal (content) {
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);
-  modal.iframe.src = api.staticUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
+  modal.iframe.src = api.static_url + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
 }
 
 _.onMessage('modal', function (e, message) {
@@ -3087,58 +3097,34 @@ module.exports = simulator;
 },{"../core/api-http":54,"../tools/log":71,"../tools/tools":74,"parole":18}],54:[function(require,module,exports){
 'use strict';
 
-var apzVersion = require('../../.tmp/aplazame-version'),
-    _ = require('../tools/tools'),
-    api = require('./api'),
-    http = require('http-rest/browser'),
-    renderAccept = _.template.compile('application/vnd.aplazame<% if(sandbox){ %>.sandbox<% } %>.v<%= version %>+json'),
-    acceptHeader = function (config) {
-      var _api = _.copy(api);
-      if( 'sandbox' in config ) {
-        _api.sandbox = config.sandbox;
-      }
-      return renderAccept(_api);
+var api = require('./api'),
+    http = require('http-rest/browser');
+
+// http.config({ headers: { Accept: 'application/json' } });
+
+var apiHttp = http.base(function () { return api.host; }, {
+  headers: {
+    Accept: function (config) {
+      config.sandbox = api.sandbox;
+      return 'application/vnd.aplazame' + ( api.sandbox ? '.sandbox' : '' ) + '.v' + api.version  + '+json';
     },
-    authorizationHeader = function (config) {
+    Authorization: function (config) {
       config.publicKey = config.publicKey || api.publicKey;
       return 'Bearer ' + config.publicKey;
-    };
-
-http.config({ headers: { Accept: 'application/json' } });
-
-var apiHttp = {};
-
-_.each(['get', 'delete'], function (method) {
-  apiHttp[method] = function (path, options) {
-    var url = _.joinPath(api.host, path);
-    return http[method](url, _.merge(options, { headers: {
-        xAjsVersion: apzVersion,
-        accept: acceptHeader,
-        authorization: authorizationHeader
-      } }) );
-  };
-});
-
-_.each(['post', 'put', 'patch'], function (method) {
-  apiHttp[method] = function (path, data, options) {
-    var url = _.joinPath(api.host, path);
-    return http[method](url, data, _.merge(options, { headers: {
-        xAjsVersion: apzVersion,
-        accept: acceptHeader,
-        authorization: authorizationHeader
-      } }) );
-  };
+    }
+  }
 });
 
 module.exports = apiHttp;
 
-},{"../../.tmp/aplazame-version":1,"../tools/tools":74,"./api":55,"http-rest/browser":11}],55:[function(require,module,exports){
+},{"./api":55,"http-rest/browser":11}],55:[function(require,module,exports){
 'use strict';
 
 module.exports = {
   host: 'https://api.aplazame.com/',
   // host: 'https://api.aplazame.com/',
-  staticUrl: 'https://aplazame.com/static/',
+  static_url: 'https://aplazame.com/static/',
+  checkout_url: 'https://aplazame.com/static/checkout/iframe.html',
   version: 1,
   sandbox: false
 };
@@ -3216,11 +3202,11 @@ module.exports = function (_, script) {
   }
 
   if( script.getAttribute('data-static-url') ) {
-    options.staticUrl = script.getAttribute('data-static-url');
+    options.static_url = script.getAttribute('data-static-url');
   }
 
   if( script.getAttribute('data-checkout-url') ) {
-    options.checkoutUrl = script.getAttribute('data-checkout-url');
+    options.checkout_url = script.getAttribute('data-checkout-url');
   }
 
   if( script.getAttribute('data-callback') ) {
@@ -3522,7 +3508,7 @@ module.exports = function (aplazame) {
       type: widget_type,
       version: widget_version,
       preferences: data.widget.preferences || {},
-      static_url: api.staticUrl,
+      static_url: api.static_url,
       custom_styles: data.widget.styles,
       data: data,
       currency: widget.options.currency,
@@ -3582,7 +3568,7 @@ module.exports = function (aplazame) {
         merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
         choices: choices,
         data: data,
-        static_url: api.staticUrl,
+        static_url: api.static_url,
         _options: widget.options,
         currency: widget.options.currency,
         country: widget.options.country,

@@ -1114,7 +1114,6 @@ module.exports = function extend () {
 
 },{}],11:[function(require,module,exports){
 
-// require('./browser-polyfills/current-script');
 require('./browser-polyfills/date');
 require('./browser-polyfills/dom-closest');
 require('./browser-polyfills/event-listener');
@@ -1406,26 +1405,40 @@ var classListHas = classListEnabled ? function (el, className) {
       el.classList.remove(className);
     } : function (el, className) {
       el.className = el.className.replace(new RegExp('\\s*' + className + '\\s*','g'), ' ');
+    },
+    classListToggle = classListEnabled ? (function () {
+      var aux = document.createElement('span');
+      aux.classList.toggle('test', true);
+      aux.classList.toggle('test', true);
+
+      // IE does not support second parameter toggle
+      return aux.classList.contains('test') ? function (el, className, toggle) {
+        el.classList.toggle(className, toggle);
+      } : function (el, className, toggle) {
+        toggle = toggle === undefined ? !el.classList.contains(className) : toggle;
+        if( toggle ) el.classList.add(className);
+        else el.classList.remove(className);
+      };
+    })() : function (el, className) {
+      el.className = el.className.replace(new RegExp('\\s*' + className + '\\s*','g'), ' ');
     };
 
+function _formKey(o, key, value) {
+  var keys = key.replace(/\[(.*?)\]/g, '.$1').split('.'),
+      last_i = keys.length - 1;
+  keys.forEach(function (_key, i) {
+    if( i === last_i ) return o[_key] = value;
+    o[_key] = o[_key] || {};
+    o = o[_key];
+  });
+}
+
 var _dom = {
-  currentScript: document.currentScript || (function() {
-    var scripts = document.getElementsByTagName('script');
-    return scripts[scripts.length - 1];
-  })(),
+  classList: { add: classListAdd, remove: classListRemove, has: classListHas, toggle: classListToggle },
   addClass: classListAdd,
   removeClass: classListRemove,
   hasClass: classListHas,
-  toggleClass: function (el, className, toggle) {
-    toggle = toggle === undefined ? !classListHas(el, className) : toggle;
-
-    if( toggle ) {
-      classListAdd(el, className);
-    } else {
-      classListRemove(el, className);
-    }
-    return toggle;
-  },
+  toggleClass: classListToggle,
   create: function (tagName, attrs) {
     var el = document.createElement(tagName);
 
@@ -1481,18 +1494,32 @@ var _dom = {
     var data = {};
     [].forEach.call(form.elements, function (el) {
       if( el.name && !el.disabled ) {
-        if( el.type === 'radio' ) {
+        if( el.type === 'checkbox' ) {
+          _formKey(data, el.name, el.checked);
+        } else if( el.type === 'radio' ) {
           if( el.checked ) {
-            data[el.name] = el.value;
+            _formKey(data, el.name, el.value);
           }
         } else {
-          data[el.name] = el.value;
+          _formKey(data, el.name, el.value);
         }
       }
     });
     return data;
   }
 };
+
+function _currentScript () {
+ var scripts = document.getElementsByTagName('script');
+ return scripts[scripts.length - 1];
+}
+
+Object.defineProperty(_dom, 'currentScript', {
+  get: function () {
+    return document.currentScript || _currentScript();
+  },
+  set: function () {}
+});
 
 module.exports = _dom;
 
@@ -1833,50 +1860,59 @@ module.exports = Scope;
 
 },{"./eval":21}],32:[function(require,module,exports){
 
-function getScrollRoot () {
-  var html = document.documentElement, body = document.body;
+var html = document.documentElement, body = document.body, scroll_root = document.scrollingElement;
 
-  if( html.scrollTop ) return html;
-  if( body.scrollTop ) return body;
-
-  var cacheTop = ((typeof window.pageYOffset !== 'undefined') ? window.pageYOffset : null) || body.scrollTop || html.scrollTop, // cache the window's current scroll position
-      root;
-
-  html.scrollTop = body.scrollTop = cacheTop + (cacheTop > 0) ? -1 : 1;
-  // find root by checking which scrollTop has a value larger than the cache.
-  root = (html.scrollTop !== cacheTop) ? html : body;
-
-  root.scrollTop = cacheTop; // restore the window's scroll position to cached value
-
-  return root; // return the scrolling root element
+function setScrollRoot(scrolling_element) {
+  scroll_root = scrolling_element;
+  scroll.goto = setScrollTopRoot;
+  scroll.top = getScrollTopRoot;
 }
 
-var ready = require('./fn/ready'),
-    scrollRoot = { scrollTop: 0 },
-    scroll = {
-      root: scrollRoot,
-      on: function ( handler, useCapture ) {
-        return document.addEventListener('scroll', handler, useCapture);
-      },
-      off: function ( handler, useCapture ) {
-        return document.removeEventListener('scroll', handler, useCapture);
-      },
-      top: function () {
-        return scroll.root.scrollTop;
-      },
-      goto: function ( value ) {
-        scroll.root.scrollTop = value;
-      }
-    };
+function setScrollTopRoot (scroll_value) {
+  scroll_root.scrollTop = scroll_value;
+}
 
-ready(function () {
-  scrollRoot = getScrollRoot();
-  scroll.root = scrollRoot;
-});
+function getScrollTopRoot () {
+  return scroll_root.scrollTop;
+}
+
+function setScrollTopDiscover (scroll_value) {
+  if( scroll_value > 0 ) {
+    html.scrollTop = scroll_value;
+    body.scrollTop = scroll_value;
+    if( scroll_value === html.scrollTop ) setScrollRoot(html);
+    else if( scroll_value === body.scrollTop ) setScrollRoot(body);
+  } else {
+    html.scrollTop = 0;
+    body.scrollTop = 0;
+  }
+}
+
+function getScrollTopDiscover () {
+  if( body.scrollTop !== 0 ) {
+    setScrollRoot(body);
+    return body.scrollTop;
+  }
+  if( html.scrollTop !== 0 ) {
+    setScrollRoot(html);
+    return html.scrollTop;
+  }
+}
+
+var scroll = {
+  on: function ( handler, useCapture ) {
+    return document.addEventListener('scroll', handler, useCapture);
+  },
+  off: function ( handler, useCapture ) {
+    return document.removeEventListener('scroll', handler, useCapture);
+  },
+  top: scroll_root ? getScrollTopRoot : getScrollTopDiscover,
+  goto: scroll_root ? setScrollTopRoot : setScrollTopDiscover,
+};
 
 module.exports = scroll;
 
-},{"./fn/ready":26}],33:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 
 module.exports = function (scroll) {
 

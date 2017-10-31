@@ -49,7 +49,7 @@ function modal (content) {
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);
-  modal.iframe.src = api.staticUrl + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
+  modal.iframe.src = api.static_url + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
 }
 
 _.onMessage('modal', function (e, message) {

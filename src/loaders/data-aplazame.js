@@ -29,11 +29,11 @@ module.exports = function (_, script) {
   }
 
   if( script.getAttribute('data-static-url') ) {
-    options.staticUrl = script.getAttribute('data-static-url');
+    options.static_url = script.getAttribute('data-static-url');
   }
 
   if( script.getAttribute('data-checkout-url') ) {
-    options.checkoutUrl = script.getAttribute('data-checkout-url');
+    options.checkout_url = script.getAttribute('data-checkout-url');
   }
 
   if( script.getAttribute('data-callback') ) {

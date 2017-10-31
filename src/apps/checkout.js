@@ -8,26 +8,17 @@ var api = require('../core/api'),
     isApp = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log');
 
-function getBaseCheckout(options) {
-  var baseCheckout = ( options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : options.host ) || ( api.checkoutUrl || api.staticUrl ) + 'checkout/';
-
-  // Append trailing slash if not exists.
-  if (!/\/$/.test(baseCheckout)) {
-    baseCheckout += '/';
-  }
-
-  return baseCheckout;
-}
-
 function checkout (options) {
-
   options = options || {};
-  var baseCheckout = getBaseCheckout(options);
+  
+  var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
+
+  console.log('checkout_url', checkout_url, options);
 
   var on = {},
       onError,
       merchant,
-      iframeSrc = baseCheckout + 'iframe.html?' + new Date().getTime(),
+      iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 't=' + new Date().getTime(),
       errorLoading = false,
       errorMessage = false,
       tmpOverlay = document.createElement('div'),
@@ -216,7 +207,6 @@ function checkout (options) {
       _.onMessage('checkout', onMessage);
 
     }).catch(function (reason) {
-      // throw new Error('can not connect to ' + baseCheckout);
       errorLoading = true;
 
       log('Aplazame ' + reason);

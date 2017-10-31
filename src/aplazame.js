@@ -54,22 +54,29 @@ require('./sandbox')(function () {
   }
 
   function safeScript (script) {
-    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null )
-      return script;
+    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null ) return script;
 
-    var is_aplazame_loader = function (script) {
-      if( script && script.src && script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 )
+    var isAplazameLoader = function (script) {
+      if( script && script.src && (
+        script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 ||
+        script.src.trim().indexOf('https://cdn.aplazame.com/aplazame.js') === 0
+      ) ) {
         return script;
+      }
     };
 
-    return is_aplazame_loader(script) || findFirst(document.querySelectorAll('script'), is_aplazame_loader) || script || document.querySelector('script[data-aplazame]') || document.createElement('script');
+    return isAplazameLoader(script) ||
+           findFirst(document.querySelectorAll('script'), isAplazameLoader) ||
+           script || document.querySelector('script[data-aplazame]') ||
+           document.createElement('script');
   }
 
   var options = require('./loaders/data-aplazame')(aplazame._, safeScript(aplazame._.currentScript));
 
   aplazame.init(options);
 
-  if (typeof define === 'function' && define.amd) {
+  // support for requirejs like libraries
+  if( typeof define === 'function' && define.amd ) {
     define([], function () {
       return aplazame;
     });

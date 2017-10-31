@@ -10,7 +10,7 @@ build:
 
 deploy:
   rsync:
-    user: ubuntu
+    user: $$DEPLOY_USER
     host: dev.aplazame.com
     target: $$DEPLOY_PATH
     delete: true
@@ -23,7 +23,7 @@ deploy:
       branch: master
 
   rsync:
-    user: ubuntu
+    user: $$DEPLOY_USER
     host: aplazame.com
     target: $$DEPLOY_PATH
     delete: true

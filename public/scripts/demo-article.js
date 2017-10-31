@@ -377,7 +377,7 @@ function http$1 (url, _config, body) {
     headers.contentType = headers.contentType || 'application/json';
     config.body = JSON.stringify(config.json);
   } else if( headers.contentType === 'application/json' && typeof config.body === 'object' ) {
-    config.body = JSON.stringify(config.json);
+    config.body = JSON.stringify(config.body);
   } else if( typeof config.body === 'object' &&
       !Blob.prototype.isPrototypeOf(config.body) &&
       !FormData.prototype.isPrototypeOf(config.body) ) {

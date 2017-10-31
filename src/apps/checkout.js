@@ -10,10 +10,8 @@ var api = require('../core/api'),
 
 function checkout (options) {
   options = options || {};
-  
-  var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
-  console.log('checkout_url', checkout_url, options);
+  var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
       onError,

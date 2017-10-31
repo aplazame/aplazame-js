@@ -1,6 +1,6 @@
 {
   "name": "aplazame",
-  "version": "0.0.451",
+  "version": "0.0.452",
   "dependencies": {
     "abbrev": {
       "version": "1.1.1",
@@ -1481,9 +1481,9 @@
       "dev": true
     },
     "http-rest": {
-      "version": "0.1.96",
-      "from": "http-rest@0.1.96",
-      "resolved": "https://registry.npmjs.org/http-rest/-/http-rest-0.1.96.tgz"
+      "version": "0.1.97",
+      "from": "http-rest@0.1.97",
+      "resolved": "https://registry.npmjs.org/http-rest/-/http-rest-0.1.97.tgz"
     },
     "http-signature": {
       "version": "1.2.0",

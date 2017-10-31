@@ -97,26 +97,6 @@ function checkout (options) {
             message.aplazame = 'checkout';
             message.event = event_name;
             (target || iframe.contentWindow).postMessage(message, '*');
-          },
-          httpCheckout = function () {
-            var started = _.now();
-            return http.apply(this, arguments).then(function (response) {
-              response.config.start = started;
-              postMessage('http-success', {
-                started: started,
-                elapsed: _.now() - started,
-                response: response
-              });
-              return response;
-            }, function (response) {
-              response.config.start = started;
-              postMessage('http-error', {
-                started: started,
-                elapsed: _.now() - started,
-                response: response
-              });
-              throw response;
-            });
           };
 
       iframe.id = 'aplazame-checkout-iframe';
@@ -166,20 +146,21 @@ function checkout (options) {
           case 'confirm':
             _.log('aplazame.checkout:confirm', message);
 
-            httpCheckout( options.merchant.confirmation_url, {
-              method: 'post',
-              contentType: 'application/json',
-              data: message.data,
+            var started = _.now();
+            http.post( options.merchant.confirmation_url, message.data, {
+              headers: { contentType: 'application/json' },
               params: _.extend(message.params || {}, {
                 order_id: message.data.checkout_token,
                 checkout_token: message.data.checkout_token
               })
             }).then(function (response) {
+              response.config.start = started;
               postMessage('confirmation', {
                 result: 'success',
                 response: response
               }, e.source);
             }, function (response) {
+              response.config.start = started;
               postMessage('confirmation', {
                 result: 'error',
                 response: response

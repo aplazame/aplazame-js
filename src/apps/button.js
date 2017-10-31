@@ -139,7 +139,10 @@ button.check = function (options, callback) {
     params.country = options.country;
   }
 
-  var checkPromise = apiHttp.get('checkout/button', { params: params });
+  var checkPromise = apiHttp.get('checkout/button', { params: params }).then(function (res) {
+    console.log('checkout/button', res);
+    return res;
+  });
 
   if( _.isFunction(callback) ) {
     checkPromise.then(function (response) { callback(response.data.allowed, response); }, function (response) { callback(false, response); });

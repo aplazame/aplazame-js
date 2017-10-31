@@ -23,7 +23,7 @@
   "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
   "dependencies": {
     "azazel": "1.1.4",
-    "http-rest": "0.1.95",
+    "http-rest": "0.1.96",
     "live-dom": "1.6.8",
     "nitro-tools": "0.2.4",
     "parole": "1.1.5",

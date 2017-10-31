@@ -1481,9 +1481,9 @@
       "dev": true
     },
     "http-rest": {
-      "version": "0.1.95",
-      "from": "http-rest@0.1.95",
-      "resolved": "https://registry.npmjs.org/http-rest/-/http-rest-0.1.95.tgz"
+      "version": "0.1.96",
+      "from": "http-rest@0.1.96",
+      "resolved": "https://registry.npmjs.org/http-rest/-/http-rest-0.1.96.tgz"
     },
     "http-signature": {
       "version": "1.2.0",

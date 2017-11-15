@@ -40,6 +40,7 @@ module.exports = function (aplazame) {
           // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
           if( !document.body.contains(widget_el) ) return $live.off(onDomChanges);
 
+          amountGetter = _amountGetter(widget_el);
           var amount = amountGetter();
 
           if( amount && amount !== current_amount ) updateAmount(amount);

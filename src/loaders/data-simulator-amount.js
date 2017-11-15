@@ -59,7 +59,9 @@ module.exports = function (aplazame) {
 
     if( priceSelector ) {
       try{
-        if( !document.querySelector(priceSelector) ) priceSelector = null;
+        priceSelector = priceSelector.split(/ *, */).reduce(function (matched, selector) {
+          return matched || (document.querySelector(selector) && selector) || null;
+        }, null);
       } catch(err) {
         priceSelector = null;
         log('data-price: missing', err.message);

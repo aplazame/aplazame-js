@@ -82,6 +82,8 @@ aplazame._.ready(function () {
   var http = require('http-rest/browser'),
       checkoutData = http(params['checkout-json']);
 
+  http.usePromise(require('parole'));
+
   function randOrderId () {
     return 'test-' + new Date().getTime();
   }

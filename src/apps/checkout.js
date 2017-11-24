@@ -6,10 +6,37 @@ var api = require('../core/api'),
     http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
     isApp = typeof navigator !== 'undefined' && navigator.app,
-    log = require('../tools/log');
+    log = require('../tools/log'),
+    dE = document.documentElement;
 
 function checkout (options) {
   options = options || {};
+  options.meta = options.meta || {};
+
+  // http://ryanve.com/lab/dimensions/
+  options.meta.screen = window.screen ? {
+    availHeight: screen.availHeight,
+    availLeft: screen.availLeft,
+    availTop: screen.availTop,
+    availWidth: screen.availWidth,
+    colorDepth: screen.colorDepth,
+    height: screen.height,
+    width: screen.width,
+    orientation: screen.orientation ? {
+      angle: screen.orientation.angle,
+      type: screen.orientation.type,
+    } : {}
+  } : {};
+  options.document = {
+    clientWidth: dE.clientWidth,
+    clientHeight: dE.clientHeight,
+  };
+  options.meta.window = {
+    innerHeight: window.innerHeight,
+    innerWidth: window.innerWidth,
+    outerHeight: window.outerHeight,
+    outerWidth: window.outerWidth,
+  };
 
   var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
@@ -55,10 +82,7 @@ function checkout (options) {
     delete merchant.onDismiss;
   }
 
-  if( isApp ) {
-    options.meta = options.meta || {};
-    options.meta.is_app = true;
-  }
+  if( isApp ) options.meta.is_app = true;
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 

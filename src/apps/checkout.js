@@ -15,27 +15,27 @@ function checkout (options) {
 
   // http://ryanve.com/lab/dimensions/
   options.meta.screen = window.screen ? {
+    availWidth: screen.availWidth,
     availHeight: screen.availHeight,
+    width: screen.width,
+    height: screen.height,
     availLeft: screen.availLeft,
     availTop: screen.availTop,
-    availWidth: screen.availWidth,
     colorDepth: screen.colorDepth,
-    height: screen.height,
-    width: screen.width,
     orientation: screen.orientation ? {
       angle: screen.orientation.angle,
       type: screen.orientation.type,
     } : {}
   } : {};
-  options.document = {
+  options.meta.document = {
     clientWidth: dE.clientWidth,
     clientHeight: dE.clientHeight,
   };
   options.meta.window = {
-    innerHeight: window.innerHeight,
     innerWidth: window.innerWidth,
-    outerHeight: window.outerHeight,
+    innerHeight: window.innerHeight,
     outerWidth: window.outerWidth,
+    outerHeight: window.outerHeight,
   };
 
   var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;

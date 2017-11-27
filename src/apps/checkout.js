@@ -5,7 +5,7 @@ var api = require('../core/api'),
     checkoutNormalizer = require('./checkout-normalizer'),
     http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
-    isApp = typeof navigator !== 'undefined' && navigator.app,
+    is_app = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log'),
     dE = document.documentElement;
 
@@ -82,7 +82,7 @@ function checkout (options) {
     delete merchant.onDismiss;
   }
 
-  if( isApp ) options.meta.is_app = true;
+  if( is_app ) options.meta.is_app = true;
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
@@ -138,22 +138,23 @@ function checkout (options) {
 
         switch( message.event ) {
           case 'merchant':
+          case 'get-checkout-data':
             iframe.style.display = _.remove_style;
             postMessage('merchant-data', {
               checkout: options
             }, e.source);
             break;
-          case 'show-iframe':
+          case 'show-iframe': // only for iframe
             _.removeClass(iframe, 'hide');
             cssModal.hack(true);
             cssOverlay.hack(false);
             document.body.removeChild(tmpOverlay);
             break;
-          case 'loading-text':
+          case 'loading-text': // only for iframe
             loadingText.textContent = message.text;
             break;
           case 'open-link':
-            if( isApp )
+            if( is_app )
               navigator.app.loadUrl(message.href, { openExternal: true });
             else
               window.open(message.href, '_system');

@@ -11,10 +11,10 @@ var api = require('../core/api'),
 
 function checkout (options) {
   options = options || {};
-  options.meta = options.meta || {};
+  options.__viewport__ = {};
 
   // http://ryanve.com/lab/dimensions/
-  options.meta.screen = window.screen ? {
+  options.__viewport__.screen = window.screen ? {
     availWidth: screen.availWidth,
     availHeight: screen.availHeight,
     width: screen.width,
@@ -27,11 +27,11 @@ function checkout (options) {
       type: screen.orientation.type,
     } : {}
   } : {};
-  options.meta.document = {
+  options.__viewport__.document = {
     clientWidth: dE.clientWidth,
     clientHeight: dE.clientHeight,
   };
-  options.meta.window = {
+  options.__viewport__.window = {
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
     outerWidth: window.outerWidth,

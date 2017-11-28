@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.456';
+module.exports = '0.0.457';
 },{}],2:[function(require,module,exports){
 module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -2642,16 +2642,16 @@ var api = require('../core/api'),
     checkoutNormalizer = require('./checkout-normalizer'),
     http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
-    isApp = typeof navigator !== 'undefined' && navigator.app,
+    is_app = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log'),
     dE = document.documentElement;
 
 function checkout (options) {
   options = options || {};
-  options.meta = options.meta || {};
+  options.__viewport__ = {};
 
   // http://ryanve.com/lab/dimensions/
-  options.meta.screen = window.screen ? {
+  options.__viewport__.screen = window.screen ? {
     availWidth: screen.availWidth,
     availHeight: screen.availHeight,
     width: screen.width,
@@ -2664,11 +2664,11 @@ function checkout (options) {
       type: screen.orientation.type,
     } : {}
   } : {};
-  options.meta.document = {
+  options.__viewport__.document = {
     clientWidth: dE.clientWidth,
     clientHeight: dE.clientHeight,
   };
-  options.meta.window = {
+  options.__viewport__.window = {
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
     outerWidth: window.outerWidth,
@@ -2719,7 +2719,7 @@ function checkout (options) {
     delete merchant.onDismiss;
   }
 
-  if( isApp ) options.meta.is_app = true;
+  if( is_app ) options.meta.is_app = true;
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
@@ -2775,22 +2775,23 @@ function checkout (options) {
 
         switch( message.event ) {
           case 'merchant':
+          case 'get-checkout-data':
             iframe.style.display = _.remove_style;
             postMessage('merchant-data', {
               checkout: options
             }, e.source);
             break;
-          case 'show-iframe':
+          case 'show-iframe': // only for iframe
             _.removeClass(iframe, 'hide');
             cssModal.hack(true);
             cssOverlay.hack(false);
             document.body.removeChild(tmpOverlay);
             break;
-          case 'loading-text':
+          case 'loading-text': // only for iframe
             loadingText.textContent = message.text;
             break;
           case 'open-link':
-            if( isApp )
+            if( is_app )
               navigator.app.loadUrl(message.href, { openExternal: true });
             else
               window.open(message.href, '_system');

@@ -70,7 +70,7 @@ function checkout (options) {
     on.cancel = merchant.onError;
     on.ko = merchant.onKO;
     on.dismiss = merchant.onDismiss;
-    on.stateChange = merchant.onStateChange || _noop;
+    on.statusChange = merchant.onStatusChange || _noop;
   } catch (e) {
     errorMessage = e.message;
   }
@@ -82,7 +82,7 @@ function checkout (options) {
     delete merchant.onError;
     delete merchant.onKO;
     delete merchant.onDismiss;
-    delete merchant.onStateChange;
+    delete merchant.onStatusChange;
   }
 
   if( is_app ) options.meta.is_app = true;
@@ -196,8 +196,8 @@ function checkout (options) {
             });
             // confirmation_url
             break;
-          case 'state-change':
-            on.stateChange(message.status);
+          case 'status-change':
+            on.statusChange(message.status);
             break;
           case 'close':
             if( iframe ) {

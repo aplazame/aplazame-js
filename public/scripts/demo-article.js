@@ -121,7 +121,7 @@ aplazame._.ready(function () {
       }
 
       data.order.id = orderId;
-      data.merchant.onStateChange = function (status) {
+      data.merchant.onStatusChange = function (status) {
         console.log('stateChange', status);
       };
 

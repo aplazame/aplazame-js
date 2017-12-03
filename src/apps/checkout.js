@@ -137,14 +137,13 @@ function checkout (options) {
         // console.log('onMessage', message);
 
         switch( message.event ) {
-          case 'merchant':
           case 'get-checkout-data':
             iframe.style.display = _.remove_style;
-            postMessage('merchant-data', {
+            postMessage('checkout-data', {
               checkout: options
             }, e.source);
             break;
-          case 'show-iframe': // only for iframe
+          case 'checkout-ready':
             _.removeClass(iframe, 'hide');
             cssModal.hack(true);
             cssOverlay.hack(false);

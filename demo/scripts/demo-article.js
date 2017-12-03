@@ -120,6 +120,9 @@ aplazame._.ready(function () {
       }
 
       data.order.id = orderId;
+      data.merchant.onStateChange = function (status) {
+        console.log('stateChange', status);
+      };
 
       // data.merchant.onError = function () {
       //   console.log('whoops!!');

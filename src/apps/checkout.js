@@ -41,6 +41,7 @@ function checkout (options) {
   var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
+      _noop = function () {},
       onError,
       merchant,
       iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 't=' + new Date().getTime(),
@@ -69,6 +70,7 @@ function checkout (options) {
     on.cancel = merchant.onError;
     on.ko = merchant.onKO;
     on.dismiss = merchant.onDismiss;
+    on.stateChange = merchant.onStateChange || _noop;
   } catch (e) {
     errorMessage = e.message;
   }
@@ -80,6 +82,7 @@ function checkout (options) {
     delete merchant.onError;
     delete merchant.onKO;
     delete merchant.onDismiss;
+    delete merchant.onStateChange;
   }
 
   if( is_app ) options.meta.is_app = true;
@@ -140,7 +143,8 @@ function checkout (options) {
           case 'get-checkout-data':
             iframe.style.display = _.remove_style;
             postMessage('checkout-data', {
-              checkout: options
+              checkout: options,
+              data: options,
             }, e.source);
             break;
           case 'checkout-ready':
@@ -191,6 +195,9 @@ function checkout (options) {
               }, e.source);
             });
             // confirmation_url
+            break;
+          case 'state-change':
+            on.stateChange(message.status);
             break;
           case 'close':
             if( iframe ) {

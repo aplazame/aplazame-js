@@ -44,34 +44,3 @@ deploy:
     recursive: true
     when:
       branch: demo
-
-publish:
-  s3_sync:
-    acl: public-read
-    region: "eu-central-1"
-    bucket: "cdn.aplazame.com"
-    access_key: $$S3_ACCESS_KEY
-    secret_key: $$S3_SECRET_KEY
-    source: dist/aplazame.js
-    target: /aplazame.js
-    content_type:
-      ".js": "application/javascript; charset=utf-8"
-    metadata:
-      Cache-Control: "max-age: no-cache"
-      x-content-type-options: "nosniff"
-      x-xss-protection: "1; mode=block"
-    when:
-      branch:
-        - master
-        - release
-
-notify:
-  slack:
-    webhook_url: $$SLACK_WEBHOOK_URL
-    username: 'drone'
-    channel: 'developers'
-    when:
-      success: false
-      failure: true
-      change: true
-      branch: master

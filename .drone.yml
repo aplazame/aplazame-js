@@ -1,5 +1,5 @@
 build:
-  image: aplazame/nodejs-karma:0.5.0
+  image: aplazame/nodejs-karma:0.7.3
   environment:
     - GITHUB_TOKEN=$$GITHUB_TOKEN
   commands:

@@ -24,23 +24,23 @@
   "dependencies": {
     "azazel": "1.1.4",
     "http-rest": "0.1.98",
-    "live-dom": "1.6.8",
+    "live-dom": "1.6.9",
     "nitro-tools": "0.2.4",
     "parole": "1.1.5",
-    "vanilla-tools": "1.2.18"
+    "vanilla-tools": "1.2.19"
   },
   "devDependencies": {
-    "autoprefixer": "7.1.6",
+    "autoprefixer": "7.2.3",
     "bower": "1.8.2",
     "browserify": "14.5.0",
     "cssnano": "^3.10.0",
     "eslint": "3.19.0",
     "git-rev-sync": "1.9.1",
     "mocha": "4.0.1",
-    "nitro": "2.1.31",
-    "node-sass": "4.3.0",
+    "nitro": "2.1.36",
+    "node-sass": "4.7.2",
     "tinyhtml": "0.0.12",
-    "uglify-js": "3.1.6",
+    "uglify-js": "3.2.2",
     "watch": "1.0.2"
   }
 }

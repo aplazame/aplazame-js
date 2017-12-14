@@ -9,8 +9,9 @@ var api = require('../core/api'),
     log = require('../tools/log'),
     dE = document.documentElement;
 
-function checkout (options) {
+function checkout (options, callbacks) {
   options = options || {};
+  callbacks = callbacks || {};
   options.__viewport__ = {};
 
   // http://ryanve.com/lab/dimensions/
@@ -52,7 +53,8 @@ function checkout (options) {
       cssBlur = cssHack('blur'),
       cssLogo = cssHack('logo'),
       cssModal = cssHack('modal'),
-      viewPortHack = document.createElement('meta');
+      viewPortHack = document.createElement('meta'),
+      valid_result_status = ['success', 'pending', 'ko', 'dismiss', 'error'];
 
   viewPortHack.name = 'viewport';
   viewPortHack.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
@@ -65,12 +67,18 @@ function checkout (options) {
   try {
     options = checkoutNormalizer(options, location, _.copy(api) );
     merchant = options ? options.merchant : null;
-    on.success = merchant.onSuccess;
-    on.pending = merchant.onPending;
-    on.cancel = merchant.onError;
-    on.ko = merchant.onKO;
-    on.dismiss = merchant.onDismiss;
-    on.statusChange = merchant.onStatusChange || _noop;
+
+    // result callbacks when close
+    on.success = merchant.onSuccess || callbacks.onSuccess;
+    on.pending = merchant.onPending || callbacks.onPending;
+    on.cancel = merchant.onError || callbacks.onError;
+    on.ko = merchant.onKO || callbacks.onKO;
+    on.dismiss = merchant.onDismiss || callbacks.onDismiss;
+
+    // event callbacks
+    on.ready = merchant.onReady || callbacks.onReady || _noop;
+    on.statusChange = merchant.onStatusChange || callbacks.onStatusChange || _noop;
+    on.close = merchant.onClose || callbacks.onClose || _noop;
   } catch (e) {
     errorMessage = e.message;
   }
@@ -152,6 +160,7 @@ function checkout (options) {
             cssModal.hack(true);
             cssOverlay.hack(false);
             document.body.removeChild(tmpOverlay);
+            on.ready();
             break;
           case 'loading-text': // only for iframe
             loadingText.textContent = message.text;
@@ -197,6 +206,10 @@ function checkout (options) {
             // confirmation_url
             break;
           case 'status-change':
+            if( valid_result_status.indexOf(message.status) < 0 ) {
+              (console.error || console.log)('Wrong status returned by checkout', message.result );
+              // throw new Error(message);
+            }
             on.statusChange(message.status);
             break;
           case 'close':
@@ -208,6 +221,12 @@ function checkout (options) {
 
               _.onMessage.off('checkout', onMessage);
 
+              if( valid_result_status.indexOf(message.result) < 0 ) {
+                (console.error || console.log)('Wrong result returned by checkout', message.result );
+                // throw new Error(message);
+              }
+
+              on.close(message.result);
               if( on[message.result] ) on[message.result]();
             }
             break;

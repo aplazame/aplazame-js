@@ -1,13 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.462';
+module.exports = '0.0.463';
 },{}],2:[function(require,module,exports){
-module.exports = '@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){animation-duration:.4s;animation-name:aplazame-blur;animation-direction:reverse}}';
+module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
-module.exports = '@keyframes aplazame-logo-smile{0%{transform:rotate(0deg);}90%{transform:rotate(2turn)}to{transform:rotate(2turn)}}@keyframes aplazame-logo-short{0%{transform:rotate(0deg)}30%{transform:rotate(0deg)}90%{transform:rotate(1turn)}to{transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{transform:rotate(0deg)}60%{transform:rotate(1turn)}90%{transform:rotate(1turn)}to{transform:rotate(1turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#5d666b}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{transform:translateZ(0);animation-fill-mode:forwards;animation-duration:1.5s;animation-iteration-count:infinite}.logo-aplazame.animate .smile{animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{animation-name:aplazame-logo-short}';
+module.exports = '@-webkit-keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@keyframes aplazame-logo-smile{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(2turn);transform:rotate(2turn)}to{-webkit-transform:rotate(2turn);transform:rotate(2turn)}}@-webkit-keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-short{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}30%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@-webkit-keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes aplazame-logo-large{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}60%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}90%{-webkit-transform:rotate(1turn);transform:rotate(1turn)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}.logo-aplazame{position:relative;display:inline-block;width:150px;height:150px}.logo-aplazame .line-large,.logo-aplazame .line-short,.logo-aplazame .smile{stroke:#ddd}.logo-aplazame .smile-outline{stroke:#5d666b}@media (min-width:480px){.logo-aplazame{width:200px;height:200px}}.logo-aplazame svg{position:absolute;top:0;left:0;width:100%;height:100%}.logo-aplazame.animate .line-large,.logo-aplazame.animate .line-short,.logo-aplazame.animate .smile{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:1.5s;animation-duration:1.5s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.logo-aplazame.animate .smile{-webkit-animation-name:aplazame-logo-smile;animation-name:aplazame-logo-smile}.logo-aplazame.animate .line-large{-webkit-animation-name:aplazame-logo-large;animation-name:aplazame-logo-large}.logo-aplazame.animate .line-short{-webkit-animation-name:aplazame-logo-short;animation-name:aplazame-logo-short}';
 },{}],4:[function(require,module,exports){
 module.exports = '.aplazame-modal{height:100%;height:100vh;position:relative;z-index:2147483647;}body{overflow:hidden}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}}@media (min-width:601px){.aplazame-modal{position:fixed}}';
 },{}],5:[function(require,module,exports){
-module.exports = '@keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{transform:translateZ(0);animation-duration:.6s;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{animation-direction:reverse}';
+module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{animation-direction:reverse}';
 },{}],6:[function(require,module,exports){
 module.exports = function anonymous(obj
 /**/) {
@@ -617,175 +617,168 @@ return http$1;
 
 },{}],12:[function(require,module,exports){
 
-(function (factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory();
-  else if ( 'define' in window && window.define.amd ) define([], factory);
-  else window.$live = factory();
-})(function () {
+var num_listeners = 0;
 
-  var num_listeners = 0;
+function _getLive (root) {
 
-  function _getLive (root) {
+  var listeners_all = [],
+      listeners = {},
+      ready_listeners = [],
+      dom_is_ready = document.readyState === 'complete',
+      each = Array.prototype.forEach,
+      filter = Array.prototype.filter;
 
-    var listeners_all = [],
-        listeners = {},
-        ready_listeners = [],
-        dom_is_ready = document.readyState === 'complete',
-        each = Array.prototype.forEach,
-        filter = Array.prototype.filter;
-
-    function triggerEvent (element, eventName, data) {
-      var event = document.createEvent('HTMLEvents');
-      event.data = data;
-      event.initEvent(eventName, true, true);
-      element.dispatchEvent(event);
-      return event;
-    }
-
-    function _remove_item (list, item) {
-      for( var i = list.length - 1 ; i >= 0 ; i-- ) {
-        if( item === list[i] ) list.splice(i, 1);
-      }
-    }
-
-    function runListener (el, listener) {
-      if( el.__live__ && el.__live__[listener.id] ) return;
-      el.__live__ = el.__live__ || {};
-      el.__live__[listener.id] = true;
-      listener.fn.call(el, el);
-    }
-
-    function runSelector (selector) {
-      each.call( document.querySelectorAll(selector), function (el) {
-        listeners[selector].forEach(function (listener) {
-          runListener(el, listener);
-        });
-      });
-    }
-
-    function _runListener (listener) { listener(); }
-
-    function onNodesChanged () {
-      for( var listener_selector in listeners ) runSelector(listener_selector);
-      if( listeners_all.length ) listeners_all.forEach(_runListener);
-    }
-
-    function onDOMReady () {
-      dom_is_ready = true;
-      document.removeEventListener('DOMContentLoaded', onDOMReady);
-      window.removeEventListener('load', onDOMReady);
-
-      ready_listeners.forEach(_runListener);
-      onNodesChanged();
-    }
-
-    if( !dom_is_ready ) {
-      document.addEventListener('DOMContentLoaded', onDOMReady);
-      window.addEventListener('load', onDOMReady);
-    }
-
-    function onReady (listener) {
-      if( dom_is_ready ) return listener();
-      ready_listeners.push(listener);
-    }
-
-    onReady(function () {
-      if( root === document ) root = document.body;
-
-      var mutations_supported = 'MutationObserver' in window;
-      if( mutations_supported ) {
-        try{
-          new MutationObserver(function(mutations) {
-            onNodesChanged();
-
-            mutations.forEach(function(mutation) {
-              [].forEach.call(mutation.removedNodes, function (node) {
-                triggerEvent(node, 'detached');
-              });
-            });
-
-          }).observe(root, { childList: true, subtree: true });
-        } catch(err) {
-          mutations_supported = false;
-        }
-      }
-      if( !mutations_supported ) {
-        root.addEventListener('DOMSubtreeModified', onNodesChanged);
-      }
-      // eslint-disable-next-line
-      // console.log('mutations ' + ( mutations_supported ? '' : 'UN' ) + 'supported');
-    });
-
-    function _live (selector, listener_fn) {
-      if( selector instanceof Function ) return listeners_all.push(selector);
-
-      if( typeof selector !== 'string' ) throw new Error('selector should be a String');
-      if( !(listener_fn instanceof Function) ) throw new Error('listener should be a Function');
-
-      var listener = { id: '_' + ++num_listeners, fn: listener_fn };
-
-      listeners[selector] = listeners[selector] || [];
-      listeners[selector].push(listener);
-
-      if( dom_is_ready ) each.call( document.querySelectorAll(selector), function (el) {
-        runListener(el, listener);
-      });
-    }
-
-    _live.off = function (selector, listener) {
-      if( selector instanceof Function ) return _remove_item(listeners_all, selector);
-
-      if( typeof selector !== 'string' ) throw new Error('selector should be a String');
-      if( !(listener instanceof Function) ) throw new Error('handler should be a Function');
-
-      _remove_item(listeners, listener);
-    };
-
-    _live.byValue = function (selector, getValue) {
-      var value_listeners = {},
-          value_live_ready = false;
-
-      return function (name, listener_fn) {
-        var listener = {
-          id: '_' + ++num_listeners, fn: listener_fn,
-          filter: function (node) {
-            return getValue.call(node, node) === name;
-          }
-        };
-
-        value_listeners[name] = value_listeners[name] || [];
-        value_listeners[name].push(listener);
-
-        if( dom_is_ready && value_live_ready ) {
-          each.call( filter.call(document.querySelectorAll(selector), listener.filter), function (el) {
-            runListener(el, listener);
-          });
-        }
-
-        if( value_live_ready ) return;
-
-        value_live_ready = true;
-        _live(selector, function (el) {
-          for( var name in value_listeners ) {
-            value_listeners[name].forEach(function (listener) {
-              if( listener.filter(el) ) runListener(el, listener);
-            });
-          }
-        });
-      };
-    };
-
-    _live.ready = onReady;
-
-    return _live;
+  function triggerEvent (element, eventName, data) {
+    var event = document.createEvent('HTMLEvents');
+    event.data = data;
+    event.initEvent(eventName, true, true);
+    element.dispatchEvent(event);
+    return event;
   }
 
-  var $live = _getLive(document);
-  $live.root = _getLive;
-  $live.form = $live.byValue('form[name]', function () { return this.name; });
+  function _remove_item (list, item) {
+    for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+      if( item === list[i] ) list.splice(i, 1);
+    }
+  }
 
-  return $live;
-});
+  function runListener (el, listener) {
+    if( el.__live__ && el.__live__[listener.id] ) return;
+    el.__live__ = el.__live__ || {};
+    el.__live__[listener.id] = true;
+    listener.fn.call(el, el);
+  }
+
+  function runSelector (selector) {
+    each.call( document.querySelectorAll(selector), function (el) {
+      listeners[selector].forEach(function (listener) {
+        runListener(el, listener);
+      });
+    });
+  }
+
+  function _runListener (listener) { listener(); }
+
+  function onNodesChanged () {
+    for( var listener_selector in listeners ) runSelector(listener_selector);
+    if( listeners_all.length ) listeners_all.forEach(_runListener);
+  }
+
+  function onDOMReady () {
+    dom_is_ready = true;
+    document.removeEventListener('DOMContentLoaded', onDOMReady);
+    window.removeEventListener('load', onDOMReady);
+
+    ready_listeners.forEach(_runListener);
+    onNodesChanged();
+  }
+
+  if( !dom_is_ready ) {
+    document.addEventListener('DOMContentLoaded', onDOMReady);
+    window.addEventListener('load', onDOMReady);
+  }
+
+  function onReady (listener) {
+    if( dom_is_ready ) return listener();
+    ready_listeners.push(listener);
+  }
+
+  onReady(function () {
+    if( root === document ) root = document.body;
+
+    var mutations_supported = 'MutationObserver' in window;
+    if( mutations_supported ) {
+      try{
+        new MutationObserver(function(mutations) {
+          onNodesChanged();
+
+          mutations.forEach(function(mutation) {
+            [].forEach.call(mutation.removedNodes, function (node) {
+              triggerEvent(node, 'detached');
+            });
+          });
+
+        }).observe(root, { childList: true, subtree: true });
+      } catch(err) {
+        mutations_supported = false;
+      }
+    }
+    if( !mutations_supported ) {
+      root.addEventListener('DOMSubtreeModified', onNodesChanged);
+    }
+    // eslint-disable-next-line
+    // console.log('mutations ' + ( mutations_supported ? '' : 'UN' ) + 'supported');
+  });
+
+  function _live (selector, listener_fn) {
+    if( selector instanceof Function ) return listeners_all.push(selector);
+
+    if( typeof selector !== 'string' ) throw new Error('selector should be a String');
+    if( !(listener_fn instanceof Function) ) throw new Error('listener should be a Function');
+
+    var listener = { id: '_' + ++num_listeners, fn: listener_fn };
+
+    listeners[selector] = listeners[selector] || [];
+    listeners[selector].push(listener);
+
+    if( dom_is_ready ) each.call( document.querySelectorAll(selector), function (el) {
+      runListener(el, listener);
+    });
+  }
+
+  _live.off = function (selector, listener) {
+    if( selector instanceof Function ) return _remove_item(listeners_all, selector);
+
+    if( typeof selector !== 'string' ) throw new Error('selector should be a String');
+    if( !(listener instanceof Function) ) throw new Error('handler should be a Function');
+
+    _remove_item(listeners, listener);
+  };
+
+  _live.byValue = function (selector, getValue) {
+    var value_listeners = {},
+        value_live_ready = false;
+
+    return function (name, listener_fn) {
+      var listener = {
+        id: '_' + ++num_listeners, fn: listener_fn,
+        filter: function (node) {
+          return getValue.call(node, node) === name;
+        }
+      };
+
+      value_listeners[name] = value_listeners[name] || [];
+      value_listeners[name].push(listener);
+
+      if( dom_is_ready && value_live_ready ) {
+        each.call( filter.call(document.querySelectorAll(selector), listener.filter), function (el) {
+          runListener(el, listener);
+        });
+      }
+
+      if( value_live_ready ) return;
+
+      value_live_ready = true;
+      _live(selector, function (el) {
+        for( var name in value_listeners ) {
+          value_listeners[name].forEach(function (listener) {
+            if( listener.filter(el) ) runListener(el, listener);
+          });
+        }
+      });
+    };
+  };
+
+  _live.ready = onReady;
+
+  return _live;
+}
+
+var $live = _getLive(document);
+$live.root = _getLive;
+$live.form = $live.byValue('form[name]', function () { return this.name; });
+
+module.exports = $live;
 
 },{}],13:[function(require,module,exports){
 
@@ -1574,13 +1567,38 @@ var Parole = require('parole'),
         }
       }
       return timingFunctions[timingFunctionName];
+    },
+    _requestAnimationFrame = window.requestAnimationFrame,
+    // eslint-disable-next-line
+    _cancelAnimationFrame = window.cancelAnimationFrame,
+    animation_polyfilled = false;
+
+// FROM: https://gist.github.com/paulirish/1579671
+if( !_requestAnimationFrame ) (function () {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      _requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+      _cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                 || window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+
+  if( !_requestAnimationFrame ) {
+    animation_polyfilled = true;
+    _requestAnimationFrame = function(callback, _element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+      timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
     };
 
-var now = Date.now ? function () {
-  return Date.now();
-} : function () {
-  return new Date().getTime();
-};
+    _cancelAnimationFrame = function(id) {
+      clearTimeout(id);
+    };
+  }
+})();
 
 function animate (progressFn, duration, atEnd, timingFunctionName) {
   var aux;
@@ -1601,33 +1619,30 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
 
   progressFn(duration === 0 ? 1 : 0);
 
-  var stopped = false,
+  var start, frame_id,
       timingFunction = getTimingFunction(timingFunctionName),
       deferred = Parole.defer();
 
   if( duration > 0 ) {
-    var start = now(),
-        interval = setInterval(function () {
-          var elapsed = now() - start;
+    start = animation_polyfilled ? new Date().getTime() : performance.now();
 
-          if( stopped ) {
-            clearInterval(interval);
-          } else if( elapsed >= duration ) {
-            stopped = true;
-            progressFn(1);
-            deferred.resolve();
-            (atEnd || noop)();
-          } else {
-            progressFn( timingFunction(elapsed/duration) );
-          }
-        }, 10);
-  }
+    frame_id = _requestAnimationFrame(function step() {
+      var elapsed = performance.now() - start;
+
+      if( elapsed >= duration ) {
+        progressFn(1);
+        deferred.resolve();
+        (atEnd || noop)();
+      } else {
+        progressFn( timingFunction(elapsed/duration) );
+        frame_id = _requestAnimationFrame(step);
+      }
+    });
+  } else setTimeout(deferred.resolve, 0);
 
   deferred.promise.stop = function (reject) {
-    stopped = true;
-    if( reject ) {
-      deferred.reject();
-    }
+    _cancelAnimationFrame(frame_id);
+    if( reject ) deferred.reject();
   };
 
   return deferred.promise;
@@ -2646,8 +2661,9 @@ var api = require('../core/api'),
     log = require('../tools/log'),
     dE = document.documentElement;
 
-function checkout (options) {
+function checkout (options, callbacks) {
   options = options || {};
+  callbacks = callbacks || {};
   options.__viewport__ = {};
 
   // http://ryanve.com/lab/dimensions/
@@ -2689,7 +2705,8 @@ function checkout (options) {
       cssBlur = cssHack('blur'),
       cssLogo = cssHack('logo'),
       cssModal = cssHack('modal'),
-      viewPortHack = document.createElement('meta');
+      viewPortHack = document.createElement('meta'),
+      valid_result_status = ['success', 'pending', 'ko', 'dismiss', 'error'];
 
   viewPortHack.name = 'viewport';
   viewPortHack.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
@@ -2702,12 +2719,18 @@ function checkout (options) {
   try {
     options = checkoutNormalizer(options, location, _.copy(api) );
     merchant = options ? options.merchant : null;
-    on.success = merchant.onSuccess;
-    on.pending = merchant.onPending;
-    on.cancel = merchant.onError;
-    on.ko = merchant.onKO;
-    on.dismiss = merchant.onDismiss;
-    on.statusChange = merchant.onStatusChange || _noop;
+
+    // result callbacks when close
+    on.success = merchant.onSuccess || callbacks.onSuccess;
+    on.pending = merchant.onPending || callbacks.onPending;
+    on.cancel = merchant.onError || callbacks.onError;
+    on.ko = merchant.onKO || callbacks.onKO;
+    on.dismiss = merchant.onDismiss || callbacks.onDismiss;
+
+    // event callbacks
+    on.ready = merchant.onReady || callbacks.onReady || _noop;
+    on.statusChange = merchant.onStatusChange || callbacks.onStatusChange || _noop;
+    on.close = merchant.onClose || callbacks.onClose || _noop;
   } catch (e) {
     errorMessage = e.message;
   }
@@ -2789,6 +2812,7 @@ function checkout (options) {
             cssModal.hack(true);
             cssOverlay.hack(false);
             document.body.removeChild(tmpOverlay);
+            on.ready();
             break;
           case 'loading-text': // only for iframe
             loadingText.textContent = message.text;
@@ -2834,6 +2858,10 @@ function checkout (options) {
             // confirmation_url
             break;
           case 'status-change':
+            if( valid_result_status.indexOf(message.status) < 0 ) {
+              (console.error || console.log)('Wrong status returned by checkout', message.result );
+              // throw new Error(message);
+            }
             on.statusChange(message.status);
             break;
           case 'close':
@@ -2845,6 +2873,12 @@ function checkout (options) {
 
               _.onMessage.off('checkout', onMessage);
 
+              if( valid_result_status.indexOf(message.result) < 0 ) {
+                (console.error || console.log)('Wrong result returned by checkout', message.result );
+                // throw new Error(message);
+              }
+
+              on.close(message.result);
               if( on[message.result] ) on[message.result]();
             }
             break;

@@ -121,9 +121,6 @@ aplazame._.ready(function () {
       }
 
       data.order.id = orderId;
-      data.merchant.onStatusChange = function (status) {
-        console.log('stateChange', status);
-      };
 
       // data.merchant.onError = function () {
       //   console.log('whoops!!');
@@ -137,7 +134,14 @@ aplazame._.ready(function () {
       //   console.log('try again!!');
       // };
 
-      aplazame.checkout(data);
+      aplazame.checkout(data, {
+        onStatusChange: function (status) {
+          console.log('onStatusChange', status);
+        },
+        onClose: function (result_status) {
+          console.log('onClose', result_status);
+        },
+      });
     });
 
   };

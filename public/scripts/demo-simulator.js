@@ -944,13 +944,38 @@ var Parole = require('parole'),
         }
       }
       return timingFunctions[timingFunctionName];
+    },
+    _requestAnimationFrame = window.requestAnimationFrame,
+    // eslint-disable-next-line
+    _cancelAnimationFrame = window.cancelAnimationFrame,
+    animation_polyfilled = false;
+
+// FROM: https://gist.github.com/paulirish/1579671
+if( !_requestAnimationFrame ) (function () {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      _requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+      _cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                 || window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+
+  if( !_requestAnimationFrame ) {
+    animation_polyfilled = true;
+    _requestAnimationFrame = function(callback, _element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+      timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
     };
 
-var now = Date.now ? function () {
-  return Date.now();
-} : function () {
-  return new Date().getTime();
-};
+    _cancelAnimationFrame = function(id) {
+      clearTimeout(id);
+    };
+  }
+})();
 
 function animate (progressFn, duration, atEnd, timingFunctionName) {
   var aux;
@@ -971,33 +996,30 @@ function animate (progressFn, duration, atEnd, timingFunctionName) {
 
   progressFn(duration === 0 ? 1 : 0);
 
-  var stopped = false,
+  var start, frame_id,
       timingFunction = getTimingFunction(timingFunctionName),
       deferred = Parole.defer();
 
   if( duration > 0 ) {
-    var start = now(),
-        interval = setInterval(function () {
-          var elapsed = now() - start;
+    start = animation_polyfilled ? new Date().getTime() : performance.now();
 
-          if( stopped ) {
-            clearInterval(interval);
-          } else if( elapsed >= duration ) {
-            stopped = true;
-            progressFn(1);
-            deferred.resolve();
-            (atEnd || noop)();
-          } else {
-            progressFn( timingFunction(elapsed/duration) );
-          }
-        }, 10);
-  }
+    frame_id = _requestAnimationFrame(function step() {
+      var elapsed = performance.now() - start;
+
+      if( elapsed >= duration ) {
+        progressFn(1);
+        deferred.resolve();
+        (atEnd || noop)();
+      } else {
+        progressFn( timingFunction(elapsed/duration) );
+        frame_id = _requestAnimationFrame(step);
+      }
+    });
+  } else setTimeout(deferred.resolve, 0);
 
   deferred.promise.stop = function (reject) {
-    stopped = true;
-    if( reject ) {
-      deferred.reject();
-    }
+    _cancelAnimationFrame(frame_id);
+    if( reject ) deferred.reject();
   };
 
   return deferred.promise;

@@ -67,7 +67,7 @@ require(['aplazame'], function (aplazame) {
     // checkout launching
 
     var params = {
-      'checkout-json': 'checkout.json'
+      'checkout-json': 'checkout-ES.json'
     };
 
     if( location.search ) {
@@ -146,7 +146,14 @@ require(['aplazame'], function (aplazame) {
         //   console.log('try again!!');
         // };
 
-        aplazame.checkout(data);
+        aplazame.checkout(data, {
+          onStatusChange: function (status) {
+            console.log('onStatusChange', status);
+          },
+          onClose: function (result_status) {
+            console.log('onClose', result_status);
+          },
+        });
       });
 
     };

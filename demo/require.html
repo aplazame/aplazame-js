@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>$include{ head }</head>
-  <body data-branch="${git.branch}" data-public-key="${ public_key }">
+  <body data-branch="${git.branch}" data-country="${ country }" data-public-key="${ public_key }">
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
       <div class="container-md">
-        <a class="demo-link" href="/">Demo</a>
-        <a class="logo-link" href="/">
+        <a class="demo-link" href="/$if{ country === 'MX' }mx/{/}">Demo</a>
+        <a class="logo-link" href="/$if{ country === 'MX' }mx/{/}">
           <img src="/dist/widgets/assets/images/logotipo-white.svg" alt="aplazame logo"/>
         </a>
       </div>
@@ -38,7 +38,7 @@
                   <button type="button" class="plus">+</button>
                 </div>
                 <div class=price-wrapper></div>
-                <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ toEUR(article.price) }</div>
+                <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ formatCurrency(article.price, currency) }</div>
               </div>
 
               <div class="article-type-choices">
@@ -63,8 +63,15 @@
                 <div data-aplazame-simulator data-view="product"
                       data-amount="${article.price}"
                       data-price="form.details [itemprop='price']"
-                      data-qty="form.details input[name='qty']"></div>
+                      data-qty="form.details input[name='qty']"
+                      data-country="${ country }"
+                      data-currency="${ currency }"></div>
               </div>
+              <!-- <div class="text-right">
+                <div data-aplazame-simulator data-view="product"
+                      data-amount="${article.price}"
+                      data-location=".article-sample .details .price:after"></div>
+              </div> -->
 
             </form>
           </article>
@@ -100,7 +107,7 @@
                 <div class="label">${article.name}</div>
                 <div class="price-wrapper">
                   $if{ article.quantity > 1 }<span class="quantity">${article.quantity}x&nbsp;</span>{/}
-                  <span class="price">${ toEUR( articleAmount(article) ) }</span>
+                  <span class="price">${ formatCurrency( articleAmount(article), currency ) }</span>
                 </div>
               </div>
             </li>
@@ -110,7 +117,7 @@
                 <div class="concept">Envío</div>
               </div>
               <div class="col-xs-4 details">
-                <span class="price">${ toEUR( shippingAmount() ) }</span>
+                <span class="price">${ formatCurrency( shippingAmount(), currency ) }</span>
               </div>
             </li>
             <li class="row">
@@ -118,7 +125,7 @@
                 <div class="concept">Descuento</div>
               </div>
               <div class="col-xs-4 details">
-                <span class="price">${ toEUR( discountAmount() ) }</span>
+                <span class="price">${ formatCurrency( discountAmount(), currency ) }</span>
               </div>
             </li>
           </ul>
@@ -126,7 +133,7 @@
           <div class="total-wrapper">
             <div class="label">Total</div>
             <div class="price-wrapper">
-              <span class="price">${ toEUR( totalAmount() ) }</span>
+              <span class="price">${ formatCurrency( totalAmount(), currency ) }</span>
             </div>
           </div>
 
@@ -154,23 +161,46 @@
 
     </div>
 
-    <footer class="footer container-md">
-      <div class="col-xs-6 no-wrap">
-        <span>&copy;&nbsp;Aplazame S.L.</span>
-      </div>
-      <div class="col-xs-6 text-right">
-        <a class="demo-footer-link" href="/simulator/">simulador</a>
+    <footer class="footer">
+      <div class="-wrapper container-md">
+        <div class="col-xs-6 no-wrap">
+          <span>&copy;&nbsp;Aplazame S.L.</span>
+        </div>
+        <div class="col-xs-6 text-right">
+          $if{ country !== 'MX' }
+            <a class="demo-footer-link" href="/simulator/">simulador</a>
+          {/}
+        </div>
       </div>
     </footer>
 
-    <script data-main="scripts/demo-require" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.2/require.js"></script>
+    <!-- <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
+            data-aplazame="${ public_key }"
+            data-sandbox="true"
+            data-callback="apzReady"
+            $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com/"{/}
+            $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-static-url="/dist/"{:}$if{ git.branch === 'master' }data-static-url="https://dev.aplazame.com/static/"{/}{/}
+            $if{ git.branch === 'demo' }data-checkout-url="/_checkout/checkout.html"{:}$if{ git.branch !== 'release' }data-checkout-url="https://dev.aplazame.com/static/checkout/iframe.html"{/}{/}>
+    </script> -->
 
     <script>
       window.apzReady = function () {
-        console.log('hello, aplazame callback!', arguments);
+        console.log('hello, aplazame callback!');
+        console.log.apply(console, arguments );
       };
     </script>
 
+    <!-- alt version using url params:
+      <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
+    -->
+
+    <!-- <script type="text/javascript" src="/scripts/demo-article.js?build=${build}"></script> -->
+    <script data-main="scripts/demo-require" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.2/require.js"></script>
+
+    <script type="text/x-javascript-example">
+      // example of checkout loading
+      aplazame.checkout($json{checkout});
+    </script>
     $if{dev}
       <script type="application/javascript">
         var head= document.getElementsByTagName('head')[0];

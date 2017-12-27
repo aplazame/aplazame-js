@@ -14,9 +14,11 @@ bower-install:
 	@echo "running bower install"
 	@$(npmdir)/bower install --allow-root > /dev/null 2>&1
 
-install: git.hooks bower-install
+npm-install:
 	@echo "running npm install"
 	@npm install > /dev/null 2>&1
+
+install: git.hooks npm-install bower-install
 
 tests:
 	@$(npmdir)/eslint src/**

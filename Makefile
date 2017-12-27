@@ -12,7 +12,7 @@ git.hooks:
 
 bower-install:
 	@echo "running bower install"
-	@bower install --allow-root > /dev/null 2>&1
+	@$(npmdir)/bower install --allow-root > /dev/null 2>&1
 
 install: git.hooks bower-install
 	@echo "running npm install"

@@ -46,8 +46,10 @@ var classList = require('./classlist');
 module.exports = function (_) {
 
   var modalsContainer = _.create('div', { className: 'modals-container with-overlay' }),
+      loadingLogo = _.create('div', { className: '-logo-aplazame' }),
       // body = document.body,
       // every = Array.prototype.every,
+
       mobile = window.matchMedia('(max-width: 600px)'),
       each = Array.prototype.forEach,
       containerAttrs = function () {
@@ -86,15 +88,41 @@ module.exports = function (_) {
         classList.toggle(body, 'modals-no-sm', noSM );
         classList.toggle(body, 'modals-sm', !noSM );
         last && classList.toggle(body, 'modals-last-no-sm', !classList.has(last, 'size-sm') );
-      };
+      },
+      modals_opened = [];
 
-  _.on('page:updated', function () {
-    _.triggerEvent(modalsContainer, 'modals:close');
-  });
+      loadingLogo.innerHTML = '<svg class="line-short" version="1.1" viewBox="0 0 100 100"><path d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"></path></svg><svg class="smile" version="1.1" viewBox="0 0 100 100"><g stroke-linecap="round" fill="none" transform="matrix(0.78036633,0,0,0.78036633,10.526512,18.003998)"><path class="smile-outline" stroke-width="12" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"></path><path class="smile-line" stroke-width="7.5" d="M75.242,57.51c-5.435,7.839-14.498,12.972-24.761,12.972-10.262,0-19.325-5.132-24.758-12.972"></path></g></svg><svg class="line-large" version="1.1" viewBox="0 0 100 100"><path stroke-linejoin="round" d="M50,50,66.687,92.266" stroke-linecap="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="none"></path></svg>';
+
+  function _remove (list, item) {
+    for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+      if( list[i] === item ) list.splice(i, 1);
+    }
+  }
+
+  function _dismissNestedModals1by1 (m, cb) {
+    var index = modals_opened.indexOf(m);
+    if( index >= 0 && index < modals_opened.length - 1 ) {
+      modals_opened[modals_opened.length - 1].close(function () {
+        _dismissNestedModals1by1(m, cb);
+      }, 'nested');
+    } else cb();
+  }
+
+  function _dismissNestedModals (m, cb) {
+    var pos = modals_opened.indexOf(m);
+
+    for( var i = modals_opened.length - 1 ; pos >= 0 && i > pos ; i-- ) {
+      modals_opened[i].close('nested');
+    }
+    cb();
+  }
+
+  function _dismissNestedModalsNoop (_m, cb) { cb(); }
 
   function Modal (_options, onClose) {
 
     var $m = this;
+    modals_opened.push($m);
 
     var on_close_listeners = [];
     $m._on_close_listeners = on_close_listeners;
@@ -111,6 +139,8 @@ module.exports = function (_) {
 
     options.card = options.card || {};
 
+    options.loader = options.loader || false;
+
     if( options.beforeClose ) before_close_listeners.push(options.beforeClose);
 
     if( options.onClose ) on_close_listeners.push(options.onClose);
@@ -121,6 +151,25 @@ module.exports = function (_) {
         body.insertBefore(modalsContainer, body.firstChild);
       } else {
         body.appendChild(modalsContainer);
+      }
+
+      if( options.loader && options.resolving ) {
+        (function () {
+          modalsContainer.appendChild(loadingLogo);
+          var resolving = true;
+
+          before_close_listeners.push(function () {
+            if( resolving ) return false;
+          });
+
+          options.resolving.then(function () {
+            resolving = false;
+            if( modalsContainer.contains(loadingLogo) ) modalsContainer.removeChild(loadingLogo);
+          }, function () {
+            resolving = false;
+          });
+
+        })();
       }
 
       classList.add(body, 'modal-opened');
@@ -136,7 +185,7 @@ module.exports = function (_) {
 
     var m = _.create('div', { className: 'modal' });
     modalsContainer.appendChild(m);
-    _.attr(modalsContainer, 'data-num', modalsContainer.children.length );
+    _.attr(modalsContainer, 'data-num', modals_opened.length );
 
     if( options.size ) {
       classList.add(m,  'size-' + options.size );
@@ -170,7 +219,9 @@ module.exports = function (_) {
           }
         } : _.noop;
 
+    // var card = _.create('div', { className: 'card', style: options.card.style });
     var getCard = function () {
+          // return card;
           return _(m, '.card');
         },
         modalStatus = 'iddle',
@@ -196,6 +247,7 @@ module.exports = function (_) {
         };
 
     m.appendChild( _.create('div', { className: 'card', style: options.card.style }) );
+    // m.appendChild( card );
 
     classList.add(modalsContainer, 'parallax');
     setTimeout(function () {
@@ -218,9 +270,21 @@ module.exports = function (_) {
       }
     }
 
+    var closeModal = function (onClosed, onDismissCancel, force_close) {
+      var body = document.body,
+          before_close_preventes_close = false,
+          nested_close = onClosed === 'nested' || onDismissCancel === 'nested';
 
-    var closeModal = function (onClosed, onDismiss, force_close) {
-      var body = document.body, before_close_preventes_close = false;
+      if( typeof onClosed === 'boolean' ) {
+        force_close = onClosed;
+        onClosed = null;
+        onDismissCancel = null;
+      } else if( typeof onDismissCancel === 'boolean' ) {
+        force_close = onDismissCancel;
+        onDismissCancel = null;
+      }
+
+      if( force_close && modals_opened.indexOf($m) === modals_opened.length - 1 ) modals_opened.pop();
 
       if( modalStatus === 'closing' ) return;
 
@@ -229,46 +293,51 @@ module.exports = function (_) {
       });
 
       if( !force_close && before_close_preventes_close ) {
-        if( onDismiss instanceof Function ) onDismiss();
+        if( onDismissCancel instanceof Function ) onDismissCancel();
         return;
       }
 
       onResize(false);
       _.off(window, 'resize', onResize);
 
-      modalStatus = 'closing';
-      _.attr(modalsContainer, 'data-num', modalsContainer.children.length - 1 );
-      _.tmpClass(m, 'is-closing', function () {
-        return _.animate.time( getCard() );
-      }, function () {
-        modalsContainer.removeChild(m);
-        _.attr(modalsContainer, 'data-num', modalsContainer.children.length );
+      ( nested_close ? _dismissNestedModalsNoop : (!force_close && options.close_1by1 ? _dismissNestedModals1by1 : _dismissNestedModals) )($m, function () {
+        _remove(modals_opened, $m);
 
-        // if( options.onClose instanceof Function ) options.onClose();
-        on_close_listeners.forEach(function (listener) { listener(); });
-        if( onClosed instanceof Function ) onClosed();
+        modalStatus = 'closing';
+        _.attr(modalsContainer, 'data-num', modalsContainer.children.length - 1 );
+        _.tmpClass(m, 'is-closing', function () {
+          return _.animate.time( getCard() );
+        }, function () {
+          modalsContainer.removeChild(m);
+          _.attr(modalsContainer, 'data-num', modalsContainer.children.length );
 
-        classList.remove(modalsContainer, 'parallax');
-        modalsContainer.removeEventListener('mousemove', onMouseMove);
-        _.off(modalsContainer, 'modals:close', closeModal);
-        containerAttrs();
-        if( !previousStandalone ) {
-          classList.remove(modalsContainer, 'standalone-mobile');
-        }
-      });
+          // if( options.onClose instanceof Function ) options.onClose();
+          on_close_listeners.forEach(function (listener) { listener(); });
+          if( onClosed instanceof Function ) onClosed();
 
-      if( modalsContainer.children.length === 1 ) {
-        _.tmpClass(modalsContainer, 'closing-wrapper', options.size === 'sm' ? _.animate.time( getCard() ) : _.animate.time(modalsContainer), function () {
-          if( body.contains(modalsContainer) ) {
-            body.removeChild(modalsContainer);
+          classList.remove(modalsContainer, 'parallax');
+          modalsContainer.removeEventListener('mousemove', onMouseMove);
+          _.off(modalsContainer, 'modals:close', closeModal);
+          containerAttrs();
+          if( !previousStandalone ) {
+            classList.remove(modalsContainer, 'standalone-mobile');
           }
-          classList.remove(body, 'modal-opened');
-          classList.remove(body, 'modals-some-no-sm');
-          classList.remove(body, 'modals-no-sm');
-          classList.remove(body, 'modals-sm');
-          classList.remove(body, 'modals-last-no-sm');
         });
-      }
+
+        if( !modals_opened.length ) {
+          _.tmpClass(modalsContainer, 'closing-wrapper', options.size === 'sm' ? _.animate.time( getCard() ) : _.animate.time(modalsContainer), function () {
+            if( body.contains(modalsContainer) ) {
+              body.removeChild(modalsContainer);
+            }
+            classList.remove(body, 'modal-opened');
+            classList.remove(body, 'modals-some-no-sm');
+            classList.remove(body, 'modals-no-sm');
+            classList.remove(body, 'modals-sm');
+            classList.remove(body, 'modals-last-no-sm');
+          });
+        }
+
+      });
 
       return true;
     };
@@ -320,13 +389,17 @@ module.exports = function (_) {
       } else if( e.target.closest('.card') ) {
         classList.remove(m, 'pressing-down');
 
-        var index = [].indexOf.call(modalsContainer.children, m);
-        if( index + 1 < modalsContainer.children.length ) {
-          for( var i = index + 1, len = modalsContainer.children.length ; i < len ; i++ ) {
-            _.triggerEvent(modalsContainer.children[i], 'modal:close');
-          }
-          _.attr(modalsContainer, 'data-num', index + 1 );
-        }
+        _dismissNestedModals($m, function () {
+          _.attr(modalsContainer, 'data-num', modals_opened.indexOf($m) + 1 );
+        });
+
+        // var index = [].indexOf.call(modalsContainer.children, m);
+        // if( index + 1 < modalsContainer.children.length ) {
+        //   for( var i = index + 1, len = modalsContainer.children.length ; i < len ; i++ ) {
+        //     _.triggerEvent(modalsContainer.children[i], 'modal:close');
+        //   }
+        //   _.attr(modalsContainer, 'data-num', index + 1 );
+        // }
       }
     });
 
@@ -342,6 +415,8 @@ module.exports = function (_) {
 
     this.close = closeModal;
 
+    if( options.closeButton instanceof Function ) options.closeButton = options.closeButton( modals_opened.indexOf($m) );
+
     if( options.closeButton ) {
       m.insertBefore( (function () {
         var closeButton = _.create('div', { className: 'close-button' });
@@ -349,14 +424,15 @@ module.exports = function (_) {
         _.on(closeButton, 'click', $m.close );
         return closeButton;
       })(), getCard() );
-    } else if( m.previousElementSibling && m.previousElementSibling.firstChild && classList.has(m.previousElementSibling.firstChild, 'close-button') ) {
+    } else if( m.previousElementSibling && m.previousElementSibling.firstElementChild && classList.has(m.previousElementSibling.firstElementChild, 'close-button') ) {
       m.insertBefore( (function (previousButton) {
         var closeButton = _.create('div', { className: 'close-button' });
         closeButton.appendChild( _.create('div', { className: 'button', textContent: previousButton.textContent }) );
         _.on(closeButton, 'click', function () {
-          $m.close(function () {
-            _.triggerEvent(previousButton, 'click');
-          });
+          _.triggerEvent(previousButton, 'click');
+          // $m.close(function () {
+          //   _.triggerEvent(previousButton, 'click');
+          // });
         });
         return closeButton;
       })(m.previousElementSibling.firstChild), getCard() );
@@ -375,6 +451,12 @@ module.exports = function (_) {
     if( !(listener instanceof Function) ) throw new Error('Modal.beforeClose listener should be a Function');
     this._before_close_listeners.push(listener);
   };
+
+  Modal.closeAll = function () {
+    _.triggerEvent(modalsContainer, 'modals:close');
+  };
+
+  _.on('page:updated', Modal.closeAll);
 
   return Modal;
 
@@ -2299,6 +2381,7 @@ function brightness (color) {
   return o < 100 ? 'dark' : ( o > 230 ? 'light' : 'medium' );
 }
 
+// https://css-tricks.com/snippets/javascript/lighten-darken-color/
 function lightenHEX (col, amt) {
   var usePound = false;
 
@@ -2324,7 +2407,8 @@ function lightenHEX (col, amt) {
   if (g > 255) g = 255;
   else if (g < 0) g = 0;
 
-  return (usePound?'#':'') + (g | (b << 8) | (r << 16)).toString(16);
+  // return (usePound?'#':'') + (g | (b << 8) | (r << 16)).toString(16);
+  return (usePound?'#':'') + String('000000' + (g | (b << 8) | (r << 16)).toString(16)).slice(-6);
 }
 
 module.exports = {

@@ -10,8 +10,8 @@
 
   <div class="choices-wrapper">
     <% for( var i = 0, n = choices.length; i < n ; i++ ) { %>
-    <button type="button" class="choice<% if( choices[i].annual_equivalent < merchant_annual_equivalent ) { %> _on_campaign<% } %>">
-      <% if( choices[i].annual_equivalent < merchant_annual_equivalent ) { %>
+    <button type="button" class="choice<% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %> _on_campaign<% } %>">
+      <% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %>
       <div class="tae-ribbon">
         <img src="<%= static_url %>/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
         <div><%= getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' %></div>

@@ -9,12 +9,6 @@ var api = require('../core/api'),
     log = require('../tools/log'),
     dE = document.documentElement;
 
-function _removeFunctions (o) {
-  for( var key in o ) {
-    if( o[key] instanceof Function ) delete o[key];
-  }
-}
-
 function checkout (options, callbacks) {
   options = options || {};
   callbacks = callbacks || {};
@@ -48,9 +42,7 @@ function checkout (options, callbacks) {
   var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
-      _noop = function () {},
       onError,
-      merchant,
       iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 't=' + new Date().getTime(),
       errorLoading = false,
       errorMessage = false,
@@ -71,26 +63,10 @@ function checkout (options, callbacks) {
   delete options.onError;
 
   try {
-    options = checkoutNormalizer(options, location, _.copy(api) );
-    merchant = options ? options.merchant : null;
-
-    // result callbacks when close
-    on.success = merchant.onSuccess || callbacks.onSuccess;
-    on.pending = merchant.onPending || callbacks.onPending;
-    on.cancel = merchant.onError || callbacks.onError;
-    on.ko = merchant.onKO || callbacks.onKO;
-    on.dismiss = merchant.onDismiss || callbacks.onDismiss;
-
-    // event callbacks
-    on.ready = merchant.onReady || callbacks.onReady || _noop;
-    on.statusChange = merchant.onStatusChange || callbacks.onStatusChange || _noop;
-    on.close = merchant.onClose || callbacks.onClose || _noop;
+    on = checkoutNormalizer(options, callbacks, location, _.copy(api) );
   } catch (e) {
     errorMessage = e.message;
   }
-
-  // All functions must be removed as them can't be serialized by postMessage
-  _removeFunctions(merchant);
 
   if( is_app ) options.meta.is_app = true;
 

@@ -1,7 +1,8 @@
 /* global describe, it */
 
 var assert = require('assert'),
-    checkoutNormalizer = require('./checkout-normalizer');
+    checkoutNormalizer = require('./checkout-normalizer'),
+    callbacks = {};
 
 describe('checkout normalizer', function () {
 
@@ -32,7 +33,7 @@ describe('checkout normalizer', function () {
 
     assert.throws(
       function () {
-        checkoutNormalizer(checkout, location, api);
+        checkoutNormalizer(checkout, callbacks, location, api);
       },
       /missing merchant parameters/
     );
@@ -45,7 +46,7 @@ describe('checkout normalizer', function () {
 
     assert.throws(
       function () {
-        checkoutNormalizer(checkout, location, api);
+        checkoutNormalizer(checkout, callbacks, location, api);
       },
       /success_url missing/
     );
@@ -60,7 +61,7 @@ describe('checkout normalizer', function () {
 
     assert.throws(
       function () {
-        checkoutNormalizer(checkout, location, api);
+        checkoutNormalizer(checkout, callbacks, location, api);
       },
       /cancel_url missing/
     );
@@ -74,22 +75,16 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    var on = checkoutNormalizer(checkout, callbacks, location, api);
 
-    checkout.merchant.onSuccess();
+    on.success();
     assert.equal(location.replace(), '/success_url');
 
-    checkout.merchant.onError();
+    on.cancel();
     assert.equal(location.replace(), '/cancel_url');
 
-    checkout.merchant.onDismiss();
+    on.dismiss();
     assert.equal(location.replace(), '/');
-
-    delete checkout.merchant.onSuccess;
-    delete checkout.merchant.onPending;
-    delete checkout.merchant.onError;
-    delete checkout.merchant.onKO;
-    delete checkout.merchant.onDismiss;
 
     assert.deepEqual(checkout, {
       api: {
@@ -120,7 +115,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.merchant.public_api_key, 'customApiKey');
     assert.equal(checkout.api.publicKey, 'fooKey');
@@ -135,7 +130,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.merchant.sandbox, false);
     assert.equal(checkout.api.sandbox, true);
@@ -153,7 +148,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.birthday, '2000-12-31');
   });
@@ -169,7 +164,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.birthday, '2000-12-31');
   });
@@ -185,7 +180,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.type, 'e');
   });
@@ -201,7 +196,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.type, 'g');
   });
@@ -217,7 +212,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.type, 'n');
   });
@@ -233,7 +228,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.gender, 0);
   });
@@ -249,7 +244,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.gender, 1);
   });
@@ -265,7 +260,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.gender, 2);
   });
@@ -281,7 +276,7 @@ describe('checkout normalizer', function () {
       }
     };
 
-    checkout = checkoutNormalizer(checkout, location, api);
+    checkoutNormalizer(checkout, callbacks, location, api);
 
     assert.equal(checkout.customer.gender, 3);
   });

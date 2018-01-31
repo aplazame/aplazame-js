@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.465';
+module.exports = '0.0.466';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -2661,6 +2661,12 @@ var api = require('../core/api'),
     log = require('../tools/log'),
     dE = document.documentElement;
 
+function _removeFunctions (o) {
+  for( var key in o ) {
+    if( o[key] instanceof Function ) delete o[key];
+  }
+}
+
 function checkout (options, callbacks) {
   options = options || {};
   callbacks = callbacks || {};
@@ -2735,15 +2741,8 @@ function checkout (options, callbacks) {
     errorMessage = e.message;
   }
 
-  if (merchant) {
-    // All functions must be removed as them can't be serialized by postMessage
-    delete merchant.onSuccess;
-    delete merchant.onPending;
-    delete merchant.onError;
-    delete merchant.onKO;
-    delete merchant.onDismiss;
-    delete merchant.onStatusChange;
-  }
+  // All functions must be removed as them can't be serialized by postMessage
+  _removeFunctions(merchant);
 
   if( is_app ) options.meta.is_app = true;
 

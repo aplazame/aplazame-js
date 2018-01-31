@@ -9,6 +9,12 @@ var api = require('../core/api'),
     log = require('../tools/log'),
     dE = document.documentElement;
 
+function _removeFunctions (o) {
+  for( var key in o ) {
+    if( o[key] instanceof Function ) delete o[key];
+  }
+}
+
 function checkout (options, callbacks) {
   options = options || {};
   callbacks = callbacks || {};
@@ -83,15 +89,8 @@ function checkout (options, callbacks) {
     errorMessage = e.message;
   }
 
-  if (merchant) {
-    // All functions must be removed as them can't be serialized by postMessage
-    delete merchant.onSuccess;
-    delete merchant.onPending;
-    delete merchant.onError;
-    delete merchant.onKO;
-    delete merchant.onDismiss;
-    delete merchant.onStatusChange;
-  }
+  // All functions must be removed as them can't be serialized by postMessage
+  _removeFunctions(merchant);
 
   if( is_app ) options.meta.is_app = true;
 

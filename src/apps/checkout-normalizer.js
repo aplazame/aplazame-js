@@ -6,7 +6,13 @@ function _locationReplaceFn ( location, href ) {
   } : null;
 }
 
-function checkoutNormalizer(checkout, location, api) {
+function _removeFunctions (o) {
+  for( var key in o ) {
+    if( o[key] instanceof Function ) delete o[key];
+  }
+}
+
+function checkoutNormalizer(checkout, callbacks, location, api) {
   checkout.origin = {
     host: location.host,
     href: location.href,
@@ -16,7 +22,9 @@ function checkoutNormalizer(checkout, location, api) {
 
   checkout.api = api;
 
-  var merchant = checkout.merchant;
+  var _noop = function () {},
+      merchant = checkout.merchant,
+      on = {};
 
   if( !merchant ) {
     throw new Error('missing merchant parameters');
@@ -26,23 +34,38 @@ function checkoutNormalizer(checkout, location, api) {
   merchant.public_api_key = merchant.public_api_key || api.publicKey;
   merchant.sandbox = merchant.sandbox === undefined ? api.sandbox : merchant.sandbox;
 
-  if (!merchant.onSuccess && !merchant.success_url) {
+  // result callbacks when close
+  on.success = callbacks.onSuccess || merchant.onSuccess;
+  on.pending = callbacks.onPending || merchant.onPending;
+  on.cancel = callbacks.onError || merchant.onError;
+  on.ko = callbacks.onKO || merchant.onKO;
+  on.dismiss = callbacks.onDismiss || merchant.onDismiss;
+
+  // event callbacks
+  on.ready = callbacks.onReady || merchant.onReady || _noop;
+  on.statusChange = callbacks.onStatusChange || merchant.onStatusChange || _noop;
+  on.close = callbacks.onClose || merchant.onClose || _noop;
+
+  if( !on.success && !merchant.success_url && on.close === _noop ) {
     throw new Error('success_url missing');
   }
-  merchant.onSuccess = merchant.onSuccess || _locationReplaceFn(location, merchant.success_url);
+  on.success = on.success || _locationReplaceFn(location, merchant.success_url);
 
-  if (!merchant.onError && !merchant.cancel_url) {
+  if( !on.cancel && !merchant.cancel_url && on.close === _noop ) {
     throw new Error('cancel_url missing');
   }
-  merchant.onError = merchant.onError || _locationReplaceFn(location, merchant.cancel_url);
+  on.cancel = on.cancel || _locationReplaceFn(location, merchant.cancel_url);
 
-  merchant.onDismiss = merchant.onDismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
+  on.dismiss = on.dismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
 
-  merchant.onKO = merchant.onKO || _locationReplaceFn(location, merchant.ko_url) || merchant.onDismiss;
+  on.ko = on.ko || _locationReplaceFn(location, merchant.ko_url) || on.dismiss;
 
-  if( !merchant.onPending ) {
-    merchant.onPending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : merchant.onDismiss;
+  if( !on.pending ) {
+    on.pending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : on.dismiss;
   }
+
+  // All functions must be removed as them can't be serialized by postMessage
+  _removeFunctions(merchant);
 
   var customer = checkout.customer;
 
@@ -80,7 +103,7 @@ function checkoutNormalizer(checkout, location, api) {
     }
   }
 
-  return checkout;
+  return on;
 }
 
 module.exports = checkoutNormalizer;

@@ -2,20 +2,22 @@
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
-    checkoutNormalizer = require('./checkout-normalizer'),
+    checkoutNormalizeAPI = require('./checkout-normalize-api'),
+    checkoutNormalizeCustomer = require('./checkout-normalize-customer'),
+    checkoutNormalizeCallbacks = require('./checkout-normalize-callbacks'),
     http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
     is_app = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log'),
     dE = document.documentElement;
 
-function checkout (options, callbacks) {
-  options = options || {};
+function checkout (transaction, callbacks) {
+  transaction = transaction || {};
   callbacks = callbacks || {};
-  options.__viewport__ = {};
+  transaction.__viewport__ = {};
 
   // http://ryanve.com/lab/dimensions/
-  options.__viewport__.screen = window.screen ? {
+  transaction.__viewport__.screen = window.screen ? {
     availWidth: screen.availWidth,
     availHeight: screen.availHeight,
     width: screen.width,
@@ -28,18 +30,18 @@ function checkout (options, callbacks) {
       type: screen.orientation.type,
     } : {}
   } : {};
-  options.__viewport__.document = {
+  transaction.__viewport__.document = {
     clientWidth: dE.clientWidth,
     clientHeight: dE.clientHeight,
   };
-  options.__viewport__.window = {
+  transaction.__viewport__.window = {
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
     outerWidth: window.outerWidth,
     outerHeight: window.outerHeight,
   };
 
-  var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
+  var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
       onError,
@@ -59,16 +61,25 @@ function checkout (options, callbacks) {
 
   document.head.appendChild(viewPortHack);
 
-  onError = options.onError || _.noop;
-  delete options.onError;
+  onError = transaction.onError || _.noop;
+  delete transaction.onError;
+
+  console.log('API', api);
 
   try {
-    on = checkoutNormalizer(options, callbacks, location, _.copy(api) );
+    checkoutNormalizeAPI(transaction, _.copy(api) );
+    log('api', transaction.api);
+
+    checkoutNormalizeCustomer(transaction);
+    log('customer', transaction.merchant.customer);
+
+    on = checkoutNormalizeCallbacks(transaction, callbacks, location);
+    log('callbacks', on);
   } catch (e) {
     errorMessage = e.message;
   }
 
-  if( is_app ) options.meta.is_app = true;
+  if( is_app ) transaction.meta.is_app = true;
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
@@ -126,8 +137,8 @@ function checkout (options, callbacks) {
           case 'get-checkout-data':
             iframe.style.display = _.remove_style;
             postMessage('checkout-data', {
-              checkout: options,
-              data: options,
+              checkout: transaction,
+              data: transaction,
             }, e.source);
             break;
           case 'checkout-ready':
@@ -159,7 +170,7 @@ function checkout (options, callbacks) {
             _.log('aplazame.checkout:confirm', message);
 
             var started = _.now();
-            http.post( options.merchant.confirmation_url, message.data, {
+            http.post( transaction.merchant.confirmation_url, message.data, {
               headers: { contentType: 'application/json' },
               params: _.extend(message.params || {}, {
                 order_id: message.data.checkout_token,

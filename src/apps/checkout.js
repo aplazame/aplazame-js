@@ -64,8 +64,6 @@ function checkout (transaction, callbacks) {
   onError = transaction.onError || _.noop;
   delete transaction.onError;
 
-  console.log('API', api);
-
   try {
     checkoutNormalizeAPI(transaction, _.copy(api) );
     log('api', transaction.api);

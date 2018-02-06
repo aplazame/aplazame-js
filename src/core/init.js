@@ -11,9 +11,11 @@ module.exports = function init (options) {
     options.sandbox = options.sandbox === 'true';
   }
 
-  _.extend(api, options);
+  for( var key in options ) {
+    api[_.toUnderscoreCase(key)] = options[key];
+  }
 
   _.log('aplazame.init', options, api);
 
-  if( api.publicKey ) events.emit('ready');
+  if( api.public_key ) events.emit('ready');
 };

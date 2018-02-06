@@ -7,11 +7,11 @@ _.extend(_,
   require('./colors'),
   require('./browser-tools'),
   require('./amount-price'),
+  require('./deserialize'),
   {
     remove_style: / Trident\//.test(navigator.userAgent) ? '' : null,
     template: require('./template'),
     onMessage: require('./message-listener'),
-    deserialize: require('./deserialize')
   }
 );
 

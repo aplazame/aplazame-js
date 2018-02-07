@@ -5,7 +5,8 @@ module.exports = function (aplazame) {
   var $live = require('live-dom'),
       _amountGetter = require('./data-simulator-amount')(aplazame),
       Widget = require('./data-simulator-widget')(aplazame),
-      log = require('../tools/log');
+      log = require('../tools/log'),
+      deserialize = require('../tools/deserialize').deserialize;
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
@@ -14,6 +15,29 @@ module.exports = function (aplazame) {
           currency:  widget_el.getAttribute('data-currency') || 'EUR',
           country:  widget_el.getAttribute('data-country') || 'ES',
         }),
+        custom_widget_options = widget_el.getAttribute('data-options') && (function (attr_content) {
+
+          try{
+            // assume JSON if colon present
+            var custom_options = /:/.test(attr_content) ?
+              JSON.parse( attr_content.replace(/&quot;/g, '"') ) :
+              deserialize( attr_content.trim() );
+          } catch(err) {
+            throw new Error('data-options should use JSON or querystring format');
+          }
+          // settings.align (optional, default: center)
+
+          // settings.smart_title (optional, default: false)
+          // settings.branding (optional, default: true)
+          if( !( 'branding' in custom_options ) ) custom_options.branding = true;
+
+          if( !custom_options.text_color ) throw new Error('text_color missing in data-options (color of text outside button)');
+          if( !custom_options.btn_text_color ) throw new Error('btn_text_color missing in data-options (color of text inside button)');
+          if( !custom_options.btn_bg_color ) throw new Error('btn_bg_color missing in data-options (background color button)');
+
+          return custom_options;
+
+        })( widget_el.getAttribute('data-options') ),
         amountGetter = _amountGetter(widget_el),
         current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
@@ -32,6 +56,7 @@ module.exports = function (aplazame) {
               $live.off(onDomChanges);
               return;
             }
+            if( custom_widget_options ) _options.widget = custom_widget_options;
             widget.render(_choices, _options);
             widget_el.style.opacity = null;
           });

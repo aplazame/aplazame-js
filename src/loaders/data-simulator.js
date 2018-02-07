@@ -21,14 +21,22 @@ module.exports = function (aplazame) {
             // assume JSON if colon present
             var custom_options = /:/.test(attr_content) ?
               JSON.parse( attr_content.replace(/&quot;/g, '"') ) :
+              // JSON examples
+              // data-options=“{&quot;text_color&quot;:&quot;#ff0000&quot;,&quot;btn_text_color&quot;:&quot;#00ff00&quot;,&quot;btn_bg_color&quot;:&quot;#0000ff&quot;,&quot;smart_title&quot;:true,&quot;branding&quot;:false}”
+              // [important! single quotes] data-options='{"text_color":"#ff0000","btn_text_color":"#00ff00","btn_bg_color":"#0000ff","smart_title":true,"branding":false}'
               deserialize( attr_content.trim() );
+              // data-options="text_color=#ff0000&btn_text_color=#00ff00&btn_bg_color=#0000ff&smart_title=true&branding=false"
           } catch(err) {
             throw new Error('data-options should use JSON or querystring format');
           }
           // settings.align (optional, default: center)
 
-          // settings.smart_title (optional, default: false)
-          // settings.branding (optional, default: true)
+          // custom_options.smart_title (optional, default: false)
+          if( typeof custom_options.smart_title === 'string' ) custom_options.smart_title = custom_options.smart_title === 'true';
+          
+          // custom_options.branding (optional, default: true)
+          if( typeof custom_options.branding === 'string' ) custom_options.branding = custom_options.branding === 'true';
+
           if( !( 'branding' in custom_options ) ) custom_options.branding = true;
 
           if( !custom_options.text_color ) throw new Error('text_color missing in data-options (color of text outside button)');

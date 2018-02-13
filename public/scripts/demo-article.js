@@ -9,14 +9,15 @@ aplazame._.ready(function () {
 
   function amount2string (amount) {
     var cents = amount%100;
-    return parseInt(amount/100) + '.' + ( cents < 10 ? '0' : '' ) + cents;
+    var centsSeparator = country==='MX' ? '.':',';
+    return parseInt(amount/100) + centsSeparator + ( cents < 10 ? '0' : '' ) + cents;
   }
 
-  function toEUR (amount) {
+  function toCurrency (amount) {
     if( amount < 0 ) {
-      return '-' + toEUR(-amount);
+      return '-' + toCurrency(-amount);
     }
-    return amount2string(amount) + '€';
+    return (country==='MX' ? '$':'') + amount2string(amount) + (country==='MX' ? '':'€');
   }
 
   // console.log('price', price);
@@ -26,9 +27,9 @@ aplazame._.ready(function () {
       var price = document.querySelector('[itemprop="price"]'),
           factor = Number( price.getAttribute('data-price-' + this.value) ) || 1;
 
-      price.textContent = toEUR( ( price ? Number( price.getAttribute('content') ) : 0 ) * factor );
+      price.textContent = toCurrency( ( price ? Number( price.getAttribute('content') ) : 0 ) * factor );
 
-      // console.log('change', this, e, this.value, factor, toEUR( priceCents * factor ) );
+      // console.log('change', this, e, this.value, factor, toCurrency( priceCents * factor ) );
 
     });
   });

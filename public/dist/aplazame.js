@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '0.0.467';
+module.exports = '0.0.468';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -11,7 +11,7 @@ module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1
 },{}],6:[function(require,module,exports){
 module.exports = function anonymous(obj
 /*``*/) {
-var p=[],print=function(){p.push.apply(p,arguments);};with(obj){ try{p.push('<div class="card-content">    <header class="aplazame"></header>    <img src="', static_url ,'/widgets/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">    <section class="info">     Elige la cuota que más te convenga   </section>    <div class="choices-wrapper">     '); for( var i = 0, n = choices.length; i < n ; i++ ) { p.push('     <button type="button" class="choice'); if( choices[i].annual_equivalent < merchant_annual_equivalent ) { p.push(' _on_campaign'); } p.push('">       '); if( choices[i].annual_equivalent < merchant_annual_equivalent ) { p.push('       <div class="tae-ribbon">         <img src="', static_url ,'/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">         <div>', getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' ,'</div>       </div>       '); } p.push('       <div class="wrapper">         <div class="num-instalments">           <span>', choices[i].num_instalments ,'</span>&nbsp;<span>', months(choices[i].num_instalments) ,'</span>         </div>         <div class="amount"><!--           '); if( currency === 'EUR' )  { p.push('           --><span class="amount-amount">', getAmount(choices[i].amount, ',', '.') ,'</span><!--           --><span class="amount-currency">&nbsp;€</span><!--           '); } else { p.push('           --><span class="amount-currency">$</span><!--           --><span class="amount-amount">', getAmount(choices[i].amount, '.', ',') ,'</span><!--           '); } p.push('           --><span class="amount-per-month">/mes</span>         </div>         <div class="amount"><!--           '); if( currency === 'EUR' )  { p.push('             --><span class="amount-amount">', getAmount(choices[i].downpayment_amount, ',', '.') ,'</span><!--             --><span class="amount-currency">&nbsp;€</span><!--           '); } else { p.push('           --><span class="amount-currency">$</span><!--             --><span class="amount-amount">', getAmount(choices[i].downpayment_amount, ',', '.') ,'</span><!--           '); } p.push('         --><span>&nbsp;entrada</span>         </div>       </div>     </button>     '); } p.push('     <img src="', static_url ,'/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">   </div>    <section class="tae">', country === 'MX' ? 'CAT' : 'TAE' ,' máximo: ', getAmount(merchant_annual_equivalent) ,'%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>    <section class="how-it-works">     <header>¿Cómo funciona?</header>     <div class="info-wrapper">       <div class="info">         <h3>Elige Aplazame</h3>         <!-- <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras de ', getAmount(9900) ,' € hasta ', parseInt(data.max_credit_amount/100) ,' €.</p> -->         <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras hasta&nbsp;<span style="white-space: nowrap;">', currency === 'EUR' ? ( parseInt(data.max_credit_amount/100) + ' €' ) : ( '$' + parseInt(data.max_credit_amount/100) ) ,'</span>.</p>       </div>       <div class="info">         <h3>Decide cómo quieres pagar</h3>         <p>Hasta en ', max_choice.num_instalments ,' ', max_choice.num_instalments > 1 ? 'cuotas' : 'cuota' ,', pagando con tarjeta.</p>       </div>       <div class="info">         <h3>Disfruta de tu compra</h3>         <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>       </div>     </div>   </section>  </div>  <div class="cta">   <div class="col-sm-6 button-wrapper">     <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>   </div>   <div class="col-sm-6 button-wrapper">     <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>   </div> </div>'); }catch(err){console.log('error', err);} }return p.join('');
+var p=[],print=function(){p.push.apply(p,arguments);};with(obj){ try{p.push('<div class="card-content">    <header class="aplazame"></header>    <img src="', static_url ,'/widgets/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">    <section class="info">     Elige la cuota que más te convenga   </section>    <div class="choices-wrapper">     '); for( var i = 0, n = choices.length; i < n ; i++ ) { p.push('     <button type="button" class="choice'); if( choices[i].annual_equivalent < reference_annual_equivalent ) { p.push(' _on_campaign'); } p.push('">       '); if( choices[i].annual_equivalent < reference_annual_equivalent ) { p.push('       <div class="tae-ribbon">         <img src="', static_url ,'/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">         <div>', getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' ,'</div>       </div>       '); } p.push('       <div class="wrapper">         <div class="num-instalments">           <span>', choices[i].num_instalments ,'</span>&nbsp;<span>', months(choices[i].num_instalments) ,'</span>         </div>         <div class="amount"><!--           '); if( currency === 'EUR' )  { p.push('           --><span class="amount-amount">', getAmount(choices[i].amount, ',', '.') ,'</span><!--           --><span class="amount-currency">&nbsp;€</span><!--           '); } else { p.push('           --><span class="amount-currency">$</span><!--           --><span class="amount-amount">', getAmount(choices[i].amount, '.', ',') ,'</span><!--           '); } p.push('           --><span class="amount-per-month">/mes</span>         </div>         <div class="amount"><!--           '); if( currency === 'EUR' )  { p.push('             --><span class="amount-amount">', getAmount(choices[i].downpayment_amount, ',', '.') ,'</span><!--             --><span class="amount-currency">&nbsp;€</span><!--           '); } else { p.push('           --><span class="amount-currency">$</span><!--             --><span class="amount-amount">', getAmount(choices[i].downpayment_amount, ',', '.') ,'</span><!--           '); } p.push('         --><span>&nbsp;', country === 'MX' ? 'enganche' : 'entrada' ,'</span>         </div>       </div>     </button>     '); } p.push('     <img src="', static_url ,'/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">   </div>    <section class="tae">', country === 'MX' ? 'CAT' : 'TAE' ,' máximo: ', getAmount(merchant_annual_equivalent) ,'%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>    <section class="how-it-works">     <header>¿Cómo funciona?</header>     <div class="info-wrapper">       <div class="info">         <h3>Elige Aplazame</h3>         <!-- <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras de ', getAmount(9900) ,' € hasta ', parseInt(data.max_credit_amount/100) ,' €.</p> -->         <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras hasta&nbsp;<span style="white-space: nowrap;">', currency === 'EUR' ? ( parseInt(data.max_credit_amount/100) + ' €' ) : ( '$' + parseInt(data.max_credit_amount/100) ) ,'</span>.</p>       </div>       <div class="info">         <h3>Decide cómo quieres pagar</h3>         <p>Hasta en ', max_choice.num_instalments ,' ', max_choice.num_instalments > 1 ? 'cuotas' : 'cuota' ,', pagando con tarjeta.</p>       </div>       <div class="info">         <h3>Disfruta de tu compra</h3>         <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>       </div>     </div>   </section>  </div>  <div class="cta">   <div class="col-sm-6 button-wrapper">     <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>   </div>   <div class="col-sm-6 button-wrapper">     <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>   </div> </div>'); }catch(err){console.log('error', err);} }return p.join('');
 };
 },{}],7:[function(require,module,exports){
 module.exports = function anonymous(obj
@@ -2570,7 +2570,13 @@ function _locationReplaceFn ( location, href ) {
   } : null;
 }
 
-function checkoutNormalizer(checkout, location, api) {
+function _removeFunctions (o) {
+  for( var key in o ) {
+    if( o[key] instanceof Function ) delete o[key];
+  }
+}
+
+function checkoutNormalizer(checkout, callbacks, location, api) {
   checkout.origin = {
     host: location.host,
     href: location.href,
@@ -2580,7 +2586,9 @@ function checkoutNormalizer(checkout, location, api) {
 
   checkout.api = api;
 
-  var merchant = checkout.merchant;
+  var _noop = function () {},
+      merchant = checkout.merchant,
+      on = {};
 
   if( !merchant ) {
     throw new Error('missing merchant parameters');
@@ -2590,23 +2598,38 @@ function checkoutNormalizer(checkout, location, api) {
   merchant.public_api_key = merchant.public_api_key || api.publicKey;
   merchant.sandbox = merchant.sandbox === undefined ? api.sandbox : merchant.sandbox;
 
-  if (!merchant.onSuccess && !merchant.success_url) {
+  // result callbacks when close
+  on.success = callbacks.onSuccess || merchant.onSuccess;
+  on.pending = callbacks.onPending || merchant.onPending;
+  on.cancel = callbacks.onError || merchant.onError;
+  on.ko = callbacks.onKO || merchant.onKO;
+  on.dismiss = callbacks.onDismiss || merchant.onDismiss;
+
+  // event callbacks
+  on.ready = callbacks.onReady || merchant.onReady || _noop;
+  on.statusChange = callbacks.onStatusChange || merchant.onStatusChange || _noop;
+  on.close = callbacks.onClose || merchant.onClose || _noop;
+
+  if( !on.success && !merchant.success_url && on.close === _noop ) {
     throw new Error('success_url missing');
   }
-  merchant.onSuccess = merchant.onSuccess || _locationReplaceFn(location, merchant.success_url);
+  on.success = on.success || _locationReplaceFn(location, merchant.success_url);
 
-  if (!merchant.onError && !merchant.cancel_url) {
+  if( !on.cancel && !merchant.cancel_url && on.close === _noop ) {
     throw new Error('cancel_url missing');
   }
-  merchant.onError = merchant.onError || _locationReplaceFn(location, merchant.cancel_url);
+  on.cancel = on.cancel || _locationReplaceFn(location, merchant.cancel_url);
 
-  merchant.onDismiss = merchant.onDismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
+  on.dismiss = on.dismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
 
-  merchant.onKO = merchant.onKO || _locationReplaceFn(location, merchant.ko_url) || merchant.onDismiss;
+  on.ko = on.ko || _locationReplaceFn(location, merchant.ko_url) || on.dismiss;
 
-  if( !merchant.onPending ) {
-    merchant.onPending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : merchant.onDismiss;
+  if( !on.pending ) {
+    on.pending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : on.dismiss;
   }
+
+  // All functions must be removed as them can't be serialized by postMessage
+  _removeFunctions(merchant);
 
   var customer = checkout.customer;
 
@@ -2644,7 +2667,7 @@ function checkoutNormalizer(checkout, location, api) {
     }
   }
 
-  return checkout;
+  return on;
 }
 
 module.exports = checkoutNormalizer;
@@ -2660,12 +2683,6 @@ var api = require('../core/api'),
     is_app = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log'),
     dE = document.documentElement;
-
-function _removeFunctions (o) {
-  for( var key in o ) {
-    if( o[key] instanceof Function ) delete o[key];
-  }
-}
 
 function checkout (options, callbacks) {
   options = options || {};
@@ -2700,9 +2717,7 @@ function checkout (options, callbacks) {
   var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
-      _noop = function () {},
       onError,
-      merchant,
       iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 't=' + new Date().getTime(),
       errorLoading = false,
       errorMessage = false,
@@ -2723,26 +2738,10 @@ function checkout (options, callbacks) {
   delete options.onError;
 
   try {
-    options = checkoutNormalizer(options, location, _.copy(api) );
-    merchant = options ? options.merchant : null;
-
-    // result callbacks when close
-    on.success = merchant.onSuccess || callbacks.onSuccess;
-    on.pending = merchant.onPending || callbacks.onPending;
-    on.cancel = merchant.onError || callbacks.onError;
-    on.ko = merchant.onKO || callbacks.onKO;
-    on.dismiss = merchant.onDismiss || callbacks.onDismiss;
-
-    // event callbacks
-    on.ready = merchant.onReady || callbacks.onReady || _noop;
-    on.statusChange = merchant.onStatusChange || callbacks.onStatusChange || _noop;
-    on.close = merchant.onClose || callbacks.onClose || _noop;
+    on = checkoutNormalizer(options, callbacks, location, _.copy(api) );
   } catch (e) {
     errorMessage = e.message;
   }
-
-  // All functions must be removed as them can't be serialized by postMessage
-  _removeFunctions(merchant);
 
   if( is_app ) options.meta.is_app = true;
 
@@ -3632,6 +3631,7 @@ module.exports = function (aplazame) {
         widget: widget,
         max_choice: choices.reduce(maxInstalments, null),
         merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
+        reference_annual_equivalent: data.reference_annual_equivalent,
         choices: choices,
         data: data,
         static_url: api.static_url,

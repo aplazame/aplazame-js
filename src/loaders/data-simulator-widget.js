@@ -116,6 +116,7 @@ module.exports = function (aplazame) {
         widget: widget,
         max_choice: choices.reduce(maxInstalments, null),
         merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
+        reference_annual_equivalent: data.reference_annual_equivalent,
         choices: choices,
         data: data,
         static_url: api.static_url,

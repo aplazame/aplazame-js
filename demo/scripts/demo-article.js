@@ -111,7 +111,7 @@ aplazame._.ready(function () {
 
       console.log('aplazame.info()', aplazame.info() );
 
-      if( aplazame.info().api.host === 'https://api-dev.aplazame.com' ) {
+      if( /https?:\/\/api-dev\.aplazame\.com\/?/.test(aplazame.info().api.host) && data.merchant.confirmation_url === '/confirm' ) {
         data.merchant.confirmation_url = 'https://demo-dev.aplazame.com/confirm';
       }
 

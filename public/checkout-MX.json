@@ -1,8 +1,8 @@
 {
   "toc": true,
   "merchant": {
-    "checkout_url": "/mx/",
     "confirmation_url": "/confirm",
+    "checkout_url": "/mx/",
     "cancel_url": "/mx/demo-cancel.html",
     "ko_url": "/mx/demo-cancel.html",
     "success_url": "/mx/demo-success.html"
@@ -18,7 +18,7 @@
       "city": "Ciudad de México",
       "state": "Ciudad de México",
       "country": "MX",
-      "zip": "04120"
+      "postcode": "04120"
     },
     "type": "e",
     "gender": 0,
@@ -77,7 +77,7 @@
     "city": "Ciudad de México",
     "state": "Ciudad de México",
     "country": "MX",
-    "zip": "04120"
+    "postcode": "04120"
   },
   "shipping": {
     "first_name": "Fernando",
@@ -89,7 +89,7 @@
     "city": "Ciudad de México",
     "state": "Ciudad de México",
     "country": "MX",
-    "zip": "04120",
+    "postcode": "04120",
     "price": 50000,
     "tax_rate": 2100,
     "name": "SEUR",

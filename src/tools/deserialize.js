@@ -11,10 +11,18 @@ function _key (o, key, value) {
 	});
 }
 
-function camelCase (text) {
-	return text.replace(/_(\w)/g, function (_matched, letter) {
+function toCamelCase (text) {
+	return text.replace(/[_-](\w)/g, function (_matched, letter) {
 		return letter.toUpperCase();
 	});
+}
+
+function toUnderscoreCase (text) {
+	return text.replace(/-(\w)/g, function (_matched, letter) {
+		return '_' + letter;
+	}).replace(/([a-z])([A-Z])/g, function (_matched, a, b) {
+		return a + '_' + b;
+	}).toLowerCase();
 }
 
 function deserialize (querystring, decode) {
@@ -28,12 +36,15 @@ function deserialize (querystring, decode) {
 			throw new Error('could not parse ' + keyValue);
 		}
 
-		_key(result, camelCase(matched[1]), decode ? decodeURI(matched[2]) : matched[2] );
+		_key(result, toUnderscoreCase(matched[1]), decode ? decodeURI(matched[2]) : matched[2] );
 
 	});
 
 	return result;
-
 }
 
-module.exports = deserialize;
+module.exports = {
+  deserialize: deserialize,
+  toUnderscoreCase: toUnderscoreCase,
+  toCamelCase: toCamelCase,
+};

@@ -27,7 +27,7 @@
     "live-dom": "1.6.9",
     "nitro-tools": "0.2.4",
     "parole": "1.1.5",
-    "vanilla-tools": "1.2.19"
+    "vanilla-tools": "1.2.24"
   },
   "devDependencies": {
     "autoprefixer": "7.2.3",

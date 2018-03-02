@@ -1,7 +1,7 @@
 'use strict';
 
-var browserify = require('./_browserify'),
-    path = require('path');
+var path = require('path'),
+    browserify = require('./_browserify');
 
 module.exports = function (nitro) {
 

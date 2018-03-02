@@ -2,4 +2,4 @@
 
 'use strict';
 
-require('nitro').import('.make', ['*.js', '!.*']).run();
+require('nitro').import('.make', ['*.js', '!.*', '!_*']).run();

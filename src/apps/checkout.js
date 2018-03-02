@@ -7,7 +7,13 @@ var api = require('../core/api'),
     cssHack = require('../tools/css-hack'),
     is_app = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log'),
-    dE = document.documentElement;
+    dE = document.documentElement,
+    flag_svg_es = require('../templates/flag-es.svg'),
+    flag_svg_mx = require('../templates/flag-mx.svg'),
+    flag_wrapper = document.createElement('div');
+
+flag_wrapper.className = 'aplazame-checkout-flag';
+flag_wrapper.style = 'position: absolute; bottom: 0; left: 0; width: 100%; z-index: 2147483647 !important;';
 
 function checkout (options, callbacks) {
   options = options || {};
@@ -114,6 +120,9 @@ function checkout (options, callbacks) {
 
       document.body.appendChild(iframe);
       iframe.src = iframeSrc;
+
+      flag_wrapper.innerHTML = options.order.currency === 'MXN' ? flag_svg_mx : flag_svg_es;
+      document.body.appendChild( flag_wrapper );
 
       if (errorMessage) {
         throw new Error(errorMessage);

@@ -130,7 +130,6 @@ module.exports = function (nitro) {
             return _separateThousands(parseInt(amount/100), _groupSeparator) + decimalsSeparator + ( cents < 10 ? '0' : '' ) + cents;
           },
           formatCurrency: function (amount, symbol) {
-            console.log('formatCurrency', amount, symbol);
             if( amount < 0 ) return '-' + index_data.formatCurrency(-amount, symbol);
             if( symbol === 'EUR' ) return index_data.amount2string(amount, ',', '.') + '€';
             return '$' + index_data.amount2string(amount, '.', ',');

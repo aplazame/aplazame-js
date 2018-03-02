@@ -1,5 +1,8 @@
 'use strict';
 
+var path = require('path'),
+    browserify = require('./_browserify');
+
 module.exports = function (nitro) {
 
   nitro.task('aplazame.js', function (target) {
@@ -8,7 +11,10 @@ module.exports = function (nitro) {
     nitro.file.write('.tmp/aplazame-version.js', 'module.exports = \'' + nitro.file.readJSON('package.json').version + '\';');
     nitro.dir('src')
       .load('aplazame.js', { sourceMap: dev ? 'inline' : false })
-      .process('browserify')
+      .each(function (f) {
+        f.src = '' + browserify( path.join('src', f.path) );
+      })
+      // .process('browserify')
       .write('dist')
       .each(function (f) {
         f.filename = f.filename.replace(/\.js$/, '.min.js');

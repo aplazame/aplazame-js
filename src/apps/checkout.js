@@ -13,7 +13,6 @@ var api = require('../core/api'),
     flag_wrapper = document.createElement('div');
 
 flag_wrapper.className = 'aplazame-checkout-flag';
-flag_wrapper.style = 'position: absolute; bottom: 0; left: 0; width: 100%; z-index: 2147483647 !important;';
 
 function checkout (options, callbacks) {
   options = options || {};
@@ -98,6 +97,13 @@ function checkout (options, callbacks) {
   setTimeout(function () {
     if( !errorLoading ) {
       tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
+      if( options.order.currency === 'MXN' ) {
+        flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
+      } else {
+        flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
+      }
+
+      document.body.appendChild( flag_wrapper );
     }
   }, 200);
 
@@ -121,9 +127,6 @@ function checkout (options, callbacks) {
       document.body.appendChild(iframe);
       iframe.src = iframeSrc;
 
-      flag_wrapper.innerHTML = options.order.currency === 'MXN' ? flag_svg_mx : flag_svg_es;
-      document.body.appendChild( flag_wrapper );
-
       if (errorMessage) {
         throw new Error(errorMessage);
       }
@@ -142,6 +145,7 @@ function checkout (options, callbacks) {
           case 'checkout-ready':
             _.removeClass(iframe, 'hide');
             cssModal.hack(true);
+            if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
             cssOverlay.hack(false);
             document.body.removeChild(tmpOverlay);
             on.ready();

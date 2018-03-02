@@ -108,6 +108,7 @@ function checkout (options, callbacks) {
   }, 200);
 
   return http( iframeSrc ).then(function (_iframe_response) {
+
       var iframe = _.getIFrame({
             top: 0,
             left: 0,
@@ -143,6 +144,7 @@ function checkout (options, callbacks) {
             }, e.source);
             break;
           case 'checkout-ready':
+            _.scroll.goto(0);
             _.removeClass(iframe, 'hide');
             cssModal.hack(true);
             if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );

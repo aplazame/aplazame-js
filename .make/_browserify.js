@@ -1,12 +1,12 @@
 
 var nitro = require('nitro');
+var path = require('path');
 var yamlify = nitro.require('yamlify');
 var stringify = nitro.require('stringify');
-var browserify = nitro.deasync(function(filepath, done) {
-  var b;
-  console.log('----------------------', process.cwd(), filepath);
-  // console.log(path.join(process.cwd(), filepath));
-  b = nitro.require('browserify')();
+var browserify = nitro.require('browserify')
+
+module.exports = nitro.deasync(function(filepath, done) {
+  var b = browserify();
   b.add(path.join(process.cwd(), filepath));
   b.transform(yamlify);
   b.transform(stringify, {
@@ -20,6 +20,5 @@ var browserify = nitro.deasync(function(filepath, done) {
     }
     done(null, result);
   });
-});
 
-module.exports = browserify;
+});

@@ -1853,14 +1853,6 @@ function cssQuery (_selector, rootElement) {
   }, []);
 }
 
-function scrollTop (value) {
-  if( value !== undefined ) {
-    document.documentElement.scrollTop = value;
-    document.body.scrollTop = value;
-  }
-  return document.documentElement.scrollTop || document.body.scrollTop;
-}
-
 function clearElement (el) {
   var child = el.firstChild;
 
@@ -1920,12 +1912,20 @@ function getIFrame (iframeStyles) {
   return iframe;
 }
 
+function matchMedia (query) {
+  return (window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia)(query);
+}
+
+var isMobile = matchMedia('( max-width: 600px )');
+
 var _ = {
+  isMobile: function () {
+    return isMobile.matches;
+  },
   ready: _ready,
   getIFrame: getIFrame,
   writeIframe: writeIframe,
   cssQuery: cssQuery,
-  scrollTop: scrollTop,
   clearElement: clearElement,
   elementData: document.createElement('div').dataset ? function (el, key, value) {
     if( value !== undefined ) {

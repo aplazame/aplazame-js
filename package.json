@@ -1,6 +1,6 @@
 {
   "name": "aplazame",
-  "version": "0.0.474",
+  "version": "0.0.475",
   "description": "javascript sdk for aplazame.com api",
   "main": "aplazame.min.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "nitro-tools": "0.2.4",
     "parole": "1.1.5",
     "stringify": "^5.2.0",
-    "vanilla-tools": "1.2.19",
+    "vanilla-tools": "1.2.26",
     "yamlify": "^0.2.0"
   },
   "devDependencies": {

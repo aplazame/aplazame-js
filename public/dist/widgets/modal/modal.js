@@ -2673,7 +2673,7 @@ _.onMessage('modal', function (_e, message) {
 });
 
 _.ready(function () {
-  _.scrollTop(0);
+  _.scroll.top(0);
   parent.window.postMessage({ aplazame: 'modal', event: 'opened' }, '*');
 });
 

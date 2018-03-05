@@ -50,10 +50,6 @@ function _getCustomOptions(widget_el) {
   };
 }
 
-function _copy (o) {
-  return JSON.parse(JSON.stringify(o));
-}
-
 module.exports = function (aplazame) {
 
   var $live = require('live-dom'),
@@ -88,13 +84,11 @@ module.exports = function (aplazame) {
               return;
             }
             // _options = _copy(_options);
-            console.log('_options.widget', _copy(_options.widget) );
             if( custom_widget_options.type ) _options.widget.type = custom_widget_options.type;
             if( custom_widget_options.preferences ) {
               _options.widget.preferences = custom_widget_options.preferences;
               _options.widget.styles = '';
             }
-            console.log('custom_options.widget', _copy(_options.widget) );
             widget.render(_choices, _options);
             widget_el.style.opacity = null;
           });

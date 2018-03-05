@@ -1388,6 +1388,32 @@ if( !_requestAnimationFrame ) (function () {
   }
 })();
 
+// FROM: https://gist.github.com/paulirish/5438650
+(function(){
+
+  if ('performance' in window == false) {
+      window.performance = {};
+  }
+
+  Date.now = (Date.now || function () {  // thanks IE8
+    return new Date().getTime();
+  });
+
+  if ('now' in window.performance == false){
+
+    var nowOffset = Date.now();
+
+    if (performance.timing && performance.timing.navigationStart){
+      nowOffset = performance.timing.navigationStart;
+    }
+
+    window.performance.now = function now(){
+      return Date.now() - nowOffset;
+    };
+  }
+
+})();
+
 function animate (progressFn, duration, atEnd, timingFunctionName) {
   var aux;
   if ( duration instanceof Function ) {
@@ -1964,7 +1990,17 @@ module.exports = Scope;
 
 },{"./eval":21}],32:[function(require,module,exports){
 
-var html = document.documentElement, body = document.body, scroll_root = document.scrollingElement;
+var html = document.documentElement, scroll_root = document.scrollingElement;
+var supports_passive = false;
+try {
+  var opts = Object.defineProperty({}, 'passive', {
+    get: function() {
+      supports_passive = true;
+    }
+  });
+  window.addEventListener('testPassive', null, opts);
+  window.removeEventListener('testPassive', null, opts);
+} catch (e) {} // eslint-disable-line
 
 function setScrollRoot(scrolling_element) {
   scroll_root = scrolling_element;
@@ -1983,19 +2019,19 @@ function getScrollTopRoot () {
 function setScrollTopDiscover (scroll_value) {
   if( scroll_value > 0 ) {
     html.scrollTop = scroll_value;
-    body.scrollTop = scroll_value;
+    if( document.body ) document.body.scrollTop = scroll_value;
     if( scroll_value === html.scrollTop ) setScrollRoot(html);
-    else if( scroll_value === body.scrollTop ) setScrollRoot(body);
+    else if( document.body && scroll_value === document.body.scrollTop ) setScrollRoot(document.body);
   } else {
     html.scrollTop = 0;
-    body.scrollTop = 0;
+    if( document.body ) document.body.scrollTop = 0;
   }
 }
 
 function getScrollTopDiscover () {
-  if( body.scrollTop !== 0 ) {
-    setScrollRoot(body);
-    return body.scrollTop;
+  if( document.body && document.body.scrollTop !== 0 ) {
+    setScrollRoot(document.body);
+    return document.body.scrollTop;
   }
   if( html.scrollTop !== 0 ) {
     setScrollRoot(html);
@@ -2004,11 +2040,11 @@ function getScrollTopDiscover () {
 }
 
 var scroll = {
-  on: function ( handler, useCapture ) {
-    return document.addEventListener('scroll', handler, useCapture);
+  on: function ( handler, use_capture ) {
+    return document.addEventListener('scroll', handler, supports_passive ? { passive: supports_passive, capture: use_capture } : use_capture );
   },
-  off: function ( handler, useCapture ) {
-    return document.removeEventListener('scroll', handler, useCapture);
+  off: function ( handler, use_capture ) {
+    return document.removeEventListener('scroll', handler, supports_passive ? { passive: supports_passive, capture: use_capture } : use_capture );
   },
   top: scroll_root ? getScrollTopRoot : getScrollTopDiscover,
   goto: scroll_root ? setScrollTopRoot : setScrollTopDiscover,

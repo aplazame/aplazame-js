@@ -1,12 +1,65 @@
 'use strict';
 
+function _attr(el, attr_name) {
+  return el.getAttribute(attr_name);
+}
+
+var custom_options_defaults = {
+  'btn_text_color': '#FFFFFF',
+  'branding': true,
+  'align': 'center',
+  'smart_title': true,
+  'text_color': '#333A3E',
+  'btn_bg_color': '#267BBD',
+  'custom_styles': false,
+  version: 3
+};
+
+var custom_options_set = {
+  'btn_text_color': 'btn-text-color',
+  'branding': 'branding',
+  'align': 'align',
+  'smart_title': 'smart-title',
+  'text_color': 'text-color',
+  'btn_bg_color': 'btn-bg-color',
+  'custom_styles': 'custom-styles',
+};
+
+function _getCustomOptions(widget_el) {
+  var custom_type = _attr(widget_el, 'data-type'),
+      custom_options = {},
+      custom_option_value,
+      has_custom_options = false,
+      key;
+
+  for( key in custom_options_defaults ) custom_options[key] = custom_options_defaults[key];
+
+  for( key in custom_options_set ) {
+    custom_option_value = _attr(widget_el, 'data-option-' + custom_options_set[key] );
+    if( typeof custom_option_value === 'string' ) {
+      custom_option_value = custom_option_value.trim();
+      if( custom_option_value === 'true' || custom_option_value === 'false' ) custom_options[key] = custom_option_value === 'true';
+      else custom_options[key] = custom_option_value;
+      has_custom_options = true;
+    }
+  }
+
+  return {
+    type: custom_type && custom_type.trim(),
+    preferences: has_custom_options ? custom_options : null
+  };
+}
+
+function _copy (o) {
+  return JSON.parse(JSON.stringify(o));
+}
+
 module.exports = function (aplazame) {
 
   var $live = require('live-dom'),
       _amountGetter = require('./data-simulator-amount')(aplazame),
       Widget = require('./data-simulator-widget')(aplazame),
-      log = require('../tools/log'),
-      deserialize = require('../tools/deserialize').deserialize;
+      log = require('../tools/log');
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
@@ -15,38 +68,7 @@ module.exports = function (aplazame) {
           currency:  widget_el.getAttribute('data-currency') || 'EUR',
           country:  widget_el.getAttribute('data-country') || 'ES',
         }),
-        custom_widget_options = widget_el.getAttribute('data-options') && (function (attr_content) {
-
-          try{
-            // assume JSON if colon present
-            var custom_options = /:/.test(attr_content) ?
-              JSON.parse( attr_content.replace(/&quot;/g, '"') ) :
-              // JSON examples
-              // data-options=“{&quot;text_color&quot;:&quot;#ff0000&quot;,&quot;btn_text_color&quot;:&quot;#00ff00&quot;,&quot;btn_bg_color&quot;:&quot;#0000ff&quot;,&quot;smart_title&quot;:true,&quot;branding&quot;:false}”
-              // [important! single quotes] data-options='{"text_color":"#ff0000","btn_text_color":"#00ff00","btn_bg_color":"#0000ff","smart_title":true,"branding":false}'
-              deserialize( attr_content.trim() );
-              // querystring example
-              // data-options="text_color=#ff0000&btn_text_color=#00ff00&btn_bg_color=#0000ff&smart_title=true&branding=false"
-          } catch(err) {
-            throw new Error('data-options should use JSON or querystring format');
-          }
-          // settings.align (optional, default: center)
-
-          // custom_options.smart_title (optional, default: false)
-          if( typeof custom_options.smart_title === 'string' ) custom_options.smart_title = custom_options.smart_title === 'true';
-
-          // custom_options.branding (optional, default: true)
-          if( typeof custom_options.branding === 'string' ) custom_options.branding = custom_options.branding === 'true';
-
-          if( !( 'branding' in custom_options ) ) custom_options.branding = true;
-
-          if( !custom_options.text_color ) throw new Error('text_color missing in data-options (color of text outside button)');
-          if( !custom_options.btn_text_color ) throw new Error('btn_text_color missing in data-options (color of text inside button)');
-          if( !custom_options.btn_bg_color ) throw new Error('btn_bg_color missing in data-options (background color button)');
-
-          return custom_options;
-
-        })( widget_el.getAttribute('data-options') ),
+        custom_widget_options = _getCustomOptions(widget_el),
         amountGetter = _amountGetter(widget_el),
         current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
         current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
@@ -65,7 +87,14 @@ module.exports = function (aplazame) {
               $live.off(onDomChanges);
               return;
             }
-            if( custom_widget_options ) _options.widget = custom_widget_options;
+            // _options = _copy(_options);
+            console.log('_options.widget', _copy(_options.widget) );
+            if( custom_widget_options.type ) _options.widget.type = custom_widget_options.type;
+            if( custom_widget_options.preferences ) {
+              _options.widget.preferences = custom_widget_options.preferences;
+              _options.widget.styles = '';
+            }
+            console.log('custom_options.widget', _copy(_options.widget) );
             widget.render(_choices, _options);
             widget_el.style.opacity = null;
           });

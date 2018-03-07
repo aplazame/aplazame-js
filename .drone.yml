@@ -1,8 +1,10 @@
 build:
   image: aplazame/nodejs-karma:0.7.3
+  environment:
+    - GITHUB_TOKEN: $$GITHUB_TOKEN
   commands:
-    - 'sed -i "s/git@github.com:/http:\/\/$$DEPLOY_USER:x-oauth-basic@github.com\//g" bower.json'
-    # - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
+    - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//g" bower.json'
+    - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'make build'
     - 'ls -la'
 

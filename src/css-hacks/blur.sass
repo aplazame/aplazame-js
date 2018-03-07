@@ -5,13 +5,13 @@
   100%
     filter: blur(1px)
 
-body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay)
+body.aplazame-blur > *:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag)
   filter: blur(1px)
   @media (min-width: 601px)
     animation-duration: .4s
     animation-name: aplazame-blur
 
-body.aplazame-unblur > *:not(.aplazame-modal):not(.aplazame-overlay)
+body.aplazame-unblur > *:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag)
   filter: blur(0px)
   @media (min-width: 601px)
     animation-duration: .4s

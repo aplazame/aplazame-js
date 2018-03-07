@@ -164,7 +164,11 @@
     <footer class="footer">
       <div class="-wrapper container-md">
         <div class="col-xs-6 no-wrap">
+          $if{ country === 'MX' }
+          <span>&copy;&nbsp;Aplazame SAPI de CV</span>
+          {:}
           <span>&copy;&nbsp;Aplazame S.L.</span>
+          {/}
         </div>
         <div class="col-xs-6 text-right">
           $if{ country !== 'MX' }

@@ -12,8 +12,8 @@ var apiHttp = http.base(function () { return api.host; }, {
       return 'application/vnd.aplazame' + ( api.sandbox ? '.sandbox' : '' ) + '.v' + api.version  + '+json';
     },
     Authorization: function (config) {
-      config.publicKey = config.publicKey || api.publicKey;
-      return 'Bearer ' + config.publicKey;
+      config.public_key = config.public_key || api.public_key;
+      return 'Bearer ' + config.public_key;
     }
   }
 });

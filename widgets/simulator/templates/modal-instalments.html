@@ -39,7 +39,7 @@
           --><span class="amount-currency">$</span><!--
             --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
           <% } %>
-        --><span>&nbsp;entrada</span>
+        --><span>&nbsp;<%= country === 'MX' ? 'enganche' : 'entrada' %></span>
         </div>
       </div>
     </button>

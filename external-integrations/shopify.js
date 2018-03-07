@@ -2,9 +2,9 @@ var Shopify = Shopify || {};
 
 (function(Shopify){
     function getMetaPropertyByName(name){
-      return document.head.querySelector("meta[property='"+name+"']").content;
+      return document.head.querySelector('meta[property=\'' + name + '\']').content;
     }
-  
+
     function findFirst( list, iteratee ) {
       for( var i = 0, n = list.length ; i < n ; i++ ) {
         if( iteratee(list[i]) ) return list[i];

@@ -1,15 +1,10 @@
 'use strict';
 
-function matchMedia (query) {
-  return (window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia)(query);
-}
-
 var api = require('../core/api'),
     _ = require('../tools/tools'),
     cssHack = require('../tools/css-hack'),
     aplazameVersion = require('../../.tmp/aplazame-version'),
-    isMobile = matchMedia('( max-width: 767px )'),
-    lastScrollTop;
+    last_scroll_top;
 
 var tmpOverlay = document.createElement('div'),
     cssOverlay = cssHack('overlay'),
@@ -34,7 +29,7 @@ function modal (content) {
   }, 0);
   setTimeout(function () {
     _.removeClass(tmpOverlay, 'aplazame-overlay-show');
-  }, isMobile.matches ? 0 : 600 );
+  }, _.isMobile() ? 0 : 600 );
 
   modal.iframe = _.getIFrame({
         top: 0,
@@ -64,11 +59,11 @@ _.onMessage('modal', function (e, message) {
       modal.iframe.style.display = _.remove_style;
       break;
     case 'opened':
-      lastScrollTop = _.scrollTop();
+      last_scroll_top = _.scroll.top();
       e.source.postMessage({
         aplazame: 'modal',
         event: 'content',
-        content: modal.iframe.content
+        content: modal.iframe.content,
       }, '*');
       break;
     case 'resolved':
@@ -76,7 +71,7 @@ _.onMessage('modal', function (e, message) {
         aplazame: 'modal',
         event: 'resolved',
         name: modal.message.name,
-        value: message.value
+        value: message.value,
       }, '*');
       delete modal.referrer;
       break;
@@ -88,15 +83,15 @@ _.onMessage('modal', function (e, message) {
       setTimeout(function () {
         cssBlur.hack(false);
         _.removeClass(document.body, 'aplazame-unblur');
-      }, isMobile.matches ? 0 : 600 );
+      }, _.isMobile() ? 0 : 600 );
       break;
     case 'close':
       setTimeout(function () {
         cssModal.hack(false);
-      }, isMobile.matches ? 0 : 100 );
+      }, _.isMobile() ? 0 : 100 );
       document.body.removeChild(tmpOverlay);
       _.removeClass(tmpOverlay, 'aplazame-overlay-hide');
-      _.scrollTop(lastScrollTop);
+      _.scroll.goto(last_scroll_top);
       if( modal.iframe ) {
         document.body.removeChild(modal.iframe);
 

@@ -111,10 +111,6 @@ aplazame._.ready(function () {
 
       console.log('aplazame.info()', aplazame.info() );
 
-      if( /https?:\/\/api-dev\.aplazame\.com\/?/.test(aplazame.info().api.host) && data.merchant.confirmation_url === '/confirm' ) {
-        data.merchant.confirmation_url = 'https://demo-dev.aplazame.com/confirm';
-      }
-
       if( !orderId ) {
         orderId = randOrderId();
         location.hash = '/order/' + orderId;

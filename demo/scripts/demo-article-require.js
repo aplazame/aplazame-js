@@ -123,10 +123,6 @@ require(['aplazame'], function (aplazame) {
           }
         }
 
-        if( aplazame.info().api.host === 'https://api-dev.aplazame.com/' ) {
-          data.merchant.confirmation_url = data.merchant.confirmation_url.replace('//demo.aplazame.com/', '//demo-dev.aplazame.com/');
-        }
-
         if( !orderId ) {
           orderId = randOrderId();
           location.hash = '/order/' + orderId;

@@ -13,7 +13,7 @@ ADD [".bowerrc", "bower.json", "./"]
 RUN sed -i "s/git@github.com:/http:\/\/${GITHUB_TOKEN}:x-oauth-basic@github.com\//g" bower.json; \
   bower install --allow-root > /dev/null 2>&1
 
-ADD ["package.json", "npm-shrinkwrap.json", "./"]
+ADD ["package.json", "package-lock.json", "./"]
 RUN npm install
 
 ADD . ./

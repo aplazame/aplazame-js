@@ -25,7 +25,6 @@ module.exports = function (nitro) {
 
   nitro.task('externalIntegrations', function () {
     nitro.file.copy('external-integrations/shopify.js', 'dist/shopify.js');
-    nitro.file.copy('external-integrations/shopify.js', 'dist/widgets/shopify.js');
   });
 
   // main tasks

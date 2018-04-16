@@ -23,7 +23,7 @@ function push2s3 () {
 
 if [ "$CI_BRANCH" == "master" ]; then
 
-  push2s3 aplazame-demo-landing
+  push2s3 aplazame-frontend-dev
 
 elif [ "$CI_BRANCH" == "release" ]; then
 

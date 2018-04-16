@@ -6,22 +6,9 @@ build:
     - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//g" bower.json'
     - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'make build'
-    - 'ls -la'
+    - 'make deploy'
 
 deploy:
-  rsync:
-    user: $$DEPLOY_USER
-    host: dev.aplazame.com
-    target: $$DEPLOY_PATH
-    delete: true
-    recursive: true
-    exclude:
-      - ".git"
-      - "node_modules"
-      - ".bower_components"
-    when:
-      branch: master
-
   rsync:
     user: $$DEPLOY_USER
     host: aplazame.com

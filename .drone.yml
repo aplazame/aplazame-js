@@ -8,9 +8,18 @@ build:
     - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//g" bower.json'
     - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'make build'
-    - 'make deploy'
 
 deploy:
+  rsync:
+    user: ec2-user
+    host: dev.aplazame.com
+    source: public/
+    target: /mnt/frontend/aplazame-js
+    delete: true
+    recursive: true
+    when:
+      branch: master
+
   rsync:
     user: $$DEPLOY_USER
     host: aplazame.com

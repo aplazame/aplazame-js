@@ -13,10 +13,12 @@ deploy:
   rsync:
     user: ec2-user
     host: 18.196.173.0
-    source: public/
     target: /mnt/frontend/aplazame-js
     delete: true
     recursive: true
+    include:
+      - '/public'
+      - '/dist'
     when:
       branch: master
 

@@ -13,8 +13,8 @@ deploy:
   rsync:
     user: ec2-user
     host: 18.196.173.0
-    source: public/
-    target: /mnt/frontend/aplazame-js/public
+    source: dist/
+    target: /mnt/frontend/aplazame-js
     delete: true
     recursive: true
     when:
@@ -23,8 +23,8 @@ deploy:
   rsync:
     user: ec2-user
     host: 18.196.173.0
-    source: dist/
-    target: /mnt/frontend/aplazame-js/dist
+    source: public/
+    target: /mnt/frontend/demo-site
     delete: true
     recursive: true
     when:

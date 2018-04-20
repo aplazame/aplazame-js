@@ -23,20 +23,15 @@ module.exports = function (nitro) {
     console.log('[[ current branch ]]', branch );
   });
 
-  nitro.task('externalIntegrations', function () {
-    nitro.file.copy('external-integrations/shopify.js', 'dist/shopify.js');
-    nitro.file.copy('external-integrations/shopify.js', 'dist/widgets/shopify.js');
-  });
-
   // main tasks
 
   nitro.task('public-dist', function () {
     nitro.dir.copy('dist', 'public/dist');
   });
 
-  nitro.task('build', ['git.branch', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets', 'js', 'demo', 'loading', 'public-dist']);
+  nitro.task('build', ['git.branch', 'clear:build', 'css-hacks', 'widgets', 'js', 'demo', 'loading', 'public-dist']);
 
-  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'externalIntegrations', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev', 'public-dist'], function () {
+  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev', 'public-dist'], function () {
 
     // if( !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
     // if( !nitro.file.exists('public/dist') ) nitro.dir.copy('dist', 'public/dist');

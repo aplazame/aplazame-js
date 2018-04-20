@@ -12,7 +12,7 @@ build:
 deploy:
   rsync:
     user: ec2-user
-    host: 18.196.173.0
+    host: sh-dev.aplazame.org
     source: dist/
     target: /mnt/frontend/aplazame-js
     delete: true
@@ -22,7 +22,7 @@ deploy:
 
   rsync:
     user: ec2-user
-    host: 18.196.173.0
+    host: sh-dev.aplazame.org
     source: public/
     target: /mnt/frontend/demo-site
     delete: true

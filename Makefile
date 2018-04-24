@@ -76,6 +76,10 @@ release: install tests npm.version git.updateRelease build dist-folder github.re
 echo:
 	@echo "make options: test build dev live"
 
+deploy:
+	chmod +x s3_deploy.sh
+	./s3_deploy.sh
+
 # DEFAULT TASKS
 
 .DEFAULT_GOAL := build

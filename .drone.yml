@@ -11,40 +11,40 @@ build:
 
 deploy:
   rsync:
-    user: ec2-user
-    host: sh-dev.aplazame.org
+    user: $$DEPLOY_USER_DEV
+    host: deploy-dev.aplazame.org
     source: dist/
-    target: /mnt/frontend/aplazame-js
+    target: ~/www/frontend/aplazame-js
     delete: true
     recursive: true
     when:
       branch: master
 
   rsync:
-    user: ec2-user
-    host: sh-dev.aplazame.org
+    user: $$DEPLOY_USER_DEV
+    host: deploy-dev.aplazame.org
     source: public/
-    target: /mnt/frontend/demo-site
+    target: ~/www/frontend/demo-site
     delete: true
     recursive: true
     when:
       branch: master
 
   rsync:
-    user: ec2-user
-    host: sh-prod.aplazame.org
+    user: $$DEPLOY_USER_PROD
+    host: deploy-prod.aplazame.org
     source: dist/
-    target: /mnt/frontend/aplazame-js
+    target: ~/www/frontend/aplazame-js
     delete: true
     recursive: true
     when:
       branch: release
 
   rsync:
-    user: ec2-user
-    host: sh-prod.aplazame.org
+    user: $$DEPLOY_USER_PROD
+    host: deploy-prod.aplazame.org
     source: public/
-    target: /mnt/frontend/demo-site
+    target: ~/www/frontend/demo-site
     delete: true
     recursive: true
     when:

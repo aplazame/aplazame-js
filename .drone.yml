@@ -53,7 +53,7 @@ deploy:
   rsync:
     user: $$DEPLOY_USER
     host: aplazame.com
-    target: $$DEPLOY_PATH
+    target: /opt/frontend/aplazame-js
     delete: true
     recursive: true
     exclude:

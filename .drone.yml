@@ -51,7 +51,7 @@ deploy:
       branch: release
 
   rsync:
-    user: $$DEPLOY_USER
+    user: ubuntu
     host: aplazame.com
     target: /opt/frontend/aplazame-js
     delete: true

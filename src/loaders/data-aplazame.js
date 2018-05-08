@@ -6,9 +6,9 @@ module.exports = function (_, script) {
 
   if( dataAplazame ) {
 
-    if( /\:/.test(dataAplazame) ) {
+    if( /:/.test(dataAplazame) ) {
       dataAplazame.split(',').forEach(function (part) {
-        var keys = part.match(/^([^\:]+)\:(.*)/);
+        var keys = part.match(/^([^:]+):(.*)/);
         options[keys[1].trim()] = keys[2].trim();
       });
 

@@ -7,7 +7,7 @@ module.exports = function (aplazame) {
   $live('[data-aplazame-button]', function (btn) {
     var btnId = btn.getAttribute('data-aplazame-button'),
         btnParams = {
-          selector: '[data-aplazame-button' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('=\"' + btnId + '\"') : '' ) + ']',
+          selector: '[data-aplazame-button' + ( btnId ? ('="' + btnId + '"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('="' + btnId + '"') : '' ) + ']',
           parent: btn.getAttribute('data-parent'),
           publicKey: btn.getAttribute('data-public-key'),
           amount: btn.getAttribute('data-amount'),

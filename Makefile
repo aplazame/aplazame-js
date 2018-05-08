@@ -20,6 +20,7 @@ npm-install:
 
 install: git.hooks npm-install bower-install
 
+test: tests
 tests:
 	@$(npmdir)/eslint src/**
 	@$(npmdir)/mocha src/**/*-tests.js

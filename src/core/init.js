@@ -4,18 +4,18 @@ var api = require('./api'),
     _ = require('../tools/tools'),
     events = require('./events');
 
-function init (options) {
+module.exports = function init (options) {
   options = options || {};
 
   if( typeof options.sandbox === 'string' ) {
     options.sandbox = options.sandbox === 'true';
   }
 
-  _.extend(api, options);
+  for( var key in options ) {
+    api[_.toUnderscoreCase(key)] = options[key];
+  }
 
   _.log('aplazame.init', options, api);
 
-  if( api.publicKey ) events.emit('ready');
-}
-
-module.exports = init;
+  if( api.public_key ) events.emit('ready');
+};

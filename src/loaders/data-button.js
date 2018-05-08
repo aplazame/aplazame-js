@@ -9,7 +9,7 @@ module.exports = function (aplazame) {
         btnParams = {
           selector: '[data-aplazame-button' + ( btnId ? ('="' + btnId + '"') : '' ) + '], [data-aplazame-button-info' + ( btnId ? ('="' + btnId + '"') : '' ) + ']',
           parent: btn.getAttribute('data-parent'),
-          publicKey: btn.getAttribute('data-public-key'),
+          public_key: btn.getAttribute('data-public-key'),
           amount: btn.getAttribute('data-amount'),
           currency: btn.getAttribute('data-currency') || undefined,
           sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,

@@ -63,7 +63,7 @@ _.onMessage('modal', function (e, message) {
       e.source.postMessage({
         aplazame: 'modal',
         event: 'content',
-        content: modal.iframe.content
+        content: modal.iframe.content,
       }, '*');
       break;
     case 'resolved':
@@ -71,7 +71,7 @@ _.onMessage('modal', function (e, message) {
         aplazame: 'modal',
         event: 'resolved',
         name: modal.message.name,
-        value: message.value
+        value: message.value,
       }, '*');
       delete modal.referrer;
       break;

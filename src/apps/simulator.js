@@ -17,13 +17,13 @@ function simulator (amount, _options, callback, onError) {
     _options = _options || {};
   }
 
-  var options = {
+  var data = {
         params: {
           amount: amount,
-          currency: _options.currency || 'EUR'
+          currency: _options.currency || 'EUR',
         }
       },
-      hash = amount + ',' + JSON.stringify(options);
+      hash = amount + ',' + JSON.stringify(data);
 
   if( requestsCache[hash] ) {
     return requestsCache[hash].then(function (result) {
@@ -32,20 +32,20 @@ function simulator (amount, _options, callback, onError) {
   }
 
   if( _options.view ) {
-    options.params.view = _options.view;
+    data.params.view = _options.view;
   }
   if( _options.payday ) {
-    options.params.payday = _options.payday;
+    data.params.payday = _options.payday;
   }
-  if( _options.publicKey ) {
-    options.publicKey = _options.publicKey;
+  if( _options.publicKey || data.public_key ) {
+    data.public_key = _options.publicKey || data.public_key;
   }
 
   var foundCached = _.find(cache, function (item) {
     return item.amount === amount;
   });
 
-  requestsCache[hash] = ( !_options.noCache && foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', options ).then(function (response) {
+  requestsCache[hash] = ( !_options.noCache && foundCached ? $q.resolve(foundCached) : apiHttp.get('instalment-plan-simulator', data ).then(function (response) {
       var result = {
         amount: amount,
         choices: response.data.choices[0].instalments,

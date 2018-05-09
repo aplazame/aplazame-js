@@ -1,22 +1,22 @@
 'use strict';
 
 module.exports = function (_, script) {
-  var dataAplazame = script.getAttribute('data-aplazame'),
+  var data_aplazame = script.getAttribute('data-aplazame'),
       options = script.src && (/[?#]/.test(script.src) ? _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) : {}) || {};
 
-  if( dataAplazame ) {
+  if( data_aplazame ) {
 
-    if( /:/.test(dataAplazame) ) {
-      dataAplazame.split(',').forEach(function (part) {
+    if( /:/.test(data_aplazame) ) {
+      data_aplazame.split(',').forEach(function (part) {
         var keys = part.match(/^([^:]+):(.*)/);
-        options[keys[1].trim()] = keys[2].trim();
+        options[_.toUnderscoreCase(keys[1].trim())] = keys[2].trim();
       });
 
-      if( !options.publicKey ) {
-        throw new Error('publicKey missing in data-aplazame');
+      if( !options.public_key ) {
+        throw new Error('public_key missing in data-aplazame');
       }
     } else {
-      options.publicKey = dataAplazame;
+      options.public_key = data_aplazame;
     }
   }
 

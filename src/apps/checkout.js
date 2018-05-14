@@ -55,7 +55,7 @@ function checkout (transaction, callbacks) {
       errorMessage = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
-      cssBlur = cssHack('blur'),
+      // cssBlur = cssHack('blur'),
       cssLogo = cssHack('logo'),
       cssModal = cssHack('modal'),
       viewPortHack = document.createElement('meta'),
@@ -89,13 +89,13 @@ function checkout (transaction, callbacks) {
 
   cssOverlay.hack(true);
   cssLogo.hack(true);
-  cssBlur.hack(true);
 
-  setTimeout(function () {
-    if( !errorLoading ) {
-      _.addClass(document.body, 'aplazame-blur');
-    }
-  }, 0);
+  // cssBlur.hack(true);
+  // setTimeout(function () {
+  //   if( !errorLoading ) {
+  //     _.addClass(document.body, 'aplazame-blur');
+  //   }
+  // }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
   require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
@@ -184,15 +184,15 @@ function checkout (transaction, callbacks) {
           else
             window.open(message.href, '_system');
           break;
-        case 'drop-blur':
-          _.removeClass(document.body, 'aplazame-blur');
-          _.addClass(document.body, 'aplazame-unblur');
-          setTimeout(function () {
-            cssBlur.hack(false);
-            _.removeClass(document.body, 'aplazame-blur');
-            _.removeClass(document.body, 'aplazame-unblur');
-          }, 600);
-          break;
+        // case 'drop-blur':
+        //   _.removeClass(document.body, 'aplazame-blur');
+        //   _.addClass(document.body, 'aplazame-unblur');
+        //   setTimeout(function () {
+        //     cssBlur.hack(false);
+        //     _.removeClass(document.body, 'aplazame-blur');
+        //     _.removeClass(document.body, 'aplazame-unblur');
+        //   }, 600);
+        //   break;
         case 'confirm':
           _.log('aplazame.checkout:confirm', message);
 

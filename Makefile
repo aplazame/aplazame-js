@@ -20,6 +20,7 @@ npm-install:
 
 install: git.hooks npm-install bower-install
 
+test: tests
 tests:
 	@$(npmdir)/eslint src/**
 	@$(npmdir)/mocha src/**/*-tests.js
@@ -75,6 +76,10 @@ release: install tests npm.version git.updateRelease build dist-folder github.re
 
 echo:
 	@echo "make options: test build dev live"
+
+deploy:
+	chmod +x s3_deploy.sh
+	./s3_deploy.sh
 
 # DEFAULT TASKS
 

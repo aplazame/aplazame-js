@@ -65,7 +65,7 @@ function querySelector (selector, rootElement) {
     return [];
   }
 
-  if( !/\:has\(/.test(selector) ) {
+  if( !/:has\(/.test(selector) ) {
     return [].slice.call( (rootElement || document).querySelectorAll( selector ) );
   }
 

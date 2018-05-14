@@ -1,29 +1,59 @@
 build:
   image: aplazame/nodejs-karma:0.7.3
+  environment:
+    - GITHUB_TOKEN=$$GITHUB_TOKEN
+    - AWS_ACCESS_KEY_ID=$$S3_ACCESS_KEY
+    - AWS_SECRET_ACCESS_KEY=$$S3_SECRET_KEY
   commands:
     - 'sed -i "s/git@github.com:/http:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\//g" bower.json'
     - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'make build'
-    - 'ls -la'
 
 deploy:
   rsync:
-    user: $$DEPLOY_USER
-    host: dev.aplazame.com
-    target: $$DEPLOY_PATH
+    user: $$DEPLOY_USER_DEV
+    host: deploy-dev.aplazame.org
+    source: dist/
+    target: ~/www/frontend/aplazame-js
     delete: true
     recursive: true
-    exclude:
-      - ".git"
-      - "node_modules"
-      - ".bower_components"
     when:
       branch: master
 
   rsync:
-    user: $$DEPLOY_USER
+    user: $$DEPLOY_USER_DEV
+    host: deploy-dev.aplazame.org
+    source: public/
+    target: ~/www/frontend/demo-site
+    delete: true
+    recursive: true
+    when:
+      branch: master
+
+  rsync:
+    user: $$DEPLOY_USER_PROD
+    host: deploy-prod.aplazame.org
+    source: dist/
+    target: ~/www/frontend/aplazame-js
+    delete: true
+    recursive: true
+    when:
+      branch: release
+
+  rsync:
+    user: $$DEPLOY_USER_PROD
+    host: deploy-prod.aplazame.org
+    source: public/
+    target: ~/www/frontend/demo-site
+    delete: true
+    recursive: true
+    when:
+      branch: release
+
+  rsync:
+    user: ubuntu
     host: aplazame.com
-    target: $$DEPLOY_PATH
+    target: /opt/frontend/aplazame-js
     delete: true
     recursive: true
     exclude:

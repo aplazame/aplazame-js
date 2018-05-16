@@ -19,10 +19,12 @@ var custom_options_set = {
   'btn_text_color': 'btn-text-color',
   'branding': 'branding',
   'align': 'align',
-  'smart_title': 'smart-title',
   'text_color': 'text-color',
   'btn_bg_color': 'btn-bg-color',
   'custom_styles': 'custom-styles',
+  'smart_title': 'title-smart',
+  'title_default': 'title-default',
+  'title_zero_interest': 'title-zero-interest',
 };
 
 function _getCustomOptions(widget_el) {
@@ -102,6 +104,29 @@ module.exports = function (aplazame) {
 
           if( amount && amount !== current_amount ) updateAmount(amount);
         };
+
+    if( 'MutationObserver' in window ) (function (observer) {
+      observer.observe(widget_el, { attributes: true });
+    })(  new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
+          console.log(mutation.type, mutation, _getCustomOptions(widget_el), current_amount, current_qty );
+          custom_widget_options = _getCustomOptions(widget_el);
+          updateAmount(current_amount, current_qty);
+        }
+      });
+    }) );
+
+    // var colors = ['red', 'yellow', 'green'], color_index = 0;
+
+    // setInterval(function () {
+    //   if( custom_widget_options.preferences ) {
+    //     console.log('color_index', color_index);
+    //     custom_widget_options.preferences.btn_bg_color = colors[color_index++];
+    //     if( color_index >= colors.length ) color_index = 0;
+    //     updateAmount(current_amount, current_qty);
+    //   }
+    // }, 2000);
 
     if( amountGetter.qtySelector ) qty_interval = setInterval(function () {
       var qty = amountGetter.getQty(amountGetter.qtySelector) || 1;

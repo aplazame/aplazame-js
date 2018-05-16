@@ -19,7 +19,8 @@ require('./sandbox')(function () {
   var aplazame = require('./core/core'),
       api = require('./core/api'),
       events = require('./core/events'),
-      log = require('./tools/log');
+      log = require('./tools/log'),
+      deserialize = require('./tools/deserialize').deserialize;
 
   aplazame.checkout = require('./apps/checkout');
   aplazame.button = require('./apps/button');
@@ -54,6 +55,10 @@ require('./sandbox')(function () {
   }
 
   function safeScript (script) {
+    
+    var params = deserialize(script.src.split('?')[1] || '');
+
+    if( script && params.public_key ) return script;
     if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null ) return script;
 
     var isAplazameLoader = function (script) {
@@ -71,7 +76,7 @@ require('./sandbox')(function () {
            document.createElement('script');
   }
 
-  var options = require('./loaders/data-aplazame')(aplazame._, safeScript(aplazame._.currentScript));
+  var options = require('./loaders/data-aplazame')(aplazame._, safeScript( aplazame._.currentScript() ) );
 
   aplazame.init(options);
 

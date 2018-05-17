@@ -71,4 +71,6 @@ deploy:
     delete: true
     recursive: true
     when:
-      branch: demo
+      branch:
+        - demo
+        - ch4602-data-options-watch

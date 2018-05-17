@@ -95,7 +95,7 @@
   }
   .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
   .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
-    background-color: <%= lighten(preferences.btn_bg_color, -5) %>;
+    background-color: <%= /^#/.test(preferences.btn_bg_color) ? lighten(preferences.btn_bg_color, -5) : preferences.btn_bg_color %>;
   }
   <% } %>
 </style>

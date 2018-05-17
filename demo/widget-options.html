@@ -86,9 +86,13 @@
                       data-amount="${article.price}"
                       data-location=".article-sample .details .price:after"></div>
               </div> -->
-              <div>
+              <label style="display: block">
                 <input type="color" onchange=" document.getElementById('widget-options').setAttribute('data-option-btn-bg-color', this.value) "></input>
-              </div>
+              </label>
+
+              <label style="display: block">
+                <input type="checkbox" style="-webkit-appearance: checkbox;" onchange=" document.getElementById('widget-options').setAttribute('data-option-branding', this.checked ? 'true' : 'false') "></input>
+              </label>
 
             </form>
           </article>

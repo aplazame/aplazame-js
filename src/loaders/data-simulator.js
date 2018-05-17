@@ -110,15 +110,25 @@ module.exports = function (aplazame) {
     })(  new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
-          console.log(mutation.type, mutation, _getCustomOptions(widget_el), current_amount, current_qty );
+
           custom_widget_options = _getCustomOptions(widget_el);
+
+          // console.log(mutation.type, mutation, _getCustomOptions(widget_el), current_amount, current_qty );
+          // var _custom_widget_options = _getCustomOptions(widget_el);
+          // if( _custom_widget_options.type ) custom_widget_options.type = _custom_widget_options.type;
+          // if( _custom_widget_options.preferences ) {
+          //   custom_widget_options.preferences = custom_widget_options.preferences || {};
+          //   for( var key in _custom_widget_options.preferences ) {
+          //     custom_widget_options.preferences[key] = _custom_widget_options.preferences[key];
+          //   }
+          // }
           updateAmount(current_amount, current_qty);
         }
       });
     }) );
 
     // var colors = ['red', 'yellow', 'green'], color_index = 0;
-
+    //
     // setInterval(function () {
     //   if( custom_widget_options.preferences ) {
     //     console.log('color_index', color_index);

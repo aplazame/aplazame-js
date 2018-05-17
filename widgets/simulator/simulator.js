@@ -15,8 +15,8 @@ var message_listeners = {}, no_listeners = [], simulator_id = -1,
     widget_type,
     widget_handler;
 
-if( location.href.match(/[\?&]simulator=(\w+?)(\&|$)/) ) {
-  simulator_id = Number(location.href.match(/[\?&]simulator=(\w+?)(\&|$)/)[1]);
+if( location.href.match(/[?&]simulator=(\w+?)(&|$)/) ) {
+  simulator_id = Number(location.href.match(/[?&]simulator=(\w+?)(&|$)/)[1]);
 }
 
 function onMessage(event_name, handler) {

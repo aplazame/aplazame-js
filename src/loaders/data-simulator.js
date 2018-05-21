@@ -12,6 +12,7 @@ var custom_options_defaults = {
   'text_color': '#333A3E',
   'btn_bg_color': '#267BBD',
   'custom_styles': false,
+  'disable_modal': false,
   version: 3
 };
 
@@ -25,6 +26,7 @@ var custom_options_set = {
   'smart_title': 'title-smart',
   'title_default': 'title-default',
   'title_zero_interest': 'title-zero-interest',
+  'disable_modal': 'disable-modal',
 };
 
 function _getCustomOptions(widget_el) {

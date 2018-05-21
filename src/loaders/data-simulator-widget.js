@@ -113,6 +113,10 @@ module.exports = function (aplazame) {
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 
+    console.log('widget', widget);
+
+    if( widget.simulator_data.preferences.disable_modal ) return;
+
     modal({
       size: 'lg',
       card: { className: 'has-cta modal-instalments-info _v3' },

@@ -102,7 +102,7 @@ module.exports = function (aplazame) {
       }
     }
 
-    console.log('widget.handler.render', widget.simulator_data);
+    // console.log('widget.handler.render', widget.simulator_data);
 
     widget.handler.render();
   };
@@ -112,8 +112,6 @@ module.exports = function (aplazame) {
         _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
         choices = widget.simulator.choices,
         data = widget.simulator.data;
-
-    console.log('widget', widget);
 
     if( widget.simulator_data.preferences.disable_modal ) return;
 

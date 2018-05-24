@@ -115,30 +115,10 @@ module.exports = function (aplazame) {
 
           custom_widget_options = _getCustomOptions(widget_el);
 
-          // console.log(mutation.type, mutation, _getCustomOptions(widget_el), current_amount, current_qty );
-          // var _custom_widget_options = _getCustomOptions(widget_el);
-          // if( _custom_widget_options.type ) custom_widget_options.type = _custom_widget_options.type;
-          // if( _custom_widget_options.preferences ) {
-          //   custom_widget_options.preferences = custom_widget_options.preferences || {};
-          //   for( var key in _custom_widget_options.preferences ) {
-          //     custom_widget_options.preferences[key] = _custom_widget_options.preferences[key];
-          //   }
-          // }
           updateAmount(current_amount, current_qty);
         }
       });
     }) );
-
-    // var colors = ['red', 'yellow', 'green'], color_index = 0;
-    //
-    // setInterval(function () {
-    //   if( custom_widget_options.preferences ) {
-    //     console.log('color_index', color_index);
-    //     custom_widget_options.preferences.btn_bg_color = colors[color_index++];
-    //     if( color_index >= colors.length ) color_index = 0;
-    //     updateAmount(current_amount, current_qty);
-    //   }
-    // }, 2000);
 
     if( amountGetter.qtySelector ) qty_interval = setInterval(function () {
       var qty = amountGetter.getQty(amountGetter.qtySelector) || 1;
@@ -147,7 +127,6 @@ module.exports = function (aplazame) {
       updateAmount(current_amount, qty);
     }, 120);
 
-    // dom_listeners.push(onDomChanges);
     $live(onDomChanges);
 
     updateAmount(current_amount);

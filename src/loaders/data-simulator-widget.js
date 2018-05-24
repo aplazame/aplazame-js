@@ -47,8 +47,6 @@ module.exports = function (aplazame) {
   Widget.prototype.render = function (choices, data) {
     if( !data.widget ) return;
 
-    console.log('Widget.prototype.render', data);
-
     var widget = this,
         widget_version = data.widget.preferences && Number(data.widget.preferences.version) || 2,
         widget_type = data.widget.type;
@@ -101,8 +99,6 @@ module.exports = function (aplazame) {
         widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
       }
     }
-
-    // console.log('widget.handler.render', widget.simulator_data);
 
     widget.handler.render();
   };

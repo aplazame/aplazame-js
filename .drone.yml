@@ -73,4 +73,3 @@ deploy:
     when:
       branch:
         - demo
-        - ch4602-data-options-watch

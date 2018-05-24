@@ -1,9 +1,9 @@
-<div class="aplazame-widget aplazame-styles aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
+<div class="aplazame-widget aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
 
   <div class="aplazame-widget-container">
 
   <% if( preferences.smart_title ) { %>
-    <div class="aplazame-widget-smart-title"><% if( choice.annual_equivalent === 0 ) { %>¡Consíguelo sin intereses!<% } else { %>Págalo a plazos<% } %></div>
+    <div class="aplazame-widget-smart-title"><%= choice.annual_equivalent === 0 ? ( preferences.title_zero_interest || '¡Consíguelo sin intereses!' ) : ( preferences.title_default || 'Págalo a plazos' ) %></div>
   <% } %>
 
   <div class="aplazame-widget-instalments" <% if( type !== 'select' && type !== 'big-button' ){ %> data-action="showInfo"<% } %>>
@@ -77,29 +77,29 @@
 <% if( !preferences.custom_styles || type !== 'text' ){ %>
 <style rel="stylesheet">
   <% if(preferences.text_color) { %>
-  .aplazame-widget.aplazame-styles { color: <%= preferences.text_color %>; }
+  .aplazame-widget:not(.aplazame-widget--custom-styles) { color: <%= preferences.text_color %>; }
   <% } %>
 
   <% if(preferences.btn_text_color) { %>
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-big-button .aplazame-widget-container,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments {
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-button .aplazame-widget-instalments,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments {
     color: <%= preferences.btn_text_color %>;
   }
   <% } %>
   <% if(preferences.btn_bg_color) { %>
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-big-button .aplazame-widget-container,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments::before,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments::before {
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-button .aplazame-widget-instalments::before,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments::before {
     background-color: <%= preferences.btn_bg_color %>;
   }
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
-    background-color: <%= lighten(preferences.btn_bg_color, -5) %>;
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
+    background-color: <%= /^#/.test(preferences.btn_bg_color) ? lighten(preferences.btn_bg_color, -5) : preferences.btn_bg_color %>;
   }
   <% } %>
 </style>
 <% } %>
 <% if( preferences.custom_styles ){ %>
-<style rel="stylesheet"><%= custom_styles %></style>
+<style rel="stylesheet"><%= custom_styles.replace(/\.aplazame-widget(?=[ \.])/g, '.aplazame-widget:not(.aplazame-widget--custom-styles)') %></style>
 <% } %>

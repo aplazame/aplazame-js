@@ -68,24 +68,38 @@
                       data-currency="${ currency }"></div>
               </div>
               <div class="text-right">
-                <div data-aplazame-simulator data-view="product"
+                <div id="widget-options" data-aplazame-simulator data-view="product"
                       data-amount="${article.price}"
                       data-price="form.details [itemprop='price']"
                       data-qty="form.details input[name='qty']"
 
-                      data-type=" big-button "
+                      data-type=" text "
                       data-option-branding=" false "
                       data-option-custom-styles=" true "
+
                       data-option-btn-text-color=" Royalblue "
                       data-option-btn-bg-color=" white "
 
-                      data-country="${ country }" data-currency="${ currency }"></div>
+                      data-option-title-smart=" true "
+                      data-option-title-default=" Fund it "
+                      data-option-title-zero-interest=" ¡Fund it without interests! "
+
+                      data-country="${ country }" data-currency="${ currency }"
+                      data-option-disable-modal=" true ">
+                    </div>
               </div>
               <!-- <div class="text-right">
                 <div data-aplazame-simulator data-view="product"
                       data-amount="${article.price}"
                       data-location=".article-sample .details .price:after"></div>
               </div> -->
+              <label style="display: block">
+                <input type="color" onchange=" document.getElementById('widget-options').setAttribute('data-option-btn-bg-color', this.value) "></input>
+              </label>
+
+              <label style="display: block">
+                <input type="checkbox" style="-webkit-appearance: checkbox;" onchange=" document.getElementById('widget-options').setAttribute('data-option-branding', this.checked ? 'true' : 'false') "></input>
+              </label>
 
             </form>
           </article>

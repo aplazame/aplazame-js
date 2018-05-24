@@ -8,7 +8,7 @@ var api = require('../core/api'),
 
 var tmpOverlay = document.createElement('div'),
     cssOverlay = cssHack('overlay'),
-    cssBlur = cssHack('blur'),
+    // cssBlur = cssHack('blur'),
     cssModal = cssHack('modal');
 
 function modal (content) {
@@ -18,7 +18,7 @@ function modal (content) {
   }
 
   cssOverlay.hack(true);
-  cssBlur.hack(true);
+  // cssBlur.hack(true);
   cssModal.hack(true);
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
@@ -81,7 +81,7 @@ _.onMessage('modal', function (e, message) {
       _.addClass(document.body, 'aplazame-unblur');
       _.addClass(tmpOverlay, 'aplazame-overlay-hide');
       setTimeout(function () {
-        cssBlur.hack(false);
+        // cssBlur.hack(false);
         _.removeClass(document.body, 'aplazame-unblur');
       }, _.isMobile() ? 0 : 600 );
       break;

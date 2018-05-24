@@ -47,6 +47,8 @@ module.exports = function (aplazame) {
   Widget.prototype.render = function (choices, data) {
     if( !data.widget ) return;
 
+    console.log('Widget.prototype.render', data);
+
     var widget = this,
         widget_version = data.widget.preferences && Number(data.widget.preferences.version) || 2,
         widget_type = data.widget.type;
@@ -55,15 +57,15 @@ module.exports = function (aplazame) {
     widget.version = widget_version;
 
     var simulator_data = widget.simulator_data || {
-      type: widget_type,
       version: widget_version,
-      preferences: data.widget.preferences || {},
       static_url: api.static_url,
       custom_styles: data.widget.styles,
       data: data,
       currency: widget.options.currency,
       country: widget.options.country,
     };
+    simulator_data.type = widget_type;
+    simulator_data.preferences = data.widget.preferences || {};
     widget.simulator_data = simulator_data;
     simulator_data.choices = choices;
 
@@ -100,6 +102,8 @@ module.exports = function (aplazame) {
       }
     }
 
+    // console.log('widget.handler.render', widget.simulator_data);
+
     widget.handler.render();
   };
 
@@ -108,6 +112,8 @@ module.exports = function (aplazame) {
         _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
         choices = widget.simulator.choices,
         data = widget.simulator.data;
+
+    if( widget.simulator_data.preferences.disable_modal ) return;
 
     modal({
       size: 'lg',

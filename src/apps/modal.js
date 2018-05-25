@@ -24,9 +24,9 @@ function modal (content) {
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
   document.body.appendChild(tmpOverlay);
 
-  setTimeout(function () {
-    _.addClass(document.body, 'aplazame-blur');
-  }, 0);
+  // setTimeout(function () {
+  //   _.addClass(document.body, 'aplazame-blur');
+  // }, 0);
   setTimeout(function () {
     _.removeClass(tmpOverlay, 'aplazame-overlay-show');
   }, _.isMobile() ? 0 : 600 );
@@ -77,13 +77,13 @@ _.onMessage('modal', function (e, message) {
       break;
     case 'closing':
       document.body.style.overflow = modal.iframe.overflow;
-      _.removeClass(document.body, 'aplazame-blur');
-      _.addClass(document.body, 'aplazame-unblur');
       _.addClass(tmpOverlay, 'aplazame-overlay-hide');
-      setTimeout(function () {
-        // cssBlur.hack(false);
-        _.removeClass(document.body, 'aplazame-unblur');
-      }, _.isMobile() ? 0 : 600 );
+      // _.removeClass(document.body, 'aplazame-blur');
+      // _.addClass(document.body, 'aplazame-unblur');
+      // setTimeout(function () {
+      //   // cssBlur.hack(false);
+      //   _.removeClass(document.body, 'aplazame-unblur');
+      // }, _.isMobile() ? 0 : 600 );
       break;
     case 'close':
       setTimeout(function () {

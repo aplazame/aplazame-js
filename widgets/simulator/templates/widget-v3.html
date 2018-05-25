@@ -1,21 +1,14 @@
-<div class="aplazame-widget aplazame-styles aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
+<div class="aplazame-widget aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
 
   <div class="aplazame-widget-container">
 
   <% if( preferences.smart_title ) { %>
-    <div class="aplazame-widget-smart-title"><% if( choice.annual_equivalent === 0 ) { %>¡Consíguelo sin intereses!<% } else { %>Págalo a plazos<% } %></div>
+    <div class="aplazame-widget-smart-title"><%= choice.annual_equivalent === 0 ? ( preferences.title_zero_interest || '¡Consíguelo sin intereses!' ) : ( preferences.title_default || 'Págalo a plazos' ) %></div>
   <% } %>
 
   <div class="aplazame-widget-instalments" <% if( type !== 'select' && type !== 'big-button' ){ %> data-action="showInfo"<% } %>>
 
     <% if( type === 'select' ){ %>
-    <svg class="aplazame-widget-select-icon" version="1.1" viewBox="0 0 8 12" height="12" width="8">
-      <g fill="none" fill-opacity="1" fill-rule="evenodd" stroke="currentColor" stroke-width="1" stroke-opacity="1" transform="translate(0.7521047,0.5)">
-        <polyline points="0 2.5 3.21428571 0 6.5 2.5" />
-        <polyline points="0 11 3.21428571 8.5 6.5 11" transform="matrix(1,0,0,-1,0,19.5)" />
-      </g>
-    </svg>
-
     <select>
       <% for ( var i = 0, n = choices.length ; i < n ; i++ ) { %>
       <option value="<%= choices[i].num_instalments %>" <%= choices[i] == choice ? 'selected' : '' %>><span class="apz-price_widget-amount"><%= getPrice(choices[i].amount, currency) %>/mes</span> en <%= choices[i].num_instalments %> <%= choices[i].num_instalments > 1 ? 'cuotas' : 'cuota' %></option>
@@ -76,25 +69,34 @@
 
 <% if( !preferences.custom_styles || type !== 'text' ){ %>
 <style rel="stylesheet">
-  .aplazame-widget.aplazame-styles { color: <%= preferences.text_color %>; }
+  <% if(preferences.text_color) { %>
+  .aplazame-widget:not(.aplazame-widget--custom-styles) { color: <%= preferences.text_color %>; }
+  <% } %>
 
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-big-button .aplazame-widget-container,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments {
+  <% if(preferences.btn_text_color) { %>
+  .aplazame-widgetc.aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-button .aplazame-widget-instalments,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments {
     color: <%= preferences.btn_text_color %>;
   }
 
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-big-button .aplazame-widget-container,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments::before,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments::before {
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments::before {
+    <%= 'background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' height=\'12\' width=\'8\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\' stroke=\'' + preferences.btn_text_color + '\'%3E%3Cpath d=\'M.752 3L3.966.5 7.252 3M.752 9l3.214 2.5L7.252 9\'/%3E%3C/g%3E%3C/svg%3E");' %>
+  }
+  <% } %>
+  <% if(preferences.btn_bg_color) { %>
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-button .aplazame-widget-instalments::before,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments::before {
     background-color: <%= preferences.btn_bg_color %>;
   }
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
-  .aplazame-widget.aplazame-styles.aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
-    background-color: <%= lighten(preferences.btn_bg_color, -5) %>;
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-button .aplazame-widget-instalments:hover::before,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments:hover::before {
+    background-color: <%= /^#/.test(preferences.btn_bg_color) ? lighten(preferences.btn_bg_color, -5) : preferences.btn_bg_color %>;
   }
+  <% } %>
 </style>
 <% } %>
 <% if( preferences.custom_styles ){ %>
-<style rel="stylesheet"><%= custom_styles %></style>
+<style rel="stylesheet"><%= custom_styles.replace(/\.aplazame-widget(?=[ \.])/g, '.aplazame-widget:not(.aplazame-widget--custom-styles)') %></style>
 <% } %>

@@ -146,6 +146,8 @@ module.exports = function (nitro) {
       file.write('public/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
       file.write('public/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
 
+      file.write('public/widget-options.html', template( file.read('demo/widget-options.html') )( scope.new({ public_key: demo_data.public_key.demo_es }) ) );
+
     })(index_data.new({ country: 'ES', currency: 'EUR' }));
 
     (function (scope) {

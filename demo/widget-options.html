@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>$include{ head }</head>
+  <body data-branch="${git.branch}" data-country="${ country }">
+    <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
+    <header class="header">
+      <div class="container-md">
+        <a class="demo-link" href="/$if{ country === 'MX' }mx/{/}">Demo</a>
+        <a class="logo-link" href="/$if{ country === 'MX' }mx/{/}">
+          <img src="/dist/widgets/assets/images/logotipo-white.svg" alt="aplazame logo"/>
+        </a>
+      </div>
+    </header>
+
+    <div class="sections container-md">
+
+      $if{result}{:}
+      <section class="section-box">
+
+        <div class="section-title">
+          <h3>Artículo</h3>
+        </div>
+
+
+        $with{ checkout.order.articles[1] as article }
+          <article class="row article-sample">
+            <div class="col-sm-offset-3 col-sm-6 col-md-offset-0 img-wrapper">
+              <img src="${article.image_url}" alt="${article.name}"/>
+            </div>
+            <form class="col-md-6 details">
+              <div class="label">${article.name}</div>
+              <p class="description">${article.description}</p>
+
+              <div class="price">
+                <div class="qty-ctrl">
+                  <button type="button" class="minus" disabled>-</button>
+                  <input type="text" name="qty" value="1"></input>
+                  <button type="button" class="plus">+</button>
+                </div>
+                <div class=price-wrapper></div>
+                <div class="price" itemprop="price" content="${ article.price }" data-price-set="1.5" data-price-unboxed="0.8">${ formatCurrency(article.price, currency) }</div>
+              </div>
+
+              <div class="article-type-choices">
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="unboxed"></input>
+                  <div class="type-label">Unboxed</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="retail" checked></input>
+                  <div class="type-label">Retail</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="set"></input>
+                  <div class="type-label">Set</div>
+                </label>
+              </div>
+
+              <hr/>
+              <br/>
+
+              <div class="text-right">
+                <div data-aplazame-simulator data-view="product"
+                      data-amount="${article.price}"
+                      data-price="form.details [itemprop='price']"
+                      data-qty="form.details input[name='qty']"
+                      data-country="${ country }"
+                      data-currency="${ currency }"></div>
+              </div>
+              <div class="text-right">
+                <div id="widget-options" data-aplazame-simulator data-view="product"
+                      data-amount="${article.price}"
+                      data-price="form.details [itemprop='price']"
+                      data-qty="form.details input[name='qty']"
+
+                      data-type=" select "
+                      data-option-branding=" true "
+                      data-option-custom-styles=" false "
+
+                      data-option-btn-text-color=" white "
+                      data-option-btn-bg-color=" Royalblue "
+
+                      data-option-title-smart=" true "
+                      data-option-title-default=" Fund it "
+                      data-option-title-zero-interest=" ¡Fund it without interests! "
+
+                      data-country="${ country }" data-currency="${ currency }"
+                      data-option-disable-modal=" true ">
+                    </div>
+              </div>
+              <!-- <div class="text-right">
+                <div data-aplazame-simulator data-view="product"
+                      data-amount="${article.price}"
+                      data-location=".article-sample .details .price:after"></div>
+              </div> -->
+              <label style="display: block">
+                <input type="color" onchange=" document.getElementById('widget-options').setAttribute('data-option-btn-bg-color', this.value) "></input>
+              </label>
+
+              <label style="display: block">
+                <input type="checkbox" style="-webkit-appearance: checkbox;" onchange=" document.getElementById('widget-options').setAttribute('data-option-branding', this.checked ? 'true' : 'false') "></input>
+              </label>
+
+            </form>
+          </article>
+        {/}
+      </section>
+      {/}
+
+      <section class="section-box cart-list">
+
+        $if{result}
+          $if{result.success}
+            <div class="alert alert-brand">Pago completado!</div>
+          {:}
+            <div class="alert alert-danger">Pago cancelado</div>
+          {/}
+        {:}
+          <div class="section-title">
+            <h3>Carrito de compra</h3>
+          </div>
+        {/}
+
+        <article>
+
+          <ul>
+            $each{ article in checkout.order.articles }
+            <li class="row">
+              <div class="col-sm-3 text-center">
+                <div class="img-wrapper">
+                  <img src="${article.image_url}" alt="${article.name}"/>
+                </div>
+              </div>
+              <div class="col-sm-9 details">
+                <div class="label">${article.name}</div>
+                <div class="price-wrapper">
+                  $if{ article.quantity > 1 }<span class="quantity">${article.quantity}x&nbsp;</span>{/}
+                  <span class="price">${ formatCurrency( articleAmount(article), currency ) }</span>
+                </div>
+              </div>
+            </li>
+            {/}
+            <li class="row">
+              <div class="col-xs-8">
+                <div class="concept">Envío</div>
+              </div>
+              <div class="col-xs-4 details">
+                <span class="price">${ formatCurrency( shippingAmount(), currency ) }</span>
+              </div>
+            </li>
+            <li class="row">
+              <div class="col-xs-8">
+                <div class="concept">Descuento</div>
+              </div>
+              <div class="col-xs-4 details">
+                <span class="price">${ formatCurrency( discountAmount(), currency ) }</span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="total-wrapper">
+            <div class="label">Total</div>
+            <div class="price-wrapper">
+              <span class="price">${ formatCurrency( totalAmount(), currency ) }</span>
+            </div>
+          </div>
+
+        </article>
+
+      </section>
+
+      $if{result}{:}
+        <!-- <div class="pay-with-aplazame"> -->
+        <div class="row"></div>
+          <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="130140000" onclick="loadCheckout();">
+            <span>Pagar con&nbsp;</span><!--
+            --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
+          </button>
+
+          </div>
+
+        </div>
+      {/}
+
+      <br/>
+      <br/>
+
+    </div>
+
+    <footer class="footer">
+      <div class="-wrapper container-md">
+        <div class="col-xs-6 no-wrap">
+          <span>&copy;&nbsp;Aplazame S.L.</span>
+        </div>
+        <div class="col-xs-6 text-right">
+          $if{ country !== 'MX' }
+            <a class="demo-footer-link" href="/simulator/">simulador</a>
+          {/}
+        </div>
+      </div>
+    </footer>
+
+    <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
+            data-aplazame="${ public_key }"
+            data-sandbox="true"
+            data-callback="apzReady"
+            $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com/"{/}
+            $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-static-url="/dist/"{:}$if{ git.branch === 'master' }data-static-url="https://dev.aplazame.com/static/"{/}{/}
+            $if{ git.branch === 'demo' }data-checkout-url="/_checkout/checkout.html"{:}$if{ git.branch !== 'release' }data-checkout-url="https://dev.aplazame.com/static/checkout/iframe.html"{/}{/}>
+    </script>
+
+    <script>
+      window.apzReady = function () {
+        console.log('hello, aplazame callback!');
+        console.log.apply(console, arguments );
+      };
+    </script>
+
+    <!-- alt version using url params:
+      <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
+    -->
+
+    <script type="text/javascript" src="/scripts/demo-article.js?build=${build}"></script>
+    <script type="text/x-javascript-example">
+      // example of checkout loading
+      aplazame.checkout($json{checkout});
+    </script>
+    $if{dev}
+      <script type="application/javascript">
+        var head= document.getElementsByTagName('head')[0];
+        var script= document.createElement('script');
+        script.type= 'text/javascript';
+        script.src= '//' + location.hostname + ':12321/livereload.js';
+        head.appendChild(script);
+      </script>
+    {/}
+  </body>
+</html>

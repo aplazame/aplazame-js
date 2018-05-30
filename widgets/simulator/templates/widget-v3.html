@@ -97,7 +97,7 @@
   <% } %>
 </style>
 <% } %>
-<% if( preferences.custom_styles ){ %>
+<% if( preferences.custom_styles && custom_styles ){ %>
 <!-- <style rel="stylesheet"><%= custom_styles.replace(/\.aplazame-widget(?=[ \.])/g, '.aplazame-widget:not(.aplazame-widget--custom-styles)') %></style> -->
 <style rel="stylesheet"><%= custom_styles %></style>
 <% } %>

@@ -1,4 +1,4 @@
-<div class="aplazame-widget aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
+<div class="aplazame-widget aplazame-widget--type-<%= type %> aplazame-widget--align-<%= preferences.align || 'center' %><% if( preferences.custom_styles && !preferences.api_custom_styles ){ %> aplazame-widget--custom-styles<% } %>">
 
   <div class="aplazame-widget-container">
 
@@ -67,14 +67,14 @@
 
 </div>
 
-<% if( !preferences.custom_styles || type !== 'text' ){ %>
+<% if( ( !preferences.custom_styles || preferences.api_custom_styles ) && type !== 'text' ){ %>
 <style rel="stylesheet">
   <% if(preferences.text_color) { %>
   .aplazame-widget:not(.aplazame-widget--custom-styles) { color: <%= preferences.text_color %>; }
   <% } %>
 
   <% if(preferences.btn_text_color) { %>
-  .aplazame-widgetc.aplazame-widget--type-big-button .aplazame-widget-container,
+  .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-big-button .aplazame-widget-container,
   .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-button .aplazame-widget-instalments,
   .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments {
     color: <%= preferences.btn_text_color %>;
@@ -98,5 +98,6 @@
 </style>
 <% } %>
 <% if( preferences.custom_styles ){ %>
-<style rel="stylesheet"><%= custom_styles.replace(/\.aplazame-widget(?=[ \.])/g, '.aplazame-widget:not(.aplazame-widget--custom-styles)') %></style>
+<!-- <style rel="stylesheet"><%= custom_styles.replace(/\.aplazame-widget(?=[ \.])/g, '.aplazame-widget:not(.aplazame-widget--custom-styles)') %></style> -->
+<style rel="stylesheet"><%= custom_styles %></style>
 <% } %>

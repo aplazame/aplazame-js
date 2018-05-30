@@ -92,6 +92,8 @@ module.exports = function (aplazame) {
             if( custom_widget_options.preferences ) {
               _options.widget.preferences = custom_widget_options.preferences;
               _options.widget.styles = '';
+            } else if( _options.widget.preferences.custom_styles ) {
+              _options.widget.preferences.api_custom_styles = true;
             }
             widget.render(_choices, _options);
             widget_el.style.opacity = null;

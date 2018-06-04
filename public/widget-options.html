@@ -24,12 +24,12 @@
 
 <!--  -->
 </head>
-  <body data-branch="release" data-country="MX">
+  <body data-branch="release" data-country="ES">
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
       <div class="container-md">
-        <a class="demo-link" href="/mx/">Demo</a>
-        <a class="logo-link" href="/mx/">
+        <a class="demo-link" href="/">Demo</a>
+        <a class="logo-link" href="/">
           <img src="/dist/widgets/assets/images/logotipo-white.svg" alt="aplazame logo"/>
         </a>
       </div>
@@ -38,13 +38,104 @@
     <div class="sections container-md">
 
       
+      <section class="section-box">
+
+        <div class="section-title">
+          <h3>Artículo</h3>
+        </div>
+
+
+        
+          <article class="row article-sample">
+            <div class="col-sm-offset-3 col-sm-6 col-md-offset-0 img-wrapper">
+              <img src="https://i.imgur.com/CZ5UPbl.jpg" alt="N°5 EAU PREMIERE SPRAY"/>
+            </div>
+            <form class="col-md-6 details">
+              <div class="label">N°5 EAU PREMIERE SPRAY</div>
+              <p class="description">A decidedly lighter, fresher, softer interpretation of N°5. . . a silky-smooth harmony of notes that reveals the delicate facet of the now and forever fragrance. The modern and airy interpretation of N°5 debuts in the iconic Classic Bottle to instantly elevate the N°5 experience.</p>
+
+              <div class="price">
+                <div class="qty-ctrl">
+                  <button type="button" class="minus" disabled>-</button>
+                  <input type="text" name="qty" value="1"></input>
+                  <button type="button" class="plus">+</button>
+                </div>
+                <div class=price-wrapper></div>
+                <div class="price" itemprop="price" content="2900" data-price-set="1.5" data-price-unboxed="0.8">29,00€</div>
+              </div>
+
+              <div class="article-type-choices">
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="unboxed"></input>
+                  <div class="type-label">Unboxed</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="retail" checked></input>
+                  <div class="type-label">Retail</div>
+                </label>
+                <label class="article-type">
+                  <input type="radio" name="item-type" value="set"></input>
+                  <div class="type-label">Set</div>
+                </label>
+              </div>
+
+              <hr/>
+              <br/>
+
+              <div class="text-right">
+                <div data-aplazame-simulator data-view="product"
+                      data-amount="2900"
+                      data-price="form.details [itemprop='price']"
+                      data-qty="form.details input[name='qty']"
+                      data-country="ES"
+                      data-currency="EUR"></div>
+              </div>
+              <div class="text-right">
+                <div id="widget-options" data-aplazame-simulator data-view="product"
+                      data-amount="2900"
+                      data-price="form.details [itemprop='price']"
+                      data-qty="form.details input[name='qty']"
+
+                      data-type=" select "
+                      data-option-branding=" true "
+                      data-option-custom-styles=" true "
+
+                      data-option-btn-text-color=" white "
+                      data-option-btn-bg-color=" Royalblue "
+
+                      data-option-title-smart=" true "
+                      data-option-title-default=" Fund it "
+                      data-option-title-zero-interest=" ¡Fund it without interests! "
+
+                      data-country="ES" data-currency="EUR"
+                      data-option-disable-modal=" true ">
+                  </div>
+              </div>
+              <!-- <div class="text-right">
+                <div data-aplazame-simulator data-view="product"
+                      data-amount="2900"
+                      data-location=".article-sample .details .price:after"></div>
+              </div> -->
+              <label style="display: block">
+                <input type="color" onchange=" document.getElementById('widget-options').setAttribute('data-option-btn-bg-color', this.value) "></input>
+              </label>
+
+              <label style="display: block">
+                <input type="checkbox" style="-webkit-appearance: checkbox;" onchange=" document.getElementById('widget-options').setAttribute('data-option-branding', this.checked ? 'true' : 'false') "></input>
+              </label>
+
+            </form>
+          </article>
+        
+      </section>
+      
 
       <section class="section-box cart-list">
 
         
-          
-            <div class="alert alert-danger">Pago cancelado</div>
-          
+          <div class="section-title">
+            <h3>Carrito de compra</h3>
+          </div>
         
 
         <article>
@@ -61,7 +152,7 @@
                 <div class="label">RELOJ EN ORO BLANCO DE 18 QUILATES Y DIAMANTES</div>
                 <div class="price-wrapper">
                   <span class="quantity">2x&nbsp;</span>
-                  <span class="price">$3,993.00</span>
+                  <span class="price">39,93€</span>
                 </div>
               </div>
             </li>
@@ -76,7 +167,7 @@
                 <div class="label">N°5 EAU PREMIERE SPRAY</div>
                 <div class="price-wrapper">
                   
-                  <span class="price">$3,509.00</span>
+                  <span class="price">35,09€</span>
                 </div>
               </div>
             </li>
@@ -91,7 +182,7 @@
                 <div class="label">ILLUSION D'OMBRE</div>
                 <div class="price-wrapper">
                   
-                  <span class="price">$1,573.00</span>
+                  <span class="price">15,73€</span>
                 </div>
               </div>
             </li>
@@ -101,7 +192,7 @@
                 <div class="concept">Envío</div>
               </div>
               <div class="col-xs-4 details">
-                <span class="price">$4.84</span>
+                <span class="price">4,84€</span>
               </div>
             </li>
             <li class="row">
@@ -109,7 +200,7 @@
                 <div class="concept">Descuento</div>
               </div>
               <div class="col-xs-4 details">
-                <span class="price">-$3.62</span>
+                <span class="price">-3,62€</span>
               </div>
             </li>
           </ul>
@@ -117,7 +208,7 @@
           <div class="total-wrapper">
             <div class="label">Total</div>
             <div class="price-wrapper">
-              <span class="price">$130.14</span>
+              <span class="price">130,14€</span>
             </div>
           </div>
 
@@ -125,6 +216,19 @@
 
       </section>
 
+      
+        <!-- <div class="pay-with-aplazame"> -->
+        <div class="row"></div>
+          <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="130140000" onclick="loadCheckout();">
+            <span>Pagar con&nbsp;</span><!--
+            --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
+          </button>
+
+          </div>
+
+        </div>
       
 
       <br/>
@@ -135,18 +239,18 @@
     <footer class="footer">
       <div class="-wrapper container-md">
         <div class="col-xs-6 no-wrap">
-          
-          <span>&copy;&nbsp;Aplazame SAPI de CV</span>
-          
+          <span>&copy;&nbsp;Aplazame S.L.</span>
         </div>
         <div class="col-xs-6 text-right">
+          
+            <a class="demo-footer-link" href="/simulator/">simulador</a>
           
         </div>
       </div>
     </footer>
 
     <script type="text/javascript" src="https://aplazame.com/static/aplazame.js"
-            data-aplazame=""
+            data-aplazame="12093289b594f50d3971e4719eedd5c314ceb6ba"
             data-sandbox="true"
             data-callback="apzReady"
             
@@ -171,10 +275,10 @@
       aplazame.checkout({
 	"toc": true,
 	"merchant": {
-		"checkout_url": "/mx/",
-		"cancel_url": "/mx/demo-cancel.html",
-		"ko_url": "/mx/demo-cancel.html",
-		"success_url": "/mx/demo-success.html"
+		"cancel_url": "/demo-cancel.html",
+		"ko_url": "/demo-cancel.html",
+		"success_url": "/demo-success.html",
+		"close_on_success": false
 	},
 	"customer": {
 		"id": "140",
@@ -182,12 +286,12 @@
 		"address": {
 			"phone": "616123456",
 			"alt_phone": "616001122",
-			"street": "Calle Holanda 6",
-			"address_addition": "",
-			"city": "Ciudad de México",
-			"state": "Ciudad de México",
-			"country": "MX",
-			"postcode": "04120"
+			"street": "Torre Picasso, Plaza Pablo Ruiz Picasso 1",
+			"address_addition": "Metro Santiago Bernabeu",
+			"city": "Madrid",
+			"state": "Madrid",
+			"country": "ES",
+			"postcode": "28020"
 		},
 		"type": "e",
 		"gender": 0,
@@ -206,7 +310,7 @@
 				"url": "http://www.chanel.com/es_ES/Relojeria/relojes_joyer%C3%ADa#reloj-en-oro-blanco-de-18-quilates-y-diamantes-J10211",
 				"image_url": "https://i.imgur.com/1nIay4X.jpg",
 				"quantity": 2,
-				"price": 330000,
+				"price": 3300,
 				"tax_rate": 2100,
 				"discount_rate": 200
 			},
@@ -217,7 +321,7 @@
 				"url": "http://www.chanel.com/en_US/fragrance-beauty/Fragrance-N%C2%B05-N%C2%B05-88145/sku/138083",
 				"image_url": "https://i.imgur.com/CZ5UPbl.jpg",
 				"quantity": 1,
-				"price": 290000,
+				"price": 2900,
 				"tax_rate": 2100
 			},
 			{
@@ -227,39 +331,39 @@
 				"url": "http://www.chanel.com/en_US/fragrance-beauty/Makeup-Eyeshadow-ILLUSION-D%27OMBRE-122567",
 				"image_url": "https://i.imgur.com/4j2ib6w.jpg",
 				"quantity": 1,
-				"price": 130000,
+				"price": 1300,
 				"tax_rate": 2100,
 				"discount_rate": 100
 			}
 		],
 		"discount": 300,
-		"currency": "MXN",
-		"total_amount": 1318945
+		"currency": "EUR",
+		"total_amount": 13014
 	},
 	"billing": {
 		"first_name": "Frank",
 		"last_name": "Costello",
 		"phone": "+34932671040",
 		"alt_phone": null,
-		"street": "Calle Holanda 6",
+		"street": "Nuñez de Balboa, 120",
 		"address_addition": "",
-		"city": "Ciudad de México",
-		"state": "Ciudad de México",
-		"country": "MX",
-		"postcode": "04120"
+		"city": "Madrid",
+		"state": "Madrid",
+		"country": "ES",
+		"postcode": "28006"
 	},
 	"shipping": {
 		"first_name": "Fernando",
 		"last_name": "Cabello",
 		"phone": "616123456",
 		"alt_phone": "616001122",
-		"street": "Calle Holanda 6",
-		"address_addition": "",
-		"city": "Ciudad de México",
-		"state": "Ciudad de México",
-		"country": "MX",
-		"postcode": "04120",
-		"price": 50000,
+		"street": "Torre Picasso, Plaza Pablo Ruiz Picasso 1",
+		"address_addition": "Metro Santiago Bernabeu",
+		"city": "Madrid",
+		"state": "Madrid",
+		"country": "ES",
+		"postcode": "28020",
+		"price": 500,
 		"tax_rate": 2100,
 		"name": "SEUR",
 		"discount": 100

@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /* globals aplazame */
 
 var _ = require('../../src/tools/tools');
@@ -51,7 +51,7 @@ form.addEventListener('submit', function (e) {
   });
 });
 
-},{"../../src/tools/tools":43}],2:[function(require,module,exports){
+},{"../../src/tools/tools":44}],2:[function(require,module,exports){
 /**
  * https://github.com/gre/bezier-easing
  * BezierEasing - use bezier curve for transition easing function
@@ -544,6 +544,8 @@ module.exports = {
 };
 
 },{}],8:[function(require,module,exports){
+(function (process){
+/* global process */
 
 (function (root, factory) {
   if( typeof exports === 'object' && typeof module !== 'undefined' ) {
@@ -558,128 +560,124 @@ module.exports = {
   }
 })(this, function () {
 
-  function runHandler (fn, deferred, x, fulfilled) {
-    if( typeof fn === 'function' ) {
-      try {
-        deferred.resolve( fn(x) );
-      } catch(reason) {
-        deferred.reject( reason );
-      }
-    } else {
-      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+  function _runQueue (queue) {
+    for( var i = 0, n = queue.length ; i < n ; i++ ) {
+      queue[i]();
     }
   }
 
-  function resolvePromise (p, x, fulfilled) {
-    if( p.resolved ) {
-      return;
-    }
-    p.resolved = true;
+  var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick :
+      (function (global) {
+        if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
+          return resolved.then.bind(resolved);
+        })( global.Promise.resolve() );
+        if( 'MutationObserver' in global ) return (function (node) {
+          return function (callback) {
+            var observer = new MutationObserver(function () {
+              callback();
+              observer.disconnect();
+            });
+            observer.observe( node, {characterData: true} );
+            node.data = false;
+          };
+        })( document.createTextNode('') );
+        return global.setImmediate || global.setTimeout;
+      })( typeof window === 'object' ? window : this );
 
-    p.result = x;
-    p.fulfilled = fulfilled || false;
-
-    var queue = p.queue.splice(0);
-    p.queue = null;
-
-    setTimeout(function () {
-      for( var i = 0, n = queue.length ; i < n ; i++ ) {
-        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
-      }
-    }, 0);
+  function once (fn) {
+    return function () {
+      if( fn ) fn.apply(this, arguments);
+      fn = null;
+    };
   }
 
-  function runThenable (then, p, x) {
-    var executed = false;
+  function isObjectLike (x) {
+    return ( typeof x === 'object' || typeof x === 'function' );
+  }
+
+  function isThenable (x) {
+    return isObjectLike(x) && 'then' in x;
+  }
+
+  function runThenable (then, xThen, p, x, resolve, reject) {
     try {
       then.call(x, function (value) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, value, true);
+        xThen(p, value, true, resolve, reject);
       }, function (reason) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, reason, false);
+        xThen(p, reason, false, resolve, reject);
       });
     } catch(err) {
-      if( executed ) return;
-      xThen(p, err, false);
+      xThen(p, err, false, resolve, reject);
     }
   }
 
-  function xThen (p, x, fulfilled) {
+  function xThen (p, x, fulfilled, resolve, reject) {
     var then;
 
-    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+    if( x && isObjectLike(x) ) {
       try {
+        if( x === p ) throw new TypeError('A promise can not be resolved by itself');
         then = x.then;
 
         if( fulfilled && typeof then === 'function' ) {
-          runThenable(then, p, x);
+          runThenable(then, once(xThen), p, x, resolve, reject);
         } else {
-          resolvePromise(p, x, fulfilled);
+          (fulfilled ? resolve : reject)(x);
         }
       } catch (reason) {
-        resolvePromise(p, reason, false);
+        reject(reason);
       }
     } else {
-      resolvePromise(p, x, fulfilled);
+      (fulfilled ? resolve : reject)(x);
     }
-  }
-
-  function resolveProcedure (p, x, fulfilled) {
-    if( p.resolving ) return;
-    p.resolving = true;
-
-    if( x === p.promise ) {
-      fulfilled = false;
-      x = new TypeError('A promise can not be resolved by itself');
-    }
-
-    xThen(p, x, fulfilled);
   }
 
   function Parole (resolver) {
-    if( !(this instanceof Parole) ) {
-      return new Parole(resolver);
-    }
+    if( !(this instanceof Parole) ) return new Parole(resolver);
 
-    if( typeof resolver !== 'function' ) {
-      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
-    }
+    var p = this,
+        reject = function (reason) {
+          if( p.fulfilled || p.rejected ) return;
+          p.rejected = true;
+          p.value = reason;
+          nextTick(function () { _runQueue(p.queue); });
+        };
 
-    var p = {
-      queue: [],
-      promise: this
-    };
+    p.queue = [];
 
-    this.__promise = p;
-
-    try {
-      resolver(function (value) {
-        resolveProcedure(p, value, true);
-      }, function (reason) {
-        resolveProcedure(p, reason, false);
-      });
-    } catch (reason) {
-      resolveProcedure(p, reason, false);
-    }
-
+    resolver(function (value) {
+      xThen(p, value, true, function (result) {
+        if( p.fulfilled || p.rejected ) return;
+        p.fulfilled = true;
+        p.value = result;
+        nextTick(function () { _runQueue(p.queue); });
+      }, reject);
+    }, reject);
   }
 
   Parole.prototype.then = function (onFulfilled, onRejected) {
-    var p = this.__promise,
-        deferred = Parole.defer();
+    var p = this;
+    return new Parole(function (resolve, reject) {
 
-    if( p.queue ) {
-      p.queue.push([onFulfilled, onRejected, deferred]);
-    } else {
-      setTimeout(function () {
-        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
-      }, 0);
-    }
+      function complete () {
+        var then = p.fulfilled ? onFulfilled : onRejected;
+        if( typeof then === 'function' ) {
+          try {
+            resolve( then(p.value) );
+          } catch(reason) {
+            reject( reason );
+          }
+        } else if( p.fulfilled ) resolve(p.value);
+        else reject(p.value);
+      }
 
-    return deferred.promise;
+      if( !p.fulfilled && !p.rejected ) {
+        p.queue.push(complete);
+      } else {
+        nextTick(complete);
+      }
+
+    });
   };
 
   Parole.prototype.catch = function (onRejected) {
@@ -687,12 +685,6 @@ module.exports = {
   };
 
   // Promise methods
-
-  function each (iterable, handler) {
-    for( var i = 0, n = iterable.length; i < n ; i++ ) {
-      handler(iterable[i], i);
-    }
-  }
 
   Parole.defer = function () {
     var deferred = {};
@@ -717,47 +709,30 @@ module.exports = {
     });
   };
 
-  Parole.all = function (iterable) {
+  Parole.all = function (promises) {
+    var waiting_promises = promises.length;
     return new Parole(function (resolve, reject) {
-      var pending = iterable.length,
-          results = [];
-      each(iterable, function (_promise, i) {
-
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+      var results = new Array(waiting_promises);
+      promises.forEach(function (promise, i) {
+        var addresult = function (result) {
           results[i] = result;
-          if( --pending === 0 ) {
-            resolve(results);
-          }
-        }, function (reason) {
-          if( pending !== -1 ) {
-            pending === -1;
-            reject(reason);
-          }
-        });
+          waiting_promises--;
+          if( !waiting_promises ) resolve(results);
+        };
+        if( isThenable(promise) ) promise.then.call(promise, addresult, reject);
+        else addresult(promise);
       });
+      if( !results.length ) resolve(results);
     });
   };
 
-  Parole.race = function (iterable) {
+  Parole.race = function (promises) {
     return new Parole(function (resolve, reject) {
-      var done = false;
-
-      each(iterable, function (_promise) {
-        if( done ) {
-          return;
-        }
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-          if( !done ) {
-            done = true;
-            resolve(result);
-          }
-        }, function (reason) {
-          if( !done ) {
-            done = true;
-            reject(reason);
-          }
-        });
+      promises.forEach(function (promise) {
+        if( isThenable(promise) ) promise.then.call(promise, resolve, reject);
+        else resolve(promise);
       });
+      if( !promises.length ) resolve();
     });
   };
 
@@ -765,7 +740,194 @@ module.exports = {
 
 });
 
-},{}],9:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"_process":9}],9:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],10:[function(require,module,exports){
 var arrayShift = [].shift;
 
 module.exports = function extend () {
@@ -783,7 +945,7 @@ module.exports = function extend () {
   return dest;
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 require('./browser-polyfills/date');
 require('./browser-polyfills/dom-closest');
@@ -791,14 +953,14 @@ require('./browser-polyfills/event-listener');
 require('./browser-polyfills/match-media');
 require('./browser-polyfills/matches-selector');
 
-},{"./browser-polyfills/date":11,"./browser-polyfills/dom-closest":12,"./browser-polyfills/event-listener":13,"./browser-polyfills/match-media":14,"./browser-polyfills/matches-selector":15}],11:[function(require,module,exports){
+},{"./browser-polyfills/date":12,"./browser-polyfills/dom-closest":13,"./browser-polyfills/event-listener":14,"./browser-polyfills/match-media":15,"./browser-polyfills/matches-selector":16}],12:[function(require,module,exports){
 
 if (!Date.now) {
   Date.now = function now() {
     return new Date().getTime();
   };
 }
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 if( !Element.prototype.closest ) {
   Element.prototype.closest = function (selector) {
@@ -813,7 +975,7 @@ if( !Element.prototype.closest ) {
     return el;
   };
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 if( !Element.prototype.addEventListener ) {
   if( Element.prototype.attachEvent ) {
@@ -827,13 +989,13 @@ if( !Element.prototype.addEventListener ) {
     throw 'Browser not compatible with element events';
   }
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (root) {
   'use strict';
 
   root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
 })(this);
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 
 if( !Element.prototype.matchesSelector ) {
   Element.prototype.matchesSelector = (
@@ -845,7 +1007,7 @@ if( !Element.prototype.matchesSelector ) {
 }
 
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 var extend = require('./extend');
 
@@ -923,7 +1085,7 @@ _.extend(_, {
 
 module.exports = _;
 
-},{"./browser-polyfills":10,"./deferred/animate":17,"./deferred/wait":18,"./dom":19,"./events":21,"./extend":22,"./fn/debounce":23,"./fn/once":24,"./fn/ready":25,"./fn/template":26,"./key":27,"./normalize":28,"./path":29,"./scope":30,"./scroll/bundle":33,"./type":35,"parole":8}],17:[function(require,module,exports){
+},{"./browser-polyfills":11,"./deferred/animate":18,"./deferred/wait":19,"./dom":20,"./events":22,"./extend":23,"./fn/debounce":24,"./fn/once":25,"./fn/ready":26,"./fn/template":27,"./key":28,"./normalize":29,"./path":30,"./scope":31,"./scroll/bundle":34,"./type":36,"parole":8}],18:[function(require,module,exports){
 
 var Parole = require('parole'),
     beizerEasing = require('bezier-easing'),
@@ -1079,7 +1241,7 @@ animate.time = function (el) {
 
 module.exports = animate;
 
-},{"bezier-easing":2,"parole":8}],18:[function(require,module,exports){
+},{"bezier-easing":2,"parole":8}],19:[function(require,module,exports){
 
 var Parole = require('parole'),
 	wait = function (delay, callback) {
@@ -1104,7 +1266,7 @@ var Parole = require('parole'),
 
 module.exports = wait;
 
-},{"parole":8}],19:[function(require,module,exports){
+},{"parole":8}],20:[function(require,module,exports){
 
 var classListEnabled = !!document.createElement('div').classList;
 
@@ -1150,6 +1312,11 @@ function _formKey(o, key, value) {
     o[_key] = o[_key] || {};
     o = o[_key];
   });
+}
+
+function _currentScriptAlt () {
+ var scripts = document.getElementsByTagName('script');
+ return scripts[scripts.length - 1];
 }
 
 var _dom = {
@@ -1225,24 +1392,15 @@ var _dom = {
       }
     });
     return data;
-  }
-};
-
-function _currentScript () {
- var scripts = document.getElementsByTagName('script');
- return scripts[scripts.length - 1];
-}
-
-Object.defineProperty(_dom, 'currentScript', {
-  get: function () {
-    return document.currentScript || _currentScript();
   },
-  set: function () {}
-});
+  currentScript: function () {
+    return document.currentScript || _currentScriptAlt();
+  },
+};
 
 module.exports = _dom;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 
 'use strict';
 
@@ -1256,7 +1414,7 @@ module.exports = function (expression) {
   };
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 
 module.exports = {
   on: function (el, eventName, handler, useCapture) {
@@ -1285,7 +1443,7 @@ module.exports = {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 
 var arrayShift = [].shift,
     type = require('./type');
@@ -1351,7 +1509,7 @@ module.exports = {
   copy: _copy
 };
 
-},{"./_extend":9,"./type":35}],23:[function(require,module,exports){
+},{"./_extend":10,"./type":36}],24:[function(require,module,exports){
 
 function debounce (fn, timeslot) {
   timeslot = timeslot || 80;
@@ -1374,7 +1532,7 @@ function debounce (fn, timeslot) {
 
 module.exports = debounce;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 
 function once (fn, nextValue) {
   var result, hasNextValue = arguments.length > 1;
@@ -1390,7 +1548,7 @@ function once (fn, nextValue) {
 
 module.exports = once;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var readyListeners = [],
     initReady = function () {
       var listeners = readyListeners;
@@ -1415,7 +1573,7 @@ function ready (callback) {
 
 module.exports = ready;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -1453,7 +1611,7 @@ template.lookup = function () {
 };
 
 module.exports = template;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var type = require('./type');
 
 function _key (o, _key, value){
@@ -1501,7 +1659,7 @@ module.exports = {
   keys: Object.keys
 };
 
-},{"./type":35}],28:[function(require,module,exports){
+},{"./type":36}],29:[function(require,module,exports){
 
 var normalize = {
   isTouchDevice: 'ontouchstart' in document.documentElement,
@@ -1522,8 +1680,8 @@ var normalize = {
 
 module.exports = normalize;
 
-},{"./dom":19}],29:[function(require,module,exports){
-var RE_dotsBack = /[^\/]+\/\.\.\//g,
+},{"./dom":20}],30:[function(require,module,exports){
+var RE_dotsBack = /[^/]+\/\.\.\//g,
 	clearStr = function () { return ''; };
 
 function _joinPath () {
@@ -1547,7 +1705,7 @@ module.exports = {
   joinPath: _joinPath
 };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 var evalExpression = require('./eval');
@@ -1577,7 +1735,7 @@ Scope.prototype.eval = function ( expression, thisArg ) {
 
 module.exports = Scope;
 
-},{"./eval":20}],31:[function(require,module,exports){
+},{"./eval":21}],32:[function(require,module,exports){
 
 var html = document.documentElement, scroll_root = document.scrollingElement;
 var supports_passive = false;
@@ -1641,7 +1799,7 @@ var scroll = {
 
 module.exports = scroll;
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -1689,7 +1847,7 @@ module.exports = function (scroll) {
 	return scroll;
 };
 
-},{"../deferred/animate":17,"parole":8}],33:[function(require,module,exports){
+},{"../deferred/animate":18,"parole":8}],34:[function(require,module,exports){
 
 var scroll = require('../scroll');
 
@@ -1697,7 +1855,7 @@ require('./top-class')(scroll);
 require('./animate')(scroll);
 
 module.exports = scroll;
-},{"../scroll":31,"./animate":32,"./top-class":34}],34:[function(require,module,exports){
+},{"../scroll":32,"./animate":33,"./top-class":35}],35:[function(require,module,exports){
 
 module.exports = function (scroll) {
 
@@ -1720,9 +1878,9 @@ module.exports = function (scroll) {
 
 };
 
-},{"../dom":19,"../fn/ready":25}],35:[function(require,module,exports){
+},{"../dom":20,"../fn/ready":26}],36:[function(require,module,exports){
 arguments[4][7][0].apply(exports,arguments)
-},{"dup":7}],36:[function(require,module,exports){
+},{"dup":7}],37:[function(require,module,exports){
 
 function thousands(amount, groupSeparator) {
   if( /\d{3}\d+/.test(amount) ) {
@@ -1806,7 +1964,7 @@ module.exports = {
 	parsePrice: parsePrice
 };
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
@@ -1874,7 +2032,7 @@ function querySelector (selector, rootElement) {
     return [];
   }
 
-  if( !/\:has\(/.test(selector) ) {
+  if( !/:has\(/.test(selector) ) {
     return [].slice.call( (rootElement || document).querySelectorAll( selector ) );
   }
 
@@ -1992,7 +2150,7 @@ _.removeClass = function (element, className) {
 
 module.exports = _;
 
-},{"nitro-tools/extend":4}],38:[function(require,module,exports){
+},{"nitro-tools/extend":4}],39:[function(require,module,exports){
 
 
 function hexToRgb(hex) {
@@ -2042,7 +2200,7 @@ module.exports = {
   lightenHEX: lightenHEX,
 };
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 
 
 function _key (o, key, value) {
@@ -2056,10 +2214,18 @@ function _key (o, key, value) {
 	});
 }
 
-function camelCase (text) {
-	return text.replace(/_(\w)/g, function (_matched, letter) {
+function toCamelCase (text) {
+	return text.replace(/[_-](\w)/g, function (_matched, letter) {
 		return letter.toUpperCase();
 	});
+}
+
+function toUnderscoreCase (text) {
+	return text.replace(/-(\w)/g, function (_matched, letter) {
+		return '_' + letter;
+	}).replace(/([a-z])([A-Z])/g, function (_matched, a, b) {
+		return a + '_' + b;
+	}).toLowerCase();
 }
 
 function deserialize (querystring, decode) {
@@ -2073,17 +2239,20 @@ function deserialize (querystring, decode) {
 			throw new Error('could not parse ' + keyValue);
 		}
 
-		_key(result, camelCase(matched[1]), decode ? decodeURI(matched[2]) : matched[2] );
+		_key(result, toUnderscoreCase(matched[1]), decode ? decodeURI(matched[2]) : matched[2] );
 
 	});
 
 	return result;
-
 }
 
-module.exports = deserialize;
+module.exports = {
+  deserialize: deserialize,
+  toUnderscoreCase: toUnderscoreCase,
+  toCamelCase: toCamelCase,
+};
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 
 
 function getErrorObject(){
@@ -2127,7 +2296,7 @@ log.history = history;
 
 module.exports = log;
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 
 var messageTarget = {},
     showLogs = false,
@@ -2175,7 +2344,7 @@ onMessage.off = function (target, handler) {
 
 module.exports = onMessage;
 
-},{"./log":40}],42:[function(require,module,exports){
+},{"./log":41}],43:[function(require,module,exports){
 
 function template (name, data){
   return template.cache[name](data || {});
@@ -2214,7 +2383,7 @@ template.lookup = function () {
 
 module.exports = template;
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 
 var _ = require('vanilla-tools');
 
@@ -2224,11 +2393,11 @@ _.extend(_,
   require('./colors'),
   require('./browser-tools'),
   require('./amount-price'),
+  require('./deserialize'),
   {
     remove_style: / Trident\//.test(navigator.userAgent) ? '' : null,
     template: require('./template'),
     onMessage: require('./message-listener'),
-    deserialize: require('./deserialize')
   }
 );
 
@@ -2265,4 +2434,4 @@ _.debounce = function (fn, debounce_duration) {
 
 module.exports = _;
 
-},{"./amount-price":36,"./browser-tools":37,"./colors":38,"./deserialize":39,"./log":40,"./message-listener":41,"./template":42,"nitro-tools/lists":5,"nitro-tools/path":6,"vanilla-tools":16}]},{},[1]);
+},{"./amount-price":37,"./browser-tools":38,"./colors":39,"./deserialize":40,"./log":41,"./message-listener":42,"./template":43,"nitro-tools/lists":5,"nitro-tools/path":6,"vanilla-tools":17}]},{},[1]);

@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /* globals aplazame */
 
 
@@ -112,10 +112,6 @@ aplazame._.ready(function () {
 
       console.log('aplazame.info()', aplazame.info() );
 
-      if( /https?:\/\/api-dev\.aplazame\.com\/?/.test(aplazame.info().api.host) && data.merchant.confirmation_url === '/confirm' ) {
-        data.merchant.confirmation_url = 'https://demo-dev.aplazame.com/confirm';
-      }
-
       if( !orderId ) {
         orderId = randOrderId();
         location.hash = '/order/' + orderId;
@@ -150,11 +146,7 @@ aplazame._.ready(function () {
 });
 
 },{"http-rest/browser":2,"parole":3}],2:[function(require,module,exports){
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.$http = factory());
-}(this, (function () { 'use strict';
+'use strict';
 
 var isType = function (type, o) {
       return o ? typeof o === type : function (_o) {
@@ -173,25 +165,51 @@ var isArray = Array.isArray || function (o) {
 var isString = isType('string');
 var isFunction = isType('function');
 
-function mapObject (o, iteratee, thisArg) {
+function toUnderscoreCase (text) {
+  return text.replace(/-/g, '_').replace(/([a-z])([A-Z])/, function (matched, a, b) { return a + '_' + b; }).toLowerCase();
+}
+
+function toCamelCase (text) {
+  return text.replace(/([a-z])[-_]([a-z])/g, function (matched, a, b) { return a + b.toUpperCase(); });
+}
+
+function toHeaderCase (text) {
+  var key = text.replace(/_/g, '-').replace(/([a-z])([A-Z])/, function (matched, a, b) { return a + '-' + b; });
+  return key[0].toUpperCase() + key.substr(1).toLowerCase().replace(/-[a-z]/g, function (matched) { return matched.toUpperCase(); });
+}
+
+function _passThrought (value) {
+  return value;
+}
+
+var case_formatters = {
+  underscore: toUnderscoreCase,
+  camel: toCamelCase,
+  header: toHeaderCase,
+};
+
+function mapObject (o, iteratee, thisArg, mapFormatter) {
   var result = {};
+  mapFormatter = mapFormatter || _passThrought;
   for( var key in o ) {
-    result[key] = iteratee.call(thisArg, o[key], key);
+    result[mapFormatter(key)] = iteratee.call(thisArg, o[key], key);
   }
   return result;
 }
 
-function copy (src) {
+function copy (src, mapFormatter) {
+  if( typeof mapFormatter === 'string' ) mapFormatter = case_formatters[mapFormatter];
+
   if( isArray(src) ) {
     return src.map(function (item) {
-      return copy(item);
+      return copy(item, mapFormatter);
     });
   }
 
   if( isObject(src) ) {
     return mapObject(src, function (item) {
-      return copy(item);
-    });
+      return copy(item, mapFormatter);
+    }, src, mapFormatter);
   }
 
   return src;
@@ -204,7 +222,7 @@ function extend (dest, src) {
 }
 
 function _mergeArrays(dest, src, concatArrays) {
-  if( !concatArrays ) return src.map(copy);
+  if( !concatArrays ) return src.map(function (item) { return copy(item); });
   [].push.apply(dest, src);
   for( var i = 0, n = src.length ; i < n ; i++ ) {
     dest.push( dest[i] ? merge(dest[i], src[i]) : copy(src[i]) );
@@ -239,48 +257,6 @@ function resolveFunctions (o, args, this_arg) {
   return o;
 }
 
-function headerToTitleSlug(text) {
-  // console.log('headerToTitleSlug', text);
-  var key = text.replace(/([a-z])([A-Z])/g, function (match, lower, upper) {
-      return lower + '-' + upper;
-  });
-  key = key[0].toUpperCase() + key.substr(1);
-
-  return key;
-}
-
-function headersToTitleSlug(headers) {
-  var _headers = {};
-
-  for( var key in headers ) {
-    _headers[ headerToTitleSlug(key) ] = headers[key];
-  }
-
-  return _headers;
-}
-
-function headerToCamelCase(text) {
-  var key = text[0].toLowerCase() + text.substr(1);
-  return key.replace(/([a-z])-([a-zA-Z])/g, function (match, lower, upper) {
-    return lower + upper.toUpperCase();
-  });
-}
-
-
-
-function serializeParams (params, previous_levels) {
-  var results = [];
-  previous_levels = previous_levels ||[];
-
-  for( var param in params ) {
-    if( typeof params[param] === 'object' ) [].push.apply( results, serializeParams(params[param], previous_levels.concat(param) ) );
-    else results.push( previous_levels.concat(param).reduce(function (key, param) {
-      return key + ( key ? ('[' + param + ']') : param );
-    }, '') + '=' + encodeURIComponent(params[param]) );
-  }
-  return results;
-}
-
 var RE_contentType = /([^/]+)\/([^+]+\+)?([^;]*)/;
 function parseContentType(contentType) {
   var matches = contentType && contentType.match(RE_contentType);
@@ -288,8 +264,8 @@ function parseContentType(contentType) {
 }
 
 
-var arrayPush = Array.prototype.push;
-var arraySlice = Array.prototype.slice;
+var arrayPush = Array.prototype.push,
+    arraySlice = Array.prototype.slice;
 
 function _sanitizePath(path, i, last) {
   if( i > 0 ) path = path.replace(/^\.*\//, '');
@@ -335,9 +311,41 @@ function joinPaths () {
   return _joinPaths( _unraise(arraySlice.call(arguments)) );
 }
 
-var http_defaults = {};
-var makeRequest = function () {};
-var Parole = typeof Promise !== 'undefined' ? Promise : function () {};
+function keysTobrackets (keys) {
+  return keys.reduce(function (result, key, i) {
+    return result + (i ? ( '[' + key + ']' ) : key);
+  }, '');
+}
+
+function _serialize (data, params, keys) {
+
+  if( typeof data === 'object' ) {
+    if( Array.isArray(data) ) {
+      for( var i = 0, n = data.length; i < n ; i++ ) {
+        _serialize( data[i], params, keys.concat( typeof data[i] === 'object' ? i : '' ) );
+      }
+    } else {
+      for( var k in data ) {
+        _serialize( data[k], params, keys.concat(k) );
+      }
+    }
+  } else {
+    params.push( keysTobrackets(keys) + '=' + encodeURIComponent('' + data) );
+    // params.push( keysTobrackets(keys) + '=' + '' + data );
+  }
+
+  return params;
+}
+
+function serializeQS (data) {
+  // eslint-disable-next-line
+  // console.log('serialize', data, _serialize(data, [], []) );
+  return _serialize(data, [], []).join('&');
+}
+
+var http_defaults = {},
+    makeRequest = function () {},
+    Parole = typeof Promise !== 'undefined' ? Promise : function () {};
 
 function _plainOptions (_options_pile, method) {
   var options_pile = _options_pile ? copy(_options_pile) : [];
@@ -363,7 +371,30 @@ function _plainOptions (_options_pile, method) {
   return plain_options;
 }
 
-function http$1 (url, _config, body) {
+function getInterceptorsProcessor (interceptors, resolve, reject, is_error) {
+  function processInterceptor (_res, interceptor) {
+    if( interceptor ) {
+      try{
+        processInterceptor( resolve( interceptor(_res) ), interceptors.shift() );
+      } catch (err) {
+        reject(err);
+      }
+    } else (is_error ? reject : resolve)(_res);
+  }
+  return function (res) {
+    return processInterceptor( res, interceptors.shift() );
+  };
+}
+
+var isBlob = typeof Blob === 'function' ? function (x) {
+  return Blob.prototype.isPrototypeOf(x);
+} : function () { return false; };
+
+var isFormData = typeof FormData === 'function' ? function (x) {
+  return FormData.prototype.isPrototypeOf(x);
+} : function () { return false; };
+
+function http (url, _config, body) {
 
   var config = _plainOptions([http_defaults, _config || {}]);
 
@@ -371,44 +402,75 @@ function http$1 (url, _config, body) {
   config.url = url === config ? config.url : url;
   config.method = config.method ? config.method.toUpperCase() : 'GET';
   config.timestamp = new Date().getTime();
-  config.body = body || config.body;
 
   if( !isString(config.url) ) throw new Error('url must be a string');
 
+  var interceptors = config.interceptors || [];
+  delete config.interceptors;
+
   config = resolveFunctions(config, [config]);
+  config.body = body || config.body;
 
   if( config.params ) {
-    config.url += ( /\?/.test(config.url) ? '&' : '?' ) + serializeParams( config.params ).join('&');
+    config.url += ( /\?/.test(config.url) ? '&' : '?' ) + serializeQS( config.params );
   }
 
-  var headers = copy(config.headers || {});
+  var headers = copy(config.headers || {}, 'underscore');
 
   if( config.json && !config.body ) {
-    headers.contentType = headers.contentType || 'application/json';
+    headers.content_type = headers.content_type || 'application/json';
     config.body = JSON.stringify(config.json);
-  } else if( headers.contentType === 'application/json' && typeof config.body === 'object' ) {
+  } else if( headers.content_type === 'application/json' && typeof config.body === 'object' ) {
     config.body = JSON.stringify(config.body);
   } else if( typeof config.body === 'object' &&
-      !Blob.prototype.isPrototypeOf(config.body) &&
-      !FormData.prototype.isPrototypeOf(config.body) ) {
+      !isBlob(config.body) &&
+      !isFormData(config.body) ) {
     config.body = JSON.stringify(config.body);
-    headers.contentType = headers.contentType || 'application/json';
-  } else if( !headers.contentType ) headers.contentType || 'application/json';
+    headers.content_type = headers.content_type || 'application/json';
+  } else if( !headers.content_type ) headers.content_type || 'application/json';
 
-  headers.accept = headers.accept || headers.contentType || 'application/json';
+  headers.accept = headers.accept || headers.content_type || 'application/json';
 
-  config.headers = headersToTitleSlug(headers);
+  config.headers = copy(headers, 'header');
+
+  var req_interceptors = [],
+      req_error_interceptors = [],
+      res_interceptors = [],
+      res_error_interceptors = [];
+
+  interceptors.forEach(function (interceptor) {
+    if( interceptor.request ) req_interceptors.push(interceptor.request);
+    if( interceptor.requestError ) req_error_interceptors.push(interceptor.requestError);
+    if( interceptor.response ) res_interceptors.push(interceptor.response);
+    if( interceptor.responseError ) res_error_interceptors.push(interceptor.responseError);
+  });
 
   var request = new Parole(function (resolve, reject) {
-    makeRequest(config, resolve, reject);
-  });
+        if( req_interceptors.length ) getInterceptorsProcessor(req_interceptors, resolve, reject)(config);
+        else resolve(config);
+      })
+      .catch(function (reason) {
+        if( req_error_interceptors.length ) {
+          return new Parole(function (resolve, reject) {
+            getInterceptorsProcessor(req_error_interceptors, resolve, reject, true)(reason);
+          });
+        } else throw reason;
+      })
+      .then(function (config) {
+        return new Parole(function (resolve, reject) {
+          makeRequest(config,
+            res_interceptors.length ? getInterceptorsProcessor(res_interceptors, resolve, reject) : resolve,
+            res_error_interceptors.length ? getInterceptorsProcessor(res_error_interceptors, resolve, reject) : reject
+          );
+        });
+      });
 
   request.config = config;
 
   return request;
 }
 
-http$1.responseData = function (response) {
+http.responseData = function (response) {
   return response.data;
 };
 
@@ -419,14 +481,14 @@ function httpBase (target, options, options_pile) {
           _options = Object.create(_options || {});
           if( url ) _options.url = url;
           _options = _plainOptions( _options ? options_pile.concat(_options) : options_pile, method );
-          return http$1( _options.url, _options, data );
+          return http( _options.url, _options, data );
         } : function (url, _options, params) {
           if( typeof url === 'object' ) { params = _options; _options = url; url = null; }
           _options = Object.create(_options || {});
           if( url ) _options.url = url;
           if( params ) _options.params = params;
           _options = _plainOptions( _options ? options_pile.concat(_options) : options_pile, method );
-          return http$1( _options.url, _options );
+          return http( _options.url, _options );
         };
       };
 
@@ -443,26 +505,30 @@ function httpBase (target, options, options_pile) {
       return httpBase( requestMethod('get'), options, options_pile.concat(options) );
     },
     config: function (_options) {
-      if( options === undefined ) return _plainOptions( [http_defaults].concat(this.options_pile).concat(options) );
+      if( options === undefined ) return _plainOptions( this.options_pile.concat(options) );
       merge( options, _options );
     },
-    responseData: http$1.responseData,
+    addInterceptor: function (interceptor_definitions) {
+      options.interceptors = options.interceptors || [];
+      options.interceptors.push(interceptor_definitions);
+    },
+    responseData: http.responseData,
   });
 }
 
-http$1.base = httpBase;
-httpBase(http$1, http_defaults, []);
+http.base = httpBase;
+httpBase(http, http_defaults, []);
 
-http$1.usePromise = function (P) { Parole = P; return http$1; };
-http$1.useRequest = function (request) {
+http.usePromise = function (P) { Parole = P; return http; };
+http.useRequest = function (request) {
   if( !isFunction(request) ) throw new Error('request should be a function');
   else makeRequest = request;
-  return http$1;
+  return http;
 };
 
-http$1.config = function (options) {
+http.config = function (options) {
   merge( http_defaults, options );
-  return http$1;
+  return http;
 };
 
 /* global ActiveXObject */
@@ -478,7 +544,7 @@ function _getXMLHeaders (request) {
   request.getAllResponseHeaders().split('\n').forEach(function (headerLine) {
     var matched = headerLine.match(/(.*?):(.*)/);
     if( matched ) {
-      headers[headerToCamelCase(matched[1])] = matched[2].trim();
+      headers[toUnderscoreCase(matched[1])] = matched[2].trim();
     }
   });
 
@@ -503,7 +569,7 @@ function xmlRequest (config, resolve, reject) {
     if( request.readyState === 'complete' || request.readyState === 4 ) {
       // var type = parseContentType( request.getResponseHeader('Content-Type') ),
       var headers = _getXMLHeaders(request),
-          type = parseContentType( headers.contentType ),
+          type = parseContentType( headers.content_type ),
           response = {
             config: config,
             status: request.status,
@@ -531,13 +597,13 @@ function xmlRequest (config, resolve, reject) {
   request.send( config.body );
 }
 
-http$1.useRequest(xmlRequest);
+http.useRequest(xmlRequest);
 
-return http$1;
-
-})));
+module.exports = http;
 
 },{}],3:[function(require,module,exports){
+(function (process){
+/* global process */
 
 (function (root, factory) {
   if( typeof exports === 'object' && typeof module !== 'undefined' ) {
@@ -552,128 +618,124 @@ return http$1;
   }
 })(this, function () {
 
-  function runHandler (fn, deferred, x, fulfilled) {
-    if( typeof fn === 'function' ) {
-      try {
-        deferred.resolve( fn(x) );
-      } catch(reason) {
-        deferred.reject( reason );
-      }
-    } else {
-      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
+  function _runQueue (queue) {
+    for( var i = 0, n = queue.length ; i < n ; i++ ) {
+      queue[i]();
     }
   }
 
-  function resolvePromise (p, x, fulfilled) {
-    if( p.resolved ) {
-      return;
-    }
-    p.resolved = true;
+  var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick :
+      (function (global) {
+        if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
+          return resolved.then.bind(resolved);
+        })( global.Promise.resolve() );
+        if( 'MutationObserver' in global ) return (function (node) {
+          return function (callback) {
+            var observer = new MutationObserver(function () {
+              callback();
+              observer.disconnect();
+            });
+            observer.observe( node, {characterData: true} );
+            node.data = false;
+          };
+        })( document.createTextNode('') );
+        return global.setImmediate || global.setTimeout;
+      })( typeof window === 'object' ? window : this );
 
-    p.result = x;
-    p.fulfilled = fulfilled || false;
-
-    var queue = p.queue.splice(0);
-    p.queue = null;
-
-    setTimeout(function () {
-      for( var i = 0, n = queue.length ; i < n ; i++ ) {
-        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
-      }
-    }, 0);
+  function once (fn) {
+    return function () {
+      if( fn ) fn.apply(this, arguments);
+      fn = null;
+    };
   }
 
-  function runThenable (then, p, x) {
-    var executed = false;
+  function isObjectLike (x) {
+    return ( typeof x === 'object' || typeof x === 'function' );
+  }
+
+  function isThenable (x) {
+    return isObjectLike(x) && 'then' in x;
+  }
+
+  function runThenable (then, xThen, p, x, resolve, reject) {
     try {
       then.call(x, function (value) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, value, true);
+        xThen(p, value, true, resolve, reject);
       }, function (reason) {
-        if( executed ) return;
-        executed = true;
-        xThen(p, reason, false);
+        xThen(p, reason, false, resolve, reject);
       });
     } catch(err) {
-      if( executed ) return;
-      xThen(p, err, false);
+      xThen(p, err, false, resolve, reject);
     }
   }
 
-  function xThen (p, x, fulfilled) {
+  function xThen (p, x, fulfilled, resolve, reject) {
     var then;
 
-    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+    if( x && isObjectLike(x) ) {
       try {
+        if( x === p ) throw new TypeError('A promise can not be resolved by itself');
         then = x.then;
 
         if( fulfilled && typeof then === 'function' ) {
-          runThenable(then, p, x);
+          runThenable(then, once(xThen), p, x, resolve, reject);
         } else {
-          resolvePromise(p, x, fulfilled);
+          (fulfilled ? resolve : reject)(x);
         }
       } catch (reason) {
-        resolvePromise(p, reason, false);
+        reject(reason);
       }
     } else {
-      resolvePromise(p, x, fulfilled);
+      (fulfilled ? resolve : reject)(x);
     }
-  }
-
-  function resolveProcedure (p, x, fulfilled) {
-    if( p.resolving ) return;
-    p.resolving = true;
-
-    if( x === p.promise ) {
-      fulfilled = false;
-      x = new TypeError('A promise can not be resolved by itself');
-    }
-
-    xThen(p, x, fulfilled);
   }
 
   function Parole (resolver) {
-    if( !(this instanceof Parole) ) {
-      return new Parole(resolver);
-    }
+    if( !(this instanceof Parole) ) return new Parole(resolver);
 
-    if( typeof resolver !== 'function' ) {
-      throw new TypeError('Promise resolver ' + resolver + ' is not a function');
-    }
+    var p = this,
+        reject = function (reason) {
+          if( p.fulfilled || p.rejected ) return;
+          p.rejected = true;
+          p.value = reason;
+          nextTick(function () { _runQueue(p.queue); });
+        };
 
-    var p = {
-      queue: [],
-      promise: this
-    };
+    p.queue = [];
 
-    this.__promise = p;
-
-    try {
-      resolver(function (value) {
-        resolveProcedure(p, value, true);
-      }, function (reason) {
-        resolveProcedure(p, reason, false);
-      });
-    } catch (reason) {
-      resolveProcedure(p, reason, false);
-    }
-
+    resolver(function (value) {
+      xThen(p, value, true, function (result) {
+        if( p.fulfilled || p.rejected ) return;
+        p.fulfilled = true;
+        p.value = result;
+        nextTick(function () { _runQueue(p.queue); });
+      }, reject);
+    }, reject);
   }
 
   Parole.prototype.then = function (onFulfilled, onRejected) {
-    var p = this.__promise,
-        deferred = Parole.defer();
+    var p = this;
+    return new Parole(function (resolve, reject) {
 
-    if( p.queue ) {
-      p.queue.push([onFulfilled, onRejected, deferred]);
-    } else {
-      setTimeout(function () {
-        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
-      }, 0);
-    }
+      function complete () {
+        var then = p.fulfilled ? onFulfilled : onRejected;
+        if( typeof then === 'function' ) {
+          try {
+            resolve( then(p.value) );
+          } catch(reason) {
+            reject( reason );
+          }
+        } else if( p.fulfilled ) resolve(p.value);
+        else reject(p.value);
+      }
 
-    return deferred.promise;
+      if( !p.fulfilled && !p.rejected ) {
+        p.queue.push(complete);
+      } else {
+        nextTick(complete);
+      }
+
+    });
   };
 
   Parole.prototype.catch = function (onRejected) {
@@ -681,12 +743,6 @@ return http$1;
   };
 
   // Promise methods
-
-  function each (iterable, handler) {
-    for( var i = 0, n = iterable.length; i < n ; i++ ) {
-      handler(iterable[i], i);
-    }
-  }
 
   Parole.defer = function () {
     var deferred = {};
@@ -711,52 +767,222 @@ return http$1;
     });
   };
 
-  Parole.all = function (iterable) {
+  Parole.all = function (promises) {
+    var waiting_promises = promises.length;
     return new Parole(function (resolve, reject) {
-      var pending = iterable.length,
-          results = [];
-      each(iterable, function (_promise, i) {
-
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
+      var results = new Array(waiting_promises);
+      promises.forEach(function (promise, i) {
+        var addresult = function (result) {
           results[i] = result;
-          if( --pending === 0 ) {
-            resolve(results);
-          }
-        }, function (reason) {
-          if( pending !== -1 ) {
-            pending === -1;
-            reject(reason);
-          }
-        });
+          waiting_promises--;
+          if( !waiting_promises ) resolve(results);
+        };
+        if( isThenable(promise) ) promise.then.call(promise, addresult, reject);
+        else addresult(promise);
       });
+      if( !results.length ) resolve(results);
     });
   };
 
-  Parole.race = function (iterable) {
+  Parole.race = function (promises) {
     return new Parole(function (resolve, reject) {
-      var done = false;
-
-      each(iterable, function (_promise) {
-        if( done ) {
-          return;
-        }
-        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
-          if( !done ) {
-            done = true;
-            resolve(result);
-          }
-        }, function (reason) {
-          if( !done ) {
-            done = true;
-            reject(reason);
-          }
-        });
+      promises.forEach(function (promise) {
+        if( isThenable(promise) ) promise.then.call(promise, resolve, reject);
+        else resolve(promise);
       });
+      if( !promises.length ) resolve();
     });
   };
 
   return Parole;
 
 });
+
+}).call(this,require('_process'))
+},{"_process":4}],4:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
 
 },{}]},{},[1]);

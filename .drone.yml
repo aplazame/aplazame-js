@@ -52,19 +52,6 @@ deploy:
 
   rsync:
     user: ubuntu
-    host: aplazame.com
-    target: /opt/frontend/aplazame-js
-    delete: true
-    recursive: true
-    exclude:
-      - ".git"
-      - "node_modules"
-      - ".bower_components"
-    when:
-      branch: release
-
-  rsync:
-    user: ubuntu
     host: demo.aplazame.org
     source: public/
     target: ~/www/demo-demo

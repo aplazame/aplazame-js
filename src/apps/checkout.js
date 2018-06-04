@@ -2,7 +2,9 @@
 
 var api = require('../core/api'),
     _ = require('../tools/tools'),
-    checkoutNormalizer = require('./checkout-normalizer'),
+    checkoutNormalizeAPI = require('./checkout-normalize-api'),
+    checkoutNormalizeCustomer = require('./checkout-normalize-customer'),
+    checkoutNormalizeCallbacks = require('./checkout-normalize-callbacks'),
     http = require('http-rest/browser'),
     cssHack = require('../tools/css-hack'),
     is_app = typeof navigator !== 'undefined' && navigator.app,
@@ -14,13 +16,13 @@ var api = require('../core/api'),
 
 flag_wrapper.className = 'aplazame-checkout-flag';
 
-function checkout (options, callbacks) {
-  options = options || {};
+function checkout (transaction, callbacks) {
+  transaction = transaction || {};
   callbacks = callbacks || {};
-  options.__viewport__ = {};
+  transaction.__viewport__ = {};
 
   // http://ryanve.com/lab/dimensions/
-  options.__viewport__.screen = window.screen ? {
+  transaction.__viewport__.screen = window.screen ? {
     availWidth: screen.availWidth,
     availHeight: screen.availHeight,
     width: screen.width,
@@ -33,18 +35,18 @@ function checkout (options, callbacks) {
       type: screen.orientation.type,
     } : {}
   } : {};
-  options.__viewport__.document = {
+  transaction.__viewport__.document = {
     clientWidth: dE.clientWidth,
     clientHeight: dE.clientHeight,
   };
-  options.__viewport__.window = {
+  transaction.__viewport__.window = {
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
     outerWidth: window.outerWidth,
     outerHeight: window.outerHeight,
   };
 
-  var checkout_url = options.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
+  var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
       onError,
@@ -53,7 +55,7 @@ function checkout (options, callbacks) {
       errorMessage = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
-      cssBlur = cssHack('blur'),
+      // cssBlur = cssHack('blur'),
       cssLogo = cssHack('logo'),
       cssModal = cssHack('modal'),
       viewPortHack = document.createElement('meta'),
@@ -65,28 +67,35 @@ function checkout (options, callbacks) {
 
   document.head.appendChild(viewPortHack);
 
-  onError = options.onError || _.noop;
-  delete options.onError;
+  onError = transaction.onError || _.noop;
+  delete transaction.onError;
 
   try {
-    on = checkoutNormalizer(options, callbacks, location, _.copy(api) );
+    checkoutNormalizeAPI(transaction, _.copy(api) );
+    log('api', transaction.api);
+
+    checkoutNormalizeCustomer(transaction);
+    log('customer', transaction.merchant.customer);
+
+    on = checkoutNormalizeCallbacks(transaction, callbacks, location);
+    log('callbacks', on);
   } catch (e) {
     errorMessage = e.message;
   }
 
-  if( is_app ) options.meta.is_app = true;
+  if( is_app ) transaction.meta.is_app = true;
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
 
   cssOverlay.hack(true);
   cssLogo.hack(true);
-  cssBlur.hack(true);
 
-  setTimeout(function () {
-    if( !errorLoading ) {
-      _.addClass(document.body, 'aplazame-blur');
-    }
-  }, 0);
+  // cssBlur.hack(true);
+  // setTimeout(function () {
+  //   if( !errorLoading ) {
+  //     _.addClass(document.body, 'aplazame-blur');
+  //   }
+  // }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
   require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
@@ -98,7 +107,7 @@ function checkout (options, callbacks) {
   setTimeout(function () {
     if( !errorLoading ) {
       tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
-      if( options.order.currency === 'MXN' ) {
+      if( transaction.order.currency === 'MXN' ) {
         flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
       } else {
         flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
@@ -142,8 +151,8 @@ function checkout (options, callbacks) {
         case 'get-checkout-data':
           iframe.style.display = _.remove_style;
           postMessage('checkout-data', {
-            checkout: options,
-            data: options,
+            checkout: transaction,
+            data: transaction,
           }, e.source);
           break;
         case 'checkout-ready':
@@ -175,20 +184,20 @@ function checkout (options, callbacks) {
           else
             window.open(message.href, '_system');
           break;
-        case 'drop-blur':
-          _.removeClass(document.body, 'aplazame-blur');
-          _.addClass(document.body, 'aplazame-unblur');
-          setTimeout(function () {
-            cssBlur.hack(false);
-            _.removeClass(document.body, 'aplazame-blur');
-            _.removeClass(document.body, 'aplazame-unblur');
-          }, 600);
-          break;
+        // case 'drop-blur':
+        //   _.removeClass(document.body, 'aplazame-blur');
+        //   _.addClass(document.body, 'aplazame-unblur');
+        //   setTimeout(function () {
+        //     cssBlur.hack(false);
+        //     _.removeClass(document.body, 'aplazame-blur');
+        //     _.removeClass(document.body, 'aplazame-unblur');
+        //   }, 600);
+        //   break;
         case 'confirm':
           _.log('aplazame.checkout:confirm', message);
 
           var started = _.now();
-          http.post( options.merchant.confirmation_url, message.data, {
+          http.post( transaction.merchant.confirmation_url, message.data, {
             headers: { contentType: 'application/json' },
             params: _.extend(message.params || {}, {
               order_id: message.data.checkout_token,

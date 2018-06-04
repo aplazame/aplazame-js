@@ -8,7 +8,7 @@ var api = require('../core/api'),
 
 var tmpOverlay = document.createElement('div'),
     cssOverlay = cssHack('overlay'),
-    cssBlur = cssHack('blur'),
+    // cssBlur = cssHack('blur'),
     cssModal = cssHack('modal');
 
 function modal (content) {
@@ -18,15 +18,15 @@ function modal (content) {
   }
 
   cssOverlay.hack(true);
-  cssBlur.hack(true);
+  // cssBlur.hack(true);
   cssModal.hack(true);
 
   tmpOverlay.className = 'aplazame-overlay aplazame-overlay-show';
   document.body.appendChild(tmpOverlay);
 
-  setTimeout(function () {
-    _.addClass(document.body, 'aplazame-blur');
-  }, 0);
+  // setTimeout(function () {
+  //   _.addClass(document.body, 'aplazame-blur');
+  // }, 0);
   setTimeout(function () {
     _.removeClass(tmpOverlay, 'aplazame-overlay-show');
   }, _.isMobile() ? 0 : 600 );
@@ -63,7 +63,7 @@ _.onMessage('modal', function (e, message) {
       e.source.postMessage({
         aplazame: 'modal',
         event: 'content',
-        content: modal.iframe.content
+        content: modal.iframe.content,
       }, '*');
       break;
     case 'resolved':
@@ -71,19 +71,19 @@ _.onMessage('modal', function (e, message) {
         aplazame: 'modal',
         event: 'resolved',
         name: modal.message.name,
-        value: message.value
+        value: message.value,
       }, '*');
       delete modal.referrer;
       break;
     case 'closing':
       document.body.style.overflow = modal.iframe.overflow;
-      _.removeClass(document.body, 'aplazame-blur');
-      _.addClass(document.body, 'aplazame-unblur');
       _.addClass(tmpOverlay, 'aplazame-overlay-hide');
-      setTimeout(function () {
-        cssBlur.hack(false);
-        _.removeClass(document.body, 'aplazame-unblur');
-      }, _.isMobile() ? 0 : 600 );
+      // _.removeClass(document.body, 'aplazame-blur');
+      // _.addClass(document.body, 'aplazame-unblur');
+      // setTimeout(function () {
+      //   // cssBlur.hack(false);
+      //   _.removeClass(document.body, 'aplazame-unblur');
+      // }, _.isMobile() ? 0 : 600 );
       break;
     case 'close':
       setTimeout(function () {

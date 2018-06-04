@@ -9,23 +9,17 @@ module.exports = function (widget) {
       textSelector = function (selector, text) {
         if( widget_el.querySelector(selector) ) widget_el.querySelector(selector).textContent = text;
       },
+      selectNumInstalmentsChoice = function (choice) {
+        widget.simulator.choice = choice;
+        textSelector('.aplazame-widget-price', widget.simulator.getAmount(choice.amount) );
+        textSelector('.aplazame-widget-instalments-num', choice.num_instalments );
+        textSelector('.aplazame-widget-choice-button-value', choice.num_instalments );
+      },
       selectNumInstalments = function (num_instalments) {
         widget.simulator.choices.forEach(function (choice) {
-          if( choice.num_instalments === num_instalments ) {
-            widget.simulator.choice = choice;
-            textSelector('.aplazame-widget-price', widget.simulator.getAmount(choice.amount) );
-            textSelector('.aplazame-widget-instalments-num', choice.num_instalments );
-            textSelector('.aplazame-widget-choice-button-value', choice.num_instalments );
-          }
+          if( choice.num_instalments === num_instalments ) selectNumInstalmentsChoice(choice);
         });
       },
-      // inIframe = function  () {
-      //   try {
-      //     return window.self !== window.top;
-      //   } catch (e) {
-      //     return true;
-      //   }
-      // },
       styles_link = document.createElement('link'),
       onReady = function () {
         window.removeEventListener('load', onReady);
@@ -59,11 +53,15 @@ module.exports = function (widget) {
   }
 
   function increaseNumInstalments () {
-    selectNumInstalments(widget.simulator.choice.num_instalments + 1);
+    var index = widget.simulator.choices.indexOf(widget.simulator.choice),
+        choice = widget.simulator.choices[index + 1];
+    if( choice ) selectNumInstalmentsChoice(choice);
   }
 
   function decreaseNumInstalments () {
-    selectNumInstalments(widget.simulator.choice.num_instalments - 1);
+    var index = widget.simulator.choices.indexOf(widget.simulator.choice),
+        choice = widget.simulator.choices[index - 1];
+    if( choice ) selectNumInstalmentsChoice(choice);
   }
 
   function unbind () {
@@ -81,7 +79,6 @@ module.exports = function (widget) {
 
   var handler = {
     render: function () {
-      console.log('widget', widget);
       unbind();
       var type = widget.simulator.type;
       widget_el.innerHTML = renderWidget(widget.simulator);

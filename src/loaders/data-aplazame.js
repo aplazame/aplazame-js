@@ -1,6 +1,10 @@
 'use strict';
 
+var log = require('../tools/log');
+
 module.exports = function (_, script) {
+  log('data-aplazame: currentScript', script && script.outerHTML );
+
   var data_aplazame = script.getAttribute('data-aplazame'),
       options = script.src && (/[?#]/.test(script.src) ? _.deserialize(script.src.match(/(.*?)[?#](.*)/)[2]) : {}) || {};
 
@@ -12,11 +16,13 @@ module.exports = function (_, script) {
         options[_.toUnderscoreCase(keys[1].trim())] = keys[2].trim();
       });
 
+      log('data-aplazame: params', '"' + data_aplazame + '"' );
+
       if( !options.public_key ) {
         throw new Error('public_key missing in data-aplazame');
       }
-    } else if( data_aplazame.trim() ) {
-      options.public_key = data_aplazame.trim();
+    } else {
+      options.public_key = data_aplazame;
     }
   }
 
@@ -43,6 +49,8 @@ module.exports = function (_, script) {
   if( options.sandbox ) {
     options.sandbox = options.sandbox === 'true' || options.sandbox === '1';
   }
+
+  log('data-aplazame: options', options );
 
   return options;
 };

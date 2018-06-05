@@ -15,8 +15,8 @@ module.exports = function (_, script) {
       if( !options.public_key ) {
         throw new Error('public_key missing in data-aplazame');
       }
-    } else {
-      options.public_key = data_aplazame;
+    } else if( data_aplazame.trim() ) {
+      options.public_key = data_aplazame.trim();
     }
   }
 

@@ -63,6 +63,8 @@ module.exports = function (aplazame) {
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
+    log('[data-aplazame-simulator]', widget_el && widget_el.outerHTML );
+
     var simulator_options = { view: widget_el.getAttribute('data-view') || 'product' },
         widget = new Widget(widget_el, {
           currency:  widget_el.getAttribute('data-currency') || 'EUR',

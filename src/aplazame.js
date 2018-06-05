@@ -89,13 +89,15 @@ require('./sandbox')(function () {
   log('_.currentScript', aplazame._.currentScript && aplazame._.currentScript.toString, aplazame._.currentScript.toString() );
 
   aplazame.init(options);
+  // throw new Error('test wtf');
 
   // support for requirejs like libraries
   if( typeof define === 'function' && define.amd ) {
+    log.warn('AMD module');
     define([], function () {
       return aplazame;
     });
-  }
+  } else log('NOT AMD module');
 
   aplazame._.ready(function () {
     if( api.callback ) {

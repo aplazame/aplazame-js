@@ -84,12 +84,15 @@ require('./sandbox')(function () {
            document.createElement('script');
   }
 
+  log('_.currentScript',
+    aplazame._.currentScript && aplazame._.currentScript.toString,
+    aplazame._.currentScript.toString(),
+    aplazame._.currentScript instanceof Function ? aplazame._.currentScript : null
+  );
+
   var options = require('./loaders/data-aplazame')(aplazame._, safeScript( aplazame._.currentScript() ) );
 
-  log('_.currentScript', aplazame._.currentScript && aplazame._.currentScript.toString, aplazame._.currentScript.toString() );
-
   aplazame.init(options);
-  // throw new Error('test wtf');
 
   // support for requirejs like libraries
   if( typeof define === 'function' && define.amd ) {

@@ -29,6 +29,8 @@ function deserialize (querystring, decode) {
 
 	var result = {};
 
+  if( !querystring.trim() ) return;
+
 	querystring.split('&').forEach(function (keyValue) {
 		var matched = keyValue.match(/(.*?)=(.*)/);
 

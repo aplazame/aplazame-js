@@ -81,7 +81,7 @@
   }
 
   .aplazame-widget:not(.aplazame-widget--custom-styles).aplazame-widget--type-select .aplazame-widget-instalments::before {
-    <%= 'background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' height=\'12\' width=\'8\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\' stroke=\'' + preferences.btn_text_color + '\'%3E%3Cpath d=\'M.752 3L3.966.5 7.252 3M.752 9l3.214 2.5L7.252 9\'/%3E%3C/g%3E%3C/svg%3E");' %>
+    <%= 'background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' height=\'12\' width=\'8\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\' stroke=\'' + preferences.btn_text_color.replace(/#/g, '%23') + '\'%3E%3Cpath d=\'M.752 3L3.966.5 7.252 3M.752 9l3.214 2.5L7.252 9\'/%3E%3C/g%3E%3C/svg%3E");' %>
   }
   <% } %>
   <% if(preferences.btn_bg_color) { %>

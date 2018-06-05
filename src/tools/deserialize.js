@@ -25,16 +25,15 @@ function toUnderscoreCase (text) {
 	}).toLowerCase();
 }
 
-function deserialize (querystring, decode) {
+function deserialize (querystring, decode, throw_errors) {
 
 	var result = {};
-
-  if( !querystring.trim() ) return;
 
 	querystring.split('&').forEach(function (keyValue) {
 		var matched = keyValue.match(/(.*?)=(.*)/);
 
 		if( !matched ) {
+      if( !throw_errors ) return;
 			throw new Error('could not parse ' + keyValue);
 		}
 

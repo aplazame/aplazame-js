@@ -12,58 +12,39 @@ var api = require('../core/api'),
     cssHack = require('../tools/css-hack'),
     is_app = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log'),
-    dE = document.documentElement,
+    viewportInfo = require('./viewport-info'),
     flag_svg_es = require('../templates/flag-es.svg'),
     flag_svg_mx = require('../templates/flag-mx.svg'),
     flag_wrapper = document.createElement('div');
 
 flag_wrapper.className = 'aplazame-checkout-flag';
 
-function checkout (transaction, callbacks) {
-  var checkout_id = null;
+function checkout (checkout_data, callbacks) {
+  var checkout_id = null, transaction;
 
-  if( typeof transaction === 'string' ) {
-    checkout_id = transaction;
+  if( typeof checkout_data === 'string' ) {
+    checkout_id = checkout_data;
+    checkout_data = null;
     transaction = {};
-  } else transaction = transaction || {};
+  } else {
+    transaction = checkout_data.transaction || checkout_data;
+    if( checkout_data === transaction ) checkout_data = null;
+  }
 
-  var checkout_data = transaction.transaction ? transaction : null;
+  ['meta', 'merchant', 'order'].forEach(function (key) {
+    if( !_.isObject(transaction[key]) ) transaction[key] = {};
+  });
 
   callbacks = callbacks || {};
-  transaction.__viewport__ = {};
-
-  // http://ryanve.com/lab/dimensions/
-  transaction.__viewport__.screen = window.screen ? {
-    availWidth: screen.availWidth,
-    availHeight: screen.availHeight,
-    width: screen.width,
-    height: screen.height,
-    availLeft: screen.availLeft,
-    availTop: screen.availTop,
-    colorDepth: screen.colorDepth,
-    orientation: screen.orientation ? {
-      angle: screen.orientation.angle,
-      type: screen.orientation.type,
-    } : {}
-  } : {};
-  transaction.__viewport__.document = {
-    clientWidth: dE.clientWidth,
-    clientHeight: dE.clientHeight,
-  };
-  transaction.__viewport__.window = {
-    innerWidth: window.innerWidth,
-    innerHeight: window.innerHeight,
-    outerWidth: window.outerWidth,
-    outerHeight: window.outerHeight,
-  };
+  transaction.__viewport__ = viewportInfo();
 
   var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
       onError,
       iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 'iframe=checkout&t=' + new Date().getTime(),
-      errorLoading = false,
-      errorMessage = false,
+      error_loading = false,
+      error_message = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
       // cssBlur = cssHack('blur'),
@@ -91,7 +72,7 @@ function checkout (transaction, callbacks) {
     on = checkoutNormalizeCallbacks(transaction, callbacks, location);
     log('callbacks', on);
   } catch (e) {
-    errorMessage = e.message;
+    error_message = e.message;
   }
 
   if( is_app ) transaction.meta.is_app = true;
@@ -103,7 +84,7 @@ function checkout (transaction, callbacks) {
 
   // cssBlur.hack(true);
   // setTimeout(function () {
-  //   if( !errorLoading ) {
+  //   if( !error_loading ) {
   //     _.addClass(document.body, 'aplazame-blur');
   //   }
   // }, 0);
@@ -116,9 +97,9 @@ function checkout (transaction, callbacks) {
   var loadingText = tmpOverlay.querySelector('.aplazame-overlay-loading-text');
 
   setTimeout(function () {
-    if( !errorLoading ) {
+    if( !error_loading ) {
       tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
-      if( transaction.order.currency === 'MXN' ) {
+      if( (transaction.order || {}).currency === 'MXN' ) {
         flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
       } else {
         flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
@@ -161,8 +142,8 @@ function checkout (transaction, callbacks) {
 
       window.checkout_iframe = iframe;
 
-      if (errorMessage) {
-        throw new Error(errorMessage);
+      if (error_message) {
+        throw new Error(error_message);
       }
 
       var onMessage = function (e, message) {
@@ -281,7 +262,7 @@ function checkout (transaction, callbacks) {
       setTimeout(reject, 10000);
     }).catch(function () { throw 'iframe-timeout'; }),
   ]).catch(function (reason) {
-    errorLoading = true;
+    error_loading = true;
 
     log('Aplazame ' + reason);
 

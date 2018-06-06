@@ -55,7 +55,7 @@ require('./sandbox')(function () {
   }
 
   function safeScript (script) {
-    log('safeScript', script && script.outerHTML );
+    log('safeScript', script );
 
     var params = deserialize(script.src.split('?')[1] || '');
 
@@ -68,6 +68,7 @@ require('./sandbox')(function () {
       return script;
     }
 
+
     var isAplazameLoader = function (script) {
       log('finding first isAplazameLoader');
       if( script && script.src && (
@@ -78,17 +79,13 @@ require('./sandbox')(function () {
       }
     };
 
+    log('safeScript: find AplazameLoader');
+
     return isAplazameLoader(script) ||
            findFirst(document.querySelectorAll('script'), isAplazameLoader) ||
            script || document.querySelector('script[data-aplazame]') ||
            document.createElement('script');
   }
-
-  log('_.currentScript',
-    aplazame._.currentScript && aplazame._.currentScript.toString,
-    aplazame._.currentScript.toString(),
-    aplazame._.currentScript instanceof Function ? aplazame._.currentScript : null
-  );
 
   var options = require('./loaders/data-aplazame')(aplazame._, safeScript( aplazame._.currentScript() ) );
 

@@ -55,7 +55,7 @@ require('./sandbox')(function () {
   }
 
   function safeScript (script) {
-    log('safeScript', script );
+    log('safeScript', script || 'NO currentScript' );
 
     var params = deserialize(script.src.split('?')[1] || '');
 

@@ -64,10 +64,9 @@ require('./sandbox')(function () {
       return script;
     }
     if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null ) {
-      log('safeScript: script has data-aplazame', params );
+      log('safeScript: script has data-aplazame');
       return script;
     }
-
 
     var isAplazameLoader = function (script) {
       log('finding first isAplazameLoader');

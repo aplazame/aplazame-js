@@ -1,6 +1,9 @@
 'use strict';
 
+var Parole = require('parole');
+
 var api = require('../core/api'),
+    apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
     checkoutNormalizeAPI = require('./checkout-normalize-api'),
     checkoutNormalizeCustomer = require('./checkout-normalize-customer'),
@@ -17,7 +20,15 @@ var api = require('../core/api'),
 flag_wrapper.className = 'aplazame-checkout-flag';
 
 function checkout (transaction, callbacks) {
-  transaction = transaction || {};
+  var checkout_id = null;
+
+  if( typeof transaction === 'string' ) {
+    checkout_id = transaction;
+    transaction = {};
+  } else transaction = transaction || {};
+
+  var checkout_data = transaction.transaction ? transaction : null;
+
   callbacks = callbacks || {};
   transaction.__viewport__ = {};
 
@@ -75,7 +86,7 @@ function checkout (transaction, callbacks) {
     log('api', transaction.api);
 
     checkoutNormalizeCustomer(transaction);
-    log('customer', transaction.merchant.customer);
+    log('customer', transaction.customer);
 
     on = checkoutNormalizeCallbacks(transaction, callbacks, location);
     log('callbacks', on);
@@ -117,6 +128,16 @@ function checkout (transaction, callbacks) {
     }
   }, 200);
 
+  var checkout_promise = checkout_id ?
+    apiHttp.get('checkout/' + checkout_id, { api_version: 3 }).then(function (res) { return res.data; }) :
+    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, { api_version: 3 }).then(function (res) { return res.data; }) );
+
+  checkout_promise.then(function (res) {
+    console.log('checkout:then', res);
+  }, function (res) {
+    console.log('checkout:catch', res);
+  });
+
   return http( iframeSrc ).then(function (_iframe_response) {
 
     var iframe = _.getIFrame({
@@ -149,11 +170,17 @@ function checkout (transaction, callbacks) {
 
       switch( message.event ) {
         case 'get-checkout-data':
-          iframe.style.display = _.remove_style;
-          postMessage('checkout-data', {
-            checkout: transaction,
-            data: transaction,
-          }, e.source);
+          checkout_promise.then(function (checkout_data) {
+            iframe.style.display = _.remove_style;
+            postMessage('checkout-data', {
+              data: checkout_data.transaction,
+            }, e.source);
+          }, function (res) {
+            iframe.style.display = _.remove_style;
+            postMessage('checkout-data', {
+              error: res,
+            }, e.source);
+          });
           break;
         case 'checkout-ready':
           iframe.style.height = null;

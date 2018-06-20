@@ -8,7 +8,10 @@ var api = require('./api'),
 var apiHttp = http.base(function () { return api.host; }, {
   headers: {
     Accept: function (config) {
-      return 'application/vnd.aplazame' + ( config.sandbox || api.sandbox ? '.sandbox' : '' ) + '.v' + (config.api_version || api.version)  + '+json';
+      config.sandbox = api.sandbox;
+      // return 'application/vnd.aplazame' + ( api.sandbox ? '.sandbox' : '' ) + '.v' + api.version  + '+json';
+      var version = config.api_version || 1;
+      return 'application/vnd.aplazame' + ( api.sandbox ? '.sandbox' : '' ) + '.v' + version  + '+json';
     },
     Authorization: function (config) {
       return 'Bearer ' + (config.public_key || api.public_key);

@@ -1,6 +1,9 @@
 'use strict';
 
+var Parole = require('parole');
+
 var api = require('../core/api'),
+    apiHttp = require('../core/api-http'),
     _ = require('../tools/tools'),
     checkoutNormalizeAPI = require('./checkout-normalize-api'),
     checkoutNormalizeCustomer = require('./checkout-normalize-customer'),
@@ -9,50 +12,39 @@ var api = require('../core/api'),
     cssHack = require('../tools/css-hack'),
     is_app = typeof navigator !== 'undefined' && navigator.app,
     log = require('../tools/log'),
-    dE = document.documentElement,
+    viewportInfo = require('./viewport-info'),
     flag_svg_es = require('../templates/flag-es.svg'),
     flag_svg_mx = require('../templates/flag-mx.svg'),
     flag_wrapper = document.createElement('div');
 
 flag_wrapper.className = 'aplazame-checkout-flag';
 
-function checkout (transaction, callbacks) {
-  transaction = transaction || {};
-  callbacks = callbacks || {};
-  transaction.__viewport__ = {};
+function checkout (checkout_data, callbacks) {
+  var checkout_id = null, transaction;
 
-  // http://ryanve.com/lab/dimensions/
-  transaction.__viewport__.screen = window.screen ? {
-    availWidth: screen.availWidth,
-    availHeight: screen.availHeight,
-    width: screen.width,
-    height: screen.height,
-    availLeft: screen.availLeft,
-    availTop: screen.availTop,
-    colorDepth: screen.colorDepth,
-    orientation: screen.orientation ? {
-      angle: screen.orientation.angle,
-      type: screen.orientation.type,
-    } : {}
-  } : {};
-  transaction.__viewport__.document = {
-    clientWidth: dE.clientWidth,
-    clientHeight: dE.clientHeight,
-  };
-  transaction.__viewport__.window = {
-    innerWidth: window.innerWidth,
-    innerHeight: window.innerHeight,
-    outerWidth: window.outerWidth,
-    outerHeight: window.outerHeight,
-  };
+  if( typeof checkout_data === 'string' ) {
+    checkout_id = checkout_data;
+    checkout_data = null;
+    transaction = {};
+  } else {
+    transaction = checkout_data.transaction || checkout_data;
+    if( checkout_data === transaction ) checkout_data = null;
+  }
+
+  ['meta', 'merchant', 'order'].forEach(function (key) {
+    if( !_.isObject(transaction[key]) ) transaction[key] = {};
+  });
+
+  callbacks = callbacks || {};
+  transaction.__viewport__ = viewportInfo();
 
   var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
       onError,
-      iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 't=' + new Date().getTime(),
-      errorLoading = false,
-      errorMessage = false,
+      iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 'iframe=checkout&t=' + new Date().getTime(),
+      error_loading = false,
+      error_message = false,
       tmpOverlay = document.createElement('div'),
       cssOverlay = cssHack('overlay'),
       // cssBlur = cssHack('blur'),
@@ -75,12 +67,12 @@ function checkout (transaction, callbacks) {
     log('api', transaction.api);
 
     checkoutNormalizeCustomer(transaction);
-    log('customer', transaction.merchant.customer);
+    log('customer', transaction.customer);
 
     on = checkoutNormalizeCallbacks(transaction, callbacks, location);
     log('callbacks', on);
   } catch (e) {
-    errorMessage = e.message;
+    error_message = e.message;
   }
 
   if( is_app ) transaction.meta.is_app = true;
@@ -92,7 +84,7 @@ function checkout (transaction, callbacks) {
 
   // cssBlur.hack(true);
   // setTimeout(function () {
-  //   if( !errorLoading ) {
+  //   if( !error_loading ) {
   //     _.addClass(document.body, 'aplazame-blur');
   //   }
   // }, 0);
@@ -105,9 +97,9 @@ function checkout (transaction, callbacks) {
   var loadingText = tmpOverlay.querySelector('.aplazame-overlay-loading-text');
 
   setTimeout(function () {
-    if( !errorLoading ) {
+    if( !error_loading ) {
       tmpOverlay.querySelector('.logo-aplazame').className += ' animate';
-      if( transaction.order.currency === 'MXN' ) {
+      if( (transaction.order || {}).currency === 'MXN' ) {
         flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
       } else {
         flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
@@ -117,140 +109,160 @@ function checkout (transaction, callbacks) {
     }
   }, 200);
 
-  return http( iframeSrc ).then(function (_iframe_response) {
+  var checkout_promise = checkout_id ?
+    apiHttp.get('checkout/' + checkout_id, { api_version: 3 }).then(function (res) { return res.data; }) :
+    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, { api_version: 3 }).then(function (res) { return res.data; }) );
 
-    var iframe = _.getIFrame({
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '0',
-          background: 'transparent'
-        }),
-        postMessage = function (event_name, message, target) {
-          message.aplazame = 'checkout';
-          message.event = event_name;
-          (target || iframe.contentWindow).postMessage(message, '*');
-        };
+  // checkout_promise.then(function (res) {
+  //   console.log('checkout:then', res);
+  // }, function (res) {
+  //   console.log('checkout:catch', res);
+  // });
 
-    iframe.id = 'aplazame-checkout-iframe';
-    iframe.className = 'aplazame-modal';
+  Parole.race([
+    new Parole(function (resolveLoadingCheckout) {
+      var iframe = _.getIFrame({
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '0',
+            background: 'transparent'
+          }),
+          postMessage = function (event_name, message, target) {
+            message.aplazame = 'checkout';
+            message.event = event_name;
+            (target || iframe.contentWindow).postMessage(message, '*');
+          };
 
-    document.body.appendChild(iframe);
-    iframe.src = iframeSrc;
+      iframe.id = 'aplazame-checkout-iframe';
+      iframe.className = 'aplazame-modal';
 
-    window.checkout_iframe = iframe;
+      document.body.appendChild(iframe);
+      iframe.src = iframeSrc;
 
-    if (errorMessage) {
-      throw new Error(errorMessage);
-    }
+      window.checkout_iframe = iframe;
 
-    var onMessage = function (e, message) {
-      // console.log('onMessage', message);
+      if (error_message) {
+        throw new Error(error_message);
+      }
 
-      switch( message.event ) {
-        case 'get-checkout-data':
-          iframe.style.display = _.remove_style;
-          postMessage('checkout-data', {
-            checkout: transaction,
-            data: transaction,
-          }, e.source);
-          break;
-        case 'checkout-ready':
-          iframe.style.height = null;
-          if( _.isMobile() ) _.scroll.goto(0);
-          _.removeClass(iframe, 'hide');
-          cssModal.hack(true);
-          if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
-          cssOverlay.hack(false);
-          document.body.removeChild(tmpOverlay);
-          on.ready();
-          break;
-        case 'loading-text': // only for iframe
-          loadingText.textContent = message.text;
-          break;
-        case 'adjust-height': // only for iframe
-          iframe.style.height = message.height + 'px';
-          postMessage('checkout-data', {
-            height: message.height,
-          }, e.source);
-          break;
-        case 'scroll-top': // only for iframe
-          if( message.animate ) _.scroll.animateTo(message.scroll_top);
-          else _.scroll.top(message.scroll_top);
-          break;
-        case 'open-link':
-          if( is_app )
-            navigator.app.loadUrl(message.href, { openExternal: true });
-          else
-            window.open(message.href, '_system');
-          break;
-        // case 'drop-blur':
-        //   _.removeClass(document.body, 'aplazame-blur');
-        //   _.addClass(document.body, 'aplazame-unblur');
-        //   setTimeout(function () {
-        //     cssBlur.hack(false);
-        //     _.removeClass(document.body, 'aplazame-blur');
-        //     _.removeClass(document.body, 'aplazame-unblur');
-        //   }, 600);
-        //   break;
-        case 'confirm':
-          _.log('aplazame.checkout:confirm', message);
+      var onMessage = function (e, message) {
+        // console.log('onMessage', message);
 
-          var started = _.now();
-          http.post( transaction.merchant.confirmation_url, message.data, {
-            headers: { contentType: 'application/json' },
-            params: _.extend(message.params || {}, {
-              order_id: message.data.checkout_token,
-              checkout_token: message.data.checkout_token
-            })
-          }).then(function (response) {
-            response.config.start = started;
-            postMessage('confirmation', {
-              result: 'success',
-              response: response
+        switch( message.event ) {
+          case 'get-checkout-data':
+            resolveLoadingCheckout();
+            checkout_promise.then(function (checkout_data) {
+              iframe.style.display = _.remove_style;
+              postMessage('checkout-data', {
+                data: checkout_data,
+              }, e.source);
+            }, function (res) {
+              iframe.style.display = _.remove_style;
+              postMessage('checkout-data', {
+                error: res,
+              }, e.source);
+            });
+            break;
+          case 'checkout-ready':
+            iframe.style.height = null;
+            if( _.isMobile() ) _.scroll.goto(0);
+            _.removeClass(iframe, 'hide');
+            cssModal.hack(true);
+            if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
+            cssOverlay.hack(false);
+            document.body.removeChild(tmpOverlay);
+            on.ready();
+            break;
+          case 'loading-text': // only for iframe
+            loadingText.textContent = message.text;
+            break;
+          case 'adjust-height': // only for iframe
+            iframe.style.height = message.height + 'px';
+            postMessage('checkout-data', {
+              height: message.height,
             }, e.source);
-          }, function (response) {
-            response.config.start = started;
-            postMessage('confirmation', {
-              result: 'error',
-              response: response
-            }, e.source);
-          });
-          // confirmation_url
-          break;
-        case 'status-change':
-          if( valid_result_status.indexOf(message.status) < 0 ) {
-            (console.error || console.log)('Wrong status returned by checkout', message.result );
-            // throw new Error(message);
-          }
-          on.statusChange(message.status);
-          break;
-        case 'close':
-          if( iframe ) {
-            if( _.isMobile() ) _.scroll.goto(previous_scroll_top);
-            document.body.removeChild(iframe);
-            cssModal.hack(false);
-            iframe = null;
-            document.head.removeChild(viewPortHack);
+            break;
+          case 'scroll-top': // only for iframe
+            if( message.animate ) _.scroll.animateTo(message.scroll_top);
+            else _.scroll.top(message.scroll_top);
+            break;
+          case 'open-link':
+            if( is_app )
+              navigator.app.loadUrl(message.href, { openExternal: true });
+            else
+              window.open(message.href, '_system');
+            break;
+          // case 'drop-blur':
+          //   _.removeClass(document.body, 'aplazame-blur');
+          //   _.addClass(document.body, 'aplazame-unblur');
+          //   setTimeout(function () {
+          //     cssBlur.hack(false);
+          //     _.removeClass(document.body, 'aplazame-blur');
+          //     _.removeClass(document.body, 'aplazame-unblur');
+          //   }, 600);
+          //   break;
+          case 'confirm':
+            _.log('aplazame.checkout:confirm', message);
 
-            _.onMessage.off('checkout', onMessage);
-
-            if( valid_result_status.indexOf(message.result) < 0 ) {
-              (console.error || console.log)('Wrong result returned by checkout', message.result );
+            var started = _.now();
+            http.post( transaction.merchant.confirmation_url, message.data, {
+              headers: { contentType: 'application/json' },
+              params: _.extend(message.params || {}, {
+                order_id: message.data.checkout_token,
+                checkout_token: message.data.checkout_token
+              })
+            }).then(function (response) {
+              response.config.start = started;
+              postMessage('confirmation', {
+                result: 'success',
+                response: response
+              }, e.source);
+            }, function (response) {
+              response.config.start = started;
+              postMessage('confirmation', {
+                result: 'error',
+                response: response
+              }, e.source);
+            });
+            // confirmation_url
+            break;
+          case 'status-change':
+            if( valid_result_status.indexOf(message.status) < 0 ) {
+              (console.error || console.log)('Wrong status returned by checkout', message.result );
               // throw new Error(message);
             }
+            on.statusChange(message.status);
+            break;
+          case 'close':
+            if( iframe ) {
+              if( _.isMobile() ) _.scroll.goto(previous_scroll_top);
+              document.body.removeChild(iframe);
+              cssModal.hack(false);
+              iframe = null;
+              document.head.removeChild(viewPortHack);
 
-            on.close(message.result);
-            if( on[message.result] ) on[message.result]();
-          }
-          break;
-      }
-    };
+              _.onMessage.off('checkout', onMessage);
 
-    _.onMessage('checkout', onMessage);
+              if( valid_result_status.indexOf(message.result) < 0 ) {
+                (console.error || console.log)('Wrong result returned by checkout', message.result );
+                // throw new Error(message);
+              }
 
-  }).catch(function (reason) {
-    errorLoading = true;
+              on.close(message.result);
+              if( on[message.result] ) on[message.result]();
+            }
+            break;
+        }
+      };
+
+      _.onMessage('checkout', onMessage);
+    }),
+    new Parole(function (_resolve, reject) {
+      setTimeout(reject, 10000);
+    }).catch(function () { throw 'iframe-timeout'; }),
+  ]).catch(function (reason) {
+    error_loading = true;
 
     log('Aplazame ' + reason);
 

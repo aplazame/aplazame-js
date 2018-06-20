@@ -55,13 +55,21 @@ require('./sandbox')(function () {
   }
 
   function safeScript (script) {
-    
+    log('safeScript', script || 'NO currentScript' );
+
     var params = deserialize(script.src.split('?')[1] || '');
 
-    if( script && params.public_key ) return script;
-    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null ) return script;
+    if( script && params.public_key ) {
+      log('safeScript: public_key in params', params );
+      return script;
+    }
+    if( script && script.getAttribute && script.getAttribute('data-aplazame') !== null ) {
+      log('safeScript: script has data-aplazame');
+      return script;
+    }
 
     var isAplazameLoader = function (script) {
+      log('finding first isAplazameLoader');
       if( script && script.src && (
         script.src.trim().indexOf('https://aplazame.com/static/aplazame.js') === 0 ||
         script.src.trim().indexOf('https://cdn.aplazame.com/aplazame.js') === 0
@@ -69,6 +77,8 @@ require('./sandbox')(function () {
         return script;
       }
     };
+
+    log('safeScript: find AplazameLoader');
 
     return isAplazameLoader(script) ||
            findFirst(document.querySelectorAll('script'), isAplazameLoader) ||
@@ -82,10 +92,11 @@ require('./sandbox')(function () {
 
   // support for requirejs like libraries
   if( typeof define === 'function' && define.amd ) {
+    log.warn('AMD module');
     define([], function () {
       return aplazame;
     });
-  }
+  } else log('NOT AMD module');
 
   aplazame._.ready(function () {
     if( api.callback ) {

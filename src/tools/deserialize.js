@@ -25,7 +25,7 @@ function toUnderscoreCase (text) {
 	}).toLowerCase();
 }
 
-function deserialize (querystring, decode) {
+function deserialize (querystring, decode, throw_errors) {
 
 	var result = {};
 
@@ -33,6 +33,7 @@ function deserialize (querystring, decode) {
 		var matched = keyValue.match(/(.*?)=(.*)/);
 
 		if( !matched ) {
+      if( !throw_errors ) return;
 			throw new Error('could not parse ' + keyValue);
 		}
 

@@ -9,11 +9,12 @@ var apiHttp = http.base(function () { return api.host; }, {
   headers: {
     Accept: function (config) {
       config.sandbox = api.sandbox;
-      return 'application/vnd.aplazame' + ( api.sandbox ? '.sandbox' : '' ) + '.v' + api.version  + '+json';
+      // return 'application/vnd.aplazame' + ( api.sandbox ? '.sandbox' : '' ) + '.v' + api.version  + '+json';
+      var version = config.api_version || 1;
+      return 'application/vnd.aplazame' + ( api.sandbox ? '.sandbox' : '' ) + '.v' + version  + '+json';
     },
     Authorization: function (config) {
-      config.public_key = config.public_key || api.public_key;
-      return 'Bearer ' + config.public_key;
+      return 'Bearer ' + (config.public_key || api.public_key);
     }
   }
 });

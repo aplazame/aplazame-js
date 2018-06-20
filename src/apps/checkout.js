@@ -113,11 +113,11 @@ function checkout (checkout_data, callbacks) {
     apiHttp.get('checkout/' + checkout_id, { api_version: 3 }).then(function (res) { return res.data; }) :
     ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, { api_version: 3 }).then(function (res) { return res.data; }) );
 
-  checkout_promise.then(function (res) {
-    console.log('checkout:then', res);
-  }, function (res) {
-    console.log('checkout:catch', res);
-  });
+  // checkout_promise.then(function (res) {
+  //   console.log('checkout:then', res);
+  // }, function (res) {
+  //   console.log('checkout:catch', res);
+  // });
 
   Parole.race([
     new Parole(function (resolveLoadingCheckout) {
@@ -155,7 +155,7 @@ function checkout (checkout_data, callbacks) {
             checkout_promise.then(function (checkout_data) {
               iframe.style.display = _.remove_style;
               postMessage('checkout-data', {
-                data: checkout_data.transaction,
+                data: checkout_data,
               }, e.source);
             }, function (res) {
               iframe.style.display = _.remove_style;

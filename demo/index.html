@@ -184,7 +184,7 @@
             data-callback="apzReady"
             $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com/"{/}
             $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-static-url="/dist/"{:}$if{ git.branch === 'master' }data-static-url="https://dev.aplazame.com/static/"{/}{/}
-            $if{ git.branch === 'demo' }data-checkout-url="/_checkout/checkout.html"{:}$if{ git.branch !== 'release' }data-checkout-url="http://checkout-dev.aplazame.com/"{/}{/}>
+            $if{ git.branch === 'demo' }data-checkout-url="/_checkout/checkout.html"{:}$if{ git.branch !== 'release' }data-checkout-url="https://checkout-dev.aplazame.com/"{/}{/}>
     </script>
 
     <script>

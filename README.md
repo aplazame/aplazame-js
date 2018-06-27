@@ -1,5 +1,6 @@
 [![aplazame-js-banner](https://cloud.githubusercontent.com/assets/2305833/18111968/37951520-6f24-11e6-8732-fa73796231ab.png) ](https://aplazame.com "Aplazame")
 
+[![aplazame](https://cdn.aplazame.com/dev/aplazame-badge.svg)](https://github.com/aplazame)
 [![Build Status](https://drone.aplazame.org/api/badges/aplazame/aplazame-js/status.svg)](https://drone.aplazame.org/aplazame/aplazame-js)
 
 [ver documentación](https://aplazame.com/docs/api/)

@@ -27,8 +27,6 @@ module.exports = function (_, script) {
     }
   }
 
-  console.log('params', params);
-
   if( script.hasAttribute('data-api-host') ) {
     params.host = script.getAttribute('data-api-host');
   }

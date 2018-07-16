@@ -42,7 +42,7 @@ function checkout (checkout_data, callbacks) {
 
   var on = {},
       onError,
-      iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 'iframe=checkout&t=' + new Date().getTime(),
+      iframe_src = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 'iframe=checkout&t=' + new Date().getTime(),
       error_loading = false,
       error_message = false,
       tmpOverlay = document.createElement('div'),
@@ -110,8 +110,8 @@ function checkout (checkout_data, callbacks) {
   }, 200);
 
   var checkout_promise = checkout_id ?
-    apiHttp.get('checkout/' + checkout_id, { api_version: 3 }).then(function (res) { return res.data; }) :
-    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, { api_version: 3 }).then(function (res) { return res.data; }) );
+    apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
+    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
 
   // checkout_promise.then(function (res) {
   //   console.log('checkout:then', res);
@@ -138,7 +138,7 @@ function checkout (checkout_data, callbacks) {
       iframe.className = 'aplazame-modal';
 
       document.body.appendChild(iframe);
-      iframe.src = iframeSrc;
+      iframe.src = iframe_src;
 
       window.checkout_iframe = iframe;
 

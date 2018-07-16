@@ -12,7 +12,7 @@ module.exports = function (aplazame) {
           public_key: btn.getAttribute('data-public-key'),
           amount: btn.getAttribute('data-amount'),
           currency: btn.getAttribute('data-currency') || undefined,
-          sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
+          sandbox: btn.hasAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
           country: btn.getAttribute('data-country') || undefined
         };
 

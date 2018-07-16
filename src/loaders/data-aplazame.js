@@ -27,23 +27,25 @@ module.exports = function (_, script) {
     }
   }
 
-  if( script.getAttribute('data-api-host') ) {
+  console.log('params', params);
+
+  if( script.hasAttribute('data-api-host') ) {
     params.host = script.getAttribute('data-api-host');
   }
 
-  if( script.getAttribute('data-sandbox') ) {
+  if( script.hasAttribute('data-sandbox') ) {
     params.sandbox = script.getAttribute('data-sandbox');
   }
 
-  if( script.getAttribute('data-static-url') ) {
+  if( script.hasAttribute('data-static-url') ) {
     params.static_url = script.getAttribute('data-static-url');
   }
 
-  if( script.getAttribute('data-checkout-url') ) {
+  if( script.hasAttribute('data-checkout-url') ) {
     params.checkout_url = script.getAttribute('data-checkout-url');
   }
 
-  if( script.getAttribute('data-callback') ) {
+  if( script.hasAttribute('data-callback') ) {
     params.callback = script.getAttribute('data-callback');
   }
 

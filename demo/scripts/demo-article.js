@@ -1,7 +1,6 @@
 /* globals aplazame */
 
-
-aplazame._.ready(function () {
+function whenAplazameReady () {
 
   var country = document.body.getAttribute('data-country');
   var choices = document.querySelectorAll('.article-type-choices .article-type input');
@@ -71,7 +70,7 @@ aplazame._.ready(function () {
 
   if( location.search ) {
     location.search.replace(/^\?/, '').split('&').forEach(function (part) {
-      var param = part.match(/(.*?)\=(.*)/);
+      var param = part.match(/(.*?)=(.*)/);
       if( param ) {
         params[param[1].trim()] = param[2].trim();
       }
@@ -118,6 +117,9 @@ aplazame._.ready(function () {
 
       data.order.id = orderId;
 
+      data.merchant.public_api_key = document.body.getAttribute('data-public-key');
+      data.merchant.sandbox = true;
+
       // data.merchant.onError = function () {
       //   console.log('whoops!!');
       // };
@@ -142,4 +144,8 @@ aplazame._.ready(function () {
 
   };
 
-});
+}
+
+window.apzReady = whenAplazameReady;
+
+// aplazame._.ready();

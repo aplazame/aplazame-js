@@ -18,13 +18,13 @@
 <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/favicon-72.png" />
 <link rel="apple-touch-icon" sizes="57x57" href="/assets/images/favicon-57.png" />
 
-<link rel="stylesheet" href="/demo.css?build=1530007974731"/>
+<link rel="stylesheet" href="/demo.css?build=1531742726687"/>
 
 <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6585874/729908/css/fonts.css" />
 
 <!--  -->
 </head>
-  <body data-branch="release" data-country="ES">
+  <body data-branch="release" data-country="ES" data-public-key="a2b2bed370dff093ad7c5195a1d72a200c35b124">
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
       <div class="container-md">
@@ -193,7 +193,7 @@
         <div class="row"></div>
           <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 
-          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="130140000" onclick="loadCheckout();">
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="13014" onclick="loadCheckout();">
             <span>Pagar con&nbsp;</span><!--
             --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
           </button>
@@ -229,24 +229,23 @@
             data-callback="apzReady"
             
             
-            >
-    </script>
-
-    <script>
-      window.apzReady = function () {
-        console.log('hello, aplazame callback!');
-        console.log.apply(console, arguments );
-      };
+            
+            defer async >
     </script>
 
     <!-- alt version using url params:
-      <script type="text/javascript" src="dist/aplazame.js?build=1530007974731&sandbox=true&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba&callback=apzReady"></script>
+      <script type="text/javascript" src="dist/aplazame.js?build=1531742726687&sandbox=true&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba&callback=apzReady"></script>
     -->
 
-    <script type="text/javascript" src="/scripts/demo-article.js?build=1530007974731"></script>
+    <script type="text/javascript" src="/scripts/demo-article.js?build=1531742726687"></script>
+
     <script type="text/x-javascript-example">
-      // example of checkout loading
-      aplazame.checkout({
+      window.apzReady = function () {
+        console.log('hello, aplazame callback!');
+        console.log.apply(console, arguments );
+
+        // example of checkout loading
+        aplazame.checkout({
 	"toc": true,
 	"merchant": {
 		"cancel_url": "/demo-cancel.html",
@@ -351,7 +350,9 @@
 		}
 	}
 });
+      };
     </script>
+
     
   </body>
 </html>

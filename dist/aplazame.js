@@ -1,5 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-module.exports = '0.0.483';
+module.exports = '0.0.484';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -7,7 +7,7 @@ module.exports = '@-webkit-keyframes aplazame-logo-smile{0%{-webkit-transform:ro
 },{}],4:[function(require,module,exports){
 module.exports = '.aplazame-modal{min-height:100vh;position:relative;z-index:2147483647;}@media (max-width:600px){html{background-color:#333a3e}body,html{height:100vh;margin:0;padding:0}body>:not(.aplazame-modal){display:none}body{overflow-y:auto;overflow-x:hidden}}@media (min-width:601px){body{overflow:hidden}.aplazame-modal{position:fixed}}';
 },{}],5:[function(require,module,exports){
-module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-50%}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{animation-direction:reverse}.aplazame-checkout-flag{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-flow:column;-ms-flex-flow:column;flex-flow:column;position:fixed;bottom:0;left:0;width:100%;padding-bottom:30px;z-index:2147483647;-webkit-animation-duration:.3s;animation-duration:.3s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-checkout-flag svg{width:24px;height:16px}.aplazame-checkout-flag .label{margin:16px 0 0;padding:0;color:#fff;font-family:sans-serif;font-weight:400;font-size:14px;text-shadow:0 1px 3px rgba(0,0,0,.5);line-height:1}';
+module.exports = '@-webkit-keyframes aplazame-overlay{0%{opacity:0;}to{opacity:1}}@keyframes aplazame-overlay{0%{opacity:0}to{opacity:1}}.aplazame-overlay{font-family:Montserrat,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;width:100vw;height:100vh;background:rgba(53,64,71,.8);text-align:center;z-index:2147483646;-webkit-transform:translateZ(0);transform:translateZ(0)}.aplazame-overlay:before{content:"";display:block;height:50vh}.aplazame-logo-wrapper{display:inline-block;margin-top:-200px}.aplazame-overlay-loading-text{color:#95a6b1;margin-top:14px;font-size:14px}.aplazame-overlay-loading-text .text-error{color:#f08080}.aplazame-overlay-loading-text a{color:#f5f5f5;display:inline-block;text-decoration:none}.aplazame-overlay-loading-text a:hover{border-bottom:1px dotted #f5f5f5}.aplazame-overlay{-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.aplazame-overlay.aplazame-overlay-hide,.aplazame-overlay.aplazame-overlay-show{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-animation-duration:.6s;animation-duration:.6s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-overlay.aplazame-overlay-hide{animation-direction:reverse}.aplazame-checkout-flag{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-flow:column;-ms-flex-flow:column;flex-flow:column;position:fixed;bottom:0;left:0;width:100%;padding-bottom:30px;z-index:2147483647;-webkit-animation-duration:.3s;animation-duration:.3s;-webkit-animation-name:aplazame-overlay;animation-name:aplazame-overlay}.aplazame-checkout-flag svg{width:24px;height:16px}.aplazame-checkout-flag .label{margin:16px 0 0;padding:0;color:#fff;font-family:sans-serif;font-weight:400;font-size:14px;text-shadow:0 1px 3px rgba(0,0,0,.5);line-height:1}';
 },{}],6:[function(require,module,exports){
 module.exports = function anonymous(obj
 /*``*/) {
@@ -2992,7 +2992,7 @@ function checkout (checkout_data, callbacks) {
 
   var on = {},
       onError,
-      iframeSrc = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 'iframe=checkout&t=' + new Date().getTime(),
+      iframe_src = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 'iframe=checkout&t=' + new Date().getTime(),
       error_loading = false,
       error_message = false,
       tmpOverlay = document.createElement('div'),
@@ -3060,8 +3060,8 @@ function checkout (checkout_data, callbacks) {
   }, 200);
 
   var checkout_promise = checkout_id ?
-    apiHttp.get('checkout/' + checkout_id, { api_version: 3 }).then(function (res) { return res.data; }) :
-    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, { api_version: 3 }).then(function (res) { return res.data; }) );
+    apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
+    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
 
   // checkout_promise.then(function (res) {
   //   console.log('checkout:then', res);
@@ -3088,7 +3088,7 @@ function checkout (checkout_data, callbacks) {
       iframe.className = 'aplazame-modal';
 
       document.body.appendChild(iframe);
-      iframe.src = iframeSrc;
+      iframe.src = iframe_src;
 
       window.checkout_iframe = iframe;
 
@@ -3622,23 +3622,25 @@ module.exports = function (_, script) {
     }
   }
 
-  if( script.getAttribute('data-api-host') ) {
+  console.log('params', params);
+
+  if( script.hasAttribute('data-api-host') ) {
     params.host = script.getAttribute('data-api-host');
   }
 
-  if( script.getAttribute('data-sandbox') ) {
+  if( script.hasAttribute('data-sandbox') ) {
     params.sandbox = script.getAttribute('data-sandbox');
   }
 
-  if( script.getAttribute('data-static-url') ) {
+  if( script.hasAttribute('data-static-url') ) {
     params.static_url = script.getAttribute('data-static-url');
   }
 
-  if( script.getAttribute('data-checkout-url') ) {
+  if( script.hasAttribute('data-checkout-url') ) {
     params.checkout_url = script.getAttribute('data-checkout-url');
   }
 
-  if( script.getAttribute('data-callback') ) {
+  if( script.hasAttribute('data-callback') ) {
     params.callback = script.getAttribute('data-callback');
   }
 
@@ -3666,7 +3668,7 @@ module.exports = function (aplazame) {
           public_key: btn.getAttribute('data-public-key'),
           amount: btn.getAttribute('data-amount'),
           currency: btn.getAttribute('data-currency') || undefined,
-          sandbox: btn.getAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
+          sandbox: btn.hasAttribute('data-sandbox') ? btn.getAttribute('data-sandbox') === 'true' : undefined,
           country: btn.getAttribute('data-country') || undefined
         };
 

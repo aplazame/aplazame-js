@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>$include{ head }</head>
-  <body data-branch="${git.branch}" data-country="${ country }">
+  <body data-branch="${git.branch}" data-country="${ country }" data-public-key="${ public_key }">
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
       <div class="container-md">
@@ -146,7 +146,7 @@
         <div class="row"></div>
           <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 
-          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="130140000" onclick="loadCheckout();">
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="${ totalAmount() }" onclick="loadCheckout();">
             <span>Pagar con&nbsp;</span><!--
             --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
           </button>
@@ -184,14 +184,8 @@
             data-callback="apzReady"
             $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com/"{/}
             $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-static-url="/dist/"{:}$if{ git.branch === 'master' }data-static-url="https://dev.aplazame.com/static/"{/}{/}
-            $if{ git.branch === 'demo' }data-checkout-url="/_checkout/checkout.html"{:}$if{ git.branch !== 'release' }data-checkout-url="https://checkout-dev.aplazame.com/"{/}{/}>
-    </script>
-
-    <script>
-      window.apzReady = function () {
-        console.log('hello, aplazame callback!');
-        console.log.apply(console, arguments );
-      };
+            $if{ git.branch === 'demo' }data-checkout-url="/_checkout/checkout.html"{:}$if{ git.branch !== 'release' }data-checkout-url="https://checkout-dev.aplazame.com/"{/}{/}
+            defer async >
     </script>
 
     <!-- alt version using url params:
@@ -199,10 +193,17 @@
     -->
 
     <script type="text/javascript" src="/scripts/demo-article.js?build=${build}"></script>
+
     <script type="text/x-javascript-example">
-      // example of checkout loading
-      aplazame.checkout($json{checkout});
+      window.apzReady = function () {
+        console.log('hello, aplazame callback!');
+        console.log.apply(console, arguments );
+
+        // example of checkout loading
+        aplazame.checkout($json{checkout});
+      };
     </script>
+
     $if{dev}
       <script type="application/javascript">
         var head= document.getElementsByTagName('head')[0];

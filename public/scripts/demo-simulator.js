@@ -2294,20 +2294,19 @@ function log () {
       index = caller_line.indexOf('at ');
 
   var l = {
-    type: this.type,
     time: new Date(),
     args: [].slice.call(arguments),
     track: {
       caller_line: caller_line,
       index: index,
-      clean: caller_line.slice(index + 2, caller_line.length)
+      clean: caller_line.slice(index + 2, caller_line.length),
     },
-    stack: (err && err.stack.split(/\n/) || []).reduce(function (lines, line, i) {
-      if( i < 3 ) return lines;
-      lines.push(line.trim());
-      return lines;
+    stack: (err && err.stack.split(/\n/) || []).slice(3).map(function (line) {
+      return line.trim();
     }, []),
   };
+
+  if( this.type ) l.type = this.type;
 
   history.push(l);
   // dumpSingleLog(l);

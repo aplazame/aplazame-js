@@ -1,5 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-module.exports = '0.0.484';
+module.exports = '0.0.485';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -3622,8 +3622,6 @@ module.exports = function (_, script) {
     }
   }
 
-  console.log('params', params);
-
   if( script.hasAttribute('data-api-host') ) {
     params.host = script.getAttribute('data-api-host');
   }
@@ -4645,20 +4643,19 @@ function log () {
       index = caller_line.indexOf('at ');
 
   var l = {
-    type: this.type,
     time: new Date(),
     args: [].slice.call(arguments),
     track: {
       caller_line: caller_line,
       index: index,
-      clean: caller_line.slice(index + 2, caller_line.length)
+      clean: caller_line.slice(index + 2, caller_line.length),
     },
-    stack: (err && err.stack.split(/\n/) || []).reduce(function (lines, line, i) {
-      if( i < 3 ) return lines;
-      lines.push(line.trim());
-      return lines;
+    stack: (err && err.stack.split(/\n/) || []).slice(3).map(function (line) {
+      return line.trim();
     }, []),
   };
+
+  if( this.type ) l.type = this.type;
 
   history.push(l);
   // dumpSingleLog(l);

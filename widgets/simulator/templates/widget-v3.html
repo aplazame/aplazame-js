@@ -3,7 +3,7 @@
   <div class="aplazame-widget-container">
 
   <% if( preferences.smart_title ) { %>
-    <div class="aplazame-widget-smart-title"><%= choice.annual_equivalent === 0 ? ( preferences.title_zero_interest || '¡Consíguelo sin intereses!' ) : ( preferences.title_default || 'Págalo a plazos' ) %></div>
+    <div class="aplazame-widget-smart-title"><%= zero_interest_campaign ? ( preferences.title_zero_interest || '¡Consíguelo sin intereses!' ) : ( preferences.title_default || 'Págalo a plazos' ) %></div>
   <% } %>
 
   <div class="aplazame-widget-instalments" <% if( type !== 'select' && type !== 'big-button' ){ %> data-action="showInfo"<% } %>>

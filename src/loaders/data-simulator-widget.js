@@ -92,6 +92,10 @@ module.exports = function (aplazame) {
       widget.simulator.brightness = color_tools.brightness;
     }
 
+    simulator_data.zero_interest_campaign = choices.some(function (choice) {
+      return choice.annual_equivalent === 0;
+    });
+
     if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
     else {
       if( widget.type !== widget_type || widget_version !== widget.version ) {

@@ -59,15 +59,16 @@ function parsePrice (price) {
       return Number( tail + '00' );
     }
 
-    if( tail.length === 1 ) {
-      return Number(main + tail + '0');
-    }
+    if( tail.length === 1 ) return Number(main + tail + '0');
 
-    if( tail.length !== 2 ) {
-      tail += '00';
-    }
+    if( tail.length === 2 ) return Number(main + tail);
 
-    return Number(main + tail);
+    // if tail length is 3 we assume there is no decimals
+    if( tail.length === 3 ) return Number(main + tail + '00');
+
+    if( tail.length > 3 ) return Number(main)*100 + Math.round( Number('0.' + tail)*100 );
+
+    return Number(main);
   }
 
   if( /\d+/.test(price) ) {

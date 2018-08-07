@@ -26,7 +26,7 @@ describe('checkout callbacks normalizer', function () {
     var checkout = {
       merchant: {
         success_url: '/success_url',
-        cancel_url: '/cancel_url'
+        ko_url: '/ko_url'
       }
     };
 
@@ -35,8 +35,9 @@ describe('checkout callbacks normalizer', function () {
     on.success();
     assert.equal(location.href, '/success_url');
 
-    on.cancel();
-    assert.equal(location.href, '/cancel_url');
+    on.ko();
+    assert.equal(callbacks.ko_url, '/ko_url' );
+    assert.equal(location.href, '/ko_url' );
 
     on.dismiss();
     assert.equal(location.href, '/');

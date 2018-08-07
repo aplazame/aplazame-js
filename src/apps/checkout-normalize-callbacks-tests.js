@@ -89,19 +89,19 @@ describe('checkout callbacks normalizer', function () {
     assert.strictEqual(on.dismiss, onDismiss, 'on.dismiss');
   });
 
-  it('onPending defaults to onDismiss when missing', function() {
-    var onDismiss = function () { /* onDismiss */ };
+  it('onPending defaults to onError when missing', function() {
+    var onSuccess = function () { /* onSuccess */ };
 
     var checkout = {
       merchant: {
-        onDismiss: onDismiss
+        onSuccess: onSuccess
       }
     };
 
     var on = checkoutNormalizeCallbacks(checkout, {}, location);
 
-    assert.strictEqual(on.pending, onDismiss, 'on.pending');
-    assert.strictEqual(on.dismiss, onDismiss, 'on.dismiss');
+    assert.strictEqual(on.pending, onSuccess, 'on.pending');
+    assert.strictEqual(on.success, onSuccess, 'on.success');
   });
 
 

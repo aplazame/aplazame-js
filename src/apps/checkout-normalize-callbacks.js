@@ -37,7 +37,7 @@ module.exports = function checkoutNormalizerCallbacks(transaction, callbacks, lo
 
 if( !merchant ) throw new Error('missing merchant parameters');
 
-'onSuccess onPending onKO onKo onDismiss success_url pending_url ko_url dismiss_url onError cancel_url error_url checkout_url'.split(/ +/).forEach(function (key) {
+'onReady onStatusChange onClose onSuccess onPending onKO onKo onDismiss success_url pending_url ko_url dismiss_url onError cancel_url error_url checkout_url'.split(/ +/).forEach(function (key) {
   // Copying merchants params to callbacks object
   if( merchant[key] ) callbacks[key] = callbacks[key] || merchant[key];
 

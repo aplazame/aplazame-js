@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>$include{ head }</head>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-59803469-5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-59803469-5');
+    </script>
+    
+    $include{ head }
+  </head>
   <body data-branch="${git.branch}" data-country="${ country }" data-public-key="${ public_key }">
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
@@ -213,5 +225,6 @@
         head.appendChild(script);
       </script>
     {/}
+
   </body>
 </html>

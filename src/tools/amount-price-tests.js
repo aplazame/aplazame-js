@@ -207,6 +207,15 @@ describe('parse price', function () {
       assert.equal( _.parsePrice('2.709') , 270900);
     });
 
+    it('long decimals tail', function() {
+      assert.equal( _.parsePrice('0.65465464') , 65, '0.65465464');
+      assert.equal( _.parsePrice('29.000000') , 2900, '29.000000');
+      assert.equal( _.parsePrice('29.1644654') , 2916, '29.1644654');
+      assert.equal( _.parsePrice('29.1654654') , 2917, '29.1654654');
+      assert.equal( _.parsePrice('29.12321321321') , 2912, '29.12321321321');
+      assert.equal( _.parsePrice('29.12521321321') , 2913, '29.12521321321');
+    });
+
     it('thousands no cents (comma)', function() {
       assert.equal( _.parsePrice('2,709') , 270900);
     });

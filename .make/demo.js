@@ -85,15 +85,19 @@ module.exports = function (nitro) {
 
     var pkg = require('../package'),
         dev = target === 'dev',
-        branch = ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim(),
+        branch = process.env.DRONE_BRANCH ||
+                 process.env.GIT_BRANCH ||
+                 ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim() ||
+                 require('git-rev-sync').branch(),
         renderIndex = template( file.read('demo/index.html') ),
         checkout = file.readJSON('./demo/checkout-ES.json'),
         checkout_mx = file.readJSON('./demo/checkout-MX.json'),
         demo_data = file.readYAML('./demo/demo-data.yml'),
         index_data = nitro.tools.scope({
           dev: dev, pkg: pkg,
+          is_prod: branch === 'release',
           git: {
-            branch: process.env.DRONE_BRANCH || process.env.GIT_BRANCH || branch || require('git-rev-sync').branch()
+            branch: branch,
           },
           // dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
           version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),

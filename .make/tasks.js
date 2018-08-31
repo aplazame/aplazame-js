@@ -74,7 +74,8 @@ module.exports = function (nitro) {
 
   var pkgActions = {
     increaseVersion: function () {
-      nitro.package('bower').setVersion( nitro.package('npm').increaseVersion().version() );
+      // nitro.package('bower').setVersion( nitro.package('npm').increaseVersion().version() );
+      nitro.package('npm').increaseVersion();
     }
   };
 

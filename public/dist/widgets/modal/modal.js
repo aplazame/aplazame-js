@@ -2750,7 +2750,7 @@ var messageTarget = {},
     };
 
 window.addEventListener('message', function (e) {
-  var message = e.data,
+  var message = e.data ||{},
       listeners = messageTarget[message.aplazame];
 
   if( !listeners ) return;

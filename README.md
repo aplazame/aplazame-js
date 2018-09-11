@@ -166,14 +166,6 @@ window.launchCheckout = function () {
       "tax_rate": 2100,
       "name": "SEUR",
       "discount": 100
-    },
-    "meta": {
-      "source": {
-        "data": {
-          "ecommerce_version": "1.9.0.1"
-        },
-        "client_name": "ecommerce client"
-      }
     }
   });
 };

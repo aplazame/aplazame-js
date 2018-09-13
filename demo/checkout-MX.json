@@ -1,5 +1,4 @@
 {
-  "toc": true,
   "merchant": {
     "checkout_url": "/mx/",
     "cancel_url": "/mx/demo-cancel.html",

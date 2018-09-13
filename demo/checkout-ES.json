@@ -1,5 +1,4 @@
 {
-  "toc": true,
   "merchant": {
     "cancel_url": "/demo-cancel.html",
     "ko_url": "/demo-cancel.html",

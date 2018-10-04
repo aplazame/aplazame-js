@@ -131,6 +131,7 @@ function whenAplazameReady () {
       // data.merchant.onDismiss = function () {
       //   console.log('try again!!');
       // };
+      aplazame.info().api.checkout_url = aplazame.info().api.checkout_url + window.location.search;
 
       aplazame.checkout(data, {
         onStatusChange: function (status) {

@@ -206,12 +206,6 @@
       <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
     -->
 
-    <script type="text/javascript">
-
-      var script = document.querySelector('[data-checkout-url]');
-      script.setAttribute('data-checkout-url', script.getAttribute('data-checkout-url') + window.location.search);
-
-    </script>
 
     <script type="text/javascript" src="/scripts/demo-article.js?build=${build}"></script>
 

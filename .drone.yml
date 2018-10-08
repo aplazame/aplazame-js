@@ -6,7 +6,7 @@ build:
     - AWS_SECRET_ACCESS_KEY=$$S3_SECRET_KEY
   commands:
     - 'sed -i "s/git+ssh:\/\/github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json'
-    - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
+    # - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'make build'
 
 deploy:

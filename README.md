@@ -72,7 +72,6 @@
 <script>
 window.launchCheckout = function () {
   aplazame.checkout({
-    "toc": true,
     "merchant": {
       "public_api_key": "f5f64b3e9c7d8da5de29d4a45f40d370282f6f05",
       "confirmation_url": "/confirm?order_id=test3232321",

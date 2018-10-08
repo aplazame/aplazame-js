@@ -8,7 +8,7 @@ build:
     - 'sed -i "s/git+ssh:\/\/github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json'
     # - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'chmod +x test.sh'
-    - 'test.sh'
+    - './test.sh'
     - 'make build'
 
 deploy:

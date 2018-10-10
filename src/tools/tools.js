@@ -1,10 +1,14 @@
 
-var _ = require('vanilla-tools');
+import _ from 'vanilla-tools';
+
+import nitro_tools_lists from 'nitro-tools/lists';
+import nitro_tools_path from 'nitro-tools/path';
+import colors from './colors';
 
 _.extend(_,
-  require('nitro-tools/lists'),
-  require('nitro-tools/path'),
-  require('./colors'),
+  nitro_tools_lists,
+  nitro_tools_path,
+  colors,
   require('./browser-tools'),
   require('./amount-price'),
   require('./deserialize'),

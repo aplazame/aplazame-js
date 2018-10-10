@@ -109,7 +109,8 @@ module.exports = function (aplazame) {
 
   Widget.prototype.showInfo = function () {
     var widget = this,
-        _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
+        // _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
+        _renderModalInfo = require('../../widgets/simulator/templates/modal-instalments.ejs'),
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 

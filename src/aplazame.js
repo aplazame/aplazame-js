@@ -1,9 +1,17 @@
 /* global define */
 
-require('./sandbox')(function () {
+import Parole from 'parole';
+import runInSandbox from './sandbox';
+import $http from 'http-rest/browser';
+
+import lib_core from './core/core';
+
+// var runInSandbox = require('./sandbox');
+
+runInSandbox(function () {
   'use strict';
 
-  require('http-rest/browser').usePromise(require('parole'));
+  $http.usePromise(Parole);
 
   function once (fn) {
     var result;
@@ -16,7 +24,7 @@ require('./sandbox')(function () {
     };
   }
 
-  var aplazame = require('./core/core'),
+  var aplazame = lib_core,
       api = require('./core/api'),
       events = require('./core/events'),
       log = require('./tools/log'),

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
   _: require('../tools/tools'),
   init: require('./init'),
   apiGet: require('./api-http').get,

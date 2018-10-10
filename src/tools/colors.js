@@ -41,7 +41,7 @@ function lightenHEX (col, amt) {
   return (usePound?'#':'') + String('000000' + (g | (b << 8) | (r << 16)).toString(16)).slice(-6);
 }
 
-module.exports = {
+export default {
   hexToRgb: hexToRgb,
   brightness: brightness,
   lightenHEX: lightenHEX,

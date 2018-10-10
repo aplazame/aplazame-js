@@ -65,4 +65,4 @@ log.dump = function () {
 
 log.history = history;
 
-module.exports = log;
+export default log;

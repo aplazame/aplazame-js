@@ -1,0 +1,80 @@
+<div class="card-content">
+
+  <header class="aplazame"></header>
+
+  <img src="<%= static_url %>/widgets/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">
+
+  <section class="info">
+    Elige la cuota que más te convenga
+  </section>
+
+  <div class="choices-wrapper">
+    <% for( var i = 0, n = choices.length; i < n ; i++ ) { %>
+    <button type="button" class="choice<% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %> _on_campaign<% } %>">
+      <% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %>
+      <div class="tae-ribbon">
+        <img src="<%= static_url %>/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
+        <div><%= getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' %></div>
+      </div>
+      <% } %>
+      <div class="wrapper">
+        <div class="num-instalments">
+          <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>
+        </div>
+        <div class="amount"><!--
+          <% if( currency === 'EUR' )  { %>
+          --><span class="amount-amount"><%= getAmount(choices[i].amount, ',', '.') %></span><!--
+          --><span class="amount-currency">&nbsp;€</span><!--
+          <% } else { %>
+          --><span class="amount-currency">$</span><!--
+          --><span class="amount-amount"><%= getAmount(choices[i].amount, '.', ',') %></span><!--
+          <% } %>
+          --><span class="amount-per-month">/mes</span>
+        </div>
+        <div class="amount"><!--
+          <% if( currency === 'EUR' )  { %>
+            --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
+            --><span class="amount-currency">&nbsp;€</span><!--
+          <% } else { %>
+          --><span class="amount-currency">$</span><!--
+            --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
+          <% } %>
+        --><span>&nbsp;<%= country === 'MX' ? 'enganche' : 'entrada' %></span>
+        </div>
+      </div>
+    </button>
+    <% } %>
+    <img src="<%= static_url %>/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">
+  </div>
+
+  <section class="tae"><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(merchant_annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>
+
+  <section class="how-it-works">
+    <header>¿Cómo funciona?</header>
+    <div class="info-wrapper">
+      <div class="info">
+        <h3>Elige Aplazame</h3>
+        <!-- <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras de <%= getAmount(9900) %> € hasta <%= parseInt(data.max_credit_amount/100) %> €.</p> -->
+        <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras hasta&nbsp;<span style="white-space: nowrap;"><%= currency === 'EUR' ? ( parseInt(data.max_credit_amount/100) + ' €' ) : ( '$' + parseInt(data.max_credit_amount/100) ) %></span>.</p>
+      </div>
+      <div class="info">
+        <h3>Decide cómo quieres pagar</h3>
+        <p>Hasta en <%= max_choice.num_instalments %> <%= max_choice.num_instalments > 1 ? 'cuotas' : 'cuota' %>, pagando con tarjeta.</p>
+      </div>
+      <div class="info">
+        <h3>Disfruta de tu compra</h3>
+        <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="cta">
+  <div class="col-sm-6 button-wrapper">
+    <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>
+  </div>
+  <div class="col-sm-6 button-wrapper">
+    <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>
+  </div>
+</div>

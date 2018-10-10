@@ -22,7 +22,7 @@ function compileTemplate (tmpl) {
 module.exports = function (nitro) {
 
   nitro.task('widgets.assets', function () {
-    nitro.dir('.bower_components/ng-aplazame/assets').copy('dist/widgets/assets');
+    nitro.dir('node_modules/ng-aplazame/assets').copy('dist/widgets/assets');
     nitro.dir('widgets/assets').copy('dist/widgets/assets');
   });
 
@@ -72,7 +72,7 @@ module.exports = function (nitro) {
       .load('{,**/}*.{sass,scss}')
       .process('sass', {
         includePaths: [
-          '.bower_components'
+          'node_modules'
         ],
         autoprefix: true,
         minify: !dev,

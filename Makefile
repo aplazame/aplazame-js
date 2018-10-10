@@ -10,15 +10,11 @@ git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 git.hooks:
 	@./bin/git-hooks
 
-bower-install:
-	@echo "running bower install"
-	@$(npmdir)/bower install --allow-root > /dev/null 2>&1
-
 npm-install:
 	@echo "running npm install"
 	@npm install > /dev/null 2>&1
 
-install: git.hooks npm-install bower-install
+install: git.hooks npm-install
 
 test: tests
 tests:

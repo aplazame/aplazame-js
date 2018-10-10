@@ -22,6 +22,7 @@
   "license": "GPL-3.0",
   "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
   "dependencies": {
+    "ng-aplazame": "git+ssh://git@github.com/aplazame/ng-aplazame.git#v0.3.204",
     "azazel": "1.1.7",
     "http-rest": "1.0.1",
     "live-dom": "1.6.9",

@@ -2,7 +2,7 @@ var _ = require('../../src/tools/tools'), Modal;
 
 _.onMessage('modal', function (_e, message) {
   if( message.event === 'content' ) {
-    Modal = Modal || require('../../.bower_components/ng-aplazame/toolkit/modal')(_);
+    Modal = Modal || require('../../node_modules/ng-aplazame/toolkit/modal')(_);
 
     // console.log('modal', message);
     var m = new Modal(_.extend(message.content, {

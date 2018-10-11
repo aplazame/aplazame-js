@@ -7,6 +7,9 @@ module.exports = {
       "require": true,
       "global": true,
     },
+    "parserOptions": {
+      "sourceType": "module",
+    },
     "extends": "eslint:recommended",
     "rules": {
       /* TODO

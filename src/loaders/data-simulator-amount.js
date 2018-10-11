@@ -1,8 +1,9 @@
 
-module.exports = function (aplazame) {
+import log from '../tools/log';
 
-  var _ = aplazame._,
-      log = require('../tools/log');
+export default function (aplazame) {
+
+  var _ = aplazame._;
 
   function getQty (qtySelector) {
     if( !_.isString(qtySelector) ) {
@@ -154,4 +155,4 @@ module.exports = function (aplazame) {
 
   return amountGetter;
 
-};
+}

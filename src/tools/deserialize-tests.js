@@ -1,10 +1,13 @@
 /* global describe, it */
 
-var assert = require('assert'),
-    deserialize = require('./deserialize').deserialize,
-    toUnderscoreCase = require('./deserialize').toUnderscoreCase,
-    toCamelCase = require('./deserialize').toCamelCase,
-    src_set = [
+import assert from 'assert';
+import _deserialize from './deserialize';
+
+var deserialize = _deserialize.deserialize;
+var toUnderscoreCase = _deserialize.toUnderscoreCase;
+var toCamelCase = _deserialize.toCamelCase;
+
+var src_set = [
       'lorem_ipsum_text',
       'loremIpsumText',
       'lorem-ipsum-text',

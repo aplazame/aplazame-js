@@ -1,7 +1,7 @@
-'use strict';
 
-var _ = require('../tools/tools'),
-    http = require('http-rest/browser');
+
+import _ from '../tools/tools';
+import http from 'http-rest/browser';
 
 function processResponse(result, message, messageSrc, started) {
 
@@ -21,16 +21,19 @@ function processResponse(result, message, messageSrc, started) {
   };
 }
 
-_.onMessage('http', function (e, message) {
+export default function () {
+  _.onMessage('http', function (e, message) {
 
-  var started = _.now();
+    var started = _.now();
 
-  http( message.url, message )
+    http( message.url, message )
     .then(
       processResponse('success', message, e.source, started),
       processResponse('error', message, e.source, started)
     );
 
-});
+  });
+}
 
-module.exports = { ready: true };
+
+// module.exports = { ready: true };

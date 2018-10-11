@@ -1,6 +1,6 @@
-'use strict';
 
-module.exports = {
+
+export default {
   host: 'https://api.aplazame.com/',
   // host: 'https://api.aplazame.com/',
   static_url: 'https://aplazame.com/static/',

@@ -1,4 +1,10 @@
-'use strict';
+
+import $live from 'live-dom';
+
+import log from '../tools/log';
+
+import _getAmountSimulatorGetter from './data-simulator-amount';
+import _getSimulatorWidget from './data-simulator-widget';
 
 function _attr(el, attr_name) {
   return el.getAttribute(attr_name);
@@ -54,12 +60,10 @@ function _getCustomOptions(widget_el) {
   };
 }
 
-module.exports = function (aplazame) {
+export default function (aplazame) {
 
-  var $live = require('live-dom'),
-      _amountGetter = require('./data-simulator-amount')(aplazame),
-      Widget = require('./data-simulator-widget')(aplazame),
-      log = require('../tools/log');
+  var _amountGetter = _getAmountSimulatorGetter(aplazame),
+      Widget = _getSimulatorWidget(aplazame);
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
@@ -137,4 +141,4 @@ module.exports = function (aplazame) {
 
   });
 
-};
+}

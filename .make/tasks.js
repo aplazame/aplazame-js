@@ -29,9 +29,9 @@ module.exports = function (nitro) {
     nitro.dir.copy('dist', 'public/dist');
   });
 
-  nitro.task('build', ['git.branch', 'clear:build', 'css-hacks', 'widgets', 'js', 'demo', 'loading', 'public-dist']);
+  nitro.task('build', ['git.branch', 'clear:build', 'widgets', 'js', 'demo', 'loading', 'public-dist']);
 
-  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'css-hacks', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev', 'public-dist'], function () {
+  nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev', 'public-dist'], function () {
 
     // if( !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
     // if( !nitro.file.exists('public/dist') ) nitro.dir.copy('dist', 'public/dist');

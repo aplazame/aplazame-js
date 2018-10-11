@@ -1,14 +1,20 @@
 
-module.exports = function (aplazame) {
+import modal from '../apps/modal';
+import api from '../core/api';
+import widgetRaw from '../../widgets/simulator/simulator-widget-raw';
+// import widgetV2 from '../../widgets/simulator/simulator-widget-v2';
+import widgetV3 from '../../widgets/simulator/simulator-widget-v3';
+import _widgetIframe from './data-simulator-iframe';
+import amount_tools from '../tools/amount-price';
+import color_tools from '../tools/colors';
+
+import _renderModalInfo from '../../widgets/simulator/templates/modal-instalments.ejs';
+
+export default function (aplazame) {
 
   var _ = aplazame._,
-      modal = require('../apps/modal'),
       serial = 1,
-      api = require('../core/api'),
-      widgetRaw = require('../../widgets/simulator/simulator-widget-raw'),
-      // widgetV2 = require('../../widgets/simulator/simulator-widget-v2'),
-      widgetV3 = require('../../widgets/simulator/simulator-widget-v3'),
-      widgetIframe = require('./data-simulator-iframe')(aplazame),
+      widgetIframe = _widgetIframe(aplazame),
       getWidgetHandler = function (type, version, preferences) {
         if( type === 'raw' ) return widgetRaw;
 
@@ -17,9 +23,7 @@ module.exports = function (aplazame) {
         }
 
         return widgetV3;
-      },
-      amount_tools = require('../tools/amount-price'),
-      color_tools = require('../tools/colors');
+      };
 
   function maxInstalments (prev, choice) {
     if( prev === null ) {
@@ -109,8 +113,6 @@ module.exports = function (aplazame) {
 
   Widget.prototype.showInfo = function () {
     var widget = this,
-        // _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
-        _renderModalInfo = require('../../widgets/simulator/templates/modal-instalments.ejs'),
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 
@@ -139,4 +141,4 @@ module.exports = function (aplazame) {
   };
 
   return Widget;
-};
+}

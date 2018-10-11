@@ -19,7 +19,7 @@ install: git.hooks npm-install
 test: tests
 tests:
 	@$(npmdir)/eslint src/**
-	@$(npmdir)/mocha src/**/*-tests.js
+	@$(npmdir)/mocha --require @babel/register src/**/*-tests.js
 
 test-tools:
 	@$(npmdir)/watch "date +\"%Y-%m-%d %T\" && $(npmdir)/mocha -R spec tests" src/tools tests

@@ -1,21 +1,24 @@
-'use strict';
 
-var Parole = require('parole');
 
-var api = require('../core/api'),
-    apiHttp = require('../core/api-http'),
-    _ = require('../tools/tools'),
-    checkoutNormalizeAPI = require('./checkout-normalize-api'),
-    checkoutNormalizeCustomer = require('./checkout-normalize-customer'),
-    checkoutNormalizeCallbacks = require('./checkout-normalize-callbacks'),
-    http = require('http-rest/browser'),
-    cssHack = require('../tools/css-hack'),
-    is_app = typeof navigator !== 'undefined' && navigator.app,
-    log = require('../tools/log'),
-    viewportInfo = require('./viewport-info'),
-    flag_svg_es = require('../templates/flag-es.svg'),
-    flag_svg_mx = require('../templates/flag-mx.svg'),
-    flag_wrapper = document.createElement('div');
+import Parole from 'parole';
+import api from '../core/api';
+import apiHttp from '../core/api-http';
+import _ from '../tools/tools';
+import checkoutNormalizeAPI from './checkout-normalize-api';
+import checkoutNormalizeCustomer from './checkout-normalize-customer';
+import checkoutNormalizeCallbacks from './checkout-normalize-callbacks';
+import http from 'http-rest/browser';
+import cssHack from '../tools/css-hack';
+import log from '../tools/log';
+import viewportInfo from './viewport-info';
+
+import flag_svg_es from '../templates/flag-es.svg';
+import flag_svg_mx from '../templates/flag-mx.svg';
+
+import loading_svg from './loading-svg';
+
+var flag_wrapper = document.createElement('div');
+var is_app = typeof navigator !== 'undefined' && navigator.app;
 
 flag_wrapper.className = 'aplazame-checkout-flag';
 
@@ -90,7 +93,7 @@ function checkout (checkout_data, callbacks) {
   // }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
-  require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
+  loading_svg + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
 
   document.body.appendChild(tmpOverlay);
 
@@ -275,4 +278,4 @@ function checkout (checkout_data, callbacks) {
 
 }
 
-module.exports = checkout;
+export default checkout;

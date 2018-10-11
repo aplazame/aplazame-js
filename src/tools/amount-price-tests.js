@@ -1,7 +1,7 @@
 /* global describe, it */
 
-var assert = require('assert'),
-    _ = require('./amount-price');
+import assert from 'assert';
+import _ from './amount-price';
 
 describe('parse price', function () {
 

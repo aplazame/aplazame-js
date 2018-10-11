@@ -1,5 +1,5 @@
 
-module.exports = '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' +
+export default '<svg class="line-short" version="1.1" viewBox="0 0 100 100">' +
 '<path  d="M36.788,81.008,50,50" stroke-linecap="round" stroke-width="6" fill="none"/>' +
 '</svg>' +
 '<svg class="smile" version="1.1" viewBox="0 0 100 100">' +

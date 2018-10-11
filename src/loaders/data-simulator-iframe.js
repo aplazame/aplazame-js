@@ -1,5 +1,5 @@
 
-module.exports = function (aplazame) {
+export default function (aplazame) {
 
   var _ = aplazame._;
 
@@ -41,4 +41,4 @@ module.exports = function (aplazame) {
 
   };
 
-};
+}

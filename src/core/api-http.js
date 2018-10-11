@@ -1,7 +1,6 @@
-'use strict';
 
-var api = require('./api'),
-    http = require('http-rest/browser');
+import api from './api';
+import http from 'http-rest/browser';
 
 // http.config({ headers: { Accept: 'application/json' } });
 
@@ -19,4 +18,4 @@ var apiHttp = http.base(function () { return api.host; }, {
   }
 });
 
-module.exports = apiHttp;
+export default apiHttp;

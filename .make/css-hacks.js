@@ -17,7 +17,7 @@ module.exports = function (nitro) {
         }
       })
       .each(function (f) {
-        f.src = 'module.exports = \'' + f.src.replace(/([^\}])\}/, '$1;}').replace(/\'/g, '\\\'') + '\';';
+        f.src = 'export default \'' + f.src.replace(/([^\}])\}/, '$1;}').replace(/\'/g, '\\\'') + '\';';
         f.path = f.path.replace(/\.css$/, '.js');
       }).write('.tmp/css-hacks');
 

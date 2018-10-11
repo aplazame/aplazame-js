@@ -1,5 +1,7 @@
 'use strict';
 
+var rollup = require('./_rollup');
+
 function compileTemplate (tmpl) {
   // John Resig micro-template
   return new Function('obj', // jshint ignore:line
@@ -40,8 +42,20 @@ module.exports = function (nitro) {
       nitro.file.write( path.join('.tmp', f.path.replace(/\.html$/, '.tmpl.js') ), 'module.exports = ' + compileTemplate( f.src ).toString() + ';' );
     });
 
-    nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist');
-    nitro.load('widgets/modal/modal.js').process('browserify').write('dist');
+    // nitro.load('widgets/simulator/simulator.js').process('browserify').write('dist');
+    // nitro.load('widgets/modal/modal.js').process('browserify').write('dist');
+
+    nitro.load('widgets/simulator/simulator.js')
+      .each(function (f) {
+        f.src = '' + rollup( path.join(f.path) );
+      })
+      .write('dist');
+
+    nitro.load('widgets/modal/modal.js')
+      .each(function (f) {
+        f.src = '' + rollup( path.join(f.path) );
+      })
+      .write('dist');
   });
 
   nitro.task('widgets.html', function (target) {

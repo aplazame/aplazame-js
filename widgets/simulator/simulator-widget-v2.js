@@ -1,7 +1,7 @@
 
-var renderWidget = require('../../.tmp/simulator/templates/widget-v2.tmpl');
+import renderWidget from './templates/widget-v2.ejs';
 
-module.exports = function (widget) {
+export default function (widget) {
 
   var widget_el = widget.el;
 
@@ -20,4 +20,4 @@ module.exports = function (widget) {
     }
   };
 
-};
+}

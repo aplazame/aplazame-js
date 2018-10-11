@@ -2,7 +2,7 @@
   "name": "aplazame",
   "version": "0.0.489",
   "description": "javascript sdk for aplazame.com api",
-  "main": "aplazame.min.js",
+  "main": "dist/aplazame.min.js",
   "scripts": {
     "build": "make build",
     "start": "make live",

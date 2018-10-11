@@ -1,5 +1,6 @@
 /* global process */
-'use strict';
+
+var rollup = require('./_rollup');
 
 module.exports = function (nitro) {
 
@@ -8,7 +9,7 @@ module.exports = function (nitro) {
   });
 
   nitro.task('demo-lintjs', function () {
-      nitro.load('demo/{,**/}*.js').process('eslint');
+      // nitro.load('demo/{,**/}*.js').process('eslint');
   });
 
   nitro.task('demo-assets', function (_target) {
@@ -40,11 +41,15 @@ module.exports = function (nitro) {
         branch = process.env.DRONE_BRANCH || process.env.GIT_BRANCH || ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim();
 
     nitro.dir('demo/scripts').load('demo-simulator.js', { sourceMap: target === 'dev' && 'inline' })
-      .process('browserify')
+      .each(function (f) {
+        f.src = '' + rollup( path.join('demo/scripts', f.path) );
+      })
       .write('public/scripts');
 
     nitro.dir('demo/scripts').load('demo-article.js', { sourceMap: target === 'dev' && 'inline' })
-      .process('browserify')
+      .each(function (f) {
+        f.src = '' + rollup( path.join('demo/scripts', f.path) );
+      })
       .write('public/scripts');
 
     nitro.file.copy('demo/scripts/demo-article-require.js', 'public/scripts/demo-article-require.js');

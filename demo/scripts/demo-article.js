@@ -1,5 +1,8 @@
 /* globals aplazame */
 
+import Parole from 'parole';
+import http from 'http-rest/browser';
+
 function whenAplazameReady () {
 
   var country = document.body.getAttribute('data-country');
@@ -79,10 +82,9 @@ function whenAplazameReady () {
 
   // console.log('params', location.search.replace(/^\?/, '').split('&')[0].match(/(.*?)\=(.*)/) );
 
-  var http = require('http-rest/browser'),
-      checkoutData = http(params['checkout-json']);
+  var checkoutData = http(params['checkout-json']);
 
-  http.usePromise(require('parole'));
+  http.usePromise(Parole);
 
   function randOrderId () {
     return 'test-' + new Date().getTime();
@@ -133,7 +135,7 @@ function whenAplazameReady () {
       // };
       var checkout_url = aplazame.info().api.checkout_url;
       aplazame.info().api.checkout_url = checkout_url + (/\?/.test(checkout_url) ? '&' : '?' ) + window.location.search.substr(1);
-      
+
       aplazame.checkout(data, {
         onStatusChange: function (status) {
           console.log('onStatusChange', status);

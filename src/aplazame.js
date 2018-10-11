@@ -121,11 +121,11 @@ runInSandbox(function () {
 
   aplazame._.ready(function () {
     if( api.callback ) {
-      if(  typeof global[api.callback] !== 'function' ) {
+      if(  typeof window[api.callback] !== 'function' ) {
         throw new Error('callback should be a global function');
       }
 
-      global[api.callback](aplazame);
+      window[api.callback](aplazame);
     }
   });
 

@@ -16,7 +16,7 @@ module.exports = function (nitro) {
       .each(function (f) {
         f.src = '' + rollup( path.join('src', f.path) );
       })
-      // .process('browserify')
+      // .process('webpack')
       .write('dist')
       .each(function (f) {
         f.filename = f.filename.replace(/\.js$/, '.min.js');

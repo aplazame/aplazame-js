@@ -41,6 +41,7 @@
     "bower": "^1.8.4",
     "browserify": "16.2.2",
     "cssnano": "^3.10.0",
+    "ejs": "^2.6.1",
     "eslint": "4.19.1",
     "git-rev-sync": "1.12.0",
     "mocha": "5.2.0",
@@ -52,6 +53,7 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "tinyhtml": "0.0.12",
     "uglify-js": "3.3.27",
-    "watch": "1.0.2"
+    "watch": "1.0.2",
+    "webpack": "^4.20.2"
   }
 }

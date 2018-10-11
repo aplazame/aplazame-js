@@ -10,6 +10,9 @@ module.exports = {
   },
   "parserOptions": {
     "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
+    },
   },
   "extends": "eslint:recommended",
   "rules": {

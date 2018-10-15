@@ -1,6 +1,7 @@
 /* global process */
 
-var rollup = require('./_rollup');
+var rollup = require('./_rollup'),
+    path = require('path');
 
 module.exports = function (nitro) {
 

@@ -1,6 +1,7 @@
 
 var nitro = require('nitro'),
     rollup = require('rollup'),
+    path = require('path'),
     resolve = require('rollup-plugin-node-resolve'),
     commonjs = require('rollup-plugin-commonjs'),
     loadHTML = require('rollup-plugin-html'),
@@ -18,7 +19,10 @@ function ejsRollup () {
 
       // console.log('ejs', file_path, code);
 
-      var templateFn = compileEjs(code);
+      var templateFn = compileEjs(code, {
+        globals: ['parseInt'],
+        // use_with: true,
+      });
       // var templateFn = ejs.compile(code, {
       //   client: true,
       //   strict: false,
@@ -28,11 +32,20 @@ function ejsRollup () {
       //   }),
       // });
 
-      console.log('compileEjs', templateFn);
+      // console.log('compileEjs', templateFn);
+      var fn_name = file_path.split('/').pop().replace(/\.ejs$/, '').replace(/-(\w)/, function (_matched, next_letter) {
+        return next_letter.toUpperCase();
+      }) + 'Ejs';
+
+      // var fn_name = 'ejs';
+
+      // console.log('templateFn', templateFn.toString() );
+      // console.log('non anonymous', templateFn.toString().replace(/^function *([^(]+)\((.*?)\s*\/\*[^\*]+\*\/\s*\)/, 'function ' + fn_name + '($2)') );
 
       return {
-          code: `export default ${templateFn.toString()};`,
-          // map: { mappings: '' },
+        // code: `export default ${templateFn.toString()};`,
+        code: 'export default ' + templateFn.toString().replace(/^function *([^(]+)\((.*?)\s*\/\*[^\*]+\*\/\s*\)/, 'function ' + fn_name + '($2)') + ';',
+        // map: { mappings: '' },
       };
     },
     // resolveId ( importee ) {

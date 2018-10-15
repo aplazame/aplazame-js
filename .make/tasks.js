@@ -54,9 +54,9 @@ module.exports = function (nitro) {
       .when('{,**/}*.{html,yml}', ['demo-templates:dev', 'loading:dev'])
       .when('{,**/}*.{sass,scss}', ['demo-sass:dev']);
 
-    nitro.watch('.make', function () {
-      nitro.import('.make');
-    });
+    // nitro.watch('.make', function () {
+    //   nitro.import('.make');
+    // });
 
     nitro.livereload(['public', 'dist'], { port: 12321 });
 

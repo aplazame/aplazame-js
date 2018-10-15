@@ -5,7 +5,7 @@ var nitro = require('nitro'),
     commonjs = require('rollup-plugin-commonjs'),
     loadHTML = require('rollup-plugin-html'),
     ejs = require('ejs'),
-    compileEjs = require('./_ejs');
+    compileEjs = require('@kilt/ejs');
 
 function ejsRollup () {
 
@@ -16,15 +16,17 @@ function ejsRollup () {
     transform: function (code, file_path) {
       if( !/\.ejs$/.test(file_path) ) return;
 
-      // var templateFn = ejs.compile(code);
-      var templateFn = ejs.compile(code, {
-        client: true,
-        strict: false,
-        _with: false,
-        outputFunctionName: file_path.split('/').pop().replace(/\.ejs$/, '').replace(/-(\w)/, function (_matched, next_letter) {
-          return next_letter.toUpperCase();
-        }),
-      });
+      // console.log('ejs', file_path, code);
+
+      var templateFn = compileEjs(code);
+      // var templateFn = ejs.compile(code, {
+      //   client: true,
+      //   strict: false,
+      //   _with: false,
+      //   outputFunctionName: file_path.split('/').pop().replace(/\.ejs$/, '').replace(/-(\w)/, function (_matched, next_letter) {
+      //     return next_letter.toUpperCase();
+      //   }),
+      // });
 
       console.log('compileEjs', templateFn);
 

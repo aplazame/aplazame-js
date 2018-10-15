@@ -37,6 +37,7 @@
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
+    "@kilt/ejs": "^1.0.4",
     "autoprefixer": "8.5.0",
     "bower": "^1.8.4",
     "browserify": "16.2.2",

@@ -33,13 +33,13 @@ module.exports = function (nitro) {
         // });
       })
       // .process('webpack')
-      // .write('dist')
-      // .each(function (f) {
-      //   f.src = f.src;
-      //   f.filename = 'dist/' + f.filename.replace(/\.js$/, '.min.js');
-      // })
-      // .process('uglify')
-      // .write('dist');
+      .write('dist')
+      .each(function (f) {
+        f.src = f.src;
+        f.filename = f.filename.replace(/\.js$/, '.min.js');
+      })
+      .process('uglify')
+      .write('dist');
   });
 
   nitro.task('js', function (target) {

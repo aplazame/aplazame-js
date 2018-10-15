@@ -29,7 +29,7 @@ test: lint unit
 test-tools:
 	@$(npmdir)/watch "date +\"%Y-%m-%d %T\" && $(npmdir)/mocha -R spec tests" src/tools tests
 
-build: install tests
+build: install test
 	@echo "running make build"
 	node make build
 

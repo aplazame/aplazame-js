@@ -19,8 +19,11 @@ import loading_svg from './loading-svg';
 
 var flag_wrapper = document.createElement('div');
 var is_app = typeof navigator !== 'undefined' && navigator.app;
+var supports_shadow_dom = 'attachShadow' in HTMLElement.prototype;
 
 flag_wrapper.className = 'aplazame-checkout-flag';
+
+console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
 
 function checkout (checkout_data, callbacks) {
   var checkout_id = null, transaction;
@@ -112,18 +115,73 @@ function checkout (checkout_data, callbacks) {
     }
   }, 200);
 
-  var checkout_promise = checkout_id ?
-    apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
-    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
-
   // checkout_promise.then(function (res) {
   //   console.log('checkout:then', res);
   // }, function (res) {
   //   console.log('checkout:catch', res);
   // });
 
+  var checkout_shadow = null;
+  function _loadCheckoutShadow () {
+    if( !checkout_shadow ) checkout_shadow = new Parole(function (resolve, reject) {
+
+      var script = document.createElement('script');
+      script.async = true;
+      script.onerror = reject;
+
+      window.__aplazame__checkout__ = function (checkout_loader) {
+        delete window.__aplazame__checkout__;
+        console.log('checkout_loader', checkout_loader);
+        resolve(checkout_loader);
+      };
+
+      console.log('checkout_url', checkout_url + 'checkout.js?build=' + Date.now()/(3600000) );
+      script.src = checkout_url + 'checkout.js?build=' + Date.now()/(3600000) + '&entrypoint=__aplazame__checkout__';
+
+      document.body.appendChild(script);
+    });
+    return checkout_shadow;
+  }
+
+  var shadow_dom_enabled = false;
   Parole.race([
-    new Parole(function (resolveLoadingCheckout) {
+    new Parole( supports_shadow_dom && shadow_dom_enabled ? function (resolveLoadingCheckout) {
+
+      _loadCheckoutShadow().then(function (checkout_loader) {
+        var checkout_container = document.createElement('div');
+        checkout_container.className = 'aplazame-modal';
+        document.body.insertBefore(checkout_container, document.body.firstChild);
+
+        console.log('_loadCheckoutShadow', checkout_data);
+
+        if( _.isMobile() ) _.scroll.goto(0);
+        checkout_loader.launch(transaction, {
+          el: checkout_container,
+          // shadow_dom: false,
+          onStatus: function (event_name, _result_status) {
+            switch( event_name ) {
+              default:
+                console.log('onStatus', arguments);
+            }
+          },
+        }, false).then(function () {
+          resolveLoadingCheckout();
+
+          cssModal.hack(true);
+          if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
+          cssOverlay.hack(false);
+          document.body.removeChild(tmpOverlay);
+          on.ready();
+        });
+
+      });
+
+    } : function (resolveLoadingCheckout) {
+
+      var checkout_promise = checkout_id ?
+        apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
+        ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
+
       var iframe = _.getIFrame({
             top: 0,
             left: 0,

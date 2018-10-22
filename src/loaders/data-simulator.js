@@ -69,7 +69,11 @@ export default function (aplazame) {
 
     log('[data-aplazame-simulator]', widget_el );
 
-    var simulator_options = { view: widget_el.getAttribute('data-view') || 'product' },
+    var simulator_options = {
+          view: widget_el.getAttribute('data-view') || 'product',
+          country: widget_el.getAttribute('data-country') || 'ES',
+          currency:  widget_el.getAttribute('data-currency') || 'EUR',
+        },
         widget = new Widget(widget_el, {
           currency:  widget_el.getAttribute('data-currency') || 'EUR',
           country:  widget_el.getAttribute('data-country') || 'ES',

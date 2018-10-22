@@ -22,6 +22,7 @@ export default function simulator (amount, _options, callback, onError) {
         params: {
           amount: amount,
           currency: _options.currency || 'EUR',
+          country: _options.country || 'ES',
         }
       },
       hash = amount + ',' + JSON.stringify(data);

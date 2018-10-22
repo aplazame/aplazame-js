@@ -135,9 +135,10 @@ export default function (aplazame) {
         getAmount: _.getAmount,
         months: function (m) {
           return m > 1 ? 'meses' : 'mes';
-        }
-      })
+        },
+      }),
     });
+
   };
 
   return Widget;

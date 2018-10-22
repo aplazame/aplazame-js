@@ -95,6 +95,8 @@ module.exports = function (widget) {
 
       if( type === 'button' ) {
         click_el = widget_el.querySelector('.aplazame-widget-instalments');
+      } else {
+        click_el = widget_el;
       }
 
       click_el.addEventListener('click', onClick);

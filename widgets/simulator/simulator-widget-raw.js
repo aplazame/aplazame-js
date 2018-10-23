@@ -17,7 +17,11 @@ module.exports = function (widget) {
     },
     unbind: function () {
       widget_el.removeEventListener('click', onClick);
-    }
+    },
+    detach: function () {
+      widget_el.innerHTML = '';
+      this.unbind();
+    },
   };
 
 };

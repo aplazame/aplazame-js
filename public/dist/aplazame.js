@@ -1,5 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-module.exports = '0.0.489';
+module.exports = '0.0.490';
 },{}],2:[function(require,module,exports){
 module.exports = '@-webkit-keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0);}to{-webkit-filter:blur(1px);filter:blur(1px)}}@keyframes aplazame-blur{0%{-webkit-filter:blur(0);filter:blur(0)}to{-webkit-filter:blur(1px);filter:blur(1px)}}body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-filter:blur(1px);filter:blur(1px)}@media (min-width:601px){body.aplazame-blur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur}}body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-filter:blur(0);filter:blur(0)}@media (min-width:601px){body.aplazame-unblur>:not(.aplazame-modal):not(.aplazame-overlay):not(.aplazame-checkout-flag){-webkit-animation-duration:.4s;animation-duration:.4s;-webkit-animation-name:aplazame-blur;animation-name:aplazame-blur;animation-direction:reverse}}';
 },{}],3:[function(require,module,exports){
@@ -3752,7 +3752,7 @@ module.exports = function (aplazame) {
           log('data-qty: missing', err.message);
         }
       }
-    } else {
+    } else if( !widgetElement.hasAttribute('data-amount') ) {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {
@@ -3801,10 +3801,11 @@ module.exports = function (aplazame) {
       log('price read from', priceElement, amount );
 
       return amount && _.parsePrice( amount );
+    } : ( widgetElement.hasAttribute('data-amount') ? function () {
+      return Number( widgetElement.getAttribute('data-amount') );
     } : function () {
-      // return Number( widgetElement.getAttribute('data-amount') );
       return;
-    };
+    });
 
     // new Events(getter);
     //
@@ -3843,29 +3844,30 @@ module.exports = function (aplazame) {
   return function (widget) {
 
     var widget_el = widget.el,
-        iframe = _.getIFrame({ width: '100%', height: '40px' });
+        iframe = _.getIFrame({ width: '100%', height: '40px' }),
+        _onMessage = function (e, message) {
+          if( message.simulator_id !== widget.id ) return;
+
+          switch( message.event ) {
+            case 'require:data':
+              e.source.postMessage({
+                event: 'simulator:data',
+                data: widget.simulator_data
+              }, '*');
+              break;
+            case 'iframe:resize':
+              iframe.style.height = message.data.height + 'px';
+              break;
+            case 'widget:showInfo':
+              widget.showInfo();
+              break;
+          }
+        };
 
     widget_el.appendChild( iframe );
     iframe.src = widget.simulator.static_url + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + widget.id;
 
-    _.onMessage('simulator', function (e, message) {
-      if( message.simulator_id !== widget.id ) return;
-
-      switch( message.event ) {
-        case 'require:data':
-          e.source.postMessage({
-            event: 'simulator:data',
-            data: widget.simulator_data
-          }, '*');
-          break;
-        case 'iframe:resize':
-          iframe.style.height = message.data.height + 'px';
-          break;
-        case 'widget:showInfo':
-          widget.showInfo();
-          break;
-      }
-    });
+    _.onMessage('simulator', _onMessage);
 
     return {
       render: function () {
@@ -3873,7 +3875,14 @@ module.exports = function (aplazame) {
           event: 'simulator:data',
           data: widget.simulator_data
         }, '*');
-      }
+      },
+      unbind: function () {
+        _.onMessage.off('simulator', _onMessage);
+      },
+      detach: function () {
+        this.unbind();
+        widget_el.innerHTML = '';
+      },
     };
 
   };
@@ -3901,6 +3910,7 @@ module.exports = function (aplazame) {
 
         return widgetV3;
       },
+      initWidgetHandler = null,
       amount_tools = require('../tools/amount-price'),
       color_tools = require('../tools/colors');
 
@@ -3979,13 +3989,16 @@ module.exports = function (aplazame) {
       return choice.annual_equivalent === 0;
     });
 
-    if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
-    else {
-      if( widget.type !== widget_type || widget_version !== widget.version ) {
-        widget.handler.unbind();
-        widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
-      }
-    }
+    widget.handler = (function (_initWidgetHandler) {
+
+      if( _initWidgetHandler === initWidgetHandler && widget.handler ) return widget.handler;
+
+      initWidgetHandler = _initWidgetHandler;
+      if( widget.handler ) widget.handler.detach();
+
+      return initWidgetHandler(widget);
+
+    })( getWidgetHandler(widget_type, widget_version, data.widget.preferences || {}) );
 
     widget.handler.render();
   };
@@ -4823,26 +4836,32 @@ module.exports = function (widget) {
 
   var widget_el = widget.el;
 
-  function onClick () {
+  function _onClick () {
     widget.showInfo();
+  }
+
+  function _unbind () {
+    widget_el.removeEventListener('click', _onClick);
   }
 
   return {
     render: function () {
       widget_el.innerHTML = renderWidget(widget.simulator);
 
-      widget_el.addEventListener('click', onClick);
+      widget_el.addEventListener('click', _onClick);
     },
-    unbind: function () {
-      widget_el.removeEventListener('click', onClick);
-    }
+    unbind: _unbind,
+    detach: function () {
+      _unbind();
+      widget_el.innerHTML = '';
+    },
   };
 
 };
 
 },{"../../.tmp/simulator/templates/widget-raw.tmpl":7}],82:[function(require,module,exports){
 
-var renderWidget = require('../../.tmp/simulator/templates/widget-v3.tmpl');
+var _renderWidget = require('../../.tmp/simulator/templates/widget-v3.tmpl');
 
 module.exports = function (widget) {
 
@@ -4864,9 +4883,9 @@ module.exports = function (widget) {
         });
       },
       styles_link = document.createElement('link'),
-      onReady = function () {
-        window.removeEventListener('load', onReady);
-        window.removeEventListener('DOMContentLoaded', onReady);
+      _onReady = function () {
+        window.removeEventListener('load', _onReady);
+        window.removeEventListener('DOMContentLoaded', _onReady);
 
         styles_link.rel = 'stylesheet';
         styles_link.href = widget.simulator.static_url + 'widgets/simulator/widget-v3.css';
@@ -4880,71 +4899,70 @@ module.exports = function (widget) {
 
   if( !widget.simulator.preferences.custom_styles || widget.type !== 'text' ) {
     widget_el.style.display = 'none';
-    if( document.readyState === 'complete' ) onReady();
+    if( document.readyState === 'complete' ) _onReady();
     else {
-      window.addEventListener('load', onReady);
-      window.addEventListener('DOMContentLoaded', onReady);
+      window.addEventListener('load', _onReady);
+      window.addEventListener('DOMContentLoaded', _onReady);
     }
   }
 
-  function onClick () {
+  function _onClick () {
     widget.showInfo();
   }
 
-  function selectChange () {
+  function _selectChange () {
     selectNumInstalments( Number(widget_el.querySelector('select').value) );
   }
 
-  function increaseNumInstalments () {
+  function _increaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index + 1];
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
-  function decreaseNumInstalments () {
+  function _decreaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index - 1];
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
-  function unbind () {
-    click_el.removeEventListener('click', onClick);
+  function _unbind () {
+    click_el.removeEventListener('click', _onClick);
+    widget_el.removeEventListener('click', _onClick);
     if( widget_el.querySelector('select') ) {
-      widget_el.querySelector('select').removeEventListener('change', selectChange);
+      widget_el.querySelector('select').removeEventListener('change', _selectChange);
     }
     if( widget_el.querySelector('.aplazame-widget-choice-button-increase') ) {
-      widget_el.querySelector('.aplazame-widget-choice-button-increase').removeEventListener('click', increaseNumInstalments);
+      widget_el.querySelector('.aplazame-widget-choice-button-increase').removeEventListener('click', _increaseNumInstalments);
     }
     if( widget_el.querySelector('.aplazame-widget-choice-button-decrease') ) {
-      widget_el.querySelector('.aplazame-widget-choice-button-decrease').removeEventListener('click', decreaseNumInstalments);
+      widget_el.querySelector('.aplazame-widget-choice-button-decrease').removeEventListener('click', _decreaseNumInstalments);
     }
   }
 
   var handler = {
     render: function () {
-      unbind();
+      _unbind();
       var type = widget.simulator.type;
-      widget_el.innerHTML = renderWidget(widget.simulator);
+      widget_el.innerHTML = _renderWidget(widget.simulator);
 
       if( type === 'select' ) {
-        return widget_el.querySelector('select').addEventListener('change', selectChange);
+        return widget_el.querySelector('select').addEventListener('change', _selectChange);
       }
 
       if( type === 'big-button' ) {
-        widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', decreaseNumInstalments);
-        widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', increaseNumInstalments);
+        widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
+        widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);
         return;
       }
 
-      if( type === 'button' ) {
-        click_el = widget_el.querySelector('.aplazame-widget-instalments');
-      }
-
-      click_el.addEventListener('click', onClick);
+      click_el = type === 'button' ? widget_el.querySelector('.aplazame-widget-instalments') : widget_el;
+      click_el.addEventListener('click', _onClick);
     },
+    unbind: _unbind,
     detach: function () {
       document.head.removeChild(styles_link);
-      unbind();
+      _unbind();
     }
   };
 

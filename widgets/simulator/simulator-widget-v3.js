@@ -1,5 +1,5 @@
 
-var renderWidget = require('../../.tmp/simulator/templates/widget-v3.tmpl');
+var _renderWidget = require('../../.tmp/simulator/templates/widget-v3.tmpl');
 
 module.exports = function (widget) {
 
@@ -21,9 +21,9 @@ module.exports = function (widget) {
         });
       },
       styles_link = document.createElement('link'),
-      onReady = function () {
-        window.removeEventListener('load', onReady);
-        window.removeEventListener('DOMContentLoaded', onReady);
+      _onReady = function () {
+        window.removeEventListener('load', _onReady);
+        window.removeEventListener('DOMContentLoaded', _onReady);
 
         styles_link.rel = 'stylesheet';
         styles_link.href = widget.simulator.static_url + 'widgets/simulator/widget-v3.css';
@@ -37,10 +37,10 @@ module.exports = function (widget) {
 
   if( !widget.simulator.preferences.custom_styles || widget.type !== 'text' ) {
     widget_el.style.display = 'none';
-    if( document.readyState === 'complete' ) onReady();
+    if( document.readyState === 'complete' ) _onReady();
     else {
-      window.addEventListener('load', onReady);
-      window.addEventListener('DOMContentLoaded', onReady);
+      window.addEventListener('load', _onReady);
+      window.addEventListener('DOMContentLoaded', _onReady);
     }
   }
 
@@ -82,7 +82,7 @@ module.exports = function (widget) {
     render: function () {
       _unbind();
       var type = widget.simulator.type;
-      widget_el.innerHTML = renderWidget(widget.simulator);
+      widget_el.innerHTML = _renderWidget(widget.simulator);
 
       if( type === 'select' ) {
         return widget_el.querySelector('select').addEventListener('change', _selectChange);
@@ -94,12 +94,7 @@ module.exports = function (widget) {
         return;
       }
 
-      if( type === 'button' ) {
-        click_el = widget_el.querySelector('.aplazame-widget-instalments');
-      } else {
-        click_el = widget_el;
-      }
-
+      click_el = type === 'button' ? widget_el.querySelector('.aplazame-widget-instalments') : widget_el;
       click_el.addEventListener('click', _onClick);
     },
     unbind: _unbind,

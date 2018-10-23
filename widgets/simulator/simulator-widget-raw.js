@@ -5,19 +5,25 @@ export default function (widget) {
 
   var widget_el = widget.el;
 
-  function onClick () {
+  function _onClick () {
     widget.showInfo();
+  }
+
+  function _unbind () {
+    widget_el.removeEventListener('click', _onClick);
   }
 
   return {
     render: function () {
       widget_el.innerHTML = renderWidget(widget.simulator);
 
-      widget_el.addEventListener('click', onClick);
+      widget_el.addEventListener('click', _onClick);
     },
-    unbind: function () {
-      widget_el.removeEventListener('click', onClick);
-    }
+    unbind: _unbind,
+    detach: function () {
+      _unbind();
+      widget_el.innerHTML = '';
+    },
   };
 
 }

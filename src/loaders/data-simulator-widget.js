@@ -23,7 +23,8 @@ export default function (aplazame) {
         }
 
         return widgetV3;
-      };
+      },
+      initWidgetHandler = null;
 
   function maxInstalments (prev, choice) {
     if( prev === null ) {
@@ -100,13 +101,16 @@ export default function (aplazame) {
       return choice.annual_equivalent === 0;
     });
 
-    if( !widget.handler ) widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
-    else {
-      if( widget.type !== widget_type || widget_version !== widget.version ) {
-        widget.handler.unbind();
-        widget.handler = getWidgetHandler(widget_type, widget_version, data.widget.preferences || {})(widget);
-      }
-    }
+    widget.handler = (function (_initWidgetHandler) {
+
+      if( _initWidgetHandler === initWidgetHandler && widget.handler ) return widget.handler;
+
+      initWidgetHandler = _initWidgetHandler;
+      if( widget.handler ) widget.handler.detach();
+
+      return initWidgetHandler(widget);
+
+    })( getWidgetHandler(widget_type, widget_version, data.widget.preferences || {}) );
 
     widget.handler.render();
   };

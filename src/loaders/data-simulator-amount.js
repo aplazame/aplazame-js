@@ -75,7 +75,7 @@ export default function (aplazame) {
           log('data-qty: missing', err.message);
         }
       }
-    } else {
+    } else if( !widgetElement.hasAttribute('data-amount') ) {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {
@@ -124,10 +124,11 @@ export default function (aplazame) {
       log('price read from', priceElement, amount );
 
       return amount && _.parsePrice( amount );
+    } : ( widgetElement.hasAttribute('data-amount') ? function () {
+      return Number( widgetElement.getAttribute('data-amount') );
     } : function () {
-      // return Number( widgetElement.getAttribute('data-amount') );
       return;
-    };
+    });
 
     // new Events(getter);
     //

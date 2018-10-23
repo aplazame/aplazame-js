@@ -52,9 +52,9 @@ onMessage('simulator:data', function (simulator_data) {
   widget.simulator = simulator;
 
   if( !widget_handler || widget_version !== simulator_data.version ) {
-    if( widget_handler && widget_handler.detach ) widget_handler.detach();
-    widget_handler = simulator.preferences.version === 3 ? widgetV3(widget) : widgetV2(widget);
     widget_version = simulator_data.version;
+    widget_handler = widget_version === 3 ? widgetV3(widget) : widgetV2(widget);
+    if( widget_handler ) widget_handler.detach();
   }
 
   widget_handler.render();

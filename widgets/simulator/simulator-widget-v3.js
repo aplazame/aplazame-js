@@ -64,7 +64,7 @@ module.exports = function (widget) {
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
-  function unbind () {
+  function _unbind () {
     click_el.removeEventListener('click', onClick);
     widget_el.removeEventListener('click', onClick);
     if( widget_el.querySelector('select') ) {
@@ -80,7 +80,7 @@ module.exports = function (widget) {
 
   var handler = {
     render: function () {
-      unbind();
+      _unbind();
       var type = widget.simulator.type;
       widget_el.innerHTML = renderWidget(widget.simulator);
 
@@ -102,10 +102,10 @@ module.exports = function (widget) {
 
       click_el.addEventListener('click', onClick);
     },
-    unbind: unbind,
+    unbind: _unbind,
     detach: function () {
       document.head.removeChild(styles_link);
-      unbind();
+      _unbind();
     }
   };
 

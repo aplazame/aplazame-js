@@ -66,6 +66,7 @@ module.exports = function (widget) {
 
   function unbind () {
     click_el.removeEventListener('click', onClick);
+    widget_el.removeEventListener('click', onClick);
     if( widget_el.querySelector('select') ) {
       widget_el.querySelector('select').removeEventListener('change', selectChange);
     }

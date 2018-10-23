@@ -102,6 +102,7 @@ module.exports = function (widget) {
 
       click_el.addEventListener('click', onClick);
     },
+    unbind: unbind,
     detach: function () {
       document.head.removeChild(styles_link);
       unbind();

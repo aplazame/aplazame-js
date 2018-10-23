@@ -13,7 +13,7 @@ module.exports = function (nitro) {
 
   nitro.task('demo-assets', function (_target) {
 
-    nitro.dir('.bower_components/ng-aplazame/assets').copy('public/assets');
+    nitro.dir('node_modules/ng-aplazame/assets').copy('public/assets');
 
     nitro.file.copy('demo/checkout-ES.json', 'public/checkout-ES.json');
     nitro.file.copy('demo/checkout-MX.json', 'public/checkout-MX.json');
@@ -25,7 +25,7 @@ module.exports = function (nitro) {
 
     nitro.dir('demo/styles').load('{,**/}*.{sass,scss}').process('sass', {
       includePaths: [
-        '.bower_components'
+        'node_modules'
       ],
       autoprefix: true,
       sourceMap: dev,

@@ -1,5 +1,5 @@
 
-var renderWidget = require('../../.tmp/simulator/templates/widget-v3.tmpl');
+var _renderWidget = require('../../.tmp/simulator/templates/widget-v3.tmpl');
 
 module.exports = function (widget) {
 
@@ -21,9 +21,9 @@ module.exports = function (widget) {
         });
       },
       styles_link = document.createElement('link'),
-      onReady = function () {
-        window.removeEventListener('load', onReady);
-        window.removeEventListener('DOMContentLoaded', onReady);
+      _onReady = function () {
+        window.removeEventListener('load', _onReady);
+        window.removeEventListener('DOMContentLoaded', _onReady);
 
         styles_link.rel = 'stylesheet';
         styles_link.href = widget.simulator.static_url + 'widgets/simulator/widget-v3.css';
@@ -37,71 +37,70 @@ module.exports = function (widget) {
 
   if( !widget.simulator.preferences.custom_styles || widget.type !== 'text' ) {
     widget_el.style.display = 'none';
-    if( document.readyState === 'complete' ) onReady();
+    if( document.readyState === 'complete' ) _onReady();
     else {
-      window.addEventListener('load', onReady);
-      window.addEventListener('DOMContentLoaded', onReady);
+      window.addEventListener('load', _onReady);
+      window.addEventListener('DOMContentLoaded', _onReady);
     }
   }
 
-  function onClick () {
+  function _onClick () {
     widget.showInfo();
   }
 
-  function selectChange () {
+  function _selectChange () {
     selectNumInstalments( Number(widget_el.querySelector('select').value) );
   }
 
-  function increaseNumInstalments () {
+  function _increaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index + 1];
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
-  function decreaseNumInstalments () {
+  function _decreaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index - 1];
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
-  function unbind () {
-    click_el.removeEventListener('click', onClick);
+  function _unbind () {
+    click_el.removeEventListener('click', _onClick);
+    widget_el.removeEventListener('click', _onClick);
     if( widget_el.querySelector('select') ) {
-      widget_el.querySelector('select').removeEventListener('change', selectChange);
+      widget_el.querySelector('select').removeEventListener('change', _selectChange);
     }
     if( widget_el.querySelector('.aplazame-widget-choice-button-increase') ) {
-      widget_el.querySelector('.aplazame-widget-choice-button-increase').removeEventListener('click', increaseNumInstalments);
+      widget_el.querySelector('.aplazame-widget-choice-button-increase').removeEventListener('click', _increaseNumInstalments);
     }
     if( widget_el.querySelector('.aplazame-widget-choice-button-decrease') ) {
-      widget_el.querySelector('.aplazame-widget-choice-button-decrease').removeEventListener('click', decreaseNumInstalments);
+      widget_el.querySelector('.aplazame-widget-choice-button-decrease').removeEventListener('click', _decreaseNumInstalments);
     }
   }
 
   var handler = {
     render: function () {
-      unbind();
+      _unbind();
       var type = widget.simulator.type;
-      widget_el.innerHTML = renderWidget(widget.simulator);
+      widget_el.innerHTML = _renderWidget(widget.simulator);
 
       if( type === 'select' ) {
-        return widget_el.querySelector('select').addEventListener('change', selectChange);
+        return widget_el.querySelector('select').addEventListener('change', _selectChange);
       }
 
       if( type === 'big-button' ) {
-        widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', decreaseNumInstalments);
-        widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', increaseNumInstalments);
+        widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
+        widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);
         return;
       }
 
-      if( type === 'button' ) {
-        click_el = widget_el.querySelector('.aplazame-widget-instalments');
-      }
-
-      click_el.addEventListener('click', onClick);
+      click_el = type === 'button' ? widget_el.querySelector('.aplazame-widget-instalments') : widget_el;
+      click_el.addEventListener('click', _onClick);
     },
+    unbind: _unbind,
     detach: function () {
       document.head.removeChild(styles_link);
-      unbind();
+      _unbind();
     }
   };
 

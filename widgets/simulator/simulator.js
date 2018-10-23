@@ -12,7 +12,6 @@ var message_listeners = {}, no_listeners = [], simulator_id = -1,
       }
     },
     widget_version,
-    widget_type,
     widget_handler;
 
 if( location.href.match(/[?&]simulator=(\w+?)(&|$)/) ) {
@@ -52,10 +51,10 @@ onMessage('simulator:data', function (simulator_data) {
 
   widget.simulator = simulator;
 
-  if( !widget_handler || widget_version !== simulator_data.version || widget_type !== simulator_data.type ) {
-    widget_handler = simulator.preferences.version === 3 ? widgetV3(widget) : widgetV2(widget);
-    widget_type = simulator_data.type;
+  if( !widget_handler || widget_version !== simulator_data.version ) {
+    if( widget_handler ) widget_handler.detach();
     widget_version = simulator_data.version;
+    widget_handler = widget_version === 3 ? widgetV3(widget) : widgetV2(widget);
   }
 
   widget_handler.render();

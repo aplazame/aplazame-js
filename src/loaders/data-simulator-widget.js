@@ -102,8 +102,9 @@ module.exports = function (aplazame) {
       if( _initWidgetHandler !== initWidgetHandler ) {
         if( widget.handler ) widget.handler.unbind();
         initWidgetHandler = _initWidgetHandler;
-        widget.handler = initWidgetHandler(widget);
       }
+
+      return initWidgetHandler(widget);
 
     })( getWidgetHandler(widget_type, widget_version, data.widget.preferences || {}) );
 

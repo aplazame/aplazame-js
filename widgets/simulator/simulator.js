@@ -51,7 +51,6 @@ onMessage('simulator:data', function (simulator_data) {
 
   widget.simulator = simulator;
 
-  console.log('simulator:data', simulator_data, widget_version);
   if( !widget_handler || widget_version !== simulator_data.version ) {
     if( widget_handler ) widget_handler.detach();
     widget_version = simulator_data.version;

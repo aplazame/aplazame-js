@@ -158,11 +158,15 @@ function checkout (checkout_data, callbacks) {
         checkout_loader.launch(transaction, {
           el: checkout_container,
           // shadow_dom: false,
-          onStatus: function (event_name, _result_status) {
-            switch( event_name ) {
-              default:
-                console.log('onStatus', arguments);
+          onStatusChange: function (result_status) {
+            if( valid_result_status.indexOf(result_status) < 0 ) {
+              (console.error || console.log)('Wrong status returned by checkout', result_status );
+              // throw new Error(message);
             }
+            on.statusChange(result_status);
+          },
+          onClose: function (result_status) {
+            on.close(result_status);
           },
         }, false).then(function () {
           resolveLoadingCheckout();

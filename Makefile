@@ -72,7 +72,7 @@ github.release:
 	@echo ${RELEASE_URL}
 	@true
 
-release: install tests npm.version git.updateRelease build dist-folder github.release
+release: install test npm.version git.updateRelease build dist-folder github.release
 	@git checkout $(git_branch)
 
 echo:

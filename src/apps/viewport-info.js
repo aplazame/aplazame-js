@@ -1,7 +1,7 @@
 
 var dE = document.documentElement;
 
-module.exports = function () {
+export default function () {
 
   var viewport = {};
 
@@ -31,5 +31,5 @@ module.exports = function () {
   };
 
   return viewport;
-  
-};
+
+}

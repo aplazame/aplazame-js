@@ -1,4 +1,4 @@
-'use strict';
+
 
 function _locationReplaceFn ( location, href ) {
   return href ? function () {
@@ -12,7 +12,7 @@ function _removeFunctions (o) {
   }
 }
 
-module.exports = function checkoutNormalizerCallbacks(transaction, callbacks, location) {
+export default function checkoutNormalizerCallbacks(transaction, callbacks, location) {
 
   var _noop = function () {},
       merchant = transaction.merchant,
@@ -54,4 +54,4 @@ module.exports = function checkoutNormalizerCallbacks(transaction, callbacks, lo
   _removeFunctions(merchant);
 
   return on;
-};
+}

@@ -1,7 +1,7 @@
-'use strict';
 
-var apiHttp = require('../core/api-http'),
-    _ = require('../tools/tools');
+
+import apiHttp from '../core/api-http';
+import _ from '../tools/tools';
 
 function getCartPrice () {
   var ttp = document.querySelector('#total_price');
@@ -148,4 +148,4 @@ button.check = function (options, callback) {
   return checkPromise;
 };
 
-module.exports = button;
+export default button;

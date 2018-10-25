@@ -1,10 +1,10 @@
-'use strict';
 
-var api = require('./api'),
-    _ = require('../tools/tools'),
-    events = require('./events');
 
-module.exports = function init (options) {
+import api from './api';
+import _ from '../tools/tools';
+import events from './events';
+
+export default function init (options) {
   options = options || {};
 
   if( typeof options.sandbox === 'string' ) {
@@ -18,4 +18,4 @@ module.exports = function init (options) {
   _.log('aplazame.init', options, api);
 
   if( api.public_key ) events.emit('ready');
-};
+}

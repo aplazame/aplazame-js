@@ -1,8 +1,9 @@
 
-module.exports = function (aplazame) {
+import log from '../tools/log';
 
-  var _ = aplazame._,
-      log = require('../tools/log');
+export default function (aplazame) {
+
+  var _ = aplazame._;
 
   function getQty (qtySelector) {
     if( !_.isString(qtySelector) ) {
@@ -74,7 +75,7 @@ module.exports = function (aplazame) {
           log('data-qty: missing', err.message);
         }
       }
-    } else if( !widgetElement.hasAttribute('data-amount') ) {
+    } else if( !widgetElement.getAttribute('data-amount') || widgetElement.getAttribute('data-amount') === '0' ) {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {
@@ -155,4 +156,4 @@ module.exports = function (aplazame) {
 
   return amountGetter;
 
-};
+}

@@ -1,6 +1,5 @@
-'use strict';
 
-module.exports = function transactionNormalizer(transaction) {
+export default function transactionNormalizer(transaction) {
 
   var customer = transaction.customer;
   if( !customer ) return;
@@ -38,4 +37,4 @@ module.exports = function transactionNormalizer(transaction) {
   }
 
   return customer;
-};
+}

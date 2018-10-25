@@ -1,13 +1,14 @@
-'use strict';
 
-var apiHttp = require('../core/api-http'),
-    _ = require('../tools/tools'),
-    $q = require('parole'),
-    cache = [],
-    requestsCache = {},
-    log = require('../tools/log');
 
-function simulator (amount, _options, callback, onError) {
+import log  from '../tools/log';
+import apiHttp  from '../core/api-http';
+import _  from '../tools/tools';
+import $q  from 'parole';
+
+var cache = [],
+    requestsCache = {};
+
+export default function simulator (amount, _options, callback, onError) {
 
   if( _.isFunction(_options) ) {
     onError = callback;
@@ -21,6 +22,7 @@ function simulator (amount, _options, callback, onError) {
         params: {
           amount: amount,
           currency: _options.currency || 'EUR',
+          country: _options.country || 'ES',
         }
       },
       hash = amount + ',' + JSON.stringify(data);
@@ -73,5 +75,3 @@ function simulator (amount, _options, callback, onError) {
 
   return requestsCache[hash];
 }
-
-module.exports = simulator;

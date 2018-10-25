@@ -44,7 +44,7 @@ function deserialize (querystring, decode, throw_errors) {
 	return result;
 }
 
-module.exports = {
+export default {
   deserialize: deserialize,
   toUnderscoreCase: toUnderscoreCase,
   toCamelCase: toCamelCase,

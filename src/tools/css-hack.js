@@ -1,4 +1,8 @@
 
+import overlay_css from '../../.tmp/css-hacks/overlay';
+import blur_css from '../../.tmp/css-hacks/blur';
+import logo_css from '../../.tmp/css-hacks/logo';
+import modal_css from '../../.tmp/css-hacks/modal';
 
 var importantCSS = function (css) {
       return css.replace(/;/g, ' !important;').replace(/:([^:;]+?)}/g, function (_matched, value) {
@@ -10,10 +14,10 @@ var importantCSS = function (css) {
     cssHack = (function () {
       var cache = {},
           hacks = {
-            overlay: importantCSS(require('../../.tmp/css-hacks/overlay')),
-            blur: importantCSS(require('../../.tmp/css-hacks/blur')),
-            logo: importantCSS(require('../../.tmp/css-hacks/logo')),
-            modal: importantCSS(require('../../.tmp/css-hacks/modal'))
+            overlay: importantCSS(overlay_css),
+            blur: importantCSS(blur_css),
+            logo: importantCSS(logo_css),
+            modal: importantCSS(modal_css),
           };
 
       return function hack (hackName) {
@@ -45,4 +49,4 @@ var importantCSS = function (css) {
       };
     })();
 
-module.exports = cssHack;
+export default cssHack;

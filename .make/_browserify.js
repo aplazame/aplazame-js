@@ -3,7 +3,7 @@ var nitro = require('nitro');
 var path = require('path');
 var yamlify = nitro.require('yamlify');
 var stringify = nitro.require('stringify');
-var browserify = nitro.require('browserify')
+var browserify = nitro.require('browserify');
 
 module.exports = nitro.deasync(function(filepath, done) {
   var b = browserify();

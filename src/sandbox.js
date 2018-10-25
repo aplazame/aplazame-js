@@ -1,10 +1,10 @@
-'use strict';
+// 
 
-var log = require('./tools/log');
+import log from './tools/log';
 
-module.exports = function (func) {
+export default function runInSandbox(func) {
   try{ func(); }
   catch(err) {
     log.error('[error]', err);
   }
-};
+}

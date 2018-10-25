@@ -1,8 +1,9 @@
 /* global describe, it */
 
-var assert = require('assert'),
-    checkoutNormalizeCallbacks = require('./checkout-normalize-callbacks'),
-    callbacks = {},
+import assert from 'assert';
+import checkoutNormalizeCallbacks from './checkout-normalize-callbacks';
+
+var callbacks = {},
     location = {
       replace: function (href) {
         this.href = href;

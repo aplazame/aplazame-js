@@ -1,8 +1,11 @@
-var _ = require('../../src/tools/tools'), Modal;
+import _ from '../../src/tools/tools';
+import _createModal from '../../node_modules/ng-aplazame/toolkit/modal';
+
+var Modal;
 
 _.onMessage('modal', function (_e, message) {
   if( message.event === 'content' ) {
-    Modal = Modal || require('../../node_modules/ng-aplazame/toolkit/modal')(_);
+    Modal = Modal || _createModal(_);
 
     // console.log('modal', message);
     var m = new Modal(_.extend(message.content, {

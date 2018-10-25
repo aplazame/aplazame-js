@@ -1,23 +1,29 @@
-'use strict';
 
-var Parole = require('parole');
 
-var api = require('../core/api'),
-    apiHttp = require('../core/api-http'),
-    _ = require('../tools/tools'),
-    checkoutNormalizeAPI = require('./checkout-normalize-api'),
-    checkoutNormalizeCustomer = require('./checkout-normalize-customer'),
-    checkoutNormalizeCallbacks = require('./checkout-normalize-callbacks'),
-    http = require('http-rest/browser'),
-    cssHack = require('../tools/css-hack'),
-    is_app = typeof navigator !== 'undefined' && navigator.app,
-    log = require('../tools/log'),
-    viewportInfo = require('./viewport-info'),
-    flag_svg_es = require('../templates/flag-es.svg'),
-    flag_svg_mx = require('../templates/flag-mx.svg'),
-    flag_wrapper = document.createElement('div');
+import Parole from 'parole';
+import api from '../core/api';
+import apiHttp from '../core/api-http';
+import _ from '../tools/tools';
+import checkoutNormalizeAPI from './checkout-normalize-api';
+import checkoutNormalizeCustomer from './checkout-normalize-customer';
+import checkoutNormalizeCallbacks from './checkout-normalize-callbacks';
+import http from 'http-rest/browser';
+import cssHack from '../tools/css-hack';
+import log from '../tools/log';
+import viewportInfo from './viewport-info';
+
+import flag_svg_es from '../templates/flag-es.svg';
+import flag_svg_mx from '../templates/flag-mx.svg';
+
+import loading_svg from './loading-svg';
+
+var flag_wrapper = document.createElement('div');
+var is_app = typeof navigator !== 'undefined' && navigator.app;
+var supports_shadow_dom = 'attachShadow' in HTMLElement.prototype;
 
 flag_wrapper.className = 'aplazame-checkout-flag';
+
+console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
 
 function checkout (checkout_data, callbacks) {
   var checkout_id = null, transaction;
@@ -90,7 +96,7 @@ function checkout (checkout_data, callbacks) {
   // }, 0);
 
   tmpOverlay.innerHTML = '<div class="aplazame-logo-wrapper"><div class="logo-aplazame" style="width: 150px; height: 150px;">' +
-  require('./loading-svg') + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
+  loading_svg + '</div><div class="aplazame-overlay-loading-text">Cargando pasarela de pago...</div></div>';
 
   document.body.appendChild(tmpOverlay);
 
@@ -109,18 +115,77 @@ function checkout (checkout_data, callbacks) {
     }
   }, 200);
 
-  var checkout_promise = checkout_id ?
-    apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
-    ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
-
   // checkout_promise.then(function (res) {
   //   console.log('checkout:then', res);
   // }, function (res) {
   //   console.log('checkout:catch', res);
   // });
 
+  var checkout_shadow = null;
+  function _loadCheckoutShadow () {
+    if( !checkout_shadow ) checkout_shadow = new Parole(function (resolve, reject) {
+
+      var script = document.createElement('script');
+      script.async = true;
+      script.onerror = reject;
+
+      window.__aplazame__checkout__ = function (checkout_loader) {
+        delete window.__aplazame__checkout__;
+        console.log('checkout_loader', checkout_loader);
+        resolve(checkout_loader);
+      };
+
+      console.log('checkout_url', checkout_url + 'checkout.js?build=' + Date.now()/(3600000) );
+      script.src = checkout_url + 'checkout.js?build=' + Date.now()/(3600000) + '&entrypoint=__aplazame__checkout__';
+
+      document.body.appendChild(script);
+    });
+    return checkout_shadow;
+  }
+
+  var shadow_dom_enabled = false;
   Parole.race([
-    new Parole(function (resolveLoadingCheckout) {
+    new Parole( supports_shadow_dom && shadow_dom_enabled ? function (resolveLoadingCheckout) {
+
+      _loadCheckoutShadow().then(function (checkout_loader) {
+        var checkout_container = document.createElement('div');
+        checkout_container.className = 'aplazame-modal';
+        document.body.insertBefore(checkout_container, document.body.firstChild);
+
+        console.log('_loadCheckoutShadow', checkout_data);
+
+        if( _.isMobile() ) _.scroll.goto(0);
+        checkout_loader.launch(transaction, {
+          el: checkout_container,
+          // shadow_dom: false,
+          onStatusChange: function (result_status) {
+            if( valid_result_status.indexOf(result_status) < 0 ) {
+              (console.error || console.log)('Wrong status returned by checkout', result_status );
+              // throw new Error(message);
+            }
+            on.statusChange(result_status);
+          },
+          onClose: function (result_status) {
+            on.close(result_status);
+          },
+        }, false).then(function () {
+          resolveLoadingCheckout();
+
+          cssModal.hack(true);
+          if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
+          cssOverlay.hack(false);
+          document.body.removeChild(tmpOverlay);
+          on.ready();
+        });
+
+      });
+
+    } : function (resolveLoadingCheckout) {
+
+      var checkout_promise = checkout_id ?
+        apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
+        ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
+
       var iframe = _.getIFrame({
             top: 0,
             left: 0,
@@ -275,4 +340,4 @@ function checkout (checkout_data, callbacks) {
 
 }
 
-module.exports = checkout;
+export default checkout;

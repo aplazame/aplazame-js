@@ -1,7 +1,8 @@
 
+import log from './log';
+
 var messageTarget = {},
     showLogs = false,
-    log = require('./log'),
     _remove = function (list, iteratee, this_arg) {
       for( var i = list.length - 1 ; i >= 0 ; i-- ) {
         if( iteratee.call(this_arg || list[i], list[i], i) ) list.splice(i, 1);
@@ -43,4 +44,4 @@ onMessage.off = function (target, handler) {
   }
 };
 
-module.exports = onMessage;
+export default onMessage;

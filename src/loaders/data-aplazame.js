@@ -1,8 +1,7 @@
-'use strict';
 
-var log = require('../tools/log');
+import log from '../tools/log';
 
-module.exports = function (_, script) {
+export default function (_, script) {
   log('data-aplazame', script );
 
   var data_aplazame = script.getAttribute('data-aplazame');
@@ -54,4 +53,4 @@ module.exports = function (_, script) {
   log('data-aplazame: params', params );
 
   return params;
-};
+}

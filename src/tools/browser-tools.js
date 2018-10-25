@@ -1,4 +1,6 @@
 
+import _extend from 'nitro-tools/extend';
+
 function _ready (_callback, delay) {
   var callback = delay ? function () { setTimeout(_callback, delay); } : _callback;
 
@@ -129,7 +131,7 @@ var remove_style = / Trident\//.test(navigator.userAgent) ? '' : null;
 
 function getIFrame (iframeStyles) {
   var iframe = document.createElement('iframe');
-  require('nitro-tools/extend').extend(iframe.style, iframeStyles || {});
+  _extend.extend(iframe.style, iframeStyles || {});
 
   iframe.frameBorder = '0';
   // iframe.style.display = 'none';
@@ -181,4 +183,4 @@ _.removeClass = function (element, className) {
   element.classList.remove(className);
 };
 
-module.exports = _;
+export default _;

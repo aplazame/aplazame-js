@@ -1,17 +1,17 @@
-'use strict';
 
-var api = require('../core/api'),
-    _ = require('../tools/tools'),
-    cssHack = require('../tools/css-hack'),
-    aplazameVersion = require('../../.tmp/aplazame-version'),
-    last_scroll_top;
+import api from '../core/api';
+import _ from '../tools/tools';
+import cssHack from '../tools/css-hack';
+import aplazameVersion from '../../.tmp/aplazame-version';
+
+var last_scroll_top;
 
 var tmpOverlay = document.createElement('div'),
     cssOverlay = cssHack('overlay'),
     // cssBlur = cssHack('blur'),
     cssModal = cssHack('modal');
 
-function modal (content) {
+export default function modal (content) {
 
   if( modal.iframe ) {
     document.body.removeChild(modal.iframe);
@@ -113,5 +113,3 @@ _.onMessage('modal', function (e, message) {
   }
 
 });
-
-module.exports = modal;

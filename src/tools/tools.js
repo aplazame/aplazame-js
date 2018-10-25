@@ -1,21 +1,33 @@
 
-var _ = require('vanilla-tools');
+import _ from 'vanilla-tools';
+
+import nitro_tools_lists from 'nitro-tools/lists';
+import nitro_tools_path from 'nitro-tools/path';
+
+import log from './log';
+
+import colors from './colors';
+import browser_tools from './browser-tools';
+import amount_price from './amount-price';
+import deserialize from './deserialize';
+import template from './template';
+import message_listener from './message-listener';
 
 _.extend(_,
-  require('nitro-tools/lists'),
-  require('nitro-tools/path'),
-  require('./colors'),
-  require('./browser-tools'),
-  require('./amount-price'),
-  require('./deserialize'),
+  nitro_tools_lists,
+  nitro_tools_path,
+  colors,
+  browser_tools,
+  amount_price,
+  deserialize,
   {
     remove_style: / Trident\//.test(navigator.userAgent) ? '' : null,
-    template: require('./template'),
-    onMessage: require('./message-listener'),
+    template: template,
+    onMessage: message_listener,
   }
 );
 
-_.log = require('./log');
+_.log = log;
 _.noop = function (value) { return value; };
 
 var _now = Date.now || function () { return new Date().getTime(); };
@@ -46,4 +58,4 @@ _.debounce = function (fn, debounce_duration) {
   };
 };
 
-module.exports = _;
+export default _;

@@ -1,7 +1,7 @@
 /* global describe, it, beforeEach */
 
-var assert = require('assert'),
-    checkoutNormalizeAPI = require('./checkout-normalize-api');
+import assert from 'assert';
+import checkoutNormalizeAPI from './checkout-normalize-api';
 
 describe('checkout API normalizer', function () {
   var api;

@@ -16,15 +16,20 @@ npm-install:
 
 install: git.hooks npm-install
 
-test: tests
-tests:
+lint:
 	@$(npmdir)/eslint src/**
-	@$(npmdir)/mocha src/**/*-tests.js
+
+unit:
+	@$(npmdir)/mocha --require @babel/register src/**/*-tests.js
+
+test: lint unit
+
+# test: tests
 
 test-tools:
 	@$(npmdir)/watch "date +\"%Y-%m-%d %T\" && $(npmdir)/mocha -R spec tests" src/tools tests
 
-build: install tests
+build: install test
 	@echo "running make build"
 	node make build
 

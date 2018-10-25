@@ -17,35 +17,17 @@ function ejsRollup () {
     transform: function (code, file_path) {
       if( !/\.ejs$/.test(file_path) ) return;
 
-      // console.log('ejs', file_path, code);
-
       var templateFn = compileEjs(code, {
         globals: ['parseInt'],
         // use_with: true,
       });
-      // var templateFn = ejs.compile(code, {
-      //   client: true,
-      //   strict: false,
-      //   _with: false,
-      //   outputFunctionName: file_path.split('/').pop().replace(/\.ejs$/, '').replace(/-(\w)/, function (_matched, next_letter) {
-      //     return next_letter.toUpperCase();
-      //   }),
-      // });
 
-      // console.log('compileEjs', templateFn);
       var fn_name = file_path.split('/').pop().replace(/\.ejs$/, '').replace(/-(\w)/, function (_matched, next_letter) {
         return next_letter.toUpperCase();
       }) + 'Ejs';
 
-      // var fn_name = 'ejs';
-
-      // console.log('templateFn', templateFn.toString() );
-      // console.log('non anonymous', templateFn.toString().replace(/^function *([^(]+)\((.*?)\s*\/\*[^\*]+\*\/\s*\)/, 'function ' + fn_name + '($2)') );
-
       return {
-        // code: `export default ${templateFn.toString()};`,
         code: 'export default ' + templateFn.toString().replace(/^function *([^(]+)\((.*?)\s*\/\*[^\*]+\*\/\s*\)/, 'function ' + fn_name + '($2)') + ';',
-        // map: { mappings: '' },
       };
     },
     // resolveId ( importee ) {
@@ -88,15 +70,6 @@ function _compileRollup (filepath, done) {
         },
       }),
       ejsRollup(),
-      // ejs({
-      //   include: ['**/*.ejs'], // optional, '**/*.ejs' by default
-      //   // exclude: ['**/index.html'], // optional, undefined by default
-      //   compilerOptions: {
-      //     client: true,
-      //     strict: false,
-      //     _with: false,
-      //   }, // optional, any options supported by ejs compiler
-      // }),
     ],
   }).then(function (bundle) {
     bundle.generate({

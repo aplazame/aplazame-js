@@ -1,6 +1,6 @@
-'use strict';
 
-module.exports = function checkoutNormalizeAPI(transaction, api_defaults) {
+
+export default function checkoutNormalizeAPI(transaction, api_defaults) {
 
   var merchant = transaction.merchant,
       transaction_api = transaction.api || {};
@@ -15,4 +15,4 @@ module.exports = function checkoutNormalizeAPI(transaction, api_defaults) {
   transaction.api = transaction_api;
 
   return transaction_api;
-};
+}

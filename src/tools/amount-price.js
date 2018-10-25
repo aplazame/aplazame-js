@@ -76,7 +76,7 @@ function parsePrice (price) {
   }
 }
 
-module.exports = {
+export default {
 	getAmount: getAmount,
 	getPrice: getPrice,
 	parsePrice: parsePrice

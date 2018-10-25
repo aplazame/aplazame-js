@@ -1,8 +1,8 @@
 {
   "name": "aplazame",
-  "version": "0.0.490",
+  "version": "0.0.491",
   "description": "javascript sdk for aplazame.com api",
-  "main": "aplazame.min.js",
+  "main": "dist/aplazame.min.js",
   "scripts": {
     "build": "make build",
     "start": "make live",
@@ -22,28 +22,39 @@
   "license": "GPL-3.0",
   "homepage": "https://github.com/aplazame/aplazame-js.git#readme",
   "dependencies": {
-    "ng-aplazame": "git+ssh://git@github.com/aplazame/ng-aplazame.git#v0.3.204",
-    "azazel": "1.1.7",
+    "azazel": "1.1.10",
+    "browserify": "^16.2.3",
     "http-rest": "1.0.1",
     "live-dom": "1.6.9",
+    "ng-aplazame": "git+ssh://git@github.com/aplazame/ng-aplazame.git#v0.3.204",
     "nitro-tools": "0.2.4",
     "parole": "1.1.17",
+    "rollup-plugin-ejs": "^1.1.1",
     "stringify": "^5.2.0",
     "vanilla-tools": "1.2.28",
     "yamlify": "^0.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "@kilt/ejs": "1.0.6",
     "autoprefixer": "8.5.0",
     "bower": "^1.8.4",
-    "browserify": "16.2.2",
     "cssnano": "^3.10.0",
+    "ejs": "^2.6.1",
     "eslint": "4.19.1",
     "git-rev-sync": "1.12.0",
     "mocha": "5.2.0",
     "nitro": "2.2.10",
     "node-sass": "4.9.0",
+    "rollup": "^0.66.6",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-html": "^0.2.1",
+    "rollup-plugin-node-resolve": "^3.4.0",
     "tinyhtml": "0.0.12",
     "uglify-js": "3.3.27",
-    "watch": "1.0.2"
+    "watch": "1.0.2",
+    "webpack": "^4.20.2"
   }
 }

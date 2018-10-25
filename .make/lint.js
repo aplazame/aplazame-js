@@ -3,8 +3,8 @@
 module.exports = function (nitro) {
 
   nitro.task('lint', function () {
-      nitro.load('src/{,**/}*.js').process('eslint');
-      nitro.load('tests/{,**/}*.js').process('eslint');
+      nitro.load('src/{,**/}*.js').process('eslint', require('../.eslintrc') );
+      nitro.load('tests/{,**/}*.js').process('eslint', require('../.eslintrc') );
   });
 
 };

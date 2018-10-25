@@ -1,9 +1,34 @@
 /* global define */
 
-require('./sandbox')(function () {
-  'use strict';
+import Parole from 'parole';
+import runInSandbox from './sandbox';
+import $http from 'http-rest/browser';
 
-  require('http-rest/browser').usePromise(require('parole'));
+import log from './tools/log';
+
+import build_version from '../.tmp/aplazame-version';
+
+import aplazame from './core/core';
+import api from './core/api';
+import events from './core/events';
+
+import _deserialize from './tools/deserialize';
+
+import aplazame_checkout from './apps/checkout';
+import aplazame_button from './apps/button';
+import aplazame_simulator from './apps/simulator';
+import aplazame_modal from './apps/modal';
+
+import initHttpService from './apps/http-service';
+
+import aplazameLoader from './loaders/data-aplazame';
+import buttonLoader from './loaders/data-button';
+import simulatorLoader from './loaders/data-simulator';
+
+runInSandbox(function () {
+
+
+  $http.usePromise(Parole);
 
   function once (fn) {
     var result;
@@ -16,35 +41,31 @@ require('./sandbox')(function () {
     };
   }
 
-  var aplazame = require('./core/core'),
-      api = require('./core/api'),
-      events = require('./core/events'),
-      log = require('./tools/log'),
-      deserialize = require('./tools/deserialize').deserialize;
+  var deserialize = _deserialize.deserialize;
 
-  aplazame.checkout = require('./apps/checkout');
-  aplazame.button = require('./apps/button');
-  aplazame.simulator = require('./apps/simulator');
-  aplazame.modal = require('./apps/modal');
+  aplazame.checkout = aplazame_checkout;
+  aplazame.button = aplazame_button;
+  aplazame.simulator = aplazame_simulator;
+  aplazame.modal = aplazame_modal;
 
   aplazame.info = function () {
     return {
-      api: require('./core/api'),
-      log: require('./tools/log').history,
-      version: require('../.tmp/aplazame-version')
+      api: api,
+      log: log.history,
+      version: build_version,
     };
   };
 
   aplazame.log = log;
   aplazame.logs = log.dump;
 
-  require('./apps/http-service');
+  initHttpService();
 
-  global.aplazame = aplazame;
+  window.aplazame = aplazame;
 
   events.on('ready', once(function () {
-    require('./loaders/data-button')(aplazame);
-    require('./loaders/data-simulator')(aplazame);
+    buttonLoader(aplazame);
+    simulatorLoader(aplazame);
   }));
 
   function findFirst( list, iteratee ) {
@@ -86,7 +107,7 @@ require('./sandbox')(function () {
            document.createElement('script');
   }
 
-  var options = require('./loaders/data-aplazame')(aplazame._, safeScript( aplazame._.currentScript() ) );
+  var options = aplazameLoader(aplazame._, safeScript( aplazame._.currentScript() ) );
 
   aplazame.init(options);
 
@@ -100,11 +121,11 @@ require('./sandbox')(function () {
 
   aplazame._.ready(function () {
     if( api.callback ) {
-      if(  typeof global[api.callback] !== 'function' ) {
+      if(  typeof window[api.callback] !== 'function' ) {
         throw new Error('callback should be a global function');
       }
 
-      global[api.callback](aplazame);
+      window[api.callback](aplazame);
     }
   });
 

@@ -1,9 +1,10 @@
 
+import widgetV2 from './simulator-widget-v2';
+import widgetV3 from './simulator-widget-v3';
+import amount_tools from '../../src/tools/amount-price';
+import color_tools from '../../src/tools/colors';
+
 var message_listeners = {}, no_listeners = [], simulator_id = -1,
-    widgetV2 = require('./simulator-widget-v2'),
-    widgetV3 = require('./simulator-widget-v3'),
-    amount_tools = require('../../src/tools/amount-price'),
-    color_tools = require('../../src/tools/colors'),
     widget = {
       id: simulator_id,
       el: document.body.querySelector('#main') || document.body,

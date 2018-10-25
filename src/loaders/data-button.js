@@ -1,8 +1,7 @@
-'use strict';
 
-module.exports = function (aplazame) {
+import $live from 'live-dom';
 
-  var $live = require('live-dom');
+export default function (aplazame) {
 
   $live('[data-aplazame-button]', function (btn) {
     var btnId = btn.getAttribute('data-aplazame-button'),
@@ -19,4 +18,4 @@ module.exports = function (aplazame) {
     aplazame.button(btnParams);
   });
 
-};
+}

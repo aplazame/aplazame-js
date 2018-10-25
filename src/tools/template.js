@@ -34,4 +34,4 @@ template.lookup = function () {
   });
 };
 
-module.exports = template;
+export default template;

@@ -1,3 +1,4 @@
 
-var Events = require('azazel');
-module.exports = new Events();
+import Events from 'azazel';
+
+export default new Events();

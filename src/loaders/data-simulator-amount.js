@@ -75,7 +75,7 @@ export default function (aplazame) {
           log('data-qty: missing', err.message);
         }
       }
-    } else if( !widgetElement.hasAttribute('data-amount') ) {
+    } else if( !widgetElement.getAttribute('data-amount') || widgetElement.getAttribute('data-amount') === '0' ) {
       priceSelector = _.find(cmsPriceSelector, matchSelector);
 
       if( priceSelector ) {

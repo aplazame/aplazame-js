@@ -1,3 +1,4 @@
+
 require(['aplazame'], function (aplazame) {
 
   aplazame.init({
@@ -72,7 +73,7 @@ require(['aplazame'], function (aplazame) {
 
     if( location.search ) {
       location.search.replace(/^\?/, '').split('&').forEach(function (part) {
-        var param = part.match(/(.*?)\=(.*)/);
+        var param = part.match(/(.*?)=(.*)/);
         if( param ) {
           params[param[1].trim()] = param[2].trim();
         }
@@ -98,7 +99,6 @@ require(['aplazame'], function (aplazame) {
 
     // console.log('params', location.search.replace(/^\?/, '').split('&')[0].match(/(.*?)\=(.*)/) );
 
-    // var http = require('http-rest/browser'),
     //     checkoutData = http(params['checkout-json']);
 
     function randOrderId (_timeout) {

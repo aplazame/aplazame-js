@@ -148,6 +148,15 @@ function whenAplazameReady () {
 
   };
 
+  setTimeout(function () {
+
+    var widget_wrapper = document.createElement('div');
+    widget_wrapper.setAttribute('data-aplazame-simulator', '');
+    widget_wrapper.setAttribute('data-amount', '1234');
+    document.body.appendChild(widget_wrapper);
+
+  }, 3000);
+
 }
 
 window.apzReady = whenAplazameReady;

@@ -23,7 +23,7 @@ var supports_shadow_dom = 'attachShadow' in HTMLElement.prototype;
 
 flag_wrapper.className = 'aplazame-checkout-flag';
 
-console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
+// console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
 
 function checkout (checkout_data, callbacks) {
   var checkout_id = null, transaction;

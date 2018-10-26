@@ -112,12 +112,19 @@ module.exports = function (aplazame) {
   };
 
   Widget.prototype.showInfo = function () {
+    this.simulator.highlighted_choices = [1,4,6,12];
     var widget = this,
         _renderModalInfo = require('../../.tmp/simulator/templates/modal-instalments.tmpl'),
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 
     if( widget.simulator_data.preferences.disable_modal ) return;
+
+
+    var highlighted_choices = !widget.simulator.highlighted_choices?choices.slice(0,4):choices.filter( function (a) {
+      return widget.simulator.highlighted_choices.indexOf(a.num_instalments) > -1;
+    });
+
 
     modal({
       size: 'lg',
@@ -128,6 +135,7 @@ module.exports = function (aplazame) {
         merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
         reference_annual_equivalent: data.reference_annual_equivalent,
         choices: choices,
+        highlighted_choices: highlighted_choices,
         data: data,
         static_url: api.static_url,
         _options: widget.options,
@@ -139,6 +147,8 @@ module.exports = function (aplazame) {
         }
       })
     });
+
+
   };
 
   return Widget;

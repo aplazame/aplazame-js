@@ -12,6 +12,7 @@ var tmpOverlay = document.createElement('div'),
     cssModal = cssHack('modal');
 
 function modal (content) {
+  console.log(content);
 
   if( modal.iframe ) {
     document.body.removeChild(modal.iframe);

@@ -117,7 +117,6 @@ module.exports = function (aplazame) {
         choices = widget.simulator.choices,
         data = widget.simulator.data;
 
-    console.log(data);
     if( widget.simulator_data.preferences.disable_modal ) return;
 
 

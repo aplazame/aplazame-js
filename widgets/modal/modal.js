@@ -15,14 +15,29 @@ _.onMessage('modal', function (_e, message) {
         var more_options_el = mEl.querySelector('.more-options');
         var summary_el = mEl.querySelector('.choices-wrapper.summary');
         var extended_el = mEl.querySelector('.choices-wrapper.expanded');
+        var first_button_els = mEl.querySelectorAll('.choices-wrapper.summary button');
 
-        initSlide(summary_el);
-        initSlide(extended_el);
+        summary_el?initSlide(summary_el):'';
+        extended_el?initSlide(extended_el):'';
 
         (more_options_el?more_options_el.addEventListener('click', function(){
           toggleSlide(summary_el);
           toggleSlide(extended_el);
         }):'');
+
+
+        if (first_button_els.length > 3 && window.matchMedia('(max-width: 768px)').matches){
+          first_button_els[0].style.display = 'none';
+        }
+
+        window.addEventListener('resize', function(){
+
+            if (first_button_els.length > 3 && window.matchMedia('(max-width: 768px)').matches){
+              first_button_els[0].style.display = 'none';
+            } else {
+              first_button_els[0].style.display = 'block';
+            }
+        })
 
       },
       beforeClose: function () {
@@ -69,15 +84,12 @@ var getHeight = function(el) {
 
 
     var toggleSlide = function(el) {
-      console.log('A');
       if(el.style.maxHeight.replace('px', '').replace('%', '') === '0') {
-        console.log('A1');
         el.style.display = 'flex';
         setTimeout(function(){
           el.style.maxHeight = el.getAttribute('data-max-height');
         },10)
       } else {
-          console.log('A2');
           el.style.maxHeight = el.getAttribute('data-max-height');
           setTimeout(function(){
             el.style.maxHeight = '0';
@@ -86,7 +98,6 @@ var getHeight = function(el) {
     };
     var initSlide = function(el){
       var el_max_height = 0;
-      console.log('B');
       el_max_height                  = getHeight(el) + 'px';
       el.style.overflowY             = 'hidden';
       el.setAttribute('data-max-height', el_max_height);

@@ -1,12 +1,12 @@
 
-function thousands(amount, groupSeparator) {
+function _formatThousands(amount, groupSeparator) {
   if( /\d{3}\d+/.test(amount) ) {
-    return thousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
+    return _formatThousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
   }
   return amount;
 }
 
-function getAmount (amount, decimalsSeparator, groupSeparator) {
+export function getAmount (amount, decimalsSeparator, groupSeparator) {
   var prefix = '';
   decimalsSeparator = decimalsSeparator || ',';
   groupSeparator = groupSeparator || '.';
@@ -24,11 +24,11 @@ function getAmount (amount, decimalsSeparator, groupSeparator) {
     return '0,' + amount;
   }
   return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
-    return thousands(main, groupSeparator) + decimalsSeparator + tail;
+    return _formatThousands(main, groupSeparator) + decimalsSeparator + tail;
   });
 }
 
-function getPrice (amount, currency) {
+export function getPrice (amount, currency) {
   var prefix = '', suffix = '', decimalsSeparator, groupSeparator;
 
   switch (currency) {
@@ -47,7 +47,7 @@ function getPrice (amount, currency) {
   return prefix + getAmount(amount, decimalsSeparator, groupSeparator) + suffix;
 }
 
-function parsePrice (price) {
+export function parsePrice (price) {
   var matched = price.match(/((\d+[,. ])*)(\d+)/),
       main, tail;
 
@@ -75,9 +75,3 @@ function parsePrice (price) {
     return Number( price.replace(/[^\d]+/g, '') + '00' );
   }
 }
-
-export default {
-	getAmount: getAmount,
-	getPrice: getPrice,
-	parsePrice: parsePrice
-};

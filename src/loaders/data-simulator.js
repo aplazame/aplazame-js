@@ -83,14 +83,16 @@ export default function (aplazame) {
         current_amount = getAmount(),
         current_qty = getQty(),
         qty_interval,
-        updateAmount = function (amount, qty) {
+        updateAmount = function (amount, qty, ignore_changes) {
           log('updateAmount', amount, qty);
           console.log('updateAmount', amount, qty);
           if( !amount ) return;
 
+
           widget_el.style.opacity = 0.5;
           aplazame.simulator( amount*qty, simulator_options, function (_choices, _options) {
-            if( qty !== undefined && qty !== current_qty ) return;
+            if( !ignore_changes && qty !== undefined && qty !== current_qty ) return;
+
             if( _options.widget.disabled ) {
               if(qty_interval) clearInterval(qty_interval);
               // _removeListener(onDomChanges);
@@ -140,18 +142,19 @@ export default function (aplazame) {
     qty_interval = setInterval(function () {
       var qty = getQty();
 
-      console.log('qty changed', qty, qty !== current_qty );
-
       if( qty === current_qty ) return;
+
+      console.log('qty changed', qty, qty !== current_qty, widget_el );
 
       current_qty = qty;
       updateAmount(current_amount, qty);
     }, 120);
 
-    if( getDataAmount(widget_el) !== current_amount ) {
-      //
+    if( widget_el.hasAttribute('data-amount') && getDataAmount(widget_el) !== current_amount ) {
+      updateAmount( getDataAmount(widget_el), current_qty, true );
+    } else {
+      updateAmount(current_amount, current_qty);
     }
-    updateAmount(current_amount, current_qty);
     $live(onDomChanges);
 
   });

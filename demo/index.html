@@ -75,7 +75,7 @@
 
               <div class="text-right">
                 <div data-aplazame-simulator data-view="product"
-                      data-amount="${article.price}"
+                      data-amount="${article.price-500}"
                       data-price="form.details [itemprop='price']"
                       data-qty="form.details input[name='qty']"
                       data-country="${ country }"
@@ -192,7 +192,7 @@
       </div>
     </footer>
 
-    <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.min.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
+    <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
             data-aplazame="public_key: ${ public_key }"
             data-sandbox="true"
             data-callback="apzReady"

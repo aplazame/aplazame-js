@@ -8,7 +8,7 @@ import log from './log';
 
 import colors from './colors';
 import browser_tools from './browser-tools';
-import amount_price from './amount-price';
+import {getAmount, getPrice, parsePrice} from './amount-price';
 import deserialize from './deserialize';
 import template from './template';
 import message_listener from './message-listener';
@@ -18,8 +18,12 @@ _.extend(_,
   nitro_tools_path,
   colors,
   browser_tools,
-  amount_price,
   deserialize,
+  {
+    getAmount: getAmount,
+    getPrice: getPrice,
+    parsePrice: parsePrice
+  },
   {
     remove_style: / Trident\//.test(navigator.userAgent) ? '' : null,
     template: template,

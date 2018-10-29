@@ -142,8 +142,6 @@ export default function (aplazame) {
 
       if( qty === current_qty ) return;
 
-      console.log('qty changed', qty, qty !== current_qty, widget_el );
-
       current_qty = qty;
       updateAmount(current_amount, qty);
     }, 120);

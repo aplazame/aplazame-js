@@ -1,6 +1,8 @@
 
-import _ from '../tools/tools';
+import _ from 'vanilla-tools';
+
 import log from '../tools/log';
+import {parsePrice} from '../tools/amount-price';
 
 var cms_price_selector = [
   'form#product_addtocart_form .special-price .price', // magento
@@ -30,10 +32,10 @@ function _$ (el, selector) {
 }
 
 function _getQty (qty_selector, show_warning) {
-  if( typeof qtySelector !== 'string' ) {
-    log('warning: data-qty should be an string. pe: form#article .final-price ');
-    return 1;
-  }
+  // if( typeof qty_selector !== 'string' ) {
+  //   log('warning: data-qty should be an string. pe: form#article .final-price ');
+  //   return 1;
+  // }
   var qty_el;
   try {
     qty_el = document.querySelector(qty_selector);
@@ -41,6 +43,8 @@ function _getQty (qty_selector, show_warning) {
     if(show_warning) log(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
     return 1;
   }
+
+  if( !qty_el ) return 1;
 
   switch( qty_el.nodeName.toLowerCase() ) {
     case 'input':
@@ -58,8 +62,6 @@ export function qtyGetter (widget_el) {
 
   if( !qty_selector ) qty_selector = cms_qty_selector.join(', ');
 
-  console.log('qty_selector', qty_selector);
-
   return function () {
     return _getQty(qty_selector, show_warning);
   };
@@ -75,36 +77,38 @@ function _getAmount (price_selector) {
     price_el = document.querySelector( price_selector );
   } catch(err) {}
 
-  var amount = price_el ? price_el.value : '0';
+  if( !price_el ) return null;
 
-  if( typeof amount === 'undefined' ) {
+  var amount_str = price_el.value;
+
+  if( typeof amount_str === 'undefined' ) {
     if( !/\d+[,.]\d+/.test(price_el.textContent) && price_el.children && price_el.children.length ) {
-      amount = '';
+      amount_str = '';
 
       var part = price_el.firstChild, matched;
 
       while( part ) {
-        if( /[,.]/.test(amount) ) {
+        if( /[,.]/.test(amount_str) ) {
           return;
         }
         matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).replace(/&nbsp;/g, '').match(/[\d,.]+/);
 
         if( matched ) {
-          amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
+          amount_str += (amount_str && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
         }
 
         part = part.nextSibling;
       }
     } else if( price_el.textContent ) {
-      amount = (price_el.textContent || '').replace(/&nbsp;/g, '');
+      amount_str = (price_el.textContent || '').replace(/&nbsp;/g, '');
     } else if( price_el.getAttribute('content') ) {
-      amount = price_el.getAttribute('content');
+      amount_str = price_el.getAttribute('content');
     }
   }
 
-  log('price read from', price_el, amount );
+  log('price read from', price_el, amount_str );
 
-  return amount && _.parsePrice( amount ) || null;
+  return amount_str && parsePrice( amount_str ) || null;
 }
 
 export function getDataAmount (widget_el) {

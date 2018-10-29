@@ -85,9 +85,7 @@ export default function (aplazame) {
         qty_interval,
         updateAmount = function (amount, qty, ignore_changes) {
           log('updateAmount', amount, qty);
-          console.log('updateAmount', amount, qty);
           if( !amount ) return;
-
 
           widget_el.style.opacity = 0.5;
           aplazame.simulator( amount*qty, simulator_options, function (_choices, _options) {

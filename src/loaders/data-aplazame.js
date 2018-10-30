@@ -2,7 +2,7 @@
 import log from '../tools/log';
 
 export default function (_, script) {
-  log('data-aplazame', script );
+  log.debug('(aplazame.js) script' + ( script.hasAttribute('data-aplazame') ? '[data-aplazame]' : '' ), script );
 
   var data_aplazame = script.getAttribute('data-aplazame');
   var params = _.deserialize(script.src.split(/[?#]/)[1] || '');

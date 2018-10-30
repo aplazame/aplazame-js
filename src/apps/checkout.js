@@ -23,10 +23,8 @@ var supports_shadow_dom = 'attachShadow' in HTMLElement.prototype;
 
 flag_wrapper.className = 'aplazame-checkout-flag';
 
-// console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
-
 function checkout (checkout_data, callbacks) {
-  var checkout_id = null, transaction;
+  var checkout_id = null, transaction = null;
 
   if( typeof checkout_data === 'string' ) {
     checkout_id = checkout_data;
@@ -37,12 +35,9 @@ function checkout (checkout_data, callbacks) {
     if( checkout_data === transaction ) checkout_data = null;
   }
 
-  ['meta', 'merchant', 'order'].forEach(function (key) {
-    if( !_.isObject(transaction[key]) ) transaction[key] = {};
-  });
-
   callbacks = callbacks || {};
-  transaction.__viewport__ = viewportInfo();
+
+  log('transaction', transaction);
 
   var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
@@ -58,7 +53,27 @@ function checkout (checkout_data, callbacks) {
       cssModal = cssHack('modal'),
       viewPortHack = document.createElement('meta'),
       valid_result_status = ['success', 'pending', 'ko', 'dismiss', 'error'],
-      previous_scroll_top = _.scroll.top();
+      previous_scroll_top = _.scroll.top(),
+      _normalizePayload = function () {
+        transaction.__viewport__ = viewportInfo();
+
+        ['meta', 'merchant', 'order'].forEach(function (key) {
+          if( !_.isObject(transaction[key]) ) transaction[key] = {};
+        });
+
+        try {
+          checkoutNormalizeAPI(transaction, _.copy(api) );
+          log('api', transaction.api);
+
+          checkoutNormalizeCustomer(transaction);
+          log('customer', transaction.customer);
+
+          on = checkoutNormalizeCallbacks(transaction, callbacks, location);
+          log('callbacks', on);
+        } catch (e) {
+          error_message = e.message;
+        }
+      };
 
   viewPortHack.name = 'viewport';
   viewPortHack.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
@@ -68,18 +83,7 @@ function checkout (checkout_data, callbacks) {
   onError = transaction.onError || _.noop;
   delete transaction.onError;
 
-  try {
-    checkoutNormalizeAPI(transaction, _.copy(api) );
-    log('api', transaction.api);
-
-    checkoutNormalizeCustomer(transaction);
-    log('customer', transaction.customer);
-
-    on = checkoutNormalizeCallbacks(transaction, callbacks, location);
-    log('callbacks', on);
-  } catch (e) {
-    error_message = e.message;
-  }
+  if( !checkout_id ) _normalizePayload();
 
   if( is_app ) transaction.meta.is_app = true;
 
@@ -175,7 +179,8 @@ function checkout (checkout_data, callbacks) {
           if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
           cssOverlay.hack(false);
           document.body.removeChild(tmpOverlay);
-          on.ready();
+          if( on.ready ) on.ready();
+          else log.debug('on.ready NOT defined');
         });
 
       });
@@ -183,8 +188,17 @@ function checkout (checkout_data, callbacks) {
     } : function (resolveLoadingCheckout) {
 
       var checkout_promise = checkout_id ?
-        apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
-        ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
+        apiHttp.get('checkout/' + checkout_id, _.merge({ api_version: 3 }, api) ).then(function (res) {
+          log('GET /checkout/' + checkout_id);
+          transaction = res.data.transaction;
+          _normalizePayload();
+          return res.data;
+        }) :
+        ( checkout_data ? Parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, _.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) )
+        .then(function (checkout_data) {
+          log('checkout_id', checkout_data.id);
+          return checkout_data;
+        });
 
       var iframe = _.getIFrame({
             top: 0,
@@ -237,7 +251,8 @@ function checkout (checkout_data, callbacks) {
             if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
             cssOverlay.hack(false);
             document.body.removeChild(tmpOverlay);
-            on.ready();
+            if( on.ready ) on.ready();
+            else log.debug('on.ready NOT defined');
             break;
           case 'loading-text': // only for iframe
             loadingText.textContent = message.text;
@@ -268,7 +283,7 @@ function checkout (checkout_data, callbacks) {
           //   }, 600);
           //   break;
           case 'confirm':
-            _.log('aplazame.checkout:confirm', message);
+            log('aplazame.checkout:confirm', message);
 
             var started = _.now();
             http.post( transaction.merchant.confirmation_url, message.data, {
@@ -297,7 +312,8 @@ function checkout (checkout_data, callbacks) {
               (console.error || console.log)('Wrong status returned by checkout', message.result );
               // throw new Error(message);
             }
-            on.statusChange(message.status);
+            if( on.statusChange ) on.statusChange(message.status);
+            else log.debug('on.statusChange NOT defined');
             break;
           case 'close':
             if( iframe ) {
@@ -314,8 +330,13 @@ function checkout (checkout_data, callbacks) {
                 // throw new Error(message);
               }
 
-              on.close(message.result);
-              if( on[message.result] ) on[message.result]();
+              if( on.close ) on.close(message.result);
+              else log.debug('on.close NOT defined');
+
+              if( on[message.result] ) {
+                log('calling on.' + message.result);
+                on[message.result]();
+              } else log.debug('on.' + message.result, 'NOT defined');
             }
             break;
         }

@@ -79,6 +79,7 @@ function _getAmount (price_selector) {
 
   if( !price_el ) return null;
 
+  // attempting read from input
   var amount_str = price_el.value;
 
   if( typeof amount_str === 'undefined' ) {
@@ -106,9 +107,10 @@ function _getAmount (price_selector) {
     }
   }
 
-  log('price read from', price_el, amount_str );
-
-  return amount_str && parsePrice( amount_str ) || null;
+  return amount_str && {
+    amount: parsePrice( amount_str ),
+    price_el: price_el,
+  } || null;
 }
 
 export function getDataAmount (widget_el) {
@@ -118,7 +120,9 @@ export function getDataAmount (widget_el) {
 }
 
 export function amountGetter (widget_el) {
-  var price_selector = widget_el.getAttribute('data-price');
+  var price_selector = widget_el.getAttribute('data-price'),
+      last_price_el = null,
+      last_price_amount = null;
 
   if( !price_selector ) {
     price_selector = _.find(cms_price_selector, _matchSelector);
@@ -127,8 +131,14 @@ export function amountGetter (widget_el) {
   }
 
   return price_selector ? function () {
-    var amount = _getAmount(price_selector);
-    return amount === null ? getDataAmount(widget_el) : amount;
+    var amount_result = _getAmount(price_selector);
+    if( !amount_result ) return getDataAmount(widget_el);
+    if( amount_result.price_el !== last_price_el || amount_result.amount !== last_price_amount ) {
+      log('price read from', amount_result.price_el, amount_result.amount );
+      last_price_el = amount_result.price_el;
+      last_price_amount = amount_result.amount;
+    }
+    return amount_result.amount;
   } : function () {
     return getDataAmount(widget_el);
   };

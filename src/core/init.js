@@ -15,7 +15,7 @@ export default function init (options) {
     api[_.toUnderscoreCase(key)] = options[key];
   }
 
-  _.log('aplazame.init', options, api);
+  _.log.debug('aplazame.init', options, api);
 
   if( api.public_key ) events.emit('ready');
 }

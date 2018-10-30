@@ -76,7 +76,8 @@ runInSandbox(function () {
   }
 
   function safeScript (script) {
-    log('safeScript', script || 'NO currentScript' );
+    if( script ) log('safeScript', script );
+    else log.warn('safeScript: currentScript MISSING');
 
     var params = deserialize(script.src.split('?')[1] || '');
 

@@ -23,23 +23,8 @@ var supports_shadow_dom = 'attachShadow' in HTMLElement.prototype;
 
 flag_wrapper.className = 'aplazame-checkout-flag';
 
-// function _getOnPlaceholders(_callbacks) {
-//   var on = {};
-//   'ready,success,pending,error,dismiss,ko,statusChange,close'.split(',').forEach(function (method) {
-//     on[method] = function () {
-//       log('on.' + method, 'is NOT defined');
-//     };
-//   });
-//   on.__placeholders__ = on;
-//   return Object.create(on);
-// }
-
-// console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
-
 function checkout (checkout_data, callbacks) {
   var checkout_id = null, transaction = null;
-
-  checkout_data = '9f5517a8b07a4d418c999224f4d38ce2';
 
   if( typeof checkout_data === 'string' ) {
     checkout_id = checkout_data;

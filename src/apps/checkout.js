@@ -68,6 +68,42 @@ function checkout (_checkout_data, callbacks) {
   document.body.appendChild(loading_el);
 
   var loading_text_el = loading_el.querySelector('.aplazame-overlay-loading-text');
+  loading_el.querySelector('.logo-aplazame').className += ' animate';
+
+  var previous_scroll_top = _.scroll.top();
+
+  var waiting_transaction = Parole.defer();
+  waiting_transaction.promise.then(function (transaction) {
+    if( (transaction.order || {}).currency === 'MXN' ) {
+      flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
+    } else {
+      flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
+    }
+
+    document.body.appendChild( flag_wrapper );
+
+    transaction.__viewport__ = viewportInfo();
+
+    ['meta', 'merchant', 'order'].forEach(function (key) {
+      if( !_.isObject(transaction[key]) ) transaction[key] = {};
+    });
+
+    checkoutNormalizeAPI(transaction, _.copy(api) );
+    log('api', transaction.api);
+
+    checkoutNormalizeCustomer(transaction);
+    log('customer', transaction.customer);
+
+    on = checkoutNormalizeCallbacks(transaction, callbacks, location);
+    log('callbacks', on);
+  }).catch(function (err) {
+    log.err('transaction error', err);
+  });
+
+  if( typeof _checkout_data === 'object' ) waiting_transaction.resolve(
+    'transaction' in _checkout_data ?
+    _checkout_data.transaction : _checkout_data
+  );
 
   var ajax_confirmation_url = null;
   var loading_app = loadIframeCheckout(api.checkout_url, {
@@ -75,7 +111,6 @@ function checkout (_checkout_data, callbacks) {
       return _ajaxConfirm(ajax_confirmation_url, data, params);
     },
   });
-  var previous_scroll_top = _.scroll.top();
 
   loading_app
     .on('loading-text', function (loading_text) {
@@ -104,47 +139,7 @@ function checkout (_checkout_data, callbacks) {
     })
   ;
 
-  var waiting_transaction = (function (deferred) {
-    loading_el.querySelector('.logo-aplazame').className += ' animate';
-    deferred.promise.then(function (transaction) {
-      if( (transaction.order || {}).currency === 'MXN' ) {
-        flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
-      } else {
-        flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
-      }
-
-      document.body.appendChild( flag_wrapper );
-    });
-    return deferred;
-  })( Parole.defer() );
-
-  if( typeof _checkout_data === 'object' ) (function (transaction) {
-
-    on = checkoutNormalizeCallbacks(transaction, location);
-    log('callbacks', on);
-
-    waiting_transaction.resolve(transaction);
-
-  })( 'transaction' in _checkout_data ? _checkout_data.transaction : _checkout_data );
-
   fetchCheckout(_checkout_data).then(function (checkout_data) {
-    var transaction = checkout_data.transaction;
-
-    transaction.__viewport__ = viewportInfo();
-
-    ['meta', 'merchant', 'order'].forEach(function (key) {
-      if( !_.isObject(transaction[key]) ) transaction[key] = {};
-    });
-
-    checkoutNormalizeAPI(transaction, _.copy(api) );
-    log('api', transaction.api);
-
-    checkoutNormalizeCustomer(transaction);
-    log('customer', transaction.customer);
-
-    on = checkoutNormalizeCallbacks(transaction, callbacks, location);
-    log('callbacks', on);
-
     loading_app.sendData(checkout_data);
 
     waiting_transaction.resolve(checkout_data.transaction);

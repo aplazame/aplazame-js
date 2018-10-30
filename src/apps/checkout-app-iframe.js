@@ -75,9 +75,9 @@ export default function loadIframeCheckout (checkout_url, options) {
         });
         break;
       case 'checkout-ready':
+        loading_app.resolve();
         iframe_el.style.height = null;
         _.removeClass(iframe_el, 'hide');
-        loading_app.resolve();
         _emit(event_name);
         break;
       case 'loading-text': // only for iframe

@@ -209,25 +209,27 @@
 	// }
 
 	var history = [],
-	    start_time = new Date().getTime();
+	    start_time = new Date().getTime(),
+	    log_colors = {
+	      info: '#277bbd',
+	      debug: 'purple',
+	    };
 
 	function dumpSingleLog (l) {
-	  var line1_color = '#277bbd';
+	  var log_type = l.type || 'info';
 	  // if( l.type === 'error' ) line1_color = 'FireBrick';
 	  // console.log('%c' + new Date + ' (' + (l.time.getTime() - start_time) + 'ms)' , 'color: #333a3e; font-weight: 500; font-style: italic;');
 	  console.groupCollapsed('%c' + l.time.toISOString() + ' (' + (l.time.getTime() - start_time) + 'ms)' , 'color: #333a3e; font-weight: 500; font-style: italic;');
 	  console.log(l.stack.join('\n'));
 	  console.groupEnd();
 
-	  if( l.type === 'error' && console.error ) {
+	  if( log_type === 'error' && console.error ) {
 	    console.error.apply(console, l.args);
-	  } else if( l.type === 'warn' && console.error ) {
+	  } else if( log_type === 'warn' && console.error ) {
 	    console.warn.apply(console, l.args);
-	  } else if( l.type === 'info' && console.error ) {
-	    console.info.apply(console, l.args);
 	  } else {
 	    console.log.apply(console, [
-	      '%c' + l.args[0], 'color: ' + line1_color + '; font-weight: bold;'
+	      '%c' + l.args[0], 'color: ' + log_colors[log_type] + '; font-weight: bold;'
 	    ].concat( l.args.slice(1) ) );
 	  }
 	}
@@ -257,6 +259,7 @@
 	}
 
 	log.warn = log.bind({ type: 'warn' });
+	log.debug = log.bind({ type: 'debug' });
 	log.error = log.bind({ type: 'error' });
 
 	log.dump = function () {
@@ -727,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.492';
+	var aplazameVersion = '0.0.493';
 
 	function _isType (type) {
 	    return function (o) {
@@ -2762,7 +2765,7 @@
 	    api[bundle$1.toUnderscoreCase(key)] = options[key];
 	  }
 
-	  bundle$1.log('aplazame.init', options, api);
+	  bundle$1.log.debug('aplazame.init', options, api);
 
 	  if( api.public_key ) events$1.emit('ready');
 	}
@@ -3017,10 +3020,8 @@
 
 	flag_wrapper.className = 'aplazame-checkout-flag';
 
-	// console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
-
 	function checkout (checkout_data, callbacks) {
-	  var checkout_id = null, transaction;
+	  var checkout_id = null, transaction = null;
 
 	  if( typeof checkout_data === 'string' ) {
 	    checkout_id = checkout_data;
@@ -3031,12 +3032,9 @@
 	    if( checkout_data === transaction ) checkout_data = null;
 	  }
 
-	  ['meta', 'merchant', 'order'].forEach(function (key) {
-	    if( !bundle$1.isObject(transaction[key]) ) transaction[key] = {};
-	  });
-
 	  callbacks = callbacks || {};
-	  transaction.__viewport__ = viewportInfo();
+
+	  log('transaction', transaction);
 
 	  var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
@@ -3052,7 +3050,27 @@
 	      cssModal = cssHack('modal'),
 	      viewPortHack = document.createElement('meta'),
 	      valid_result_status = ['success', 'pending', 'ko', 'dismiss', 'error'],
-	      previous_scroll_top = bundle$1.scroll.top();
+	      previous_scroll_top = bundle$1.scroll.top(),
+	      _normalizePayload = function () {
+	        transaction.__viewport__ = viewportInfo();
+
+	        ['meta', 'merchant', 'order'].forEach(function (key) {
+	          if( !bundle$1.isObject(transaction[key]) ) transaction[key] = {};
+	        });
+
+	        try {
+	          checkoutNormalizeAPI(transaction, bundle$1.copy(api) );
+	          log('api', transaction.api);
+
+	          transactionNormalizer(transaction);
+	          log('customer', transaction.customer);
+
+	          on = checkoutNormalizerCallbacks(transaction, callbacks, location);
+	          log('callbacks', on);
+	        } catch (e) {
+	          error_message = e.message;
+	        }
+	      };
 
 	  viewPortHack.name = 'viewport';
 	  viewPortHack.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
@@ -3062,18 +3080,7 @@
 	  onError = transaction.onError || bundle$1.noop;
 	  delete transaction.onError;
 
-	  try {
-	    checkoutNormalizeAPI(transaction, bundle$1.copy(api) );
-	    log('api', transaction.api);
-
-	    transactionNormalizer(transaction);
-	    log('customer', transaction.customer);
-
-	    on = checkoutNormalizerCallbacks(transaction, callbacks, location);
-	    log('callbacks', on);
-	  } catch (e) {
-	    error_message = e.message;
-	  }
+	  if( !checkout_id ) _normalizePayload();
 
 	  if( is_app ) transaction.meta.is_app = true;
 
@@ -3169,7 +3176,8 @@
 	          if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
 	          cssOverlay.hack(false);
 	          document.body.removeChild(tmpOverlay);
-	          on.ready();
+	          if( on.ready ) on.ready();
+	          else log.debug('on.ready NOT defined');
 	        });
 
 	      });
@@ -3177,8 +3185,17 @@
 	    } : function (resolveLoadingCheckout) {
 
 	      var checkout_promise = checkout_id ?
-	        apiHttp.get('checkout/' + checkout_id, bundle$1.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) :
-	        ( checkout_data ? parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, bundle$1.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) );
+	        apiHttp.get('checkout/' + checkout_id, bundle$1.merge({ api_version: 3 }, api) ).then(function (res) {
+	          log('GET /checkout/' + checkout_id);
+	          transaction = res.data.transaction;
+	          _normalizePayload();
+	          return res.data;
+	        }) :
+	        ( checkout_data ? parole.resolve(checkout_data) : apiHttp.post('checkout', transaction, bundle$1.merge({ api_version: 3 }, transaction.api) ).then(function (res) { return res.data; }) )
+	        .then(function (checkout_data) {
+	          log('checkout_id', checkout_data.id);
+	          return checkout_data;
+	        });
 
 	      var iframe = bundle$1.getIFrame({
 	            top: 0,
@@ -3231,7 +3248,8 @@
 	            if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
 	            cssOverlay.hack(false);
 	            document.body.removeChild(tmpOverlay);
-	            on.ready();
+	            if( on.ready ) on.ready();
+	            else log.debug('on.ready NOT defined');
 	            break;
 	          case 'loading-text': // only for iframe
 	            loadingText.textContent = message.text;
@@ -3262,7 +3280,7 @@
 	          //   }, 600);
 	          //   break;
 	          case 'confirm':
-	            bundle$1.log('aplazame.checkout:confirm', message);
+	            log('aplazame.checkout:confirm', message);
 
 	            var started = bundle$1.now();
 	            browser.post( transaction.merchant.confirmation_url, message.data, {
@@ -3291,7 +3309,8 @@
 	              (console.error || console.log)('Wrong status returned by checkout', message.result );
 	              // throw new Error(message);
 	            }
-	            on.statusChange(message.status);
+	            if( on.statusChange ) on.statusChange(message.status);
+	            else log.debug('on.statusChange NOT defined');
 	            break;
 	          case 'close':
 	            if( iframe ) {
@@ -3308,8 +3327,13 @@
 	                // throw new Error(message);
 	              }
 
-	              on.close(message.result);
-	              if( on[message.result] ) on[message.result]();
+	              if( on.close ) on.close(message.result);
+	              else log.debug('on.close NOT defined');
+
+	              if( on[message.result] ) {
+	                log('calling on.' + message.result);
+	                on[message.result]();
+	              } else log.debug('on.' + message.result, 'NOT defined');
 	            }
 	            break;
 	        }
@@ -3696,7 +3720,7 @@
 	// module.exports = { ready: true };
 
 	function aplazameLoader (_, script) {
-	  log('data-aplazame', script );
+	  log.debug('(aplazame.js) script' + ( script.hasAttribute('data-aplazame') ? '[data-aplazame]' : '' ), script );
 
 	  var data_aplazame = script.getAttribute('data-aplazame');
 	  var params = _.deserialize(script.src.split(/[?#]/)[1] || '');
@@ -4342,6 +4366,7 @@
 
 	  if( !price_el ) return null;
 
+	  // attempting read from input
 	  var amount_str = price_el.value;
 
 	  if( typeof amount_str === 'undefined' ) {
@@ -4369,9 +4394,10 @@
 	    }
 	  }
 
-	  log('price read from', price_el, amount_str );
-
-	  return amount_str && parsePrice( amount_str ) || null;
+	  return amount_str && {
+	    amount: parsePrice( amount_str ),
+	    price_el: price_el,
+	  } || null;
 	}
 
 	function getDataAmount (widget_el) {
@@ -4381,7 +4407,9 @@
 	}
 
 	function amountGetter (widget_el) {
-	  var price_selector = widget_el.getAttribute('data-price');
+	  var price_selector = widget_el.getAttribute('data-price'),
+	      last_price_el = null,
+	      last_price_amount = null;
 
 	  if( !price_selector ) {
 	    price_selector = bundle$1.find(cms_price_selector, _matchSelector);
@@ -4390,8 +4418,14 @@
 	  }
 
 	  return price_selector ? function () {
-	    var amount = _getAmount(price_selector);
-	    return amount === null ? getDataAmount(widget_el) : amount;
+	    var amount_result = _getAmount(price_selector);
+	    if( !amount_result ) return getDataAmount(widget_el);
+	    if( amount_result.price_el !== last_price_el || amount_result.amount !== last_price_amount ) {
+	      log('price read from', amount_result.price_el, amount_result.amount );
+	      last_price_el = amount_result.price_el;
+	      last_price_amount = amount_result.amount;
+	    }
+	    return amount_result.amount;
 	  } : function () {
 	    return getDataAmount(widget_el);
 	  };
@@ -4604,7 +4638,8 @@
 	  }
 
 	  function safeScript (script) {
-	    log('safeScript', script || 'NO currentScript' );
+	    if( script ) log('safeScript', script );
+	    else log.warn('safeScript: currentScript MISSING');
 
 	    var params = deserialize(script.src.split('?')[1] || '');
 

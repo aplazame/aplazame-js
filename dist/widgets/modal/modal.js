@@ -1520,25 +1520,27 @@
   // }
 
   var history = [],
-      start_time = new Date().getTime();
+      start_time = new Date().getTime(),
+      log_colors = {
+        info: '#277bbd',
+        debug: 'purple',
+      };
 
   function dumpSingleLog (l) {
-    var line1_color = '#277bbd';
+    var log_type = l.type || 'info';
     // if( l.type === 'error' ) line1_color = 'FireBrick';
     // console.log('%c' + new Date + ' (' + (l.time.getTime() - start_time) + 'ms)' , 'color: #333a3e; font-weight: 500; font-style: italic;');
     console.groupCollapsed('%c' + l.time.toISOString() + ' (' + (l.time.getTime() - start_time) + 'ms)' , 'color: #333a3e; font-weight: 500; font-style: italic;');
     console.log(l.stack.join('\n'));
     console.groupEnd();
 
-    if( l.type === 'error' && console.error ) {
+    if( log_type === 'error' && console.error ) {
       console.error.apply(console, l.args);
-    } else if( l.type === 'warn' && console.error ) {
+    } else if( log_type === 'warn' && console.error ) {
       console.warn.apply(console, l.args);
-    } else if( l.type === 'info' && console.error ) {
-      console.info.apply(console, l.args);
     } else {
       console.log.apply(console, [
-        '%c' + l.args[0], 'color: ' + line1_color + '; font-weight: bold;'
+        '%c' + l.args[0], 'color: ' + log_colors[log_type] + '; font-weight: bold;'
       ].concat( l.args.slice(1) ) );
     }
   }
@@ -1568,6 +1570,7 @@
   }
 
   log.warn = log.bind({ type: 'warn' });
+  log.debug = log.bind({ type: 'debug' });
   log.error = log.bind({ type: 'error' });
 
   log.dump = function () {

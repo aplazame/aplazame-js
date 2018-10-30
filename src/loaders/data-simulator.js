@@ -109,12 +109,8 @@ export default function (aplazame) {
             widget_el.style.opacity = null;
           });
         },
-        onDomChanges = function () {
-          // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
-          if( !document.body.contains(widget_el) ) return $live.off(onDomChanges);
-
-          var amount = getAmount(),
-              qty = getQty();
+        updateAmountAttempt = function (amount) {
+          var qty = getQty();
 
           if( !amount || (amount === current_amount && qty === current_qty) ) return;
 
@@ -122,13 +118,20 @@ export default function (aplazame) {
           current_qty = qty;
 
           updateAmount(amount, current_qty);
+        },
+        onDomChanges = function () {
+          if( !document.body.contains(widget_el) ) return $live.off(onDomChanges);
+
+          updateAmountAttempt( getAmount() );
         };
 
     if( 'MutationObserver' in window ) (function (observer) {
       observer.observe(widget_el, { attributes: true });
     })(  new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
+        if( mutation.attributeName === 'data-amount' ) {
+          updateAmountAttempt( getDataAmount(widget_el) );
+        } else if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
 
           custom_widget_options = _getCustomOptions(widget_el);
 

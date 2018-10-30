@@ -76,8 +76,8 @@ export default function loadIframeCheckout (checkout_url, options) {
         break;
       case 'checkout-ready':
         iframe_el.style.height = null;
-        loading_app.resolve();
         _.removeClass(iframe_el, 'hide');
+        loading_app.resolve();
         _emit(event_name);
         break;
       case 'loading-text': // only for iframe

@@ -79,14 +79,8 @@ function checkout (_checkout_data, callbacks) {
 
   loading_app
     .on('loading-text', function (loading_text) {
-      console.log('loading_text_el', loading_text);
+      log('loading_text_el', loading_text);
       loading_text_el.textContent = loading_text;
-    })
-    .on('checkout-ready', function () {
-      css_modal.hack(true);
-      css_overlay.hack(false);
-      document.body.removeChild(loading_el);
-      if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
     })
     .on('open-link', function (link) {
       if( is_app )
@@ -105,13 +99,15 @@ function checkout (_checkout_data, callbacks) {
       if( valid_result_status.indexOf(result_status) < 0 ) {
         log.warn('checkout result_status not valid', result_status);
       }
+      log('on.' + result_status, on[result_status] );
       if( on[result_status] instanceof Function ) on[result_status]();
-    });
+    })
+  ;
 
-  var waiting_order = (function (deferred) {
+  var waiting_transaction = (function (deferred) {
     loading_el.querySelector('.logo-aplazame').className += ' animate';
-    deferred.promise.then(function (order) {
-      if( (order || {}).currency === 'MXN' ) {
+    deferred.promise.then(function (transaction) {
+      if( (transaction.order || {}).currency === 'MXN' ) {
         flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
       } else {
         flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
@@ -121,6 +117,15 @@ function checkout (_checkout_data, callbacks) {
     });
     return deferred;
   })( Parole.defer() );
+
+  if( typeof _checkout_data === 'object' ) (function (transaction) {
+
+    on = checkoutNormalizeCallbacks(transaction, location);
+    log('callbacks', on);
+
+    waiting_transaction.resolve(transaction);
+
+  })( 'transaction' in _checkout_data ? _checkout_data.transaction : _checkout_data );
 
   fetchCheckout(_checkout_data).then(function (checkout_data) {
     var transaction = checkout_data.transaction;
@@ -142,7 +147,7 @@ function checkout (_checkout_data, callbacks) {
 
     loading_app.sendData(checkout_data);
 
-    waiting_order.resolve(checkout_data.order);
+    waiting_transaction.resolve(checkout_data.transaction);
 
     // retro-compatibility
     ajax_confirmation_url = checkout_data.transaction.merchant.confirmation_url;
@@ -150,7 +155,12 @@ function checkout (_checkout_data, callbacks) {
     loading_app.errorData(res);
   });
 
-  return loading_app.catch(function (reason) {
+  return loading_app.then(function () {
+    css_modal.hack(true);
+    css_overlay.hack(false);
+    document.body.removeChild(loading_el);
+    if( document.body.contains(flag_wrapper) ) document.body.removeChild( flag_wrapper );
+  }, function (reason) {
     log.error('Loading Checkout App', reason);
 
     _.removeClass(loading_el.querySelector('.logo-aplazame'), 'animate');

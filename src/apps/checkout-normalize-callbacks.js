@@ -12,10 +12,9 @@ function _removeFunctions (o) {
   }
 }
 
-export default function checkoutNormalizerCallbacks(transaction, callbacks, location) {
+export default function checkoutNormalizerCallbacks(merchant, callbacks, location) {
 
   var _noop = function () {},
-      merchant = transaction.merchant,
       on = { noop: _noop };
 
   if( !merchant ) throw new Error('missing merchant parameters');

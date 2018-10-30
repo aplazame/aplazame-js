@@ -46,7 +46,7 @@ function _ajaxConfirm (confirmation_url, data, params) {
 function checkout (_checkout_data, callbacks) {
   callbacks = callbacks || {};
 
-  var on = {};
+  var on = null;
 
   var viewport_hack = document.createElement('meta');
   viewport_hack.name = 'viewport';
@@ -94,16 +94,22 @@ function checkout (_checkout_data, callbacks) {
     checkoutNormalizeCustomer(transaction);
     log('customer', transaction.customer);
 
-    on = checkoutNormalizeCallbacks(transaction, callbacks, location);
+    if( on ) return;
+    on = checkoutNormalizeCallbacks(transaction.merchant ||{}, callbacks, location);
     log('callbacks', on);
   }).catch(function (err) {
     log.err('transaction error', err);
   });
 
-  if( typeof _checkout_data === 'object' ) waiting_transaction.resolve(
-    'transaction' in _checkout_data ?
-    _checkout_data.transaction : _checkout_data
-  );
+  if( typeof _checkout_data === 'object' ) {
+    waiting_transaction.resolve(
+      'transaction' in _checkout_data ?
+      _checkout_data.transaction : _checkout_data
+    );
+  } else {
+    on = checkoutNormalizeCallbacks({}, callbacks, location);
+    log('callbacks', on);
+  }
 
   var ajax_confirmation_url = null;
   var loading_app = loadIframeCheckout(api.checkout_url, {

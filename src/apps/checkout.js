@@ -47,7 +47,6 @@ function checkout (checkout_data, callbacks) {
   var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
 
   var on = {},
-      onError,
       iframe_src = checkout_url + ( /\?/.test(checkout_url) ? '&' : '?' ) + 'iframe=checkout&t=' + new Date().getTime(),
       error_loading = false,
       error_message = false,
@@ -64,9 +63,6 @@ function checkout (checkout_data, callbacks) {
   viewPortHack.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
 
   document.head.appendChild(viewPortHack);
-
-  onError = transaction.onError || _.noop;
-  delete transaction.onError;
 
   try {
     checkoutNormalizeAPI(transaction, _.copy(api) );
@@ -335,7 +331,7 @@ function checkout (checkout_data, callbacks) {
     loadingText.innerHTML = '<div class="text-error">Error cargando pasarela de pago</div><br/><div><a href="mailto:soporte@aplazame.com?subject=' + encodeURI('Checkout error: ' + reason) + '">soporte@aplazame.com</a></div>';
     loadingText.style.lineHeight = '1.5';
 
-    onError(reason);
+    on.error(reason);
   });
 
 }

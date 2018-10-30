@@ -27,7 +27,7 @@ describe('checkout callbacks normalizer', function () {
     var checkout = {
       merchant: {
         success_url: '/success_url',
-        cancel_url: '/cancel_url'
+        ko_url: '/ko_url'
       }
     };
 
@@ -36,8 +36,9 @@ describe('checkout callbacks normalizer', function () {
     on.success();
     assert.equal(location.href, '/success_url');
 
-    on.cancel();
-    assert.equal(location.href, '/cancel_url');
+    on.ko();
+    assert.equal(callbacks.ko_url, '/ko_url' );
+    assert.equal(location.href, '/ko_url' );
 
     on.dismiss();
     assert.equal(location.href, '/');
@@ -89,19 +90,19 @@ describe('checkout callbacks normalizer', function () {
     assert.strictEqual(on.dismiss, onDismiss, 'on.dismiss');
   });
 
-  it('onPending defaults to onDismiss when missing', function() {
-    var onDismiss = function () { /* onDismiss */ };
+  it('onPending defaults to onError when missing', function() {
+    var onSuccess = function () { /* onSuccess */ };
 
     var checkout = {
       merchant: {
-        onDismiss: onDismiss
+        onSuccess: onSuccess
       }
     };
 
     var on = checkoutNormalizeCallbacks(checkout, {}, location);
 
-    assert.strictEqual(on.pending, onDismiss, 'on.pending');
-    assert.strictEqual(on.dismiss, onDismiss, 'on.dismiss');
+    assert.strictEqual(on.pending, onSuccess, 'on.pending');
+    assert.strictEqual(on.success, onSuccess, 'on.success');
   });
 
 

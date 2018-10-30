@@ -37,6 +37,8 @@ function checkout (checkout_data, callbacks) {
     if( checkout_data === transaction ) checkout_data = null;
   }
 
+  log('transaction', transaction);
+
   ['meta', 'merchant', 'order'].forEach(function (key) {
     if( !_.isObject(transaction[key]) ) transaction[key] = {};
   });
@@ -314,6 +316,7 @@ function checkout (checkout_data, callbacks) {
                 // throw new Error(message);
               }
 
+              alert('close: ' + message.result);
               on.close(message.result);
               if( on[message.result] ) on[message.result]();
             }

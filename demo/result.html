@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    $if{ is_prod }
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-59803469-5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-59803469-5');
+    </script>
+    {/}
+
+    $include{ head }
+  </head>
+  <body data-branch="${git.branch}" data-country="${ country }" data-public-key="${ public_key }">
+    <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
+    <header class="header">
+      <div class="container-md">
+        <a class="demo-link" href="/$if{ country === 'MX' }mx/{/}">Demo</a>
+        <a class="logo-link" href="/$if{ country === 'MX' }mx/{/}">
+          <img src="/dist/widgets/assets/images/logotipo-white.svg" alt="aplazame logo"/>
+        </a>
+      </div>
+    </header>
+
+    <div class="sections container-md">
+
+      <section class="section-box cart-list">
+
+        $if{ result.status === 'success' || result.status === 'pending' }
+          <div class="alert alert-brand"><span>Pago completado!</span><span>${ result.status }</span></div>
+        {:}
+          $if{ result.status === 'ko' }
+            <div class="alert alert-danger"><span>Pago rechazado</span><span>${ result.status }</span></div>
+          {:}
+            <div class="alert alert-warning"><span>Pago cancelado</span><span>${ result.status }</span></div>
+          {/}
+        {/}
+
+        <article>
+
+          <ul>
+            $each{ article in checkout.order.articles }
+            <li class="row">
+              <div class="col-sm-3 text-center">
+                <div class="img-wrapper">
+                  <img src="${article.image_url}" alt="${article.name}"/>
+                </div>
+              </div>
+              <div class="col-sm-9 details">
+                <div class="label">${article.name}</div>
+                <div class="price-wrapper">
+                  $if{ article.quantity > 1 }<span class="quantity">${article.quantity}x&nbsp;</span>{/}
+                  <span class="price">${ formatCurrency( articleAmount(article), currency ) }</span>
+                </div>
+              </div>
+            </li>
+            {/}
+            <li class="row">
+              <div class="col-xs-8">
+                <div class="concept">Envío</div>
+              </div>
+              <div class="col-xs-4 details">
+                <span class="price">${ formatCurrency( shippingAmount(), currency ) }</span>
+              </div>
+            </li>
+            <li class="row">
+              <div class="col-xs-8">
+                <div class="concept">Descuento</div>
+              </div>
+              <div class="col-xs-4 details">
+                <span class="price">${ formatCurrency( discountAmount(), currency ) }</span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="total-wrapper">
+            <div class="label">Total</div>
+            <div class="price-wrapper">
+              <span class="price">${ formatCurrency( totalAmount(), currency ) }</span>
+            </div>
+          </div>
+
+        </article>
+
+      </section>
+
+      <br/>
+      <br/>
+
+    </div>
+
+    <footer class="footer">
+      <div class="-wrapper container-md">
+        <div class="col-xs-6 no-wrap">
+          $if{ country === 'MX' }
+          <span>&copy;&nbsp;Aplazame SAPI de CV</span>
+          {:}
+          <span>&copy;&nbsp;Aplazame S.L.</span>
+          {/}
+        </div>
+        <div class="col-xs-6 text-right">
+          $if{ country !== 'MX' }
+            <a class="demo-footer-link" href="/simulator/">simulador</a>
+          {/}
+        </div>
+      </div>
+    </footer>
+
+    <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
+            data-aplazame="public_key: ${ public_key }"
+            data-sandbox="true"
+            data-callback="apzReady"
+            $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com/"{/}
+            $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-static-url="/dist/"{:}$if{ git.branch === 'master' }data-static-url="https://dev.aplazame.com/static/"{/}{/}
+            $if{ git.branch === 'demo' }data-checkout-url="https://checkout-demo.aplazame.org/"{:}$if{ git.branch !== 'release' }data-checkout-url="https://checkout-dev.aplazame.com/"{/}{/}
+            defer async >
+    </script>
+
+    <!-- alt version using url params:
+      <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
+    -->
+
+
+    <script type="text/javascript" src="/scripts/demo-article.js?build=${build}"></script>
+
+    <script type="text/x-javascript-example">
+      window.apzReady = function () {
+        console.log('hello, aplazame callback!');
+        console.log.apply(console, arguments );
+
+        // example of checkout loading
+        aplazame.checkout($json{checkout});
+      };
+    </script>
+
+    $if{dev}
+      <script type="application/javascript">
+        var head= document.getElementsByTagName('head')[0];
+        var script= document.createElement('script');
+        script.type= 'text/javascript';
+        script.src= '//' + location.hostname + ':12321/livereload.js';
+        head.appendChild(script);
+      </script>
+    {/}
+
+  </body>
+</html>

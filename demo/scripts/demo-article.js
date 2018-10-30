@@ -5,6 +5,8 @@ import http from 'http-rest/browser';
 
 function whenAplazameReady () {
 
+  var is_dev = document.documentElement.getAttribute('data-branch') !== 'release';
+
   var country = document.body.getAttribute('data-country');
   var choices = document.querySelectorAll('.article-type-choices .article-type input');
 
@@ -68,21 +70,21 @@ function whenAplazameReady () {
   // checkout launching
 
   var params = {
-    'checkout-json': 'checkout-' + country + '.json'
+    checkout_json: 'checkout-' + country + '.json'
   };
 
   if( location.search ) {
     location.search.replace(/^\?/, '').split('&').forEach(function (part) {
       var param = part.match(/(.*?)=(.*)/);
       if( param ) {
-        params[param[1].trim()] = param[2].trim();
+        params[param[1].trim().replace(/-/g, '_')] = param[2].trim();
       }
     });
   }
 
   // console.log('params', location.search.replace(/^\?/, '').split('&')[0].match(/(.*?)\=(.*)/) );
 
-  var checkoutData = http(params['checkout-json']);
+  var checkoutData = http(params.checkout_json);
 
   http.usePromise(Parole);
 
@@ -108,6 +110,10 @@ function whenAplazameReady () {
         } catch(err) {
           console.error('received json is not valid');
         }
+      }
+
+      if( params.checkout_json !== 'checkout-' + country + '.json' && data.merchant ) {
+        if( 'confirmation_url' in data.merchant ) data.merchant.confirmation_url = 'https://demo' + (is_dev ? '-dev' : '') + '.aplazame.com/confirm';
       }
 
       console.log('aplazame.info()', aplazame.info() );

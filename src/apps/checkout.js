@@ -28,7 +28,8 @@ flag_wrapper.className = 'aplazame-checkout-flag';
 
 function _ajaxConfirm (confirmation_url, data, params) {
   var started = _.now();
-  http.post( confirmation_url, data, {
+  
+  return http.post( confirmation_url, data, {
     headers: { contentType: 'application/json' },
     params: _.extend(params || {}, {
       order_id: data.checkout_token,
@@ -46,7 +47,8 @@ function _ajaxConfirm (confirmation_url, data, params) {
 function checkout (_checkout_data, callbacks) {
   callbacks = callbacks || {};
 
-  var on = null;
+  var on = null,
+      checkout_result = Parole.defer();
 
   var viewport_hack = document.createElement('meta');
   viewport_hack.name = 'viewport';
@@ -112,7 +114,7 @@ function checkout (_checkout_data, callbacks) {
   }
 
   var ajax_confirmation_url = null;
-  var loading_app = loadIframeCheckout(api.checkout_url, {
+  var loading_app = loadIframeCheckout(api.checkout_url + 'will-fail', {
     ajaxConfirm: function (data, params) {
       return _ajaxConfirm(ajax_confirmation_url, data, params);
     },
@@ -142,6 +144,11 @@ function checkout (_checkout_data, callbacks) {
       }
       log('on.' + result_status, on[result_status] );
       if( on[result_status] instanceof Function ) on[result_status]();
+
+      css_modal.hack(false);
+      css_logo.hack(false);
+
+      checkout_result.resolve(result_status);
     })
   ;
 
@@ -156,7 +163,7 @@ function checkout (_checkout_data, callbacks) {
     loading_app.errorData(res);
   });
 
-  return loading_app.then(function () {
+  loading_app.then(function () {
     css_modal.hack(true);
     css_overlay.hack(false);
     document.body.removeChild(loading_el);
@@ -170,9 +177,10 @@ function checkout (_checkout_data, callbacks) {
 
     console.error('Loading Checkout App', reason);
 
-    throw reason;
+    checkout_result.reject(reason);
   });
 
+  return checkout_result.promise;
 }
 
 export default checkout;

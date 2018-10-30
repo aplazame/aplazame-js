@@ -1,9 +1,9 @@
 {
   "merchant": {
     "checkout_url": "/mx/",
-    "cancel_url": "/mx/demo-cancel.html",
-    "ko_url": "/mx/demo-cancel.html",
-    "success_url": "/mx/demo-success.html"
+    "cancel_url": "/demo-mx/result-dismiss.html",
+    "ko_url": "/demo-mx/result-ko.html",
+    "success_url": "/demo-mx/result-success.html"
   },
   "customer": {
     "id": "140",

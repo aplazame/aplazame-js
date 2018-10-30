@@ -2,7 +2,7 @@
 import Azazel from 'azazel';
 import Parole from 'parole';
 
-// import log from '../tools/log';
+import log from '../tools/log';
 import _ from '../tools/tools';
 
 var checkout_shadow = null;
@@ -19,7 +19,7 @@ function _loadCheckoutShadow (checkout_url) {
       resolve(checkout_loader);
     };
 
-    console.log('checkout_url', checkout_url + 'checkout.js?build=' + Date.now()/(3600000) );
+    log('checkout_url', checkout_url + 'checkout.js?build=' + Date.now()/(3600000) );
     script.src = checkout_url + 'checkout.js?build=' + Date.now()/(3600000) + '&entrypoint=__aplazame__checkout__';
 
     document.body.appendChild(script);
@@ -32,7 +32,6 @@ export default function loadShadowCheckout (checkout_url, options) {
       waiting_data = Parole.defer(),
       ctrl_events = new Azazel(),
       _emit = function (event_name, args) {
-        console.log('_emit', event_name, args, ctrl_events);
         ctrl_events.emit(event_name, args);
       };
 
@@ -44,11 +43,9 @@ export default function loadShadowCheckout (checkout_url, options) {
       return loading_app.promise;
     },
     sendData: function (checkout_data) {
-      console.log('sendData', checkout_data);
       waiting_data.resolve(checkout_data);
     },
     errorData: function (res) {
-      console.log('errorData', res);
       waiting_data.reject(res);
     },
   });

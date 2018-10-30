@@ -26,7 +26,6 @@ export default function loadIframeCheckout (checkout_url, options) {
       waiting_data = Parole.defer(),
       ctrl_events = new Azazel(),
       _emit = function (event_name, args) {
-        console.log('_emit', event_name, args, ctrl_events);
         ctrl_events.emit(event_name, args);
       };
 
@@ -36,11 +35,9 @@ export default function loadIframeCheckout (checkout_url, options) {
       return loading_app.promise;
     },
     sendData: function (checkout_data) {
-      console.log('sendData', checkout_data);
       waiting_data.resolve(checkout_data);
     },
     errorData: function (res) {
-      console.log('errorData', res);
       waiting_data.reject(res);
     },
   });
@@ -57,7 +54,6 @@ export default function loadIframeCheckout (checkout_url, options) {
   }, 20000);
 
   function _onMessage (e, message) {
-    // console.log('onMessage', message);
     var event_name = message.event;
 
     switch( event_name ) {

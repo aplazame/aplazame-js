@@ -43,11 +43,9 @@ export default function checkoutNormalizerCallbacks(merchant, callbacks, locatio
 
   on.dismiss = on.dismiss || _locationReplaceFn(location, merchant.checkout_url || '/');
 
-  on.ko = on.ko || _locationReplaceFn(location, merchant.ko_url) || on.dismiss;
+  on.ko = on.ko || _locationReplaceFn(location, merchant.ko_url) || on.cancel || on.dismiss;
 
-  if( !on.pending ) {
-    on.pending = merchant.pending_url ? _locationReplaceFn(location, merchant.pending_url) : on.dismiss;
-  }
+  on.pending = on.pending || _locationReplaceFn(location, merchant.pending_url) || on.dismiss;
 
   // All functions must be removed as them can't be serialized by postMessage
   _removeFunctions(merchant);

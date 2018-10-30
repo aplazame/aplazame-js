@@ -1,7 +1,8 @@
 /* global process */
 
 var rollup = require('./_rollup'),
-    path = require('path');
+    path = require('path'),
+    status_list = ['success', 'pending', 'error', 'dismiss', 'ko'];
 
 module.exports = function (nitro) {
 
@@ -96,6 +97,7 @@ module.exports = function (nitro) {
                  ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim() ||
                  require('git-rev-sync').branch(),
         renderIndex = template( file.read('demo/index.html') ),
+        renderResult = template( file.read('demo/result.html') ),
         checkout = file.readJSON('./demo/checkout-ES.json'),
         checkout_mx = file.readJSON('./demo/checkout-MX.json'),
         demo_data = file.readYAML('./demo/demo-data.yml'),
@@ -159,8 +161,12 @@ module.exports = function (nitro) {
       file.write('public/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_ES }) ) );
       file.write('public/clients/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_ES }) ) );
       file.write('public/clientes/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_ES }) ) );
-      file.write('public/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
-      file.write('public/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+      // file.write('public/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
+      // file.write('public/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+
+      status_list.forEach(function (result_status) {
+        file.write('public/demo-es/result-' + result_status + '.html', renderResult( scope.new({ result: { status: result_status } }) ) );
+      });
 
       file.write('public/widget-options.html', template( file.read('demo/widget-options.html') )( scope.new({ public_key: PUBLIC_KEY_DEMO_ES }) ) );
 
@@ -171,8 +177,13 @@ module.exports = function (nitro) {
       file.write('public/mx/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_MX }) ) );
       file.write('public/mx/clients/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_MX }) ) );
       file.write('public/mx/clientes/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_MX }) ) );
-      file.write('public/mx/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
-      file.write('public/mx/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+
+      // file.write('public/mx/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
+      // file.write('public/mx/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+
+      status_list.forEach(function (result_status) {
+        file.write('public/demo-mx/result-' + result_status + '.html', renderResult( scope.new({ result: { status: result_status } }) ) );
+      });
 
     })(index_data.new({ checkout: checkout_mx, country: 'MX', currency: 'MXN' }));
 

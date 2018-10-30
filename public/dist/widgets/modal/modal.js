@@ -1885,9 +1885,9 @@
     element.classList.remove(className);
   };
 
-  function thousands(amount, groupSeparator) {
+  function _formatThousands(amount, groupSeparator) {
     if( /\d{3}\d+/.test(amount) ) {
-      return thousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
+      return _formatThousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
     }
     return amount;
   }
@@ -1910,7 +1910,7 @@
       return '0,' + amount;
     }
     return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
-      return thousands(main, groupSeparator) + decimalsSeparator + tail;
+      return _formatThousands(main, groupSeparator) + decimalsSeparator + tail;
     });
   }
 
@@ -1961,12 +1961,6 @@
       return Number( price.replace(/[^\d]+/g, '') + '00' );
     }
   }
-
-  var amount_price = {
-  	getAmount: getAmount,
-  	getPrice: getPrice,
-  	parsePrice: parsePrice
-  };
 
   function _key$1 (o, key, value) {
   	key.split('.').forEach(function (k, i, keys) {
@@ -2101,8 +2095,12 @@
     path$1,
     colors,
     _$1,
-    amount_price,
     deserialize$1,
+    {
+      getAmount: getAmount,
+      getPrice: getPrice,
+      parsePrice: parsePrice
+    },
     {
       remove_style: / Trident\//.test(navigator.userAgent) ? '' : null,
       template: template$1,

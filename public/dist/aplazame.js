@@ -727,7 +727,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.491';
+	var aplazameVersion = '0.0.492';
 
 	function _isType (type) {
 	    return function (o) {
@@ -2383,9 +2383,9 @@
 	  element.classList.remove(className);
 	};
 
-	function thousands(amount, groupSeparator) {
+	function _formatThousands(amount, groupSeparator) {
 	  if( /\d{3}\d+/.test(amount) ) {
-	    return thousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
+	    return _formatThousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
 	  }
 	  return amount;
 	}
@@ -2408,7 +2408,7 @@
 	    return '0,' + amount;
 	  }
 	  return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
-	    return thousands(main, groupSeparator) + decimalsSeparator + tail;
+	    return _formatThousands(main, groupSeparator) + decimalsSeparator + tail;
 	  });
 	}
 
@@ -2459,12 +2459,6 @@
 	    return Number( price.replace(/[^\d]+/g, '') + '00' );
 	  }
 	}
-
-	var amount_tools = {
-		getAmount: getAmount,
-		getPrice: getPrice,
-		parsePrice: parsePrice
-	};
 
 	function _key$1 (o, key, value) {
 		key.split('.').forEach(function (k, i, keys) {
@@ -2599,8 +2593,12 @@
 	  path$1,
 	  color_tools,
 	  _$1,
-	  amount_tools,
 	  deserialize$1,
+	  {
+	    getAmount: getAmount,
+	    getPrice: getPrice,
+	    parsePrice: parsePrice
+	  },
 	  {
 	    remove_style: / Trident\//.test(navigator.userAgent) ? '' : null,
 	    template: template$1,
@@ -3019,7 +3017,7 @@
 
 	flag_wrapper.className = 'aplazame-checkout-flag';
 
-	console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
+	// console.log('%caplazame.checkout', 'color: red; font-weight:; bold;');
 
 	function checkout (checkout_data, callbacks) {
 	  var checkout_id = null, transaction;
@@ -3933,163 +3931,6 @@
 
 	}
 
-	function _getAmountSimulatorGetter (aplazame) {
-
-	  var _ = aplazame._;
-
-	  function getQty (qtySelector) {
-	    if( !_.isString(qtySelector) ) {
-	      log('warning: data-qty should be an string. pe: form#article .final-price ');
-	      return 1;
-	    }
-	    var qtyElement;
-	    try {
-	      qtyElement = document.querySelector(qtySelector);
-	    } catch(err) {
-	      log(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
-	      return 1;
-	    }
-
-	    switch( qtyElement.nodeName.toLowerCase() ) {
-	      case 'input':
-	        return Number( qtyElement.value );
-	      case 'select':
-	        return qtyElement.querySelector('option[selected]') && Number( qtyElement.querySelector('option[selected]').value ) || 1;
-	      default:
-	        return Number( qtyElement.textContent.trim() );
-	    }
-	  }
-
-	  var cmsPriceSelector = [
-	    'form#product_addtocart_form .special-price .price', // magento
-	    'form#product_addtocart_form .regular-price .price', // magento
-	    '#product-info .special-price .price', // magento
-	    '#product-info .regular-price .price', // magento
-	    '#our_price_display', // prestashop
-	    '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price ins .amount', // woocommerce
-	    '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
-	    '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce
-	    'body.woocommerce-page .product-page-price .woocommerce-Price-amount', // woocommerce
-	    '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]', // Schema.org
-	  ],
-	  cmsQtySelector = [
-	    'form#product_addtocart_form input[name="qty"]', // magento
-	    'form#buy_block input[name="qty"]', // prestashop
-	    '#quantity_wanted', // prestashop
-	    'form#product-options-form button[data-id=qty]', // custom
-	    '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]', // woocommerce
-	    'body.woocommerce-page form.cart input[name="quantity"]', // woocommerce
-	  ];
-
-	  function matchSelector (selector) {
-	    return document.querySelector(selector);
-	  }
-
-	  function amountGetter (widgetElement) {
-	    var priceSelector = widgetElement.getAttribute('data-price'),
-	        qtySelector = widgetElement.getAttribute('data-qty'),
-	        autoDiscovered = false;
-
-	    if( priceSelector ) {
-	      try{
-	        priceSelector = priceSelector.split(/ *, */).reduce(function (matched, selector) {
-	          return matched || (document.querySelector(selector) && selector) || null;
-	        }, null);
-	      } catch(err) {
-	        priceSelector = null;
-	        log('data-price: missing', err.message);
-	      }
-	      if( qtySelector ) {
-	        try{
-	          document.querySelector(qtySelector);
-	        } catch(err) {
-	          qtySelector = null;
-	          log('data-qty: missing', err.message);
-	        }
-	      }
-	    } else if( !widgetElement.getAttribute('data-amount') || widgetElement.getAttribute('data-amount') === '0' ) {
-	      priceSelector = _.find(cmsPriceSelector, matchSelector);
-
-	      if( priceSelector ) {
-	        qtySelector = _.find(cmsQtySelector, matchSelector);
-	        autoDiscovered = true;
-
-	        log('auto-discovered price selector', priceSelector, qtySelector);
-	      } else {
-	        log('data-price failing', widgetElement.getAttribute('data-price'), widgetElement.getAttribute('data-price') !== null ? document.querySelector(widgetElement.getAttribute('data-price')) : 'data-price missing', _.find(cmsPriceSelector, matchSelector) );
-	      }
-	    }
-
-	    var getter = priceSelector ? function () {
-	      var priceElement;
-	      try {
-	        priceElement = document.querySelector( priceSelector );
-	      } catch(err) {}
-
-	      var amount = priceElement ? priceElement.value : '0';
-
-	      if( typeof amount === 'undefined' ) {
-	        if( !/\d+[,.]\d+/.test(priceElement.textContent) && priceElement.children && priceElement.children.length ) {
-	          amount = '';
-
-	          var part = priceElement.firstChild, matched;
-
-	          while( part ) {
-	            if( /[,.]/.test(amount) ) {
-	              return;
-	            }
-	            matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).replace(/&nbsp;/g, '').match(/[\d,.]+/);
-
-	            if( matched ) {
-	              amount += (amount && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
-	            }
-
-	            part = part.nextSibling;
-	          }
-	        } else if( priceElement.textContent ) {
-	          amount = (priceElement.textContent || '').replace(/&nbsp;/g, '');
-	        } else if( priceElement.getAttribute('content') ) {
-	          amount = priceElement.getAttribute('content');
-	        }
-	      }
-
-	      log('price read from', priceElement, amount );
-
-	      return amount && _.parsePrice( amount );
-	    } : ( widgetElement.hasAttribute('data-amount') ? function () {
-	      return Number( widgetElement.getAttribute('data-amount') );
-	    } : function () {
-	      return;
-	    });
-
-	    // new Events(getter);
-	    //
-	    // if( priceSelector ) $live(priceSelector, function (price_el) {
-	    //   function onNodeChanged () {
-	    //     getter.emit('change', [price_el]);
-	    //   }
-	    //
-	    //   if( window.MutationObserver ) {
-	    //     new MutationObserver(function(mutations) {
-	    //       mutations.forEach(onNodeChanged);
-	    //     }).observe(price_el, { childList: true, subtree: true });
-	    //   } else {
-	    //     price_el.addEventListener('DOMSubtreeModified', onNodeChanged);
-	    //   }
-	    // });
-
-	    getter.priceSelector = priceSelector;
-	    getter.qtySelector = qtySelector;
-	    getter.autoDiscovered = autoDiscovered,
-	    getter.getQty = getQty;
-
-	    return getter;
-	  }
-
-	  return amountGetter;
-
-	}
-
 	function widgetRawEjs(s) {
 	s=s||{};var _='currency,getAmount,choice,custom_styles'.split(',');return Function.apply(null,_.concat('var _λ=\'\';_λ+=\'\\n<div class="aplazame-widget-instalments">\\n\\n  <span class="aplazame-widget-from">desde&nbsp;</span><!--\\n\\n  --><strong class="aplazame-widget-amount"><!--\\n    \';if( currency === \'EUR\' ) {_λ+=\'\\n    --><span class="aplazame-widget-price">\';_λ+=(getAmount(choice.amount, \',\', \'.\'));_λ+=\'</span><!--\\n    --><span class="aplazame-widget-currency">€</span><!--\\n    \';} else {_λ+=\'\\n    --><span class="aplazame-widget-currency">$</span><!--\\n    --><span class="aplazame-widget-price">\';_λ+=(getAmount(choice.amount, \'.\', \',\'));_λ+=\'</span><!--\\n    \';}_λ+=\'\\n  --></strong><!--\\n\\n  --><sub class="aplazame-widget-per-month">/mes</sub><!--\\n\\n  --><span class="aplazame-widget-instalments-wrapper"><!--\\n  --><span>&nbsp;en&nbsp;</span><!--\\n    --><em class="aplazame-widget-instalments-num">\';_λ+=(choice.num_instalments);_λ+=\'</em><!--\\n    --><span>&nbsp;\';_λ+=(choice.num_instalments === 1 ? \'cuota\' : \'cuotas\');_λ+=\'</span><!--\\n  --></span>\\n\\n</div>\\n\\n<style rel="stylesheet">\';_λ+=(custom_styles);_λ+=\'</style>\\n\';return _λ;')).apply(null, _.map(function (k) {return s[k];}));
 	}
@@ -4369,8 +4210,8 @@
 	        return new SimulatorData();
 	      })();
 	      widget.simulator.$widget = widget;
-	      widget.simulator.getAmount = amount_tools.getAmount;
-	      widget.simulator.getPrice = amount_tools.getPrice;
+	      widget.simulator.getAmount = getAmount;
+	      widget.simulator.getPrice = getPrice;
 	      widget.simulator.lighten = color_tools.lightenHEX;
 	      widget.simulator.brightness = color_tools.brightness;
 	    }
@@ -4424,6 +4265,136 @@
 	  };
 
 	  return Widget;
+	}
+
+	var cms_price_selector = [
+	  'form#product_addtocart_form .special-price .price', // magento
+	  'form#product_addtocart_form .regular-price .price', // magento
+	  '#product-info .special-price .price', // magento
+	  '#product-info .regular-price .price', // magento
+	  '#our_price_display', // prestashop
+	  '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price ins .amount', // woocommerce
+	  '#main [itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] .price .amount', // woocommerce
+	  '#main [itemtype="http://schema.org/Product"] .single_variation_wrap .amount', // woocommerce
+	  'body.woocommerce-page .product-page-price .woocommerce-Price-amount', // woocommerce
+	  '[itemtype="http://schema.org/Product"] [itemtype="http://schema.org/Offer"] [itemprop="price"]', // Schema.org
+	];
+
+	var cms_qty_selector = [
+	  'form#product_addtocart_form input[name="qty"]', // magento
+	  'form#buy_block input[name="qty"]', // prestashop
+	  '#quantity_wanted', // prestashop
+	  'form#product-options-form button[data-id=qty]', // custom
+	  '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]', // woocommerce
+	  'body.woocommerce-page form.cart input[name="quantity"]', // woocommerce
+	];
+
+	function _$ (el, selector) {
+	  if( typeof el === 'string' ) return document.querySelector(el);
+	  return el.querySelector(selector);
+	}
+
+	function _getQty (qty_selector, show_warning) {
+	  // if( typeof qty_selector !== 'string' ) {
+	  //   log('warning: data-qty should be an string. pe: form#article .final-price ');
+	  //   return 1;
+	  // }
+	  var qty_el;
+	  try {
+	    qty_el = document.querySelector(qty_selector);
+	  } catch(err) {
+	    if(show_warning) log(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
+	    return 1;
+	  }
+
+	  if( !qty_el ) return 1;
+
+	  switch( qty_el.nodeName.toLowerCase() ) {
+	    case 'input':
+	      return Number( qty_el.value );
+	    case 'select':
+	      return _$(qty_el, 'option[selected]') && Number( _$(qty_el, 'option[selected]').value ) || 1;
+	    default:
+	      return Number( qty_el.textContent.trim() );
+	  }
+	}
+
+	function qtyGetter (widget_el) {
+	  var qty_selector = widget_el.getAttribute('data-qty'),
+	      show_warning = typeof qty_selector === 'string';
+
+	  if( !qty_selector ) qty_selector = cms_qty_selector.join(', ');
+
+	  return function () {
+	    return _getQty(qty_selector, show_warning);
+	  };
+	}
+
+	function _matchSelector (selector) {
+	  return document.querySelector(selector);
+	}
+
+	function _getAmount (price_selector) {
+	  var price_el;
+	  try {
+	    price_el = document.querySelector( price_selector );
+	  } catch(err) {}
+
+	  if( !price_el ) return null;
+
+	  var amount_str = price_el.value;
+
+	  if( typeof amount_str === 'undefined' ) {
+	    if( !/\d+[,.]\d+/.test(price_el.textContent) && price_el.children && price_el.children.length ) {
+	      amount_str = '';
+
+	      var part = price_el.firstChild, matched;
+
+	      while( part ) {
+	        if( /[,.]/.test(amount_str) ) {
+	          return;
+	        }
+	        matched = ( part.toString() === '[object Text]' ? part.data : part.textContent ).replace(/&nbsp;/g, '').match(/[\d,.]+/);
+
+	        if( matched ) {
+	          amount_str += (amount_str && !/^[,.]/.test(matched[0]) ? '.' : '') + matched[0];
+	        }
+
+	        part = part.nextSibling;
+	      }
+	    } else if( price_el.textContent ) {
+	      amount_str = (price_el.textContent || '').replace(/&nbsp;/g, '');
+	    } else if( price_el.getAttribute('content') ) {
+	      amount_str = price_el.getAttribute('content');
+	    }
+	  }
+
+	  log('price read from', price_el, amount_str );
+
+	  return amount_str && parsePrice( amount_str ) || null;
+	}
+
+	function getDataAmount (widget_el) {
+	  var data_amount = widget_el.getAttribute('data-amount');
+
+	  return typeof data_amount === 'string' ? Number(data_amount.trim()) : 0;
+	}
+
+	function amountGetter (widget_el) {
+	  var price_selector = widget_el.getAttribute('data-price');
+
+	  if( !price_selector ) {
+	    price_selector = bundle$1.find(cms_price_selector, _matchSelector);
+
+	    if( price_selector ) log('auto-discovered price selector', price_selector);
+	  }
+
+	  return price_selector ? function () {
+	    var amount = _getAmount(price_selector);
+	    return amount === null ? getDataAmount(widget_el) : amount;
+	  } : function () {
+	    return getDataAmount(widget_el);
+	  };
 	}
 
 	function _attr(el, attr_name) {
@@ -4482,8 +4453,7 @@
 
 	function simulatorLoader (aplazame) {
 
-	  var _amountGetter = _getAmountSimulatorGetter(aplazame),
-	      Widget = _getSimulatorWidget(aplazame);
+	  var Widget = _getSimulatorWidget(aplazame);
 
 	  liveDom('[data-aplazame-simulator]', function (widget_el) {
 
@@ -4499,18 +4469,19 @@
 	          country:  widget_el.getAttribute('data-country') || 'ES',
 	        }),
 	        custom_widget_options = _getCustomOptions(widget_el),
-	        amountGetter = _amountGetter(widget_el),
-	        current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
-	        current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
+	        getAmount = amountGetter(widget_el),
+	        getQty = qtyGetter(widget_el),
+	        current_amount = getAmount(),
+	        current_qty = getQty(),
 	        qty_interval,
-	        updateAmount = function (amount, qty) {
+	        updateAmount = function (amount, qty, ignore_changes) {
 	          log('updateAmount', amount, qty);
 	          if( !amount ) return;
-	          current_amount = amount;
-	          if( qty !== undefined ) current_qty = qty;
+
 	          widget_el.style.opacity = 0.5;
-	          aplazame.simulator( amount*( qty === undefined ? current_qty : qty ), simulator_options, function (_choices, _options) {
-	            if( qty !== undefined && qty !== current_qty ) return;
+	          aplazame.simulator( amount*qty, simulator_options, function (_choices, _options) {
+	            if( !ignore_changes && qty !== undefined && qty !== current_qty ) return;
+
 	            if( _options.widget.disabled ) {
 	              if(qty_interval) clearInterval(qty_interval);
 	              // _removeListener(onDomChanges);
@@ -4529,21 +4500,29 @@
 	            widget_el.style.opacity = null;
 	          });
 	        },
+	        updateAmountAttempt = function (amount) {
+	          var qty = getQty();
+
+	          if( !amount || (amount === current_amount && qty === current_qty) ) return;
+
+	          current_amount = amount;
+	          current_qty = qty;
+
+	          updateAmount(amount, current_qty);
+	        },
 	        onDomChanges = function () {
-	          // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
 	          if( !document.body.contains(widget_el) ) return liveDom.off(onDomChanges);
 
-	          amountGetter = _amountGetter(widget_el);
-	          var amount = amountGetter();
-
-	          if( amount && amount !== current_amount ) updateAmount(amount);
+	          updateAmountAttempt( getAmount() );
 	        };
 
 	    if( 'MutationObserver' in window ) (function (observer) {
 	      observer.observe(widget_el, { attributes: true });
 	    })(  new MutationObserver(function(mutations) {
 	      mutations.forEach(function(mutation) {
-	        if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
+	        if( mutation.attributeName === 'data-amount' ) {
+	          updateAmountAttempt( getDataAmount(widget_el) );
+	        } else if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
 
 	          custom_widget_options = _getCustomOptions(widget_el);
 
@@ -4552,16 +4531,21 @@
 	      });
 	    }) );
 
-	    if( amountGetter.qtySelector ) qty_interval = setInterval(function () {
-	      var qty = amountGetter.getQty(amountGetter.qtySelector) || 1;
+	    qty_interval = setInterval(function () {
+	      var qty = getQty();
 
 	      if( qty === current_qty ) return;
+
+	      current_qty = qty;
 	      updateAmount(current_amount, qty);
 	    }, 120);
 
+	    if( widget_el.hasAttribute('data-amount') && getDataAmount(widget_el) !== current_amount ) {
+	      updateAmount( getDataAmount(widget_el), current_qty, true );
+	    } else {
+	      updateAmount(current_amount, current_qty);
+	    }
 	    liveDom(onDomChanges);
-
-	    updateAmount(current_amount);
 
 	  });
 

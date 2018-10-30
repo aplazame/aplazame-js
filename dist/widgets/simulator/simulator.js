@@ -145,9 +145,9 @@
 
   }
 
-  function thousands(amount, groupSeparator) {
+  function _formatThousands(amount, groupSeparator) {
     if( /\d{3}\d+/.test(amount) ) {
-      return thousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
+      return _formatThousands(amount.replace(/(\d{3}?)(\.|$)/, groupSeparator + '$&'), groupSeparator);
     }
     return amount;
   }
@@ -170,7 +170,7 @@
       return '0,' + amount;
     }
     return prefix + ('' + amount).replace(/(\d*)(\d{2})$/, function (_matched, main, tail) {
-      return thousands(main, groupSeparator) + decimalsSeparator + tail;
+      return _formatThousands(main, groupSeparator) + decimalsSeparator + tail;
     });
   }
 
@@ -192,41 +192,6 @@
 
     return prefix + getAmount(amount, decimalsSeparator, groupSeparator) + suffix;
   }
-
-  function parsePrice (price) {
-    var matched = price.match(/((\d+[,. ])*)(\d+)/),
-        main, tail;
-
-    if( matched ) {
-      tail = matched[3];
-      main = matched[1].replace(/[^\d]/g, '');
-
-      if( !main ) {
-        return Number( tail + '00' );
-      }
-
-      if( tail.length === 1 ) return Number(main + tail + '0');
-
-      if( tail.length === 2 ) return Number(main + tail);
-
-      // if tail length is 3 we assume there is no decimals
-      if( tail.length === 3 ) return Number(main + tail + '00');
-
-      if( tail.length > 3 ) return Number(main)*100 + Math.round( Number('0.' + tail)*100 );
-
-      return Number(main);
-    }
-
-    if( /\d+/.test(price) ) {
-      return Number( price.replace(/[^\d]+/g, '') + '00' );
-    }
-  }
-
-  var amount_tools = {
-  	getAmount: getAmount,
-  	getPrice: getPrice,
-  	parsePrice: parsePrice
-  };
 
   function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -316,8 +281,8 @@
 
     var simulator = Object.create(simulator_data);
 
-    simulator.getAmount = amount_tools.getAmount;
-    simulator.getPrice = amount_tools.getPrice;
+    simulator.getAmount = getAmount;
+    simulator.getPrice = getPrice;
     simulator.lighten = color_tools.lightenHEX;
     simulator.brightness = color_tools.brightness;
 

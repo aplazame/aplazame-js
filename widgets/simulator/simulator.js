@@ -1,7 +1,7 @@
 
 import widgetV2 from './simulator-widget-v2';
 import widgetV3 from './simulator-widget-v3';
-import amount_tools from '../../src/tools/amount-price';
+import {getAmount, getPrice} from '../../src/tools/amount-price';
 import color_tools from '../../src/tools/colors';
 
 var message_listeners = {}, no_listeners = [], simulator_id = -1,
@@ -45,8 +45,8 @@ onMessage('simulator:data', function (simulator_data) {
 
   var simulator = Object.create(simulator_data);
 
-  simulator.getAmount = amount_tools.getAmount;
-  simulator.getPrice = amount_tools.getPrice;
+  simulator.getAmount = getAmount;
+  simulator.getPrice = getPrice;
   simulator.lighten = color_tools.lightenHEX;
   simulator.brightness = color_tools.brightness;
 

@@ -5,7 +5,7 @@ import widgetRaw from '../../widgets/simulator/simulator-widget-raw';
 // import widgetV2 from '../../widgets/simulator/simulator-widget-v2';
 import widgetV3 from '../../widgets/simulator/simulator-widget-v3';
 import _widgetIframe from './data-simulator-iframe';
-import amount_tools from '../tools/amount-price';
+import {getAmount, getPrice} from '../tools/amount-price';
 import color_tools from '../tools/colors';
 
 import _renderModalInfo from '../../widgets/simulator/templates/modal-instalments.ejs';
@@ -91,8 +91,8 @@ export default function (aplazame) {
         return new SimulatorData();
       })();
       widget.simulator.$widget = widget;
-      widget.simulator.getAmount = amount_tools.getAmount;
-      widget.simulator.getPrice = amount_tools.getPrice;
+      widget.simulator.getAmount = getAmount;
+      widget.simulator.getPrice = getPrice;
       widget.simulator.lighten = color_tools.lightenHEX;
       widget.simulator.brightness = color_tools.brightness;
     }

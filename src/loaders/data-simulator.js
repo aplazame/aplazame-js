@@ -3,8 +3,8 @@ import $live from 'live-dom';
 
 import log from '../tools/log';
 
-import _getAmountSimulatorGetter from './data-simulator-amount';
 import _getSimulatorWidget from './data-simulator-widget';
+import {amountGetter, qtyGetter, getDataAmount} from './data-simulator-amount';
 
 function _attr(el, attr_name) {
   return el.getAttribute(attr_name);
@@ -62,8 +62,7 @@ function _getCustomOptions(widget_el) {
 
 export default function (aplazame) {
 
-  var _amountGetter = _getAmountSimulatorGetter(aplazame),
-      Widget = _getSimulatorWidget(aplazame);
+  var Widget = _getSimulatorWidget(aplazame);
 
   $live('[data-aplazame-simulator]', function (widget_el) {
 
@@ -79,18 +78,19 @@ export default function (aplazame) {
           country:  widget_el.getAttribute('data-country') || 'ES',
         }),
         custom_widget_options = _getCustomOptions(widget_el),
-        amountGetter = _amountGetter(widget_el),
-        current_amount = amountGetter() || widget_el.getAttribute('data-amount') && Number( widget_el.getAttribute('data-amount') ),
-        current_qty = amountGetter.qtySelector ? ( amountGetter.getQty(amountGetter.qtySelector) || 1 ) : 1,
+        getAmount = amountGetter(widget_el),
+        getQty = qtyGetter(widget_el),
+        current_amount = getAmount(),
+        current_qty = getQty(),
         qty_interval,
-        updateAmount = function (amount, qty) {
+        updateAmount = function (amount, qty, ignore_changes) {
           log('updateAmount', amount, qty);
           if( !amount ) return;
-          current_amount = amount;
-          if( qty !== undefined ) current_qty = qty;
+
           widget_el.style.opacity = 0.5;
-          aplazame.simulator( amount*( qty === undefined ? current_qty : qty ), simulator_options, function (_choices, _options) {
-            if( qty !== undefined && qty !== current_qty ) return;
+          aplazame.simulator( amount*qty, simulator_options, function (_choices, _options) {
+            if( !ignore_changes && qty !== undefined && qty !== current_qty ) return;
+
             if( _options.widget.disabled ) {
               if(qty_interval) clearInterval(qty_interval);
               // _removeListener(onDomChanges);
@@ -109,21 +109,29 @@ export default function (aplazame) {
             widget_el.style.opacity = null;
           });
         },
+        updateAmountAttempt = function (amount) {
+          var qty = getQty();
+
+          if( !amount || (amount === current_amount && qty === current_qty) ) return;
+
+          current_amount = amount;
+          current_qty = qty;
+
+          updateAmount(amount, current_qty);
+        },
         onDomChanges = function () {
-          // if( !document.body.contains(widget_el) ) return _removeListener(onDomChanges);
           if( !document.body.contains(widget_el) ) return $live.off(onDomChanges);
 
-          amountGetter = _amountGetter(widget_el);
-          var amount = amountGetter();
-
-          if( amount && amount !== current_amount ) updateAmount(amount);
+          updateAmountAttempt( getAmount() );
         };
 
     if( 'MutationObserver' in window ) (function (observer) {
       observer.observe(widget_el, { attributes: true });
     })(  new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
+        if( mutation.attributeName === 'data-amount' ) {
+          updateAmountAttempt( getDataAmount(widget_el) );
+        } else if( /^data-type/.test(mutation.attributeName) || /^data-option-/.test(mutation.attributeName) ) {
 
           custom_widget_options = _getCustomOptions(widget_el);
 
@@ -132,16 +140,21 @@ export default function (aplazame) {
       });
     }) );
 
-    if( amountGetter.qtySelector ) qty_interval = setInterval(function () {
-      var qty = amountGetter.getQty(amountGetter.qtySelector) || 1;
+    qty_interval = setInterval(function () {
+      var qty = getQty();
 
       if( qty === current_qty ) return;
+
+      current_qty = qty;
       updateAmount(current_amount, qty);
     }, 120);
 
+    if( widget_el.hasAttribute('data-amount') && getDataAmount(widget_el) !== current_amount ) {
+      updateAmount( getDataAmount(widget_el), current_qty, true );
+    } else {
+      updateAmount(current_amount, current_qty);
+    }
     $live(onDomChanges);
-
-    updateAmount(current_amount);
 
   });
 

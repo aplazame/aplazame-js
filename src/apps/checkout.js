@@ -28,7 +28,7 @@ flag_wrapper.className = 'aplazame-checkout-flag';
 
 function _ajaxConfirm (confirmation_url, data, params) {
   var started = _.now();
-  
+
   return http.post( confirmation_url, data, {
     headers: { contentType: 'application/json' },
     params: _.extend(params || {}, {
@@ -44,10 +44,11 @@ function _ajaxConfirm (confirmation_url, data, params) {
   });
 }
 
-function checkout (_checkout_data, callbacks) {
-  callbacks = callbacks || {};
+function checkout (_checkout_data, _callbacks) {
+  var callbacks = _callbacks ? Object.create(_callbacks) : {};
 
   var on = null,
+      use_method_get = typeof _checkout_data === 'string',
       checkout_result = Parole.defer();
 
   var viewport_hack = document.createElement('meta');
@@ -74,43 +75,45 @@ function checkout (_checkout_data, callbacks) {
 
   var previous_scroll_top = _.scroll.top();
 
-  var waiting_transaction = Parole.defer();
-  waiting_transaction.promise.then(function (transaction) {
-    if( (transaction.order || {}).currency === 'MXN' ) {
-      flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
-    } else {
-      flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
+  function _onTransaction (transaction) {
+    try {
+      if( (transaction.order || {}).currency === 'MXN' ) {
+        flag_wrapper.innerHTML = flag_svg_mx + '<div class="label">México</div>';
+      } else {
+        flag_wrapper.innerHTML = flag_svg_es + '<div class="label">España</div>';
+      }
+
+      document.body.appendChild( flag_wrapper );
+
+      transaction.__viewport__ = viewportInfo();
+
+      ['meta', 'merchant', 'order'].forEach(function (key) {
+        if( !_.isObject(transaction[key]) ) transaction[key] = {};
+      });
+
+      if( use_method_get ) return;
+
+      checkoutNormalizeAPI(transaction, _.copy(api) );
+      log('api', transaction.api);
+
+      checkoutNormalizeCustomer(transaction);
+      log('customer', transaction.customer);
+
+      on = checkoutNormalizeCallbacks(callbacks, location, transaction.merchant);
+      log('callbacks', on);
+    } catch(err) {
+      log.err('transaction error', err);
     }
+  }
 
-    document.body.appendChild( flag_wrapper );
-
-    transaction.__viewport__ = viewportInfo();
-
-    ['meta', 'merchant', 'order'].forEach(function (key) {
-      if( !_.isObject(transaction[key]) ) transaction[key] = {};
-    });
-
-    checkoutNormalizeAPI(transaction, _.copy(api) );
-    log('api', transaction.api);
-
-    checkoutNormalizeCustomer(transaction);
-    log('customer', transaction.customer);
-
-    if( on ) return;
-    on = checkoutNormalizeCallbacks(transaction.merchant ||{}, callbacks, location);
+  if( use_method_get ) {
+    on = checkoutNormalizeCallbacks(callbacks, location);
     log('callbacks', on);
-  }).catch(function (err) {
-    log.err('transaction error', err);
-  });
-
-  if( typeof _checkout_data === 'object' ) {
-    waiting_transaction.resolve(
+  } else {
+    _onTransaction(
       'transaction' in _checkout_data ?
       _checkout_data.transaction : _checkout_data
     );
-  } else {
-    on = checkoutNormalizeCallbacks({}, callbacks, location);
-    log('callbacks', on);
   }
 
   var ajax_confirmation_url = null;
@@ -155,7 +158,7 @@ function checkout (_checkout_data, callbacks) {
   fetchCheckout(_checkout_data).then(function (checkout_data) {
     loading_app.sendData(checkout_data);
 
-    waiting_transaction.resolve(checkout_data.transaction);
+    if( use_method_get ) _onTransaction(checkout_data.transaction);
 
     // retro-compatibility
     ajax_confirmation_url = checkout_data.transaction.merchant.confirmation_url;

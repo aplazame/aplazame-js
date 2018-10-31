@@ -17,7 +17,7 @@ npm-install:
 install: git.hooks npm-install
 
 lint:
-	@$(npmdir)/eslint src/**
+	@$(npmdir)/eslint src/**.js
 
 unit:
 	@$(npmdir)/mocha --require @babel/register src/**/*-tests.js

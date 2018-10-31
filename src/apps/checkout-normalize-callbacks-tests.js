@@ -24,14 +24,12 @@ describe('checkout callbacks normalizer', function () {
   });
 
   it('minimum fields are provided', function() {
-    var checkout = {
-      merchant: {
-        success_url: '/success_url',
-        cancel_url: '/cancel_url'
-      }
+    var merchant = {
+      success_url: '/success_url',
+      cancel_url: '/cancel_url'
     };
 
-    var on = checkoutNormalizeCallbacks(checkout, callbacks, location);
+    var on = checkoutNormalizeCallbacks(callbacks, location, merchant);
 
     on.success();
     assert.equal(location.href, '/success_url');
@@ -49,16 +47,14 @@ describe('checkout callbacks normalizer', function () {
         onKO = function () { /* onKO */ },
         onDismiss = function () { /* onDismiss */ };
 
-    var checkout = {
-      merchant: {
-        onSuccess: onSuccess,
-        onPending: onPending,
-        onKO: onKO,
-        onDismiss: onDismiss,
-      }
+    var merchant = {
+      onSuccess: onSuccess,
+      onPending: onPending,
+      onKO: onKO,
+      onDismiss: onDismiss,
     };
 
-    var on = checkoutNormalizeCallbacks(checkout, callbacks, location);
+    var on = checkoutNormalizeCallbacks(callbacks, location, merchant);
 
     assert.strictEqual(on.success, onSuccess, 'on.success');
     assert.strictEqual(on.pending, onPending, 'on.pending');
@@ -72,11 +68,7 @@ describe('checkout callbacks normalizer', function () {
         onKO = function () { /* onKO */ },
         onDismiss = function () { /* onDismiss */ };
 
-    var checkout = {
-      merchant: {}
-    };
-
-    var on = checkoutNormalizeCallbacks(checkout, {
+    var on = checkoutNormalizeCallbacks({
       onSuccess: onSuccess,
       onPending: onPending,
       onKO: onKO,
@@ -92,13 +84,11 @@ describe('checkout callbacks normalizer', function () {
   it('onPending defaults to onDismiss when missing', function() {
     var onDismiss = function () { /* onDismiss */ };
 
-    var checkout = {
-      merchant: {
-        onDismiss: onDismiss
-      }
+    var merchant = {
+      onDismiss: onDismiss
     };
 
-    var on = checkoutNormalizeCallbacks(checkout, {}, location);
+    var on = checkoutNormalizeCallbacks({}, location, merchant);
 
     assert.strictEqual(on.pending, onDismiss, 'on.pending');
     assert.strictEqual(on.dismiss, onDismiss, 'on.dismiss');

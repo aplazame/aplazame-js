@@ -7,21 +7,21 @@ var callbacks = {},
     location = {
       replace: function (href) {
         this.href = href;
-      }
+      },
     };
 
 describe('checkout callbacks normalizer', function () {
 
-  it('throw exception when merchant is not provided', function() {
-    var checkout = {};
-
-    assert.throws(
-      function () {
-        checkoutNormalizeCallbacks(checkout, callbacks, location);
-      },
-      /missing merchant parameters/
-    );
-  });
+  // it('throw exception when merchant is not provided', function() {
+  //   var checkout = {};
+  //
+  //   assert.throws(
+  //     function () {
+  //       checkoutNormalizeCallbacks(checkout, callbacks, location);
+  //     },
+  //     /missing merchant parameters/
+  //   );
+  // });
 
   it('minimum fields are provided', function() {
     var merchant = {
@@ -29,12 +29,12 @@ describe('checkout callbacks normalizer', function () {
       cancel_url: '/cancel_url'
     };
 
-    var on = checkoutNormalizeCallbacks(callbacks, location, merchant);
+    var on = checkoutNormalizeCallbacks(Object.create(callbacks), location, merchant);
 
     on.success();
     assert.equal(location.href, '/success_url');
 
-    on.cancel();
+    on.ko();
     assert.equal(location.href, '/cancel_url');
 
     on.dismiss();
@@ -54,7 +54,7 @@ describe('checkout callbacks normalizer', function () {
       onDismiss: onDismiss,
     };
 
-    var on = checkoutNormalizeCallbacks(callbacks, location, merchant);
+    var on = checkoutNormalizeCallbacks(Object.create(callbacks), location, merchant);
 
     assert.strictEqual(on.success, onSuccess, 'on.success');
     assert.strictEqual(on.pending, onPending, 'on.pending');

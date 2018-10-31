@@ -22,6 +22,26 @@ module.exports = function (aplazame) {
       amount_tools = require('../tools/amount-price'),
       color_tools = require('../tools/colors');
 
+
+
+  function _fillWith( array_to_fill, array, max_length ){
+
+    var array_to_fill_length = array_to_fill.length;
+    max_length = max_length?max_length:4;
+
+    if ( array_to_fill_length < max_length ) {
+      for (var i = 0, array_length = array.length; i < array_length; i++){
+        if ( array_to_fill_length < max_length ) {
+          if (array_to_fill.map(function(item){return item.num_instalments; }).indexOf(array[i].num_instalments) === -1){
+            array_to_fill.push(array[i]);
+            array_to_fill_length = array_to_fill.length;
+          }
+        }
+      }
+    }
+
+  }
+
   function maxInstalments (prev, choice) {
     if( prev === null ) {
       return choice;
@@ -123,6 +143,27 @@ module.exports = function (aplazame) {
     var highlighted_num_instalments = !data.highlighted_num_instalments?choices.slice(0,4):choices.filter( function (a) {
       return data.highlighted_num_instalments.indexOf(a.num_instalments) > -1;
     });
+
+
+    var all_choices = choices;
+    var choices_with_campaign = all_choices.filter( function( choice ){
+      return choice.annual_equivalent < ( data.reference_annual_equivalent || 2450);
+    } );
+
+    var choices_highlighted = !data.highlighted_num_instalments?[]:all_choices.filter( function (choice) {
+      return data.highlighted_num_instalments.indexOf(choice.num_instalments) > -1;
+    });
+
+    highlighted_num_instalments = [];
+
+    _fillWith(highlighted_num_instalments, choices_with_campaign);
+    _fillWith(highlighted_num_instalments, choices_highlighted);
+    _fillWith(highlighted_num_instalments, all_choices);
+
+    highlighted_num_instalments.sort( function (a,b) {
+      return a.num_instalments - b.num_instalments;
+    });
+
 
 
     modal({

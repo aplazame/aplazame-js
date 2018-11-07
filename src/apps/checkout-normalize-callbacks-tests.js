@@ -34,11 +34,39 @@ describe('checkout callbacks normalizer', function () {
     on.success();
     assert.equal(location.href, '/success_url');
 
-    on.ko();
-    assert.equal(location.href, '/cancel_url');
-
+    location.href = null;
     on.dismiss();
     assert.equal(location.href, '/');
+
+    location.href = null;
+    on.ko();
+    assert.equal(location.href, '/cancel_url');
+  });
+
+  // docs: https://aplazame.com/docs/api/checkout-parameters/#merchant
+  it('mandatory fields are provided', function() {
+    var merchant = {
+      success_url: '/success_url',
+      pending_url: '/pending_url',
+      cancel_url: '/cancel_url'
+    };
+
+    var on = checkoutNormalizeCallbacks(Object.create(callbacks), location, merchant);
+
+    on.success();
+    assert.equal(location.href, '/success_url');
+
+    location.href = null;
+    on.pending();
+    assert.equal(location.href, '/pending_url');
+
+    location.href = null;
+    on.dismiss();
+    assert.equal(location.href, '/');
+
+    location.href = null;
+    on.ko();
+    assert.equal(location.href, '/cancel_url');
   });
 
   it('merchant callbacks are normalized', function() {

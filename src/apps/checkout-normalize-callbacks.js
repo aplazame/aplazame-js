@@ -33,8 +33,9 @@ export default function checkoutNormalizerCallbacks(callbacks, location, merchan
 
   if( merchant ) _moveToCallbacks(merchant, callbacks);
 
-  // result callbacks when close
   var _onCancel = callbacks.onError || _locationReplaceFn(location, callbacks.cancel_url);
+  
+  // result callbacks when close
   on.dismiss = callbacks.onDismiss ||
       _locationReplaceFn(location, merchant.dismiss_url || '/') ||
       _locationReplaceFn(location, merchant.checkout_url || '/');

@@ -26,13 +26,13 @@ _.onMessage('modal', function (_e, message) {
         }):'');
 
 
-        if (first_button_els.length > 3 && window.matchMedia('(max-width: 768px)').matches){
+        if (first_button_els.length > 3 && _.isMobile()){
           first_button_els[0].style.display = 'none';
         }
 
         window.addEventListener('resize', function(){
 
-            if (first_button_els.length > 3 && window.matchMedia('(max-width: 768px)').matches){
+            if (first_button_els.length > 3 && _.isMobile()){
               first_button_els[0].style.display = 'none';
             } else {
               first_button_els[0].style.display = 'block';

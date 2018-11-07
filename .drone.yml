@@ -7,7 +7,7 @@ build:
   commands:
     - echo $PWD
     - ls -la
-    - cd .. && ls -la && cd -
+    - cd /drone && ls -la && cd -
     - 'sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json'
     # - 'echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc'
     - 'make build'

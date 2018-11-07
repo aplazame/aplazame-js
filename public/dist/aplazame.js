@@ -730,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.493';
+	var aplazameVersion = '0.0.494';
 
 	function _isType (type) {
 	    return function (o) {
@@ -4574,8 +4574,10 @@
 	      updateAmount(current_amount, qty);
 	    }, 120);
 
-	    if( widget_el.hasAttribute('data-amount') && getDataAmount(widget_el) !== current_amount ) {
-	      updateAmount( getDataAmount(widget_el), current_qty, true );
+	    var data_amount = widget_el.hasAttribute('data-amount') && getDataAmount(widget_el) || null;
+
+	    if( data_amount && data_amount !== current_amount ) {
+	      updateAmount( data_amount, current_qty, true );
 	    } else {
 	      updateAmount(current_amount, current_qty);
 	    }

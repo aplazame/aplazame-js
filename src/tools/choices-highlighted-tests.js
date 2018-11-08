@@ -20,7 +20,7 @@ function _hasCampaign69 (choice) {
   return [6,9].indexOf(choice.num_instalments) >= 0;
 }
 
-function _ignoreHasCampaign (choice) {
+function _ignoreHasCampaign () {
   return false;
 }
 
@@ -32,7 +32,7 @@ function _numInstalmentsToString (choices) {
 
 describe('highlighted-choices: getHighlightedChoices', function () {
 
-  var num_instalments_choices = [1,2,3,4,5,6,7,8,9,10,11,12].map(function (num_instalments, i) {
+  var num_instalments_choices = [1,2,3,4,5,6,7,8,9,10,11,12].map(function (num_instalments) {
         return { num_instalments: num_instalments };
       }),
       FIRST_NUM_INSTALMENTS_CHOICES = num_instalments_choices.slice(0, HIGHLIGHTED_CHOICES_LENGTH);

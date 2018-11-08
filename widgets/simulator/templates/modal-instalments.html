@@ -43,7 +43,6 @@
         </div>
       </button>
     <% } %>
-    <img src="<%= static_url %>/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">
   </div>
   <div class="choices-wrapper summary" data-open="true">
     <% for( var i = 0, n = highlighted_num_instalments.length; i < n ; i++ ) { %>
@@ -88,7 +87,9 @@
     </div>
 
 
-  <section class="tae"><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(merchant_annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>
+  <section class="tae">
+    <img src="<%= static_url %>/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">
+    <p><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(merchant_annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</p></section>
 
   <section class="how-it-works">
     <header>¿Cómo funciona?</header>

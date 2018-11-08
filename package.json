@@ -26,7 +26,7 @@
     "browserify": "^16.2.3",
     "http-rest": "1.0.1",
     "live-dom": "1.6.9",
-    "ng-aplazame": "git+ssh://git@github.com/aplazame/ng-aplazame.git#v0.3.204",
+    "ng-aplazame": "git+ssh://git@github.com/aplazame/ng-aplazame.git#v0.3.296",
     "nitro-tools": "0.2.4",
     "parole": "1.1.17",
     "rollup-plugin-ejs": "^1.1.1",

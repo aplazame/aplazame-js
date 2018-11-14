@@ -7,89 +7,47 @@
   <section class="info">
     Elige la cuota que más te convenga
   </section>
-    <div class="choices-wrapper expanded">
+
+  <div class="choices-wrapper">
     <% for( var i = 0, n = choices.length; i < n ; i++ ) { %>
-      <button type="button" class="choice<% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %> _on_campaign<% } %>">
-        <% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %>
-        <div class="tae-ribbon">
-          <img src="<%= static_url %>/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
-          <div><%= getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' %></div>
-        </div>
-        <% } %>
-        <div class="wrapper">
-          <div class="num-instalments">
-            <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>
-          </div>
-          <div class="amount"><!--
-            <% if( currency === 'EUR' )  { %>
-            --><span class="amount-amount"><%= getAmount(choices[i].amount, ',', '.') %></span><!--
-            --><span class="amount-currency">&nbsp;€</span><!--
-            <% } else { %>
-            --><span class="amount-currency">$</span><!--
-            --><span class="amount-amount"><%= getAmount(choices[i].amount, '.', ',') %></span><!--
-            <% } %>
-            --><span class="amount-per-month">/mes</span>
-          </div>
-          <div class="amount"><!--
-            <% if( currency === 'EUR' )  { %>
-              --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
-              --><span class="amount-currency">&nbsp;€</span><!--
-            <% } else { %>
-            --><span class="amount-currency">$</span><!--
-              --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
-            <% } %>
-          --><span>&nbsp;<%= country === 'MX' ? 'enganche' : 'entrada' %></span>
-          </div>
-        </div>
-      </button>
-    <% } %>
-  </div>
-  <div class="choices-wrapper summary" data-open="true">
-    <% for( var i = 0, n = highlighted_num_instalments.length; i < n ; i++ ) { %>
-      <button type="button" class="choice<% if( highlighted_num_instalments[i].annual_equivalent < reference_annual_equivalent ) { %> _on_campaign<% } %>">
-        <% if( highlighted_num_instalments[i].annual_equivalent < reference_annual_equivalent ) { %>
-        <div class="tae-ribbon">
-          <img src="<%= static_url %>/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
-          <div><%= getAmount(highlighted_num_instalments[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' %></div>
-        </div>
-        <% } %>
-        <div class="wrapper">
-          <div class="num-instalments">
-            <span><%= highlighted_num_instalments[i].num_instalments %></span>&nbsp;<span><%= months(highlighted_num_instalments[i].num_instalments) %></span>
-          </div>
-          <div class="amount"><!--
-            <% if( currency === 'EUR' )  { %>
-            --><span class="amount-amount"><%= getAmount(highlighted_num_instalments[i].amount, ',', '.') %></span><!--
-            --><span class="amount-currency">&nbsp;€</span><!--
-            <% } else { %>
-            --><span class="amount-currency">$</span><!--
-            --><span class="amount-amount"><%= getAmount(highlighted_num_instalments[i].amount, '.', ',') %></span><!--
-            <% } %>
-            --><span class="amount-per-month">/mes</span>
-          </div>
-          <div class="amount"><!--
-            <% if( currency === 'EUR' )  { %>
-              --><span class="amount-amount"><%= getAmount(highlighted_num_instalments[i].downpayment_amount, ',', '.') %></span><!--
-              --><span class="amount-currency">&nbsp;€</span><!--
-            <% } else { %>
-            --><span class="amount-currency">$</span><!--
-              --><span class="amount-amount"><%= getAmount(highlighted_num_instalments[i].downpayment_amount, ',', '.') %></span><!--
-            <% } %>
-          --><span>&nbsp;<%= country === 'MX' ? 'enganche' : 'entrada' %></span>
-          </div>
-        </div>
-      </button>
-    <% } %>
-      <div class="more-options">
-        <svg viewBox="0 0 19 18" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414"><path fill="#333a3e" d="M7.797.475h2.406v17.05H7.797z"/><path fill="#333a3e" d="M.475 10.203V7.797h17.05v2.406z"/></svg>
-        <p>Otras opciones</p>
+    <button type="button" class="choice<% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %> _on_campaign<% } %>">
+      <% if( choices[i].annual_equivalent < reference_annual_equivalent ) { %>
+      <div class="tae-ribbon">
+        <img src="<%= static_url %>/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">
+        <div><%= getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,' ').replace(/0$/,'') + '% TAE' %></div>
       </div>
-    </div>
-
-
-  <section class="tae">
+      <% } %>
+      <div class="wrapper">
+        <div class="num-instalments">
+          <span><%= choices[i].num_instalments %></span>&nbsp;<span><%= months(choices[i].num_instalments) %></span>
+        </div>
+        <div class="amount"><!--
+          <% if( currency === 'EUR' )  { %>
+          --><span class="amount-amount"><%= getAmount(choices[i].amount, ',', '.') %></span><!--
+          --><span class="amount-currency">&nbsp;€</span><!--
+          <% } else { %>
+          --><span class="amount-currency">$</span><!--
+          --><span class="amount-amount"><%= getAmount(choices[i].amount, '.', ',') %></span><!--
+          <% } %>
+          --><span class="amount-per-month">/mes</span>
+        </div>
+        <div class="amount"><!--
+          <% if( currency === 'EUR' )  { %>
+            --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
+            --><span class="amount-currency">&nbsp;€</span><!--
+          <% } else { %>
+          --><span class="amount-currency">$</span><!--
+            --><span class="amount-amount"><%= getAmount(choices[i].downpayment_amount, ',', '.') %></span><!--
+          <% } %>
+        --><span>&nbsp;<%= country === 'MX' ? 'enganche' : 'entrada' %></span>
+        </div>
+      </div>
+    </button>
+    <% } %>
     <img src="<%= static_url %>/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">
-    <p><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(merchant_annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</p></section>
+  </div>
+
+  <section class="tae"><%= country === 'MX' ? 'CAT' : 'TAE' %> máximo: <%= getAmount(merchant_annual_equivalent) %>%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>
 
   <section class="how-it-works">
     <header>¿Cómo funciona?</header>

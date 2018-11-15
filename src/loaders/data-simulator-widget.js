@@ -123,10 +123,8 @@ export default function (aplazame) {
     if( widget.simulator_data.preferences.disable_modal ) return;
 
     var highlighted_num_instalments = choices.filter(function( choice ){
-      return data.highlighted_num_instalments.indexOf( choice.num_instalment ) > -1;
+      return data.highlighted_num_instalments.indexOf( choice.num_instalments ) > -1;
     });
-
-    console.log(data)
 
     modal({
       size: 'lg',

@@ -1,15 +1,18 @@
 
 import _renderWidget from './templates/widget-v3.ejs';
+import _ from '../../src/tools/tools';
 
 export default function (widget) {
 
   var widget_el = widget.el,
+      widget_wrapper_el,
       click_el = widget_el,
       remove_style = / Trident\//.test(navigator.userAgent) ? '' : null,
       textSelector = function (selector, text) {
         if( widget_el.querySelector(selector) ) widget_el.querySelector(selector).textContent = text;
       },
       selectNumInstalmentsChoice = function (choice) {
+        console.log('aab');
         widget.simulator.choice = choice;
         textSelector('.aplazame-widget-price', widget.simulator.getAmount(choice.amount) );
         textSelector('.aplazame-widget-instalments-num', choice.num_instalments );
@@ -55,12 +58,22 @@ export default function (widget) {
   function _increaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index + 1];
+
+    _.removeClass(widget_wrapper_el, '_first-choice');
+    _.removeClass(widget_wrapper_el, '_last-choice');
+
+    if ( widget.simulator.choices.length-1 <= index + 1 ) _.addClass(widget_wrapper_el, '_last-choice');
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
   function _decreaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index - 1];
+
+    _.removeClass(widget_wrapper_el, '_first-choice');
+    _.removeClass(widget_wrapper_el, '_last-choice');
+
+    if ( 0 >= index - 1 ) _.addClass(widget_wrapper_el, '_first-choice');
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
@@ -83,12 +96,16 @@ export default function (widget) {
       _unbind();
       var type = widget.simulator.type;
       widget_el.innerHTML = _renderWidget(widget.simulator);
+      widget_wrapper_el = widget.el.querySelector('.aplazame-widget');
 
       if( type === 'select' ) {
         return widget_el.querySelector('select').addEventListener('change', _selectChange);
       }
 
       if( type === 'big-button' ) {
+        var index = widget.simulator.choices.indexOf(widget.simulator.choice);
+        if ( widget.simulator.choices.length-1 <= index + 1 ) _.addClass(widget_wrapper_el, '_last-choice');
+        if ( 0 >= index - 1 ) _.addClass(widget_wrapper_el, '_first-choice');
         widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
         widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);
         return;

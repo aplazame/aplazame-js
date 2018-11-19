@@ -12,7 +12,6 @@ export default function (widget) {
         if( widget_el.querySelector(selector) ) widget_el.querySelector(selector).textContent = text;
       },
       selectNumInstalmentsChoice = function (choice) {
-        console.log('aab');
         widget.simulator.choice = choice;
         textSelector('.aplazame-widget-price', widget.simulator.getAmount(choice.amount) );
         textSelector('.aplazame-widget-instalments-num', choice.num_instalments );

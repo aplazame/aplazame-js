@@ -7,8 +7,6 @@ import widgetV3 from '../../widgets/simulator/simulator-widget-v3';
 import _widgetIframe from './data-simulator-iframe';
 import {getAmount, getPrice} from '../tools/amount-price';
 import color_tools from '../tools/colors';
-import {getHighlightedChoices, hasCampaignCurry} from '../../src/tools/choices';
-
 
 import _renderModalInfo from '../../widgets/simulator/templates/modal-instalments.ejs';
 
@@ -124,14 +122,9 @@ export default function (aplazame) {
 
     if( widget.simulator_data.preferences.disable_modal ) return;
 
-
-    var hasCampaign = hasCampaignCurry(data.reference_annual_equivalent);
-
-     var highlighted_num_instalments = getHighlightedChoices(
-      choices,
-      data.highlighted_num_instalments || [],
-      hasCampaign
-    );
+    var highlighted_num_instalments = choices.filter(function( choice ){
+      return data.highlighted_num_instalments.indexOf( choice.num_instalments ) > -1;
+    });
 
     modal({
       size: 'lg',

@@ -18,11 +18,12 @@ _.onMessage('modal', function (_e, message) {
         var more_options_el = mEl.querySelector('.more-options');
         var summary_el = mEl.querySelector('.choices-wrapper.summary');
         var extended_el = mEl.querySelector('.choices-wrapper.expanded');
+        extended_el.style.display = 'flex';
         var first_button_els = mEl.querySelectorAll('.choices-wrapper.summary button');
 
+        /*
         summary_el?initSlide(summary_el):'';
         extended_el?initSlide(extended_el):'';
-
         (more_options_el?more_options_el.addEventListener('click', function(){
           toggleSlide(summary_el);
           toggleSlide(extended_el);
@@ -41,6 +42,7 @@ _.onMessage('modal', function (_e, message) {
               first_button_els[0].style.display = 'block';
             }
         });
+        */
       },
       beforeClose: function () {
         parent.window.postMessage({

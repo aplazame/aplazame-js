@@ -122,6 +122,10 @@ export default function (aplazame) {
 
     if( widget.simulator_data.preferences.disable_modal ) return;
 
+    var highlighted_num_instalments = choices.filter(function( choice ){
+      return data.highlighted_num_instalments.indexOf( choice.num_instalments ) > -1;
+    });
+
     modal({
       size: 'lg',
       card: { className: 'has-cta modal-instalments-info _v3' },
@@ -131,6 +135,7 @@ export default function (aplazame) {
         merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
         reference_annual_equivalent: data.reference_annual_equivalent,
         choices: choices,
+        highlighted_num_instalments: highlighted_num_instalments,
         data: data,
         static_url: api.static_url,
         _options: widget.options,

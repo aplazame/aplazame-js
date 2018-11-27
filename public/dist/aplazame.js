@@ -730,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.495';
+	var aplazameVersion = '0.0.496';
 
 	function _isType (type) {
 	    return function (o) {
@@ -3993,6 +3993,7 @@
 	function widgetV3 (widget) {
 
 	  var widget_el = widget.el,
+	      widget_wrapper_el,
 	      click_el = widget_el,
 	      remove_style = / Trident\//.test(navigator.userAgent) ? '' : null,
 	      textSelector = function (selector, text) {
@@ -4044,12 +4045,18 @@
 	  function _increaseNumInstalments () {
 	    var index = widget.simulator.choices.indexOf(widget.simulator.choice),
 	        choice = widget.simulator.choices[index + 1];
+
+	    bundle$1.toggleClass(widget_wrapper_el, '_first-choice', 0 >= index + 1 );
+	    bundle$1.toggleClass(widget_wrapper_el, '_last-choice', widget.simulator.choices.length-1 <= index + 1 );
 	    if( choice ) selectNumInstalmentsChoice(choice);
 	  }
 
 	  function _decreaseNumInstalments () {
 	    var index = widget.simulator.choices.indexOf(widget.simulator.choice),
 	        choice = widget.simulator.choices[index - 1];
+
+	    bundle$1.toggleClass(widget_wrapper_el, '_first-choice', 0 >= index - 1 );
+	    bundle$1.toggleClass(widget_wrapper_el, '_last-choice', widget.simulator.choices.length-1 <= index - 1 );
 	    if( choice ) selectNumInstalmentsChoice(choice);
 	  }
 
@@ -4072,12 +4079,16 @@
 	      _unbind();
 	      var type = widget.simulator.type;
 	      widget_el.innerHTML = widgetV3Ejs(widget.simulator);
+	      widget_wrapper_el = widget.el.querySelector('.aplazame-widget');
 
 	      if( type === 'select' ) {
 	        return widget_el.querySelector('select').addEventListener('change', _selectChange);
 	      }
 
 	      if( type === 'big-button' ) {
+	        var index = widget.simulator.choices.indexOf(widget.simulator.choice);
+	        bundle$1.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index + 1 );
+	        bundle$1.toggleClass(widget_wrapper_el, '_first-choice',  0 >= index - 1 );
 	        widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
 	        widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);
 	        return;
@@ -4150,7 +4161,7 @@
 	}
 
 	function modalInstalmentsEjs(s) {
-	s=s||{};var _='static_url,choices,reference_annual_equivalent,getAmount,months,currency,country,merchant_annual_equivalent,data,max_choice'.split(',');return Function.apply(null,_.concat('var _λ=\'\';_λ+=\'<div class="card-content">\\n\\n  <header class="aplazame"></header>\\n\\n  <img src="\';_λ+=(static_url);_λ+=\'/widgets/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">\\n\\n  <section class="info">\\n    Elige la cuota que más te convenga\\n  </section>\\n\\n  <div class="choices-wrapper">\\n    \';for( var i = 0, n = choices.length; i < n ; i++ ) {_λ+=\'\\n    <button type="button" class="choice\';if( choices[i].annual_equivalent < reference_annual_equivalent ) {_λ+=\' _on_campaign\';}_λ+=\'">\\n      \';if( choices[i].annual_equivalent < reference_annual_equivalent ) {_λ+=\'\\n      <div class="tae-ribbon">\\n        <img src="\';_λ+=(static_url);_λ+=\'/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">\\n        <div>\';_λ+=(getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,\' \').replace(/0$/,\'\') + \'% TAE\');_λ+=\'</div>\\n      </div>\\n      \';}_λ+=\'\\n      <div class="wrapper">\\n        <div class="num-instalments">\\n          <span>\';_λ+=(choices[i].num_instalments);_λ+=\'</span>&nbsp;<span>\';_λ+=(months(choices[i].num_instalments));_λ+=\'</span>\\n        </div>\\n        <div class="amount"><!--\\n          \';if( currency === \'EUR\' )  {_λ+=\'\\n          --><span class="amount-amount">\';_λ+=(getAmount(choices[i].amount, \',\', \'.\'));_λ+=\'</span><!--\\n          --><span class="amount-currency">&nbsp;€</span><!--\\n          \';} else {_λ+=\'\\n          --><span class="amount-currency">$</span><!--\\n          --><span class="amount-amount">\';_λ+=(getAmount(choices[i].amount, \'.\', \',\'));_λ+=\'</span><!--\\n          \';}_λ+=\'\\n          --><span class="amount-per-month">/mes</span>\\n        </div>\\n        <div class="amount"><!--\\n          \';if( currency === \'EUR\' )  {_λ+=\'\\n            --><span class="amount-amount">\';_λ+=(getAmount(choices[i].downpayment_amount, \',\', \'.\'));_λ+=\'</span><!--\\n            --><span class="amount-currency">&nbsp;€</span><!--\\n          \';} else {_λ+=\'\\n          --><span class="amount-currency">$</span><!--\\n            --><span class="amount-amount">\';_λ+=(getAmount(choices[i].downpayment_amount, \',\', \'.\'));_λ+=\'</span><!--\\n          \';}_λ+=\'\\n        --><span>&nbsp;\';_λ+=(country === \'MX\' ? \'enganche\' : \'entrada\');_λ+=\'</span>\\n        </div>\\n      </div>\\n    </button>\\n    \';}_λ+=\'\\n    <img src="\';_λ+=(static_url);_λ+=\'/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">\\n  </div>\\n\\n  <section class="tae">\';_λ+=(country === \'MX\' ? \'CAT\' : \'TAE\');_λ+=\' máximo: \';_λ+=(getAmount(merchant_annual_equivalent));_λ+=\'%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</section>\\n\\n  <section class="how-it-works">\\n    <header>¿Cómo funciona?</header>\\n    <div class="info-wrapper">\\n      <div class="info">\\n        <h3>Elige Aplazame</h3>\\n        <!-- <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras de \';_λ+=(getAmount(9900));_λ+=\' € hasta \';_λ+=(parseInt(data.max_credit_amount/100));_λ+=\' €.</p> -->\\n        <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras hasta&nbsp;<span style="white-space: nowrap;">\';_λ+=(currency === \'EUR\' ? ( parseInt(data.max_credit_amount/100) + \' €\' ) : ( \'$\' + parseInt(data.max_credit_amount/100) ));_λ+=\'</span>.</p>\\n      </div>\\n      <div class="info">\\n        <h3>Decide cómo quieres pagar</h3>\\n        <p>Hasta en \';_λ+=(max_choice.num_instalments);_λ+=\' \';_λ+=(max_choice.num_instalments > 1 ? \'cuotas\' : \'cuota\');_λ+=\', pagando con tarjeta.</p>\\n      </div>\\n      <div class="info">\\n        <h3>Disfruta de tu compra</h3>\\n        <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>\\n      </div>\\n    </div>\\n  </section>\\n\\n</div>\\n\\n<div class="cta">\\n  <div class="col-sm-6 button-wrapper">\\n    <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>\\n  </div>\\n  <div class="col-sm-6 button-wrapper">\\n    <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>\\n  </div>\\n</div>\\n\';return _λ;')).apply(null, _.map(function (k) {return s[k];}));
+	s=s||{};var _='static_url,choices,reference_annual_equivalent,getAmount,months,currency,country,merchant_annual_equivalent,data,max_choice'.split(',');return Function.apply(null,_.concat('var _λ=\'\';_λ+=\'<div class="card-content">\\n\\n  <header class="aplazame"></header>\\n\\n  <img src="\';_λ+=(static_url);_λ+=\'/widgets/assets/images/ilustrations/camara.svg" alt="Cámara" class="camera">\\n\\n  <section class="info">\\n    Elige la cuota que más te convenga\\n  </section>\\n    <div class="choices-wrapper expanded" data-open="true">\\n    \';for( var i = 0, n = choices.length; i < n ; i++ ) {_λ+=\'\\n      <button type="button" class="choice\';if( choices[i].annual_equivalent < reference_annual_equivalent ) {_λ+=\' _on_campaign\';}_λ+=\'">\\n        \';if( choices[i].annual_equivalent < reference_annual_equivalent ) {_λ+=\'\\n        <div class="tae-ribbon">\\n          <img src="\';_λ+=(static_url);_λ+=\'/widgets/assets/images/ilustrations/ribbon.svg" alt="TAE Reducido">\\n          <div>\';_λ+=(getAmount(choices[i].annual_equivalent).replace(/[,.]00$/,\' \').replace(/0$/,\'\') + \'% TAE\');_λ+=\'</div>\\n        </div>\\n        \';}_λ+=\'\\n        <div class="wrapper">\\n          <div class="num-instalments">\\n            <span>\';_λ+=(choices[i].num_instalments);_λ+=\'</span>&nbsp;<span>\';_λ+=(months(choices[i].num_instalments));_λ+=\'</span>\\n          </div>\\n          <div class="amount"><!--\\n            \';if( currency === \'EUR\' )  {_λ+=\'\\n            --><span class="amount-amount">\';_λ+=(getAmount(choices[i].amount, \',\', \'.\'));_λ+=\'</span><!--\\n            --><span class="amount-currency">&nbsp;€</span><!--\\n            \';} else {_λ+=\'\\n            --><span class="amount-currency">$</span><!--\\n            --><span class="amount-amount">\';_λ+=(getAmount(choices[i].amount, \'.\', \',\'));_λ+=\'</span><!--\\n            \';}_λ+=\'\\n            --><span class="amount-per-month">/mes</span>\\n          </div>\\n          <div class="amount"><!--\\n            \';if( currency === \'EUR\' )  {_λ+=\'\\n              --><span class="amount-amount">\';_λ+=(getAmount(choices[i].downpayment_amount, \',\', \'.\'));_λ+=\'</span><!--\\n              --><span class="amount-currency">&nbsp;€</span><!--\\n            \';} else {_λ+=\'\\n            --><span class="amount-currency">$</span><!--\\n              --><span class="amount-amount">\';_λ+=(getAmount(choices[i].downpayment_amount, \',\', \'.\'));_λ+=\'</span><!--\\n            \';}_λ+=\'\\n          --><span>&nbsp;\';_λ+=(country === \'MX\' ? \'enganche\' : \'entrada\');_λ+=\'</span>\\n          </div>\\n        </div>\\n      </button>\\n    \';}_λ+=\'\\n  </div>\\n  \\n\\n  <section class="tae">\\n    <img src="\';_λ+=(static_url);_λ+=\'/widgets/assets/images/ilustrations/tocadiscos.svg" alt="Tocadiscos" class="music">\\n    <p>\';_λ+=(country === \'MX\' ? \'CAT\' : \'TAE\');_λ+=\' máximo: \';_λ+=(getAmount(merchant_annual_equivalent));_λ+=\'%. Cantidades orientativas. Las finales dependerán del perfil de riesgo de cada cliente.</p></section>\\n\\n  <section class="how-it-works">\\n    <header>¿Cómo funciona?</header>\\n    <div class="info-wrapper">\\n      <div class="info">\\n        <h3>Elige Aplazame</h3>\\n        <!-- <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras de \';_λ+=(getAmount(9900));_λ+=\' € hasta \';_λ+=(parseInt(data.max_credit_amount/100));_λ+=\' €.</p> -->\\n        <p>en la tienda, cuando vayas a pagar el pedido. Puedes financiar compras hasta&nbsp;<span style="white-space: nowrap;">\';_λ+=(currency === \'EUR\' ? ( parseInt(data.max_credit_amount/100) + \' €\' ) : ( \'$\' + parseInt(data.max_credit_amount/100) ));_λ+=\'</span>.</p>\\n      </div>\\n      <div class="info">\\n        <h3>Decide cómo quieres pagar</h3>\\n        <p>Hasta en \';_λ+=(max_choice.num_instalments);_λ+=\' \';_λ+=(max_choice.num_instalments > 1 ? \'cuotas\' : \'cuota\');_λ+=\', pagando con tarjeta.</p>\\n      </div>\\n      <div class="info">\\n        <h3>Disfruta de tu compra</h3>\\n        <p>Desde Aplazame estaremos disponibles por si necesitas cualquier cosa. ¡A disfrutar!</p>\\n      </div>\\n    </div>\\n  </section>\\n\\n</div>\\n\\n<div class="cta">\\n  <div class="col-sm-6 button-wrapper">\\n    <button class="btn lg btn-block white" type="button" data-modal="dismiss">Volver a Tienda</button>\\n  </div>\\n  <div class="col-sm-6 button-wrapper">\\n    <a class="btn lg btn-block" href="http://aplazame.com/how/customers/" target="_blank">¿Quieres saber más?</a>\\n  </div>\\n</div>\\n\';return _λ;')).apply(null, _.map(function (k) {return s[k];}));
 	}
 
 	function _getSimulatorWidget (aplazame) {
@@ -4265,6 +4276,10 @@
 
 	    if( widget.simulator_data.preferences.disable_modal ) return;
 
+	    var highlighted_num_instalments = choices.filter(function( choice ){
+	      return data.highlighted_num_instalments.indexOf( choice.num_instalments ) > -1;
+	    });
+
 	    modal({
 	      size: 'lg',
 	      card: { className: 'has-cta modal-instalments-info _v3' },
@@ -4274,6 +4289,7 @@
 	        merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
 	        reference_annual_equivalent: data.reference_annual_equivalent,
 	        choices: choices,
+	        highlighted_num_instalments: highlighted_num_instalments,
 	        data: data,
 	        static_url: api.static_url,
 	        _options: widget.options,

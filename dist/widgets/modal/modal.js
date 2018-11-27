@@ -127,6 +127,10 @@
     };
   }
 
+  var date = /*#__PURE__*/Object.freeze({
+
+  });
+
   if( !Element.prototype.closest ) {
     Element.prototype.closest = function (selector) {
       var el = this;
@@ -141,6 +145,10 @@
     };
   }
 
+  var domClosest = /*#__PURE__*/Object.freeze({
+
+  });
+
   if( !Element.prototype.addEventListener ) {
     if( Element.prototype.attachEvent ) {
       Element.prototype.addEventListener = function (eventName, listener) {
@@ -154,10 +162,18 @@
     }
   }
 
+  var eventListener = /*#__PURE__*/Object.freeze({
+
+  });
+
   (function (root) {
 
     root.matchMedia = root.matchMedia || root.webkitMatchMedia || root.mozMatchMedia || root.msMatchMedia;
   })(window);
+
+  var matchMedia = /*#__PURE__*/Object.freeze({
+
+  });
 
   if( !Element.prototype.matchesSelector ) {
     Element.prototype.matchesSelector = (
@@ -168,11 +184,29 @@
     );
   }
 
+  var matchesSelector = /*#__PURE__*/Object.freeze({
+
+  });
+
   var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
   }
+
+  function getCjsExportFromNamespace (n) {
+  	return n && n.default || n;
+  }
+
+  getCjsExportFromNamespace(date);
+
+  getCjsExportFromNamespace(domClosest);
+
+  getCjsExportFromNamespace(eventListener);
+
+  getCjsExportFromNamespace(matchMedia);
+
+  getCjsExportFromNamespace(matchesSelector);
 
   var parole = createCommonjsModule(function (module, exports) {
   /* global process */
@@ -1846,11 +1880,11 @@
     return iframe;
   }
 
-  function matchMedia (query) {
+  function matchMedia$2 (query) {
     return (window.matchMedia = window.matchMedia || window.webkitMatchMedia || window.mozMatchMedia || window.msMatchMedia)(query);
   }
 
-  var isMobile = matchMedia('( max-width: 600px )');
+  var isMobile = matchMedia$2('( max-width: 600px )');
 
   var _$1 = {
     isMobile: function () {
@@ -2181,6 +2215,13 @@
     }
   };
 
+  var IS_SAFARI = (function () {
+        var ua = navigator.userAgent.toLowerCase();
+        if (ua.indexOf('safari') != -1) {
+          if (ua.indexOf('chrome') === -1) return true;
+        }
+      })();
+
   var modal = function (_) {
 
     var modalsContainer = _.create('div', { className: 'modals-container' }),
@@ -2414,6 +2455,15 @@
       }
 
       var closeModal = function (onClosed, onDismissCancel, force_close) {
+
+        if( IS_SAFARI && m.contains(document.activeElement) && (document.activeElement.nodeName === 'INPUT' || document.activeElement.nodeName === 'SELECT') ) {
+          document.activeElement.blur();
+          setTimeout(function () {
+            closeModal.apply(this, arguments);
+          }, 50);
+          return;
+        }
+
         var body = document.body,
             before_close_preventes_close = false,
             nested_close = onClosed === 'nested' || onDismissCancel === 'nested';
@@ -2617,6 +2667,34 @@
               m.close();
             });
           });
+          var more_options_el = mEl.querySelector('.more-options');
+          var summary_el = mEl.querySelector('.choices-wrapper.summary');
+          var extended_el = mEl.querySelector('.choices-wrapper.expanded');
+          extended_el.style.display = 'flex';
+          var first_button_els = mEl.querySelectorAll('.choices-wrapper.summary button');
+
+          /*
+          summary_el?initSlide(summary_el):'';
+          extended_el?initSlide(extended_el):'';
+          (more_options_el?more_options_el.addEventListener('click', function(){
+            toggleSlide(summary_el);
+            toggleSlide(extended_el);
+          }):'');
+
+
+          if (first_button_els.length > 3 && _.isMobile()){
+            first_button_els[0].style.display = 'none';
+          }
+
+          window.addEventListener('resize', function(){
+
+              if (first_button_els.length > 3 && _.isMobile()){
+                first_button_els[0].style.display = 'none';
+              } else {
+                first_button_els[0].style.display = 'block';
+              }
+          });
+          */
         },
         beforeClose: function () {
           parent.window.postMessage({

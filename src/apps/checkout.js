@@ -117,7 +117,8 @@ function checkout (_checkout_data, _callbacks) {
   }
 
   var ajax_confirmation_url = null;
-  var loading_app = loadIframeCheckout(api.checkout_url + 'will-fail', {
+  // var loading_app = loadIframeCheckout('https://checkout.aplazame.com/will-fail/', {
+  var loading_app = loadIframeCheckout(api.checkout_url, {
     ajaxConfirm: function (data, params) {
       return _ajaxConfirm(ajax_confirmation_url, data, params);
     },

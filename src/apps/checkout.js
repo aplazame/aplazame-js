@@ -147,7 +147,8 @@ function checkout (checkout_data, callbacks) {
     return checkout_shadow;
   }
 
-  var shadow_dom_enabled = false;
+  var shadow_dom_enabled = transaction.merchant && transaction.merchant.allow_shadow_dom;
+  
   Parole.race([
     new Parole( supports_shadow_dom && shadow_dom_enabled ? function (resolveLoadingCheckout) {
 
@@ -173,6 +174,7 @@ function checkout (checkout_data, callbacks) {
             on.close(result_status);
           },
         }, false).then(function () {
+          // console.log('checkout_loader.launched');
           resolveLoadingCheckout();
 
           cssModal.hack(true);

@@ -147,10 +147,8 @@ function checkout (checkout_data, callbacks) {
     return checkout_shadow;
   }
 
-  var shadow_dom_enabled = transaction.merchant && transaction.merchant.allow_shadow_dom;
-  
   Parole.race([
-    new Parole( supports_shadow_dom && shadow_dom_enabled ? function (resolveLoadingCheckout) {
+    new Parole( supports_shadow_dom && callbacks.allow_shadow_dom ? function (resolveLoadingCheckout) {
 
       _loadCheckoutShadow().then(function (checkout_loader) {
         var checkout_container = document.createElement('div');

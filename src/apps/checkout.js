@@ -244,7 +244,9 @@ function checkout (checkout_data, callbacks) {
             });
             break;
           case 'checkout-ready':
-            iframe.style.height = null;
+            iframe.style.height = '';
+            iframe.className += ' _is-ready';
+            iframe.setAttribute('height', '100%');
             if( _.isMobile() ) _.scroll.goto(0);
             _.removeClass(iframe, 'hide');
             cssModal.hack(true);

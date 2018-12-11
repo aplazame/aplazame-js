@@ -12,6 +12,8 @@ import cssHack from '../tools/css-hack';
 import log from '../tools/log';
 import viewportInfo from './viewport-info';
 
+import checkoutAB from './checkout-ab';
+
 import flag_svg_es from '../templates/flag-es.svg';
 import flag_svg_mx from '../templates/flag-mx.svg';
 
@@ -40,6 +42,7 @@ function checkout (checkout_data, callbacks) {
   log('transaction', transaction);
 
   var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
+  checkout_url = checkoutAB(checkout_url);
 
   var on = {},
       onError,

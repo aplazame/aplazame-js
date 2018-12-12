@@ -2,8 +2,8 @@
 import api from '../core/api';
 
 var _ab_list = [
-  // '6f9f8f04a55c4b50cb888e97c75eca4d82962f69',
-  // '78b9fe21619c6fc652b006fd1c772284bbd18f34',
+  '6f9f8f04a55c4b50cb888e97c75eca4d82962f69',
+  '78b9fe21619c6fc652b006fd1c772284bbd18f34',
   '12093289b594f50d3971e4719eedd5c314ceb6ba',
   '0e880ca5c85eb848ec878cb6d16dc223ea3ed2a8',
   '519727259c5d55599369d19df95f75a582a9e685',
@@ -13,7 +13,7 @@ var _ab_list = [
 ];
 
 function _getCheckoutVanillaUrl () {
-  if( /\/api\.aplazame\.com\/?/.test(api.host) ) {
+  if( /^https:\/\/api\.aplazame\.com\/?/.test(api.host) ) {
     return 'https://checkout-vanilla.aplazame.com/';
   }
 

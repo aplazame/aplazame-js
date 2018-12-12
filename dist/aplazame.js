@@ -730,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.501';
+	var aplazameVersion = '0.0.502';
 
 	function _isType (type) {
 	    return function (o) {
@@ -3009,7 +3009,7 @@
 	];
 
 	function _getCheckoutVanillaUrl () {
-	  if( api.checkout_url === 'https://checkout.aplazame.com/' ) {
+	  if( /^https:\/\/api\.aplazame\.com\/?/.test(api.host) ) {
 	    return 'https://checkout-vanilla.aplazame.com/';
 	  }
 

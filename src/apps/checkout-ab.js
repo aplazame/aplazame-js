@@ -12,9 +12,17 @@ var _ab_list = [
   '73ee9ba32eab8893e7e07add3b133f706e95a761',
 ];
 
+function _getCheckoutVanillaUrl () {
+  if( api.checkout_url === 'https://checkout.aplazame.com/' ) {
+    return 'https://checkout-vanilla.aplazame.com/';
+  }
+
+  return 'https://checkout-vanilla-dev.aplazame.com/';
+}
+
 export default function checkoutAB (checkout_url) {
 
-  if( _ab_list.indexOf(api.public_key) >= 0 ) return 'https://checkout-vanilla.aplazame.com/';
+  if( _ab_list.indexOf(api.public_key) >= 0 ) return _getCheckoutVanillaUrl();
 
   return checkout_url;
 

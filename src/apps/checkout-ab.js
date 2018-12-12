@@ -13,7 +13,7 @@ var _ab_list = [
 ];
 
 function _getCheckoutVanillaUrl () {
-  if( /\/api\.aplazame\.com\/?/.test(api.host) ) {
+  if( /^https:\/\/api\.aplazame\.com\/?/.test(api.host) ) {
     return 'https://checkout-vanilla.aplazame.com/';
   }
 

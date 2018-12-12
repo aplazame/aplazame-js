@@ -12,6 +12,8 @@ import cssHack from '../tools/css-hack';
 import log from '../tools/log';
 import viewportInfo from './viewport-info';
 
+import checkoutAB from './checkout-ab';
+
 import flag_svg_es from '../templates/flag-es.svg';
 import flag_svg_mx from '../templates/flag-mx.svg';
 
@@ -40,6 +42,7 @@ function checkout (checkout_data, callbacks) {
   log('transaction', transaction);
 
   var checkout_url = transaction.host === 'location' ? ( location.protocol + '//' + location.host + '/' ) : api.checkout_url;
+  checkout_url = checkoutAB(checkout_url);
 
   var on = {},
       onError,
@@ -147,9 +150,8 @@ function checkout (checkout_data, callbacks) {
     return checkout_shadow;
   }
 
-  var shadow_dom_enabled = false;
   Parole.race([
-    new Parole( supports_shadow_dom && shadow_dom_enabled ? function (resolveLoadingCheckout) {
+    new Parole( supports_shadow_dom && callbacks.allow_shadow_dom ? function (resolveLoadingCheckout) {
 
       _loadCheckoutShadow().then(function (checkout_loader) {
         var checkout_container = document.createElement('div');
@@ -173,6 +175,7 @@ function checkout (checkout_data, callbacks) {
             on.close(result_status);
           },
         }, false).then(function () {
+          // console.log('checkout_loader.launched');
           resolveLoadingCheckout();
 
           cssModal.hack(true);
@@ -244,7 +247,9 @@ function checkout (checkout_data, callbacks) {
             });
             break;
           case 'checkout-ready':
-            iframe.style.height = null;
+            iframe.style.height = '';
+            iframe.className += ' _is-ready';
+            iframe.setAttribute('height', '100%');
             if( _.isMobile() ) _.scroll.goto(0);
             _.removeClass(iframe, 'hide');
             cssModal.hack(true);

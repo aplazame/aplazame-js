@@ -2,6 +2,8 @@
 import api from '../core/api';
 
 var _ab_list = [
+  'cb67e9f4d00eab8fa1dba5b5cb4b1200fb4c0fda',
+
   '6f9f8f04a55c4b50cb888e97c75eca4d82962f69',
   '78b9fe21619c6fc652b006fd1c772284bbd18f34',
 

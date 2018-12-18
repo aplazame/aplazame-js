@@ -97,9 +97,7 @@ export default function (aplazame) {
       widget.simulator.brightness = color_tools.brightness;
     }
 
-    simulator_data.zero_interest_campaign = choices.some(function (choice) {
-      return choice.annual_equivalent === 0;
-    });
+    simulator_data.zero_interest_campaign = (simulator_data.choice === 0);
 
     widget.handler = (function (_initWidgetHandler) {
 

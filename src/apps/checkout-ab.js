@@ -44,7 +44,9 @@ function _getCheckoutVanillaUrl () {
     return 'https://checkout-vanilla.aplazame.com/';
   }
 
-  return 'https://checkout-vanilla-dev.aplazame.com/';
+  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-vanilla-dev.aplazame.com/';
+
+  return api.checkout_url;
 }
 
 export default function checkoutAB (checkout_url) {

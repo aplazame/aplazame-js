@@ -106,7 +106,7 @@ export default function (widget) {
 
       if( type === 'big-button' ) {
         var index = widget.simulator.choices.indexOf(widget.simulator.choice);
-        _.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index + 1 );
+        //_.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index + 1 );
         _.toggleClass(widget_wrapper_el, '_first-choice',  0 >= index - 1 );
         widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
         widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);

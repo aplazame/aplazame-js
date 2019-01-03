@@ -84,7 +84,7 @@ function button (options) {
   }
 
   elements.forEach(function (el) {
-    if( el.style.display !== 'none' ) {
+    if( el.style.display !== 'none !important' ) {
       el.__display = el.style.display;
     }
     el.__input = ( el.nodeName === 'INPUT' || el.nodeName === 'BUTTON' ) ? el : el.querySelector('input, button');
@@ -99,7 +99,7 @@ function button (options) {
         el.__input.setAttribute('disabled', 'disabled');
       }
     }
-    el.style.display = 'none';
+    el.style.display = 'none !important';
   });
 
   elements.forEach(function (el) {

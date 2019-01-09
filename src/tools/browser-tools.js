@@ -70,12 +70,6 @@ function querySelector (selector, rootElement) {
     return [];
   }
 
-  selector = selector
-    .replace(/:first(?!-)/, ':first-child')
-    .replace(/:last(?!-)/, ':last-child')
-    .replace(/:(password|checkbox|file|submit|image)(?!-)/, '[type="$1"]')
-  ;
-
   if( !/:has\(/.test(selector) ) {
     return [].slice.call( (rootElement || document).querySelectorAll( selector ) );
   }

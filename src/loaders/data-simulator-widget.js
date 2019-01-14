@@ -72,6 +72,7 @@ export default function (aplazame) {
     widget.simulator_data = simulator_data;
     simulator_data.choices = choices;
 
+
     if( widget.simulator ) {
       simulator_data.choice = (function (choices, num_instalments) {
 
@@ -84,6 +85,9 @@ export default function (aplazame) {
       })(choices, widget.simulator.choice.num_instalments);
     } else {
       simulator_data.choice = choices[choices.length - 1];
+      choices.forEach(function (_choice) {
+        if( _choice.annual_equivalent < widget.simulator_data.data.annual_equivalent ) simulator_data.choice = _choice;
+      });
       // widget.simulator = Object.create(simulator_data);
       widget.simulator = (function () {
         function SimulatorData () {}
@@ -96,10 +100,7 @@ export default function (aplazame) {
       widget.simulator.lighten = color_tools.lightenHEX;
       widget.simulator.brightness = color_tools.brightness;
     }
-
-    simulator_data.zero_interest_campaign = choices.some(function (choice) {
-      return choice.annual_equivalent === 0;
-    });
+    simulator_data.zero_interest_campaign = (simulator_data.choice.annual_equivalent === 0);
 
     widget.handler = (function (_initWidgetHandler) {
 

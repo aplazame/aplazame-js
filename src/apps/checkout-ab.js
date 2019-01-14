@@ -44,12 +44,18 @@ function _getCheckoutVanillaUrl () {
     return 'https://checkout-vanilla.aplazame.com/';
   }
 
-  return 'https://checkout-vanilla-dev.aplazame.com/';
+  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-vanilla-dev.aplazame.com/';
+
+  return api.checkout_url;
 }
 
 export default function checkoutAB (checkout_url) {
 
   if( _ab_list.indexOf(api.public_key) < 0 ) return _getCheckoutVanillaUrl();
+
+  if( /^https:\/\/api\.aplazame\.com\/?/.test(api.host) ) return 'https://checkout-3.aplazame.com/';
+
+  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-3-dev.aplazame.com/';
 
   return checkout_url;
 

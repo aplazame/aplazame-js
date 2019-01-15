@@ -730,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.508';
+	var aplazameVersion = '0.0.509';
 
 	function _isType (type) {
 	    return function (o) {
@@ -2232,28 +2232,31 @@
 	  return -1;
 	}
 
+	var _arraySlice = Array.prototype.slice;
+	var _arrayPush = Array.prototype.push;
+
 	function hasSelector (selector, rootElement) {
-	  var splitHas = selector.split(':has(');
+	  var split_has = selector.split(':has(');
 
-	  return splitHas.reduce(function (matches, partial) {
+	  return split_has.reduce(function (matches, partial) {
 
-	    var closePosition = findBubbleClose(partial),
-	        hasFilter = partial.substr(0, closePosition),
-	        partialQuery = partial.substr(closePosition + 1).trim();
+	    var close_pos = findBubbleClose(partial),
+	        has_filter = partial.substr(0, close_pos),
+	        partial_query = partial.substr(close_pos + 1).trim();
 
-	    if( closePosition === -1 ) {
+	    if( close_pos === -1 ) {
 	      throw new Error('malformed selector');
 	    }
 
 	    matches = matches.filter(function (element) {
-	      return element.querySelector(hasFilter);
+	      return element.querySelector(has_filter);
 	    });
 
-	    if( partialQuery ) {
+	    if( partial_query ) {
 	      var submatches = [];
 
 	      matches.forEach(function (element) {
-	        [].push.apply(submatches, element.querySelectorAll(partialQuery) );
+	        _arrayPush.apply(submatches, element.querySelectorAll(partial_query) );
 	      });
 
 	      return submatches;
@@ -2261,7 +2264,7 @@
 
 	    return matches;
 
-	  }, [].slice.call( (rootElement || document).querySelectorAll( splitHas.shift() ) ) );
+	  }, _arraySlice.call( (rootElement || document).querySelectorAll( split_has.shift() ) ) );
 	}
 
 	function querySelector (selector, rootElement) {
@@ -3040,12 +3043,18 @@
 	    return 'https://checkout-vanilla.aplazame.com/';
 	  }
 
-	  return 'https://checkout-vanilla-dev.aplazame.com/';
+	  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-vanilla-dev.aplazame.com/';
+
+	  return api.checkout_url;
 	}
 
 	function checkoutAB (checkout_url) {
 
 	  if( _ab_list.indexOf(api.public_key) < 0 ) return _getCheckoutVanillaUrl();
+
+	  if( /^https:\/\/api\.aplazame\.com\/?/.test(api.host) ) return 'https://checkout-3.aplazame.com/';
+
+	  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-3-dev.aplazame.com/';
 
 	  return checkout_url;
 
@@ -3496,7 +3505,7 @@
 	  }
 
 	  elements.forEach(function (el) {
-	    if( el.style.display !== 'none' ) {
+	    if( el.style.display !== 'none !important' ) {
 	      el.__display = el.style.display;
 	    }
 	    el.__input = ( el.nodeName === 'INPUT' || el.nodeName === 'BUTTON' ) ? el : el.querySelector('input, button');
@@ -3511,7 +3520,7 @@
 	        el.__input.setAttribute('disabled', 'disabled');
 	      }
 	    }
-	    el.style.display = 'none';
+	    el.style.display = 'none !important';
 	  });
 
 	  elements.forEach(function (el) {
@@ -4062,6 +4071,7 @@
 	      },
 	      selectNumInstalmentsChoice = function (choice) {
 	        widget.simulator.choice = choice;
+	        textSelector('.aplazame-widget-smart-title', _titleByTaxes(choice) );
 	        textSelector('.aplazame-widget-price', widget.simulator.getAmount(choice.amount) );
 	        textSelector('.aplazame-widget-instalments-num', choice.num_instalments );
 	        textSelector('.aplazame-widget-choice-button-value', choice.num_instalments );
@@ -4083,7 +4093,9 @@
 	        };
 
 	        document.head.appendChild(styles_link);
-	      };
+	      },
+	      title_zero_interest = widget.simulator.preferences.title_zero_interest || '¡Consíguelo sin intereses!',
+	      title_default = widget.simulator.preferences.title_default || 'Págalo a plazos';
 
 
 	  if( !widget.simulator.preferences.custom_styles || widget.type !== 'text' ) {
@@ -4093,6 +4105,10 @@
 	      window.addEventListener('load', _onReady);
 	      window.addEventListener('DOMContentLoaded', _onReady);
 	    }
+	  }
+
+	  function _titleByTaxes(choice){
+	    return choice.annual_equivalent === 0 ? title_zero_interest : title_default
 	  }
 
 	  function _onClick () {
@@ -4148,8 +4164,9 @@
 
 	      if( type === 'big-button' ) {
 	        var index = widget.simulator.choices.indexOf(widget.simulator.choice);
-	        bundle$1.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index + 1 );
-	        bundle$1.toggleClass(widget_wrapper_el, '_first-choice',  0 >= index - 1 );
+	        bundle$1.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index );
+	        bundle$1.toggleClass(widget_wrapper_el, '_first-choice',  0 >= index );
+
 	        widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
 	        widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);
 	        return;
@@ -4287,6 +4304,7 @@
 	    widget.simulator_data = simulator_data;
 	    simulator_data.choices = choices;
 
+
 	    if( widget.simulator ) {
 	      simulator_data.choice = (function (choices, num_instalments) {
 
@@ -4299,6 +4317,9 @@
 	      })(choices, widget.simulator.choice.num_instalments);
 	    } else {
 	      simulator_data.choice = choices[choices.length - 1];
+	      choices.forEach(function (_choice) {
+	        if( _choice.annual_equivalent < widget.simulator_data.data.annual_equivalent ) simulator_data.choice = _choice;
+	      });
 	      // widget.simulator = Object.create(simulator_data);
 	      widget.simulator = (function () {
 	        function SimulatorData () {}
@@ -4311,10 +4332,7 @@
 	      widget.simulator.lighten = color_tools.lightenHEX;
 	      widget.simulator.brightness = color_tools.brightness;
 	    }
-
-	    simulator_data.zero_interest_campaign = choices.some(function (choice) {
-	      return choice.annual_equivalent === 0;
-	    });
+	    simulator_data.zero_interest_campaign = (simulator_data.choice.annual_equivalent === 0);
 
 	    widget.handler = (function (_initWidgetHandler) {
 

@@ -782,7 +782,8 @@
 	      //   console.log('try again!!');
 	      // };
 	      var checkout_url = aplazame.info().api.checkout_url;
-	      aplazame.info().api.checkout_url = checkout_url + (/\?/.test(checkout_url) ? '&' : '?' ) + window.location.search.substr(1);
+	      
+	      if( window.location.search ) aplazame.info().api.checkout_url = checkout_url + (/\?/.test(checkout_url) ? '&' : '?' ) + window.location.search.substr(1);
 
 	      aplazame.checkout(data, {
 	        onStatusChange: function (status) {

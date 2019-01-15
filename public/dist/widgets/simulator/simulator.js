@@ -1773,28 +1773,31 @@
     return -1;
   }
 
+  var _arraySlice = Array.prototype.slice;
+  var _arrayPush = Array.prototype.push;
+
   function hasSelector (selector, rootElement) {
-    var splitHas = selector.split(':has(');
+    var split_has = selector.split(':has(');
 
-    return splitHas.reduce(function (matches, partial) {
+    return split_has.reduce(function (matches, partial) {
 
-      var closePosition = findBubbleClose(partial),
-          hasFilter = partial.substr(0, closePosition),
-          partialQuery = partial.substr(closePosition + 1).trim();
+      var close_pos = findBubbleClose(partial),
+          has_filter = partial.substr(0, close_pos),
+          partial_query = partial.substr(close_pos + 1).trim();
 
-      if( closePosition === -1 ) {
+      if( close_pos === -1 ) {
         throw new Error('malformed selector');
       }
 
       matches = matches.filter(function (element) {
-        return element.querySelector(hasFilter);
+        return element.querySelector(has_filter);
       });
 
-      if( partialQuery ) {
+      if( partial_query ) {
         var submatches = [];
 
         matches.forEach(function (element) {
-          [].push.apply(submatches, element.querySelectorAll(partialQuery) );
+          _arrayPush.apply(submatches, element.querySelectorAll(partial_query) );
         });
 
         return submatches;
@@ -1802,7 +1805,7 @@
 
       return matches;
 
-    }, [].slice.call( (rootElement || document).querySelectorAll( splitHas.shift() ) ) );
+    }, _arraySlice.call( (rootElement || document).querySelectorAll( split_has.shift() ) ) );
   }
 
   function querySelector (selector, rootElement) {
@@ -2192,6 +2195,7 @@
         },
         selectNumInstalmentsChoice = function (choice) {
           widget.simulator.choice = choice;
+          textSelector('.aplazame-widget-smart-title', _titleByTaxes(choice) );
           textSelector('.aplazame-widget-price', widget.simulator.getAmount(choice.amount) );
           textSelector('.aplazame-widget-instalments-num', choice.num_instalments );
           textSelector('.aplazame-widget-choice-button-value', choice.num_instalments );
@@ -2213,7 +2217,9 @@
           };
 
           document.head.appendChild(styles_link);
-        };
+        },
+        title_zero_interest = widget.simulator.preferences.title_zero_interest || '¡Consíguelo sin intereses!',
+        title_default = widget.simulator.preferences.title_default || 'Págalo a plazos';
 
 
     if( !widget.simulator.preferences.custom_styles || widget.type !== 'text' ) {
@@ -2223,6 +2229,10 @@
         window.addEventListener('load', _onReady);
         window.addEventListener('DOMContentLoaded', _onReady);
       }
+    }
+
+    function _titleByTaxes(choice){
+      return choice.annual_equivalent === 0 ? title_zero_interest : title_default
     }
 
     function _onClick () {
@@ -2278,8 +2288,9 @@
 
         if( type === 'big-button' ) {
           var index = widget.simulator.choices.indexOf(widget.simulator.choice);
-          bundle$1.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index + 1 );
-          bundle$1.toggleClass(widget_wrapper_el, '_first-choice',  0 >= index - 1 );
+          bundle$1.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index );
+          bundle$1.toggleClass(widget_wrapper_el, '_first-choice',  0 >= index );
+
           widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
           widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);
           return;

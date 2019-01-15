@@ -1768,28 +1768,31 @@
     return -1;
   }
 
+  var _arraySlice = Array.prototype.slice;
+  var _arrayPush = Array.prototype.push;
+
   function hasSelector (selector, rootElement) {
-    var splitHas = selector.split(':has(');
+    var split_has = selector.split(':has(');
 
-    return splitHas.reduce(function (matches, partial) {
+    return split_has.reduce(function (matches, partial) {
 
-      var closePosition = findBubbleClose(partial),
-          hasFilter = partial.substr(0, closePosition),
-          partialQuery = partial.substr(closePosition + 1).trim();
+      var close_pos = findBubbleClose(partial),
+          has_filter = partial.substr(0, close_pos),
+          partial_query = partial.substr(close_pos + 1).trim();
 
-      if( closePosition === -1 ) {
+      if( close_pos === -1 ) {
         throw new Error('malformed selector');
       }
 
       matches = matches.filter(function (element) {
-        return element.querySelector(hasFilter);
+        return element.querySelector(has_filter);
       });
 
-      if( partialQuery ) {
+      if( partial_query ) {
         var submatches = [];
 
         matches.forEach(function (element) {
-          [].push.apply(submatches, element.querySelectorAll(partialQuery) );
+          _arrayPush.apply(submatches, element.querySelectorAll(partial_query) );
         });
 
         return submatches;
@@ -1797,7 +1800,7 @@
 
       return matches;
 
-    }, [].slice.call( (rootElement || document).querySelectorAll( splitHas.shift() ) ) );
+    }, _arraySlice.call( (rootElement || document).querySelectorAll( split_has.shift() ) ) );
   }
 
   function querySelector (selector, rootElement) {

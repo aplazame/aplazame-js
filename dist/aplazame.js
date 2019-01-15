@@ -730,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.509';
+	var aplazameVersion = '0.0.510';
 
 	function _isType (type) {
 	    return function (o) {
@@ -3038,23 +3038,19 @@
 	  // '73ee9ba32eab8893e7e07add3b133f706e95a761',
 	];
 
-	function _getCheckoutVanillaUrl () {
+	function _getCheckout3Url () {
 	  if( /^https:\/\/api\.aplazame\.com\/?/.test(api.host) ) {
-	    return 'https://checkout-vanilla.aplazame.com/';
+	    return 'https://checkout-3.aplazame.com/';
 	  }
 
-	  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-vanilla-dev.aplazame.com/';
+	  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-3-dev.aplazame.com/';
 
 	  return api.checkout_url;
 	}
 
 	function checkoutAB (checkout_url) {
 
-	  if( _ab_list.indexOf(api.public_key) < 0 ) return _getCheckoutVanillaUrl();
-
-	  if( /^https:\/\/api\.aplazame\.com\/?/.test(api.host) ) return 'https://checkout-3.aplazame.com/';
-
-	  if( api.checkout_url === 'https://checkout-dev.aplazame.com/' ) return 'https://checkout-3-dev.aplazame.com/';
+	  if( _ab_list.indexOf(api.public_key) >= 0 ) return _getCheckout3Url();
 
 	  return checkout_url;
 

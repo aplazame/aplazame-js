@@ -730,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.510';
+	var aplazameVersion = '0.0.511';
 
 	function _isType (type) {
 	    return function (o) {
@@ -3274,7 +3274,10 @@
 	      iframe.className = 'aplazame-modal';
 
 	      document.body.appendChild(iframe);
-	      iframe.src = iframe_src;
+
+	      iframe.src = iframe_src + '&public-key=' + transaction.api.public_key +
+	        ( transaction.api.sandbox ? '&sandbox=true' : '') +
+	        '&referer=' + encodeURIComponent(location.href);
 
 	      window.checkout_iframe = iframe;
 

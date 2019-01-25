@@ -221,9 +221,13 @@ function checkout (checkout_data, callbacks) {
 
       document.body.appendChild(iframe);
 
-      iframe.src = iframe_src + '&public-key=' + transaction.api.public_key +
-        ( transaction.api.sandbox ? '&sandbox=true' : '') +
-        '&referer=' + encodeURIComponent(location.href);
+      var _transaction_api = transaction.api || {};
+
+      if( _transaction_api.sandbox ) {
+        iframe.src = iframe_src + '&public-key=' + _transaction_api.public_key +
+          ( _transaction_api.sandbox ? '&sandbox=true' : '') +
+          '&referer=' + encodeURIComponent(location.href);
+      } else iframe.src = iframe_src;
 
       window.checkout_iframe = iframe;
 

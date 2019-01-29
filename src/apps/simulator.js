@@ -74,8 +74,8 @@ export default function simulator (amount, _options, callback, onError) {
         }
         (onError || _.noop)(response);
     });
+    return requestsCache[hash];
   } else {
     log('Aplazame[error]: El importe debe tener el formato correcto, asegúrate de que es un número');
   }
-  return requestsCache[hash];
 }

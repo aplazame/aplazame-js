@@ -730,7 +730,7 @@
 
 	var browser = http;
 
-	var aplazameVersion = '0.0.512';
+	var aplazameVersion = '0.0.513';
 
 	function _isType (type) {
 	    return function (o) {
@@ -3411,7 +3411,7 @@
 	      bundle$1.onMessage('checkout', onMessage);
 	    }),
 	    new parole(function (_resolve, reject) {
-	      setTimeout(reject, 20000);
+	      setTimeout(reject, 60000);
 	    }).catch(function () { throw 'iframe-timeout'; }),
 	  ]).catch(function (reason) {
 	    error_loading = true;

@@ -357,7 +357,7 @@ function checkout (checkout_data, callbacks) {
       _.onMessage('checkout', onMessage);
     }),
     new Parole(function (_resolve, reject) {
-      setTimeout(reject, 20000);
+      setTimeout(reject, 60000);
     }).catch(function () { throw 'iframe-timeout'; }),
   ]).catch(function (reason) {
     error_loading = true;

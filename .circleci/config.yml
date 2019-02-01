@@ -23,7 +23,7 @@ jobs:
       
       - run:
           name: Build application
-          command: make build
+          command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
 
       - save_cache:
           paths:

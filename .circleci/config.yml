@@ -75,7 +75,7 @@ jobs:
     docker:
       - image: circleci/node:9
 
-    working_directory: ~/tmp/
+    working_directory: /tmp/
 
     steps:
 
@@ -117,26 +117,26 @@ workflows:
   deploy-dev:
     jobs:
       - build:
-        filters:
-          branches:
-            only:
-              - jasuch/ch9557/migración-de-los-procesos-de-despliegue
+          filters:
+              branches:
+                  only:
+                      - jasuch/ch9557/migración-de-los-procesos-de-despliegue
 
       - deploy_dev:
           requires:
-            - build
+              - build
           filters:
-            branches:
-              only:
-              - jasuch/ch9557/migración-de-los-procesos-de-despliegue
+              branches:
+                  only:
+                      - jasuch/ch9557/migración-de-los-procesos-de-despliegue
 
   deploy-prod:
     jobs:
       - build:
-        filters:
-          branches:
-            only:
-              - release
+          filters:
+              branches:
+                  only:
+                      - release
       
 
 

@@ -62,13 +62,8 @@ jobs:
       - run: 
           name: RSync Deploy to EC2 Instance + EFS
           command: |
-            ENVIRONMENT=$(node /tmp/workspace/.circleci/getEnv.js)
-            echo $ENVIRONMENT
-            if [ ! -z "$ENVIRONMENT" ]
-            then
-              rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/aplazame-js
-              rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/demo-site
-            fi
+            rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/aplazame-js
+            rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/demo-site
 
   deploy_prod:
 

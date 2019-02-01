@@ -29,16 +29,113 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      
+      - persist_to_workspace:
+          root: ./
+          paths:
+              - public
+              - dist
+    
+  deploy_dev:
+
+    docker:
+      - image: circleci/node:9
+
+    working_directory: ~/tmp/
+
+    steps:
+
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - add_ssh_keys
+
+      - run:
+          name: Add instance to known_hosts
+          command: |
+            ssh-keyscan deploy-dev.aplazame.org >> ~/.ssh/known_hosts
+
+      - run:
+          name: Installing deployment dependencies [RSync]
+          command: sudo apt install rsync
+
+      - run: 
+          name: RSync Deploy to EC2 Instance + EFS
+          command: |
+            ENVIRONMENT=$(node /tmp/workspace/.circleci/getEnv.js)
+            echo $ENVIRONMENT
+            if [ ! -z "$ENVIRONMENT" ]
+            then
+              rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/aplazame-js
+              rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/demo-site
+            fi
+
+  deploy_prod:
+
+    docker:
+      - image: circleci/node:9
+
+    working_directory: ~/tmp/
+
+    steps:
+
+      - attach_workspace:
+        at: /tmp/workspace
+
+      - add_ssh_keys
+
+      - run:
+          name: Add instance to known_hosts
+          command: |
+            ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
+
+      - run:
+          name: Installing deployment dependencies [RSync]
+          command: sudo apt install rsync
+
+      - run: 
+          name: RSync Deploy to EC2 Instance + EFS
+          command: |
+            ENVIRONMENT=$(node /tmp/workspace/.circleci/getEnv.js)
+            echo $ENVIRONMENT
+            if [ ! -z "$ENVIRONMENT" ]
+            then
+              rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_PROD@deploy-prod.aplazame.org:~/www/frontend/aplazame-js
+              rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_PROD@deploy-prod.aplazame.org:~/www/frontend/demo-site
+            fi
 
 workflows:
   version: 2
-  test_workflow:
+  test:
+    jobs:
+      - build:
+        filters:
+          branches:
+            only:
+              - no_branch
+              
+  deploy-dev:
     jobs:
       - build:
         filters:
           branches:
             only:
               - jasuch/ch9557/migración-de-los-procesos-de-despliegue
+
+      - deploy_dev:
+        filters:
+          branches:
+            only:
+              - jasuch/ch9557/migración-de-los-procesos-de-despliegue
+
+  deploy-prod:
+    jobs:
+      - build:
+        filters:
+          branches:
+            only:
+              - no_branch
+      
 
 
 

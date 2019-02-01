@@ -11,7 +11,7 @@ git.hooks:
 	@./bin/git-hooks
 
 npm-install:
-	"running npm install"
+	echo "running npm install"
 	npm install --quiet 
 
 install: git.hooks npm-install

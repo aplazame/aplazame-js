@@ -112,7 +112,7 @@ workflows:
         filters:
           branches:
             only:
-              - no_branch
+              - master
               
   deploy-dev:
     jobs:
@@ -123,6 +123,8 @@ workflows:
               - jasuch/ch9557/migración-de-los-procesos-de-despliegue
 
       - deploy_dev:
+        requires:
+          - build
         filters:
           branches:
             only:
@@ -134,7 +136,7 @@ workflows:
         filters:
           branches:
             only:
-              - no_branch
+              - release
       
 
 

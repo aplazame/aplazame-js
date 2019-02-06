@@ -157,11 +157,25 @@
 
       $if{result}{:}
         <!-- <div class="pay-with-aplazame"> -->
-        <div class="row"></div>
+        <div class="row">
           <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 
           <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-amount="${ totalAmount() }" onclick="loadCheckout();">
             <span>Pagar con&nbsp;</span><!--
+            --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
+          </button>
+
+          </div>
+
+        </div>
+
+        </br>
+
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+          <button class="btn btn-block pay-with-aplazame" data-aplazame-button data-type="pay_later" data-amount="${ totalAmount() }" onclick="loadCheckout();">
+            <span>Pagar en 15 días con&nbsp;</span><!--
             --><img src="/dist/widgets/assets/images/logotipo-white.svg"/>
           </button>
 

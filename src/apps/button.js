@@ -10,6 +10,8 @@ function getCartPrice () {
 
 function button (options) {
 
+  console.log('button', options);
+
   if( !options ) {
     throw new Error('aplazame.button requires parameters');
   }
@@ -132,7 +134,8 @@ button.check = function (options, callback) {
 
   var params = {
     amount: options.amount,
-    currency: options.currency || 'EUR'
+    currency: options.currency || 'EUR',
+    type: options.checkout_type,
   };
 
   if( options.country ) {

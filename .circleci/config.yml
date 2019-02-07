@@ -1,0 +1,182 @@
+commands:
+  replace_cred:
+    steps:
+      - run:
+          name: 'Add credentials for cloning properly via HTTPS instead of SSH'
+          command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
+            sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node:9
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - replace_cred
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      
+      - run:
+          name: Build application
+          command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      
+      - persist_to_workspace:
+          root: ./
+          paths:
+              - public
+              - dist
+    
+  deploy_dev:
+
+    docker:
+      - image: circleci/node:9
+
+    working_directory: ~/tmp/
+
+    steps:
+
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - add_ssh_keys
+
+      - run:
+          name: Add instance to known_hosts
+          command: |
+            ssh-keyscan deploy-dev.aplazame.org >> ~/.ssh/known_hosts
+
+      - run:
+          name: Installing deployment dependencies [RSync]
+          command: sudo apt install rsync
+
+      - run: 
+          name: RSync Deploy to EC2 Instance + EFS
+          command: |
+            rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/aplazame-js
+            rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/demo-site
+
+  deploy_demo:
+
+    docker:
+      - image: circleci/node:9
+
+    working_directory: ~/tmp/
+
+    steps:
+
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - add_ssh_keys
+
+      - run:
+          name: Add instance to known_hosts
+          command: |
+            ssh-keyscan demo.aplazame.org >> ~/.ssh/known_hosts
+
+      - run:
+          name: Installing deployment dependencies [RSync]
+          command: sudo apt install rsync
+
+      - run: 
+          name: RSync Deploy to EC2 Instance + EFS
+          command: |
+            rsync -rva --delete /tmp/workspace/public/ ubuntu@demo.aplazame.org:~/www/frontend/demo-demo
+
+  deploy_prod:
+
+    docker:
+      - image: circleci/node:9
+
+    working_directory: /tmp/
+
+    steps:
+
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - add_ssh_keys
+
+      - run:
+          name: Add instance to known_hosts
+          command: |
+            ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
+
+      - run:
+          name: Installing deployment dependencies [RSync]
+          command: sudo apt install rsync
+
+      - run: 
+          name: RSync Deploy to EC2 Instance + EFS
+          command: |
+            ENVIRONMENT=$(node /tmp/workspace/.circleci/getEnv.js)
+            echo $ENVIRONMENT
+            if [ ! -z "$ENVIRONMENT" ]
+            then
+              rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_PROD@deploy-prod.aplazame.org:~/www/frontend/aplazame-js
+              rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_PROD@deploy-prod.aplazame.org:~/www/frontend/demo-site
+            fi
+
+workflows:
+  version: 2
+              
+  deploy-dev:
+    jobs:
+      - build:
+          filters:
+              branches:
+                  only:
+                      - master
+
+      - deploy_dev:
+          requires:
+              - build
+          filters:
+              branches:
+                  only:
+                      - master
+
+  deploy-demo:
+    jobs:
+      - build:
+          filters:
+              branches:
+                  only:
+                      - demo
+
+      - deploy_demo:
+          requires:
+              - build
+          filters:
+              branches:
+                  only:
+                      - demo
+
+  deploy-prod:
+    jobs:
+      - build:
+          filters:
+              branches:
+                  only:
+                      - release
+      - deploy_prod:
+          filters:
+              branches:
+                  only:
+                    - release  
+
+      
+
+
+
+

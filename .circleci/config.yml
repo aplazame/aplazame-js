@@ -103,7 +103,7 @@ jobs:
     steps:
 
       - attach_workspace:
-        at: /tmp/workspace
+          at: /tmp/workspace
 
       - add_ssh_keys
 
@@ -136,7 +136,7 @@ workflows:
           filters:
               branches:
                   only:
-                      - jasuch/ch9557/migración-de-los-procesos-de-despliegue
+                      - master
 
       - deploy_dev:
           requires:
@@ -144,7 +144,7 @@ workflows:
           filters:
               branches:
                   only:
-                      - jasuch/ch9557/migración-de-los-procesos-de-despliegue
+                      - master
 
   deploy-demo:
     jobs:
@@ -152,7 +152,7 @@ workflows:
           filters:
               branches:
                   only:
-                      - no_branch
+                      - demo
 
       - deploy_demo:
           requires:
@@ -160,7 +160,7 @@ workflows:
           filters:
               branches:
                   only:
-                      - no_branch
+                      - demo
 
   deploy-prod:
     jobs:
@@ -169,6 +169,12 @@ workflows:
               branches:
                   only:
                       - release
+      - deploy_prod:
+          filters:
+              branches:
+                  only:
+                    - release  
+
       
 
 

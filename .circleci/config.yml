@@ -15,7 +15,7 @@ executors:
     deploy_s3_box:
         docker:
         - image: circleci/python:3.6.1
-        working_directory: ~/tmp/
+        working_directory: /tmp/workspace
 
 commands:
     replace_cred:
@@ -159,7 +159,7 @@ jobs:
         steps:
         - attach_workspace:
             at: /tmp/workspace
-            
+
         - run:
             name: Installing deployment dependencies [Python + awscli]
             command: |

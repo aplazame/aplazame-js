@@ -94,67 +94,67 @@ jobs:
     - steps: << parameters.then >>
 
 workflows:
-  version: 2
+    version: 2
 
-  build_and_deploy:
-    - build
+    build_and_deploy:
+        - build
 
-    - rsync_deploy:
-        requires:
-          - build
-        then:
-        - rsync:
-            folder: dist
-            user: $DEPLOY_USER_DEV
-            host: deploy-dev.aplazame.org
-            dest: ~/www/frontend/aplazame-js
-
-        - rsync:
-            folder: public
-            user: $DEPLOY_USER_DEV
-            host: deploy-dev.aplazame.org
-            dest: ~/www/frontend/demo-site
-
-        filters:
-            branches:
-                only:
-                - master
-
-    - rsync_deploy:
-        requires:
+        - rsync_deploy:
+            requires:
             - build
-        then:
-        - rsync:
-            folder: public
-            host: demo.aplazame.org
-            dest: ~/www/frontend/demo-demo
+            then:
+            - rsync:
+                folder: dist
+                user: $DEPLOY_USER_DEV
+                host: deploy-dev.aplazame.org
+                dest: ~/www/frontend/aplazame-js
 
-        filters:
-            branches:
-                only:
-                    - demo
-                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+            - rsync:
+                folder: public
+                user: $DEPLOY_USER_DEV
+                host: deploy-dev.aplazame.org
+                dest: ~/www/frontend/demo-site
 
-    - rsync_deploy:
-        requires:
-            - build
-        then:
-        - rsync:
-            folder: dist
-            user: $DEPLOY_USER_PROD
-            host: deploy-prod.aplazame.org
-            dest: ~/www/frontend/aplazame-js
+            filters:
+                branches:
+                    only:
+                    - master
 
-        - rsync:
-            folder: public
-            user: $DEPLOY_USER_PROD
-            host: deploy-prod.aplazame.org
-            dest: ~/www/frontend/demo-site
+        - rsync_deploy:
+            requires:
+                - build
+            then:
+            - rsync:
+                folder: public
+                host: demo.aplazame.org
+                dest: ~/www/frontend/demo-demo
 
-        filters:
-            branches:
-                only:
-                - release  
+            filters:
+                branches:
+                    only:
+                        - demo
+                        - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+
+        - rsync_deploy:
+            requires:
+                - build
+            then:
+            - rsync:
+                folder: dist
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/aplazame-js
+
+            - rsync:
+                folder: public
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/demo-site
+
+            filters:
+                branches:
+                    only:
+                    - release  
 
       
 

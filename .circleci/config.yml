@@ -9,7 +9,7 @@ executors:
 
     deploy_box:
         docker:
-            - image: nitrojs/alpine-rsync:0.1.0
+            - image: circleci/node:10
         working_directory: ~/tmp/
 
 commands:

@@ -10,8 +10,6 @@ executors:
   deploy_box:
     docker:
       - image: circleci/node:9
-    requires:
-      - build
     working_directory: ~/tmp/
 
 commands:
@@ -107,23 +105,25 @@ workflows:
     #         - master
 
     - rsync_deploy:
-      then:
-        - rsync:
-          folder: dist
-          user: $DEPLOY_USER_DEV
-          host: deploy-dev.aplazame.org
-          dest: ~/www/frontend/aplazame-js
+        requires:
+          - build
+        then:
+          - rsync:
+            folder: dist
+            user: $DEPLOY_USER_DEV
+            host: deploy-dev.aplazame.org
+            dest: ~/www/frontend/aplazame-js
 
-        - rsync:
-          folder: public
-          user: $DEPLOY_USER_DEV
-          host: deploy-dev.aplazame.org
-          dest: ~/www/frontend/demo-site
+          - rsync:
+            folder: public
+            user: $DEPLOY_USER_DEV
+            host: deploy-dev.aplazame.org
+            dest: ~/www/frontend/demo-site
 
-      filters:
-        branches:
-          only:
-            - master
+        filters:
+          branches:
+            only:
+              - master
 
   deploy-demo:
     jobs:
@@ -134,17 +134,19 @@ workflows:
     #         - demo
 
     - rsync_deploy:
-      then:
-        - rsync:
-          folder: public
-          host: demo.aplazame.org
-          dest: ~/www/frontend/demo-demo
+        requires:
+          - build
+        then:
+          - rsync:
+            folder: public
+            host: demo.aplazame.org
+            dest: ~/www/frontend/demo-demo
 
-      filters:
-        branches:
-          only:
-            - demo
-            - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+        filters:
+          branches:
+            only:
+              - demo
+              - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
 
   deploy-prod:
     jobs:
@@ -155,23 +157,25 @@ workflows:
     #         - release
 
     - rsync_deploy:
-      then:
-        - rsync:
-          folder: dist
-          user: $DEPLOY_USER_PROD
-          host: deploy-prod.aplazame.org
-          dest: ~/www/frontend/aplazame-js
+        requires:
+          - build
+        then:
+          - rsync:
+            folder: dist
+            user: $DEPLOY_USER_PROD
+            host: deploy-prod.aplazame.org
+            dest: ~/www/frontend/aplazame-js
 
-        - rsync:
-          folder: public
-          user: $DEPLOY_USER_PROD
-          host: deploy-prod.aplazame.org
-          dest: ~/www/frontend/demo-site
+          - rsync:
+            folder: public
+            user: $DEPLOY_USER_PROD
+            host: deploy-prod.aplazame.org
+            dest: ~/www/frontend/demo-site
 
-      filters:
-        branches:
-          only:
-            - release  
+        filters:
+          branches:
+            only:
+              - release  
 
       
 

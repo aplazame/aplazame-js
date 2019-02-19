@@ -60,7 +60,7 @@ commands:
                 default: true
         steps:
             - run:
-                name: "Deploying folder to S3: << parameters.src >> > << parameters.dest >>"
+                name: "Deploying folder to S3: << parameters.src >> > s3:<< parameters.bucket_name >>/<< parameters.dest >>"
                 command: |
                     aws s3 sync --acl private \
                         --cache-control "private, max-age:3600"\
@@ -84,7 +84,7 @@ commands:
                 default: private, max-age:3600
         steps:
             - run:
-                name: "Deploying file to S3: << parameters.src >> > << parameters.dest >>"
+                name: "Deploying file to S3: << parameters.src >> > s3:<< parameters.bucket_name >>/<< parameters.dest >>"
                 command: |
                     aws s3api put-object --acl private \
                         --bucket << parameters.bucket_name >> \

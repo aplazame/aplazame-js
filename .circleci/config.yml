@@ -4,12 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-            - image: circleci/node:10
+        - image: circleci/node:10
         working_directory: ~/repo
 
     deploy_box:
         docker:
-            - image: circleci/node:10
+        - image: circleci/node:10
+        working_directory: ~/tmp/
+    
+    deploy_s3_box:
+        docker:
+        - image: circleci/python:3.6.1
         working_directory: ~/tmp/
 
 commands:
@@ -145,13 +150,22 @@ jobs:
         - steps: << parameters.then >>
 
     s3_deploy:
-        executor: deploy_box
+        executor: deploy_s3_box
         parameters:
             do_deploy:
                 description: commands to be executed after for S3 deploy
                 type: steps
                 default: []
         steps:
+        - attach_workspace:
+            at: /tmp/workspace
+            
+        - run:
+            name: Installing deployment dependencies [Python + awscli]
+            command: |
+                sudo apt install python-pip python-dev
+                sudo pip install awscli
+
         - steps: << parameters.do_deploy >>
 
 

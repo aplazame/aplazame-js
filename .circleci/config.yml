@@ -2,72 +2,72 @@
 version: 2.1
 
 executors:
-  build_box:
-    docker:
-      - image: circleci/node:9
-    working_directory: ~/repo
+    build_box:
+        docker:
+            - image: circleci/node:9
+        working_directory: ~/repo
 
-  deploy_box:
-    docker:
-      - image: circleci/node:9
-    working_directory: ~/tmp/
+    deploy_box:
+        docker:
+            - image: circleci/node:9
+        working_directory: ~/tmp/
 
 commands:
   replace_cred:
     steps:
       - run:
-          name: 'Add credentials for cloning properly via HTTPS instead of SSH'
-          command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
-            sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
+            name: 'Add credentials for cloning properly via HTTPS instead of SSH'
+            command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
+                    sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
 
   rsync:
     description: "A simple encapsulation of doing a rsync"
     parameters:
-      folder:
-        type: string
-      user:
-        type: string
-        default: ubuntu
-      host:
-        type: string
-      dest:
-        type: string
-      overwrite:
-        default: true
-        type: boolean
+        folder:
+            type: string
+        user:
+            type: string
+            default: ubuntu
+        host:
+            type: string
+        dest:
+            type: string
+        overwrite:
+            default: true
+            type: boolean
     steps:
       - run:
-          name: RSync Deploy
-          command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
-          # command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
+            name: RSync Deploy
+            command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
+            # command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
 
 jobs:
   build:
     executor: build_box
     steps:
-      - checkout
-      - replace_cred
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-      
-      - run:
-          name: Build application
-          command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
+        - checkout
+        - replace_cred
+        # Download and cache dependencies
+        - restore_cache:
+            keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+        
+        - run:
+            name: Build application
+            command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      
-      - persist_to_workspace:
-          root: ./
-          paths:
-              - public
-              - dist
+        - save_cache:
+            paths:
+                - node_modules
+            key: v1-dependencies-{{ checksum "package.json" }}
+        
+        - persist_to_workspace:
+            root: ./
+            paths:
+                - public
+                - dist
 
   rsync_deploy:
     executor: deploy_box
@@ -108,13 +108,13 @@ workflows:
         requires:
           - build
         then:
-          - rsync:
+        - rsync:
             folder: dist
             user: $DEPLOY_USER_DEV
             host: deploy-dev.aplazame.org
             dest: ~/www/frontend/aplazame-js
 
-          - rsync:
+        - rsync:
             folder: public
             user: $DEPLOY_USER_DEV
             host: deploy-dev.aplazame.org
@@ -135,9 +135,9 @@ workflows:
 
     - rsync_deploy:
         requires:
-          - build
+            - build
         then:
-          - rsync:
+        - rsync:
             folder: public
             host: demo.aplazame.org
             dest: ~/www/frontend/demo-demo
@@ -145,12 +145,12 @@ workflows:
         filters:
           branches:
             only:
-              - demo
-              - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+                - demo
+                - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
 
   deploy-prod:
     jobs:
-    - build
+        - build
     #   filters:
     #     branches:
     #       only:
@@ -158,15 +158,15 @@ workflows:
 
     - rsync_deploy:
         requires:
-          - build
+            - build
         then:
-          - rsync:
+        - rsync:
             folder: dist
             user: $DEPLOY_USER_PROD
             host: deploy-prod.aplazame.org
             dest: ~/www/frontend/aplazame-js
 
-          - rsync:
+        - rsync:
             folder: public
             user: $DEPLOY_USER_PROD
             host: deploy-prod.aplazame.org

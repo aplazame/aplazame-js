@@ -68,6 +68,8 @@ jobs:
             paths:
                 - public
                 - dist
+                - Makefile
+                - s3_deploy.sh
 
   rsync_deploy:
     executor: deploy_box

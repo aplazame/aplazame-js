@@ -99,10 +99,10 @@ workflows:
   deploy-dev:
     jobs:
     - build
-    #   filters:
-    #     branches:
-    #       only:
-    #         - master
+        filters:
+            branches:
+            only:
+                - master
 
     - rsync_deploy:
         requires:
@@ -128,10 +128,10 @@ workflows:
   deploy-demo:
     jobs:
     - build
-    #   filters:
-    #     branches:
-    #       only:
-    #         - demo
+        filters:
+            branches:
+            only:
+                - demo
 
     - rsync_deploy:
         requires:
@@ -151,10 +151,10 @@ workflows:
   deploy-prod:
     jobs:
     - build
-    #   filters:
-    #     branches:
-    #       only:
-    #         - release
+        filters:
+            branches:
+            only:
+                - release
 
     - rsync_deploy:
         requires:

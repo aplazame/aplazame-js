@@ -102,7 +102,7 @@ workflows:
         filters:
             branches:
                 only:
-                    - master
+                - master
 
     - rsync_deploy:
         requires:
@@ -121,9 +121,9 @@ workflows:
             dest: ~/www/frontend/demo-site
 
         filters:
-          branches:
-            only:
-              - master
+            branches:
+                only:
+                - master
 
   deploy-demo:
     jobs:
@@ -131,7 +131,7 @@ workflows:
         filters:
             branches:
                 only:
-                    - demo
+                - demo
 
     - rsync_deploy:
         requires:
@@ -143,8 +143,8 @@ workflows:
             dest: ~/www/frontend/demo-demo
 
         filters:
-          branches:
-            only:
+            branches:
+                only:
                 - demo
                 - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
 
@@ -154,7 +154,7 @@ workflows:
         filters:
             branches:
                 only:
-                    - release
+                - release
 
     - rsync_deploy:
         requires:
@@ -173,9 +173,9 @@ workflows:
             dest: ~/www/frontend/demo-site
 
         filters:
-          branches:
-            only:
-              - release  
+            branches:
+                only:
+                - release  
 
       
 

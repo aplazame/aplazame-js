@@ -93,7 +93,7 @@ jobs:
 
     - run:
         name: Listing dir
-        command: ls -la
+        command: ls -la /tmp/workspace
 
     - steps: << parameters.then >>
 

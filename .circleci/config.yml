@@ -4,17 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: aplazame/node-karma:0.7.4
+        - image: aplazame/nodejs-karma:0.7.4
         working_directory: ~/repo
 
     deploy_rsync_box:
         docker:
-        - image: aplazame/node-karma:0.7.4
+        - image: aplazame/nodejs-karma:0.7.4
         working_directory: ~/tmp/
     
     deploy_s3_box:
         docker:
-        - image: aplazame/node-karma:0.7.4
+        - image: aplazame/nodejs-karma:0.7.4
         working_directory: /tmp/workspace
 
 commands:

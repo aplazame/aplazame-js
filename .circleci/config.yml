@@ -4,17 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: circleci/node:10
+        - image: aplazame/nodejs-karma:0.7.4
         working_directory: ~/repo
 
     deploy_box:
         docker:
-        - image: circleci/node:10
+        - image: aplazame/nodejs-karma:0.7.4
         working_directory: ~/tmp/
     
     deploy_s3_box:
         docker:
-        - image: circleci/python:3.6.1
+        - image: aplazame/nodejs-karma:0.7.4
         working_directory: /tmp/workspace
 
 commands:
@@ -160,11 +160,11 @@ jobs:
         - attach_workspace:
             at: /tmp/workspace
 
-        - run:
-            name: Installing deployment dependencies [Python + awscli]
-            command: |
-                sudo apt install python-pip python-dev
-                sudo pip install awscli
+        # - run:
+        #     name: Installing deployment dependencies [Python + awscli]
+        #     command: |
+        #         sudo apt install python-pip python-dev
+        #         sudo pip install awscli
 
         - steps: << parameters.do_deploy >>
 

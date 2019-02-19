@@ -108,9 +108,9 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - node-10-alpine-
 
-        - run:
-            name: Installing make
-            command: apk add --update make
+        # - run:
+        #     name: Installing make
+        #     command: apk add --update make
         
         - run:
             name: Build application

@@ -235,12 +235,12 @@ workflows:
 
             do_deploy:
             - s3_folder:
-                bucket_name: apz-frontend-test
+                bucket_name: cdn-dev.aplazame.com
                 src: public/dist/widgets
                 dest: aplazame-js/widgets
             
             - s3_file:
-                bucket_name: apz-frontend-test
+                bucket_name: cdn-dev.aplazame.com
                 src: public/dist/aplazame.min.js
                 dest: aplazame-js/aplazame.js
                 content_type: application/javascript

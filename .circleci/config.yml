@@ -91,6 +91,10 @@ jobs:
         name: Installing deployment dependencies [RSync]
         command: sudo apt install rsync
 
+    - run:
+        name: Listing dir
+        command: ls -la
+
     - steps: << parameters.then >>
 
 workflows:

@@ -5,12 +5,47 @@ commands:
           name: 'Add credentials for cloning properly via HTTPS instead of SSH'
           command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
             sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
+
 version: 2.1
-jobs:
-  build:
+
+executors:
+  build_box:
     docker:
       - image: circleci/node:9
     working_directory: ~/repo
+
+  deploy_box:
+    docker:
+      - image: circleci/node:9
+    requires:
+      - build
+    working_directory: ~/tmp/
+
+commands:
+  rsync:
+    description: "A simple encapsulation of doing a rsync"
+    parameters:
+      folder:
+        type: string
+      user:
+        type: string
+        default: ubuntu
+      host:
+        type: string
+      dest:
+        type: string
+      overwrite:
+        default: true
+        type: boolean
+    steps:
+      - run:
+          name: RSync Deploy
+          command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
+          # command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
+
+jobs:
+  build:
+    executor: build_box
     steps:
       - checkout
       - replace_cred
@@ -35,145 +70,107 @@ jobs:
           paths:
               - public
               - dist
-    
-  deploy_dev:
 
-    docker:
-      - image: circleci/node:9
-
-    working_directory: ~/tmp/
-
+  setup_rsync:
+    executor: deploy_box
+    parameters:
+      then:
+        description: commands executed after rsync setup
+        type: steps
+        default: []
     steps:
+    - attach_workspace:
+        at: /tmp/workspace
 
-      - attach_workspace:
-          at: /tmp/workspace
+    - add_ssh_keys
 
-      - add_ssh_keys
+    - run:
+        name: Add instance to known_hosts
+        command: |
+          ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
 
-      - run:
-          name: Add instance to known_hosts
-          command: |
-            ssh-keyscan deploy-dev.aplazame.org >> ~/.ssh/known_hosts
+    - run:
+        name: Installing deployment dependencies [RSync]
+        command: sudo apt install rsync
 
-      - run:
-          name: Installing deployment dependencies [RSync]
-          command: sudo apt install rsync
-
-      - run: 
-          name: RSync Deploy to EC2 Instance + EFS
-          command: |
-            rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/aplazame-js
-            rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_DEV@deploy-dev.aplazame.org:~/www/frontend/demo-site
-
-  deploy_demo:
-
-    docker:
-      - image: circleci/node:9
-
-    working_directory: ~/tmp/
-
-    steps:
-
-      - attach_workspace:
-          at: /tmp/workspace
-
-      - add_ssh_keys
-
-      - run:
-          name: Add instance to known_hosts
-          command: |
-            ssh-keyscan demo.aplazame.org >> ~/.ssh/known_hosts
-
-      - run:
-          name: Installing deployment dependencies [RSync]
-          command: sudo apt install rsync
-
-      - run: 
-          name: RSync Deploy to EC2 Instance + EFS
-          command: |
-            rsync -rva --delete /tmp/workspace/public/ ubuntu@demo.aplazame.org:~/www/frontend/demo-demo
-
-  deploy_prod:
-
-    docker:
-      - image: circleci/node:9
-
-    working_directory: /tmp/
-
-    steps:
-
-      - attach_workspace:
-          at: /tmp/workspace
-
-      - add_ssh_keys
-
-      - run:
-          name: Add instance to known_hosts
-          command: |
-            ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
-
-      - run:
-          name: Installing deployment dependencies [RSync]
-          command: sudo apt install rsync
-
-      - run: 
-          name: RSync Deploy to EC2 Instance + EFS
-          command: |
-            ENVIRONMENT=$(node /tmp/workspace/.circleci/getEnv.js)
-            echo $ENVIRONMENT
-            if [ ! -z "$ENVIRONMENT" ]
-            then
-              rsync -rva --delete /tmp/workspace/dist/ $DEPLOY_USER_PROD@deploy-prod.aplazame.org:~/www/frontend/aplazame-js
-              rsync -rva --delete /tmp/workspace/public/ $DEPLOY_USER_PROD@deploy-prod.aplazame.org:~/www/frontend/demo-site
-            fi
+    - steps: << parameters.then >>
 
 workflows:
   version: 2
-              
+  
   deploy-dev:
     jobs:
-      - build:
-          filters:
-              branches:
-                  only:
-                      - master
+    # - build:
+    #   filters:
+    #     branches:
+    #       only:
+    #         - master
 
-      - deploy_dev:
-          requires:
-              - build
-          filters:
-              branches:
-                  only:
-                      - master
+    - setup_rsync:
+      then:
+        - rsync:
+          folder: dist
+          user: $DEPLOY_USER_DEV
+          host: deploy-dev.aplazame.org
+          dest: ~/www/frontend/aplazame-js
+
+        - rsync:
+          folder: public
+          user: $DEPLOY_USER_DEV
+          host: deploy-dev.aplazame.org
+          dest: ~/www/frontend/demo-site
+
+      filters:
+        branches:
+          only:
+            - master
 
   deploy-demo:
     jobs:
-      - build:
-          filters:
-              branches:
-                  only:
-                      - demo
+    # - build:
+    #   filters:
+    #     branches:
+    #       only:
+    #         - demo
 
-      - deploy_demo:
-          requires:
-              - build
-          filters:
-              branches:
-                  only:
-                      - demo
+    - setup_rsync:
+      then:
+        - rsync:
+          folder: public
+          host: demo.aplazame.org
+          dest: ~/www/frontend/demo-demo
+
+      filters:
+        branches:
+          only:
+            - demo
 
   deploy-prod:
     jobs:
-      - build:
-          filters:
-              branches:
-                  only:
-                      - release
-      - deploy_prod:
-          filters:
-              branches:
-                  only:
-                    - release  
+    # - build:
+    #   filters:
+    #     branches:
+    #       only:
+    #         - release
+
+    - setup_rsync:
+      then:
+        - rsync:
+          folder: dist
+          user: $DEPLOY_USER_PROD
+          host: deploy-prod.aplazame.org
+          dest: ~/www/frontend/aplazame-js
+
+        - rsync:
+          folder: public
+          user: $DEPLOY_USER_PROD
+          host: deploy-prod.aplazame.org
+          dest: ~/www/frontend/demo-site
+
+      filters:
+        branches:
+          only:
+            - release  
 
       
 

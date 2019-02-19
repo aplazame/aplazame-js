@@ -9,7 +9,7 @@ executors:
 
     deploy_rsync_box:
         docker:
-        - image: nitrojs/alpine-rsync:0.1.0
+        - image: circleci/node:10
         working_directory: ~/tmp/
     
     deploy_s3_box:
@@ -139,9 +139,9 @@ jobs:
             command: |
                 ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
 
-        # - run:
-        #     name: Installing deployment dependencies [RSync]
-        #     command: sudo apt install rsync
+        - run:
+            name: Installing deployment dependencies [RSync]
+            command: sudo apt install rsync
 
         - steps: << parameters.then >>
 

@@ -5,6 +5,7 @@ executors:
     build_box:
         docker:
         - image: node:10.15.1-alpine
+          entrypoint: /bin/bash
         working_directory: ~/repo
 
     deploy_rsync_box:
@@ -120,7 +121,7 @@ jobs:
         - run:
             name: Installing make
             command: apk add make
-            
+
         # Download and cache dependencies
         - restore_cache:
             keys:

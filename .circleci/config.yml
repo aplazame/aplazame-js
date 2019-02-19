@@ -98,7 +98,7 @@ workflows:
   
   deploy-dev:
     jobs:
-    # - build:
+    - build
     #   filters:
     #     branches:
     #       only:
@@ -127,7 +127,7 @@ workflows:
 
   deploy-demo:
     jobs:
-    # - build:
+    - build
     #   filters:
     #     branches:
     #       only:
@@ -150,7 +150,7 @@ workflows:
 
   deploy-prod:
     jobs:
-    # - build:
+    - build
     #   filters:
     #     branches:
     #       only:

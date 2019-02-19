@@ -108,9 +108,24 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - node-10-alpine-
 
-        # - run:
-        #     name: Installing make
-        #     command: apk add --update make
+        - run:
+            name: Updating apk
+            command: apk update
+
+        - run:
+            name: Intall CA certificates
+            command: >
+                apk add ca-certificates; \
+                rm -rf /var/cache/apk/*; \
+                update-ca-certificates;
+
+        - run:
+            name: Installing git
+            command: apk add git
+
+        - run:
+            name: Installing make
+            command: apk add make
         
         - run:
             name: Build application

@@ -4,7 +4,7 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: node:10.15.1-alpine
+        - image: germade/node:0.1.1
         working_directory: ~/repo
 
     deploy_rsync_box:
@@ -101,24 +101,6 @@ jobs:
         steps:
         - checkout
         - replace_cred
-
-        - run:
-            name: Updating apk
-            command: apk update
-
-        - run:
-            name: Intall CA certificates
-            command: >
-                apk add ca-certificates; \
-                update-ca-certificates;
-
-        - run:
-            name: Installing git
-            command: apk add git
-
-        - run:
-            name: Installing make
-            command: apk add make
 
         # Download and cache dependencies
         - restore_cache:

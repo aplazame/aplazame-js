@@ -95,14 +95,9 @@ jobs:
 
 workflows:
   version: 2
-  
-  deploy-dev:
-    jobs:
-    - build:
-        filters:
-            branches:
-                only:
-                    - master
+
+  build_and_deploy:
+    - build
 
     - rsync_deploy:
         requires:
@@ -125,15 +120,6 @@ workflows:
                 only:
                 - master
 
-  deploy-demo:
-    jobs:
-    - build:
-        filters:
-            branches:
-                only:
-                    - demo
-                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
-
     - rsync_deploy:
         requires:
             - build
@@ -148,14 +134,6 @@ workflows:
                 only:
                     - demo
                     - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
-
-  deploy-prod:
-    jobs:
-    - build:
-        filters:
-            branches:
-                only:
-                    - release
 
     - rsync_deploy:
         requires:

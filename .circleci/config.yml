@@ -148,10 +148,11 @@ jobs:
         executor: deploy_box
         parameters:
             do_deploy:
-                description: commands executed after rsync setup
+                description: commands to be executed after for S3 deploy
                 type: steps
                 default: []
-        steps: << parameters.do_deploy >>
+        steps:
+        - steps: << parameters.do_deploy >>
 
 
 workflows:
@@ -219,6 +220,9 @@ workflows:
                     - release
 
         - s3_deploy:
+            requires:
+                - build
+
             do_deploy:
             - s3_folder:
                 bucket_name: apz-frontend-test

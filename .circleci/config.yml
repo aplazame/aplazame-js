@@ -101,7 +101,7 @@ workflows:
 
         - rsync_deploy:
             requires:
-            - build
+                - build
             then:
             - rsync:
                 folder: dist

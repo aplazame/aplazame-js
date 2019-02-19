@@ -44,7 +44,9 @@ commands:
         - run:
             name: RSync Deploy
             # command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
-            command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
+            command: >
+                ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts
+                rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
 
     s3_folder:
         description: "Parametrized folder deploy to S3"
@@ -108,7 +110,8 @@ jobs:
         
         - run:
             name: Build application
-            command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
+            command: make build | sed 's/[[:alnum:]]*:x-oauth-basic//g'
+            # command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
 
         - save_cache:
             paths:
@@ -134,10 +137,10 @@ jobs:
 
         - add_ssh_keys
 
-        - run:
-            name: Add instance to known_hosts
-            command: |
-                ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
+        # - run:
+        #     name: Add instance to known_hosts
+        #     command: |
+        #         ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
 
         # - run:
         #     name: Installing deployment dependencies [RSync]

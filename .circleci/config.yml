@@ -13,38 +13,85 @@ executors:
         working_directory: ~/tmp/
 
 commands:
-  replace_cred:
-    steps:
-      - run:
+    replace_cred:
+        steps:
+        - run:
             name: 'Add credentials for cloning properly via HTTPS instead of SSH'
             command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
                     sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
 
-  rsync:
-    description: "A simple encapsulation of doing a rsync"
-    parameters:
-        folder:
-            type: string
-        user:
-            type: string
-            default: ubuntu
-        host:
-            type: string
-        dest:
-            type: string
-        overwrite:
-            default: true
-            type: boolean
-    steps:
-      - run:
+    rsync:
+        description: "A simple encapsulation of doing a rsync"
+        parameters:
+            folder:
+                type: string
+            user:
+                type: string
+                default: ubuntu
+            host:
+                type: string
+            dest:
+                type: string
+            overwrite:
+                type: boolean
+                default: true
+        steps:
+        - run:
             name: RSync Deploy
             command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
             # command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
 
+    s3_folder:
+        description: "Parametrized folder deploy to S3"
+        parameters:
+            bucket_name:
+                type: string
+            src:
+                type: string
+            dest:
+                type: string
+            overwrite:
+                type: boolean
+                default: true
+        steps:
+            - run:
+                name: "Deploying folder << parameters.folder >>"
+                command: >
+                    aws s3 sync --acl private \
+                        --cache-control "private, max-age:3600"\
+                        <<# parameters.overwrite >> --delete<</ parameters.overwrite >>\
+                        << parameters.src >> s3://<< parameters.bucket_name >>/<< parameters.dest >>;
+
+    s3_file:
+        description: "Parametrized single file deploy to S3"
+        parameters:
+            bucket_name:
+                type: string
+            src:
+                type: string
+            dest:
+                type: string
+                default: ""
+            content_type:
+                type: string
+            cache_control:
+                type: string
+                default: private, max-age:3600
+        steps:
+            - run:
+                name: "Deploying file to S3"
+                command: >
+                    aws s3api put-object --acl private \
+                        --bucket << parameters.bucket_name >> \
+                        --cache-control "<< parameters.cache_control >>" \
+                        --content-type "<< parameters.content_type >>" \
+                        --key << parameters.dest >> \
+                        --body << parameters.src >>;
+
 jobs:
-  build:
-    executor: build_box
-    steps:
+    build:
+        executor: build_box
+        steps:
         - checkout
         - replace_cred
         # Download and cache dependencies
@@ -68,36 +115,44 @@ jobs:
             paths:
                 - public
                 - dist
-                - Makefile
-                - s3_deploy.sh
 
-  rsync_deploy:
-    executor: deploy_box
-    parameters:
-      then:
-        description: commands executed after rsync setup
-        type: steps
-        default: []
-    steps:
-    - attach_workspace:
-        at: /tmp/workspace
+    rsync_deploy:
+        executor: deploy_box
+        parameters:
+            then:
+                description: commands executed after rsync setup
+                type: steps
+                default: []
+        steps:
+        - attach_workspace:
+            at: /tmp/workspace
 
-    - add_ssh_keys
+        - add_ssh_keys
 
-    - run:
-        name: Add instance to known_hosts
-        command: |
-          ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
+        - run:
+            name: Add instance to known_hosts
+            command: |
+            ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
 
-    - run:
-        name: Installing deployment dependencies [RSync]
-        command: sudo apt install rsync
+        - run:
+            name: Installing deployment dependencies [RSync]
+            command: sudo apt install rsync
 
-    - run:
-        name: Listing dir
-        command: ls -la /tmp/workspace
+        - run:
+            name: Listing dir
+            command: ls -la /tmp/workspace
 
-    - steps: << parameters.then >>
+        - steps: << parameters.then >>
+
+    s3_deploy:
+        executor: deploy_box
+        parameters:
+            do_deploy:
+                description: commands executed after rsync setup
+                type: steps
+                default: []
+        steps: << parameters.do_deploy >>
+
 
 workflows:
     version: 2
@@ -161,7 +216,26 @@ workflows:
             filters:
                 branches:
                     only:
-                    - release  
+                    - release
+
+        - s3_deploy:
+            do_deploy:
+            - s3_folder:
+                bucket_name: apz-frontend-test
+                src: public/dist/widgets
+                dest: aplazame-js/widgets
+            
+            - s3_file:
+                bucket_name: apz-frontend-test
+                src: public/dist/aplazame.min.js
+                dest: aplazame-js/aplazame.js
+                content_type: application/javascript
+                cache_control: no-cache, no-store
+            
+            filters:
+                branches:
+                    only:
+                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
 
       
 

@@ -118,7 +118,7 @@ workflows:
             filters:
                 branches:
                     only:
-                    - master
+                        - master
 
         - rsync_deploy:
             requires:
@@ -154,7 +154,7 @@ workflows:
             filters:
                 branches:
                     only:
-                    - release  
+                        - release  
 
       
 

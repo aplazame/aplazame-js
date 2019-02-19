@@ -55,7 +55,7 @@ commands:
                 default: true
         steps:
             - run:
-                name: "Deploying folder << parameters.folder >>"
+                name: "Deploying folder << parameters.src >>"
                 command: |
                     aws s3 sync --acl private \
                         --cache-control "private, max-age:3600"\

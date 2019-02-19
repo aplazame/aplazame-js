@@ -9,7 +9,7 @@ executors:
 
     deploy_box:
         docker:
-            - image: nitrojs/alpine-rsync
+            - image: nitrojs/alpine-rsync:0.1.0
         working_directory: ~/tmp/
 
 commands:

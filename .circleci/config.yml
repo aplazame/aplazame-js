@@ -101,12 +101,6 @@ jobs:
         steps:
         - checkout
         - replace_cred
-        # Download and cache dependencies
-        - restore_cache:
-            keys:
-            - node-10-alpine-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - node-10-alpine-
 
         - run:
             name: Updating apk
@@ -126,7 +120,14 @@ jobs:
         - run:
             name: Installing make
             command: apk add make
-        
+            
+        # Download and cache dependencies
+        - restore_cache:
+            keys:
+            - node-10-alpine-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - node-10-alpine-
+
         - run:
             name: Build application
             command: make build | sed 's/[[:alnum:]]*:x-oauth-basic//g'

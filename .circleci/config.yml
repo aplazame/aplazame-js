@@ -150,7 +150,7 @@ workflows:
 
   deploy-prod:
     jobs:
-        - build
+    - build
     #   filters:
     #     branches:
     #       only:

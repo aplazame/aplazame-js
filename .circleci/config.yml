@@ -71,7 +71,7 @@ jobs:
               - public
               - dist
 
-  setup_rsync:
+  rsync_deploy:
     executor: deploy_box
     parameters:
       then:
@@ -106,7 +106,7 @@ workflows:
     #       only:
     #         - master
 
-    - setup_rsync:
+    - rsync_deploy:
       then:
         - rsync:
           folder: dist
@@ -133,7 +133,7 @@ workflows:
     #       only:
     #         - demo
 
-    - setup_rsync:
+    - rsync_deploy:
       then:
         - rsync:
           folder: public
@@ -144,6 +144,7 @@ workflows:
         branches:
           only:
             - demo
+            - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
 
   deploy-prod:
     jobs:
@@ -153,7 +154,7 @@ workflows:
     #       only:
     #         - release
 
-    - setup_rsync:
+    - rsync_deploy:
       then:
         - rsync:
           folder: dist

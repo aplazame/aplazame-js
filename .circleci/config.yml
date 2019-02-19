@@ -56,7 +56,7 @@ commands:
         steps:
             - run:
                 name: "Deploying folder << parameters.folder >>"
-                command: >
+                command: |
                     aws s3 sync --acl private \
                         --cache-control "private, max-age:3600"\
                         <<# parameters.overwrite >> --delete<</ parameters.overwrite >>\
@@ -80,7 +80,7 @@ commands:
         steps:
             - run:
                 name: "Deploying file to S3"
-                command: >
+                command: |
                     aws s3api put-object --acl private \
                         --bucket << parameters.bucket_name >> \
                         --cache-control "<< parameters.cache_control >>" \
@@ -132,7 +132,7 @@ jobs:
         - run:
             name: Add instance to known_hosts
             command: |
-            ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
+                ssh-keyscan deploy-prod.aplazame.org >> ~/.ssh/known_hosts
 
         - run:
             name: Installing deployment dependencies [RSync]

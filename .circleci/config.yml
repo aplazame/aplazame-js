@@ -1,10 +1,3 @@
-commands:
-  replace_cred:
-    steps:
-      - run:
-          name: 'Add credentials for cloning properly via HTTPS instead of SSH'
-          command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
-            sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
 
 version: 2.1
 
@@ -22,6 +15,13 @@ executors:
     working_directory: ~/tmp/
 
 commands:
+  replace_cred:
+    steps:
+      - run:
+          name: 'Add credentials for cloning properly via HTTPS instead of SSH'
+          command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
+            sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
+
   rsync:
     description: "A simple encapsulation of doing a rsync"
     parameters:

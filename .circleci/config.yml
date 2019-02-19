@@ -4,7 +4,7 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: germade/node:0.1.1
+        - image: germade/node:0.1.2
         working_directory: ~/repo
 
     deploy_rsync_box:
@@ -67,7 +67,7 @@ commands:
                     aws s3 sync --acl private \
                         --cache-control "private, max-age:3600"\
                         <<# parameters.overwrite >> --delete<</ parameters.overwrite >>\
-                        << parameters.src >> s3://<< parameters.bucket_name >>/<< parameters.dest >>;
+                        "<< parameters.src >>" "s3://<< parameters.bucket_name >>/<< parameters.dest >>";
 
     s3_file:
         description: "Parametrized single file deploy to S3"
@@ -89,11 +89,11 @@ commands:
                 name: "Deploying file to S3: << parameters.src >> > s3:<< parameters.bucket_name >>/<< parameters.dest >>"
                 command: |
                     aws s3api put-object --acl private \
-                        --bucket << parameters.bucket_name >> \
+                        --bucket "<< parameters.bucket_name >>" \
                         --cache-control "<< parameters.cache_control >>" \
                         --content-type "<< parameters.content_type >>" \
-                        --key << parameters.dest >> \
-                        --body << parameters.src >>;
+                        --key "<< parameters.dest >>" \
+                        --body "<< parameters.src >>";
 
 jobs:
     build:

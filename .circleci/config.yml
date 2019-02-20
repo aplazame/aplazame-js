@@ -44,7 +44,7 @@ commands:
         - run:
             name: Gathering the public SSH
             command: ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts
-            
+
         - run:
             name: RSync Deploy
             command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
@@ -205,7 +205,7 @@ workflows:
             - rsync:
                 folder: public
                 host: demo.aplazame.org
-                dest: ~/www/frontend/demo-demo
+                dest: ~/www/demo-demo
 
             filters:
                 branches:

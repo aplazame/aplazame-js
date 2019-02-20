@@ -4,17 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: aplazame/alpine:0.1.5-node
+        - image: aplazame/alpine:0.1.6-node
         working_directory: ~/repo
 
     deploy_rsync_box:
         docker:
-        - image: aplazame/alpine:0.1.5-rsync
+        - image: aplazame/alpine:0.1.6-rsync
         working_directory: ~/tmp/
     
     deploy_s3_box:
         docker:
-        - image: aplazame/alpine:0.1.5-aws
+        - image: aplazame/alpine:0.1.6-aws
         working_directory: /tmp/workspace
 
 commands:
@@ -172,6 +172,8 @@ workflows:
                 dest: ~/www/demo-demo
 
             filters:
+                tags:
+                    ignore: /.*/
                 branches:
                     only:
                     - demo
@@ -194,6 +196,8 @@ workflows:
                 dest: ~/www/frontend/demo-site
 
             filters:
+                tags:
+                    ignore: /.*/
                 branches:
                     only:
                     - master
@@ -215,6 +219,8 @@ workflows:
                 dest: ~/www/frontend/demo-site
 
             filters:
+                tags:
+                    ignore: /.*/
                 branches:
                     only:
                     - release
@@ -237,10 +243,35 @@ workflows:
                 cache_control: no-cache, no-store
             
             filters:
+                tags:
+                    ignore: /.*/
                 branches:
                     only:
                     - master
                     - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+
+        - s3_deploy:
+            requires:
+                - build
+
+            do_deploy:
+            - s3_folder:
+                bucket_name: cdn.aplazame.com
+                src: public/dist/widgets
+                dest: widgets
+            
+            - s3_file:
+                bucket_name: cdn.aplazame.com
+                src: dist/aplazame.min.js
+                dest: aplazame.js
+                content_type: application/javascript
+                cache_control: no-cache, no-store
+            
+            filters:
+                tags:
+                    only: /^v.*/
+                branches:
+                    ignore: /.*/
 
       
 

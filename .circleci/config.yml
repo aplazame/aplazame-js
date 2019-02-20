@@ -4,17 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: germade/alpine:0.1.3-node
+        - image: germade/alpine:0.1.5-node
         working_directory: ~/repo
 
     deploy_rsync_box:
         docker:
-        - image: germade/alpine:0.1.4-rsync
+        - image: germade/alpine:0.1.5-rsync
         working_directory: ~/tmp/
     
     deploy_s3_box:
         docker:
-        - image: germade/alpine:0.1.3-aws
+        - image: germade/alpine:0.1.5-aws
         working_directory: /tmp/workspace
 
 commands:
@@ -245,8 +245,8 @@ workflows:
             
             - s3_file:
                 bucket_name: cdn-dev.aplazame.com
-                src: public/dist/aplazame.min.js
-                dest: aplazame-js/aplazame.js
+                src: dist/aplazame.min.js
+                dest: aplazame.js
                 content_type: application/javascript
                 cache_control: no-cache, no-store
             

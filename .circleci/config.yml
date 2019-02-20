@@ -106,9 +106,9 @@ jobs:
         # Download and cache dependencies
         - restore_cache:
             keys:
-            - node_10-alpine-{{ checksum "package.json" }}
+            - node10-alpine-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
-            - node_10-alpine-
+            - node10-alpine-
 
         - run:
             name: Build application
@@ -118,7 +118,7 @@ jobs:
         - save_cache:
             paths:
                 - node_modules
-            key: node_10-alpine-{{ checksum "package.json" }}
+            key: node10-alpine-{{ checksum "package.json" }}
         
         - persist_to_workspace:
             root: ./

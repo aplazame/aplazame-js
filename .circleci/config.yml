@@ -9,7 +9,7 @@ executors:
 
     deploy_rsync_box:
         docker:
-        - image: germade/alpine:0.1.3-rsync
+        - image: germade/alpine:0.1.4-rsync
         working_directory: ~/tmp/
     
     deploy_s3_box:
@@ -41,10 +41,6 @@ commands:
                 type: boolean
                 default: true
         steps:
-        - run:
-            name: Install openssh-client
-            command: apk add --update openssh-client rsync
-
         - run:
             name: RSync Deploy
             # command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"

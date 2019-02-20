@@ -4,17 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: germade/alpine:0.1.5-node
+        - image: aplazame/alpine:0.1.0-node
         working_directory: ~/repo
 
     deploy_rsync_box:
         docker:
-        - image: germade/alpine:0.1.5-rsync
+        - image: aplazame/alpine:0.1.0-rsync
         working_directory: ~/tmp/
     
     deploy_s3_box:
         docker:
-        - image: germade/alpine:0.1.5-aws
+        - image: aplazame/alpine:0.1.0-aws
         working_directory: /tmp/workspace
 
 commands:

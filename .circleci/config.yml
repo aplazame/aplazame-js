@@ -49,7 +49,7 @@ commands:
             name: RSync Deploy
             # command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
             command: >
-                ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts
+                ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts; \
                 rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
 
     s3_folder:

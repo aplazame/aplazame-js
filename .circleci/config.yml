@@ -242,7 +242,7 @@ workflows:
             - s3_folder:
                 bucket_name: cdn-dev.aplazame.com
                 src: public/dist/widgets
-                dest: aplazame-js/widgets
+                dest: widgets
             
             - s3_file:
                 bucket_name: cdn-dev.aplazame.com

@@ -42,6 +42,10 @@ commands:
                 default: true
         steps:
         - run:
+            name: Install openssh-client
+            command: apk add --update openssh-client
+
+        - run:
             name: RSync Deploy
             # command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
             command: >

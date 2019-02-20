@@ -42,11 +42,12 @@ commands:
                 default: true
         steps:
         - run:
+            name: Gathering the public SSH
+            command: ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts
+            
+        - run:
             name: RSync Deploy
-            # command: echo "rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>"
-            command: >
-                ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts;
-                rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
+            command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
 
     s3_folder:
         description: "Parametrized folder deploy to S3"

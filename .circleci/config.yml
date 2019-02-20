@@ -43,7 +43,7 @@ commands:
         steps:
         - run:
             name: Install openssh-client
-            command: apk add --update openssh-client
+            command: apk add --update openssh-client rsync
 
         - run:
             name: RSync Deploy

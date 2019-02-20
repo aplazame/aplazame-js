@@ -4,17 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: aplazame/alpine:0.1.2-node
+        - image: aplazame/alpine:0.1.5-node
         working_directory: ~/repo
 
     deploy_rsync_box:
         docker:
-        - image: aplazame/alpine:0.1.2-rsync
+        - image: aplazame/alpine:0.1.5-rsync
         working_directory: ~/tmp/
     
     deploy_s3_box:
         docker:
-        - image: aplazame/alpine:0.1.2-aws
+        - image: aplazame/alpine:0.1.5-aws
         working_directory: /tmp/workspace
 
 commands:
@@ -167,6 +167,21 @@ workflows:
                 - build
             then:
             - rsync:
+                folder: public
+                host: demo.aplazame.org
+                dest: ~/www/demo-demo
+
+            filters:
+                branches:
+                    only:
+                    - demo
+                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+        
+        - rsync_deploy:
+            requires:
+                - build
+            then:
+            - rsync:
                 folder: dist
                 user: $DEPLOY_USER_DEV
                 host: deploy-dev.aplazame.org
@@ -182,21 +197,6 @@ workflows:
                 branches:
                     only:
                     - master
-
-        - rsync_deploy:
-            requires:
-                - build
-            then:
-            - rsync:
-                folder: public
-                host: demo.aplazame.org
-                dest: ~/www/demo-demo
-
-            filters:
-                branches:
-                    only:
-                    - demo
-                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
 
         - rsync_deploy:
             requires:
@@ -239,6 +239,7 @@ workflows:
             filters:
                 branches:
                     only:
+                    - master
                     - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
 
       

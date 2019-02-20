@@ -4,17 +4,17 @@ version: 2.1
 executors:
     build_box:
         docker:
-        - image: aplazame/alpine:0.1.0-node
+        - image: aplazame/alpine:0.1.3-node
         working_directory: ~/repo
 
     deploy_rsync_box:
         docker:
-        - image: aplazame/alpine:0.1.0-rsync
+        - image: aplazame/alpine:0.1.3-rsync
         working_directory: ~/tmp/
     
     deploy_s3_box:
         docker:
-        - image: aplazame/alpine:0.1.0-aws
+        - image: aplazame/alpine:0.1.3-aws
         working_directory: /tmp/workspace
 
 commands:
@@ -106,9 +106,9 @@ jobs:
         # Download and cache dependencies
         - restore_cache:
             keys:
-            - node-10-alpine-{{ checksum "package.json" }}
+            - node_10-alpine-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
-            - node-10-alpine-
+            - node_10-alpine-
 
         - run:
             name: Build application
@@ -118,7 +118,7 @@ jobs:
         - save_cache:
             paths:
                 - node_modules
-            key: node-10-alpine-{{ checksum "package.json" }}
+            key: node_10-alpine-{{ checksum "package.json" }}
         
         - persist_to_workspace:
             root: ./

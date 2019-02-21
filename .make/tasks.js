@@ -65,6 +65,7 @@ module.exports = function (nitro) {
   nitro.task('live', ['dev'], function () {
     nitro.server({
        root: 'public',
+       port: 8088,
        openInBrowser: true,
        dirAlias: {
          'dist': 'dist'

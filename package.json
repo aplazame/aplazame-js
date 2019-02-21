@@ -46,7 +46,7 @@
     "eslint": "4.19.1",
     "git-rev-sync": "1.12.0",
     "mocha": "5.2.0",
-    "nitro": "2.2.10",
+    "nitro": "2.2.13",
     "node-sass": "4.9.0",
     "rollup": "^0.66.6",
     "rollup-plugin-commonjs": "^9.2.0",

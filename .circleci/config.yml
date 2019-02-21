@@ -47,7 +47,7 @@ commands:
 
         - run:
             name: RSync Deploy
-            command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> /tmp/workspace/<< parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
+            command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> << parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
 
     s3_folder:
         description: "Parametrized folder deploy to S3"

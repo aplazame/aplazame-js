@@ -29,10 +29,7 @@ module.exports = function (nitro) {
 
   nitro.task('dev', ['git.branch', 'lint', 'clear:build', 'widgets-dev', 'js:dev', 'demo-dev', 'loading:dev'], function () {
 
-    // if( !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
-    // if( !nitro.file.exists('public/dist') ) nitro.dir.copy('dist', 'public/dist');
-
-    nitro.watch('dist', ['public-dist']);
+    if( !nitro.file.exists('public/dist') ) nitro.symlink('public/dist', '../dist');
 
     nitro.watch('src')
       .when('{,**/}*.js', ['lint', 'js:dev'])

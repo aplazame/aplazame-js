@@ -36,6 +36,7 @@ test-tools:
 build: install test
 	@echo "running make build"
 	node make build
+	cp -r dist public
 
 dev: install
 	node make dev

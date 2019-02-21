@@ -10,7 +10,7 @@ executors:
     deploy_rsync_box:
         docker:
         - image: aplazame/alpine:0.1.6-rsync
-        working_directory: ~/tmp/
+        working_directory: /tmp/workspace
     
     deploy_s3_box:
         docker:
@@ -134,8 +134,8 @@ jobs:
                 type: steps
                 default: []
         steps:
-        - attach_workspace:
-            at: /tmp/workspace
+        # - attach_workspace:
+        #     at: /tmp/workspace
 
         - add_ssh_keys
 
@@ -149,8 +149,8 @@ jobs:
                 type: steps
                 default: []
         steps:
-        - attach_workspace:
-            at: /tmp/workspace
+        # - attach_workspace:
+        #     at: /tmp/workspace
 
         - steps: << parameters.do_deploy >>
 

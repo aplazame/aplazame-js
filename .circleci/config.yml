@@ -134,8 +134,8 @@ jobs:
                 type: steps
                 default: []
         steps:
-        # - attach_workspace:
-        #     at: /tmp/workspace
+        - attach_workspace:
+            at: /tmp/workspace
 
         - add_ssh_keys
 
@@ -149,8 +149,8 @@ jobs:
                 type: steps
                 default: []
         steps:
-        # - attach_workspace:
-        #     at: /tmp/workspace
+        - attach_workspace:
+            at: /tmp/workspace
 
         - steps: << parameters.do_deploy >>
 

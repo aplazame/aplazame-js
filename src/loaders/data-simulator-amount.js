@@ -20,11 +20,19 @@ var cms_price_selector = [
 var cms_qty_selector = [
   'form#product_addtocart_form input[name="qty"]', // magento
   'form#buy_block input[name="qty"]', // prestashop
+  'input#quantity_wanted', // prestashop
   '#quantity_wanted', // prestashop
   'form#product-options-form button[data-id=qty]', // custom
   '#main [itemtype="http://schema.org/Product"] form.cart input[name="quantity"]', // woocommerce
   'body.woocommerce-page form.cart input[name="quantity"]', // woocommerce
 ];
+
+function _matchFirstQuerySelector (query_seletors) {
+  for( var i = 0, n = query_seletors.length, matched_el ; i < n ; i++ ) {
+    matched_el = document.querySelector(query_seletors[i]);
+    if( matched_el ) return matched_el;
+  }
+}
 
 function _$ (el, selector) {
   if( typeof el === 'string' ) return document.querySelector(el);
@@ -37,8 +45,12 @@ function _getQty (qty_selector, show_warning) {
   //   return 1;
   // }
   var qty_el;
+
+  if( typeof qty_selector === 'string' ) qty_selector = qty_selector.split(/ *, */);
+  if( !(qty_selector instanceof Array) ) return 1;
+
   try {
-    qty_el = document.querySelector(qty_selector);
+    qty_el = _matchFirstQuerySelector(qty_selector);
   } catch(err) {
     if(show_warning) log(err.message + '\ndata-qty should be an string. pe: form#article .final-price ');
     return 1;
@@ -46,11 +58,11 @@ function _getQty (qty_selector, show_warning) {
 
   if( !qty_el ) return 1;
 
-  switch( qty_el.nodeName.toLowerCase() ) {
-    case 'input':
+  switch( qty_el.nodeName ) {
+    case 'INPUT':
       return Number( qty_el.value );
-    case 'select':
-      return _$(qty_el, 'option[selected]') && Number( _$(qty_el, 'option[selected]').value ) || 1;
+    case 'SELECT':
+      return _$(qty_el, 'option[selected]') && Number( _$(qty_el, 'option[selected]').value );
     default:
       return Number( qty_el.textContent.trim() );
   }
@@ -60,10 +72,10 @@ export function qtyGetter (widget_el) {
   var qty_selector = widget_el.getAttribute('data-qty'),
       show_warning = typeof qty_selector === 'string';
 
-  if( !qty_selector ) qty_selector = cms_qty_selector.join(', ');
+  // if( !qty_selector ) qty_selector = cms_qty_selector.join(', ');
 
   return function () {
-    return _getQty(qty_selector, show_warning);
+    return _getQty(qty_selector || cms_qty_selector, show_warning) || 1;
   };
 }
 
@@ -74,7 +86,7 @@ function _matchSelector (selector) {
 function _getAmount (price_selector) {
   var price_el;
   try {
-    price_el = document.querySelector( price_selector );
+    price_el = _matchFirstQuerySelector(price_selector);
   } catch(err) {}
 
   if( !price_el ) return null;
@@ -125,21 +137,36 @@ export function amountGetter (widget_el) {
       last_price_amount = null;
 
   if( !price_selector ) {
-    price_selector = _.find(cms_price_selector, _matchSelector);
+    var price_selector_tmp = _.find(cms_price_selector, _matchSelector);
 
-    if( price_selector ) log('auto-discovered price selector', price_selector);
+    if( price_selector_tmp ) log('auto-discovered price selector', price_selector_tmp);
   }
 
-  return price_selector ? function () {
-    var amount_result = _getAmount(price_selector);
+  if( typeof price_selector === 'string' ) price_selector = price_selector.split(/ *, */);
+
+  return function () {
+    var amount_result = _getAmount(price_selector || cms_price_selector);
+
     if( !amount_result ) return getDataAmount(widget_el);
+
     if( amount_result.price_el !== last_price_el || amount_result.amount !== last_price_amount ) {
       log('price read from', amount_result.price_el, amount_result.amount );
       last_price_el = amount_result.price_el;
       last_price_amount = amount_result.amount;
     }
     return amount_result.amount;
-  } : function () {
-    return getDataAmount(widget_el);
   };
+
+  // return price_selector ? function () {
+  //   var amount_result = _getAmount(price_selector);
+  //   if( !amount_result ) return getDataAmount(widget_el);
+  //   if( amount_result.price_el !== last_price_el || amount_result.amount !== last_price_amount ) {
+  //     log('price read from', amount_result.price_el, amount_result.amount );
+  //     last_price_el = amount_result.price_el;
+  //     last_price_amount = amount_result.amount;
+  //   }
+  //   return amount_result.amount;
+  // } : function () {
+  //   return getDataAmount(widget_el);
+  // };
 }

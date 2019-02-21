@@ -12,6 +12,8 @@ import cssHack from '../tools/css-hack';
 import log from '../tools/log';
 import viewportInfo from './viewport-info';
 
+import checkoutAB from './checkout-ab';
+
 import flag_svg_es from '../templates/flag-es.svg';
 import flag_svg_mx from '../templates/flag-mx.svg';
 
@@ -55,6 +57,8 @@ function checkout (_checkout_data, _callbacks) {
   viewport_hack.name = 'viewport';
   viewport_hack.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
   document.head.appendChild(viewport_hack);
+
+  var checkout_url = checkoutAB(api.checkout_url);
 
   var css_logo = cssHack('logo'),
       css_overlay = cssHack('overlay'),
@@ -118,7 +122,7 @@ function checkout (_checkout_data, _callbacks) {
 
   var ajax_confirmation_url = null;
   // var loading_app = loadIframeCheckout('https://checkout.aplazame.com/will-fail/', {
-  var loading_app = loadIframeCheckout(api.checkout_url, {
+  var loading_app = loadIframeCheckout(checkout_url, {
     ajaxConfirm: function (data, params) {
       return _ajaxConfirm(ajax_confirmation_url, data, params);
     },

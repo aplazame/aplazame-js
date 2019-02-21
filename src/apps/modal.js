@@ -56,9 +56,13 @@ _.onMessage('modal', function (e, message) {
       modal(message.data);
       break;
     case 'opening':
-      modal.iframe.style.display = _.remove_style;
+      // modal.iframe.style.display = _.remove_style;
+      modal.iframe.style.height = '';
+      modal.iframe.className += ' _is-ready';
       break;
     case 'opened':
+      modal.iframe.style.height = '';
+      modal.iframe.className += ' _is-ready';
       last_scroll_top = _.scroll.top();
       e.source.postMessage({
         aplazame: 'modal',

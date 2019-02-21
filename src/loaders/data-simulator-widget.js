@@ -72,6 +72,7 @@ export default function (aplazame) {
     widget.simulator_data = simulator_data;
     simulator_data.choices = choices;
 
+
     if( widget.simulator ) {
       simulator_data.choice = (function (choices, num_instalments) {
 
@@ -84,6 +85,9 @@ export default function (aplazame) {
       })(choices, widget.simulator.choice.num_instalments);
     } else {
       simulator_data.choice = choices[choices.length - 1];
+      choices.forEach(function (_choice) {
+        if( _choice.annual_equivalent < widget.simulator_data.data.annual_equivalent ) simulator_data.choice = _choice;
+      });
       // widget.simulator = Object.create(simulator_data);
       widget.simulator = (function () {
         function SimulatorData () {}
@@ -96,10 +100,7 @@ export default function (aplazame) {
       widget.simulator.lighten = color_tools.lightenHEX;
       widget.simulator.brightness = color_tools.brightness;
     }
-
-    simulator_data.zero_interest_campaign = choices.some(function (choice) {
-      return choice.annual_equivalent === 0;
-    });
+    simulator_data.zero_interest_campaign = (simulator_data.choice.annual_equivalent === 0);
 
     widget.handler = (function (_initWidgetHandler) {
 
@@ -122,6 +123,10 @@ export default function (aplazame) {
 
     if( widget.simulator_data.preferences.disable_modal ) return;
 
+    var highlighted_num_instalments = choices.filter(function( choice ){
+      return data.highlighted_num_instalments.indexOf( choice.num_instalments ) > -1;
+    });
+
     modal({
       size: 'lg',
       card: { className: 'has-cta modal-instalments-info _v3' },
@@ -131,6 +136,7 @@ export default function (aplazame) {
         merchant_annual_equivalent: data.annual_equivalent || choices.reduce(maxAnnualEquivalent, null).annual_equivalent,
         reference_annual_equivalent: data.reference_annual_equivalent,
         choices: choices,
+        highlighted_num_instalments: highlighted_num_instalments,
         data: data,
         static_url: api.static_url,
         _options: widget.options,

@@ -1,6 +1,6 @@
 {
   "name": "aplazame",
-  "version": "0.0.493",
+  "version": "0.0.513",
   "description": "javascript sdk for aplazame.com api",
   "main": "dist/aplazame.min.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "browserify": "^16.2.3",
     "http-rest": "1.0.10",
     "live-dom": "1.6.13",
-    "ng-aplazame": "git+ssh://git@github.com/aplazame/ng-aplazame.git#v0.3.204",
+    "ng-aplazame": "git+ssh://git@github.com/aplazame/ng-aplazame.git#v0.3.298",
     "nitro-tools": "0.2.4",
     "parole": "1.1.24",
     "rollup-plugin-ejs": "^1.1.1",
@@ -46,7 +46,7 @@
     "eslint": "5.8.0",
     "git-rev-sync": "1.12.0",
     "mocha": "5.2.0",
-    "nitro": "2.2.12",
+    "nitro": "2.2.13",
     "node-sass": "4.9.4",
     "rollup": "^0.66.6",
     "rollup-plugin-commonjs": "9.2.0",

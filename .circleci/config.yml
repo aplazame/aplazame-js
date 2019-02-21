@@ -1,0 +1,279 @@
+
+version: 2.1
+
+executors:
+    build_box:
+        docker:
+        - image: aplazame/alpine:0.1.6-node
+        working_directory: ~/repo
+
+    deploy_rsync_box:
+        docker:
+        - image: aplazame/alpine:0.1.6-rsync
+        working_directory: /tmp/workspace
+    
+    deploy_s3_box:
+        docker:
+        - image: aplazame/alpine:0.1.6-aws
+        working_directory: /tmp/workspace
+
+commands:
+    replace_cred:
+        steps:
+        - run:
+            name: 'Add credentials for cloning properly via HTTPS instead of SSH'
+            command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
+                    sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
+
+    rsync:
+        description: "A simple encapsulation of doing a rsync"
+        parameters:
+            folder:
+                type: string
+            user:
+                type: string
+                default: ubuntu
+            host:
+                type: string
+            dest:
+                type: string
+            overwrite:
+                type: boolean
+                default: true
+        steps:
+        - run:
+            name: Gathering the public SSH
+            command: ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts
+
+        - run:
+            name: RSync Deploy
+            command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> << parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
+
+    s3_folder:
+        description: "Parametrized folder deploy to S3"
+        parameters:
+            bucket_name:
+                type: string
+            src:
+                type: string
+            dest:
+                type: string
+            overwrite:
+                type: boolean
+                default: true
+        steps:
+            - run:
+                name: "Deploying folder to s3: << parameters.src >> > s3:<< parameters.bucket_name >>/<< parameters.dest >>"
+                command: |
+                    aws s3 sync --acl private \
+                        --cache-control "private, max-age:3600" \
+                        <<# parameters.overwrite >>--delete <</ parameters.overwrite >>\
+                        "<< parameters.src >>" "s3://<< parameters.bucket_name >>/<< parameters.dest >>";
+
+    s3_file:
+        description: "Parametrized single file deploy to S3"
+        parameters:
+            bucket_name:
+                type: string
+            src:
+                type: string
+            dest:
+                type: string
+                default: ""
+            content_type:
+                type: string
+            cache_control:
+                type: string
+                default: private, max-age:3600
+        steps:
+            - run:
+                name: "Deploying file to s3: << parameters.src >> > s3:<< parameters.bucket_name >>/<< parameters.dest >>"
+                command: |
+                    aws s3api put-object --acl private \
+                        --bucket "<< parameters.bucket_name >>" \
+                        --cache-control "<< parameters.cache_control >>" \
+                        --content-type "<< parameters.content_type >>" \
+                        --key "<< parameters.dest >>" \
+                        --body "<< parameters.src >>";
+
+jobs:
+    build:
+        executor: build_box
+        steps:
+        - checkout
+        - replace_cred
+
+        # Download and cache dependencies
+        - restore_cache:
+            keys:
+            - node10-alpine-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - node10-alpine-
+
+        - run:
+            name: Build application
+            command: make build | sed 's/[[:alnum:]]*:x-oauth-basic//g'
+            # command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
+
+        - save_cache:
+            paths:
+                - node_modules
+            key: node10-alpine-{{ checksum "package.json" }}
+        
+        - persist_to_workspace:
+            root: ./
+            paths:
+                - public
+                - dist
+
+    rsync_deploy:
+        executor: deploy_rsync_box
+        parameters:
+            then:
+                description: commands executed after rsync setup
+                type: steps
+                default: []
+        steps:
+        - attach_workspace:
+            at: /tmp/workspace
+
+        - add_ssh_keys
+
+        - steps: << parameters.then >>
+
+    s3_deploy:
+        executor: deploy_s3_box
+        parameters:
+            do_deploy:
+                description: commands to be executed after for S3 deploy
+                type: steps
+                default: []
+        steps:
+        - attach_workspace:
+            at: /tmp/workspace
+
+        - steps: << parameters.do_deploy >>
+
+
+workflows:
+    version: 2
+
+    build_and_deploy:
+        jobs:
+        - build
+
+        - rsync_deploy:
+            requires:
+                - build
+            then:
+            - rsync:
+                folder: public
+                host: demo.aplazame.org
+                dest: ~/www/demo-demo
+
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - demo
+                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+        
+        - rsync_deploy:
+            requires:
+                - build
+            then:
+            - rsync:
+                folder: dist
+                user: $DEPLOY_USER_DEV
+                host: deploy-dev.aplazame.org
+                dest: ~/www/frontend/aplazame-js
+
+            - rsync:
+                folder: public
+                user: $DEPLOY_USER_DEV
+                host: deploy-dev.aplazame.org
+                dest: ~/www/frontend/demo-site
+
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - master
+
+        - rsync_deploy:
+            requires:
+                - build
+            then:
+            - rsync:
+                folder: dist
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/aplazame-js
+
+            - rsync:
+                folder: public
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/demo-site
+
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - release
+
+        - s3_deploy:
+            requires:
+                - build
+
+            do_deploy:
+            - s3_folder:
+                bucket_name: cdn-dev.aplazame.com
+                src: public/dist/widgets
+                dest: widgets
+            
+            - s3_file:
+                bucket_name: cdn-dev.aplazame.com
+                src: dist/aplazame.min.js
+                dest: aplazame.js
+                content_type: application/javascript
+                cache_control: no-cache, no-store
+            
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - master
+                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+
+        - s3_deploy:
+            requires:
+                - build
+
+            do_deploy:
+            - s3_folder:
+                bucket_name: cdn.aplazame.com
+                src: public/dist/widgets
+                dest: widgets
+            
+            - s3_file:
+                bucket_name: cdn.aplazame.com
+                src: dist/aplazame.min.js
+                dest: aplazame.js
+                content_type: application/javascript
+                cache_control: no-cache, no-store
+            
+            filters:
+                tags:
+                    only: /^v.*/
+                branches:
+                    ignore: /.*/
+
+      
+
+
+

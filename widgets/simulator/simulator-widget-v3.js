@@ -1,9 +1,11 @@
 
 import _renderWidget from './templates/widget-v3.ejs';
+import _ from '../../src/tools/tools';
 
 export default function (widget) {
 
   var widget_el = widget.el,
+      widget_wrapper_el,
       click_el = widget_el,
       remove_style = / Trident\//.test(navigator.userAgent) ? '' : null,
       textSelector = function (selector, text) {
@@ -11,6 +13,7 @@ export default function (widget) {
       },
       selectNumInstalmentsChoice = function (choice) {
         widget.simulator.choice = choice;
+        textSelector('.aplazame-widget-smart-title', _titleByTaxes(choice) );
         textSelector('.aplazame-widget-price', widget.simulator.getAmount(choice.amount) );
         textSelector('.aplazame-widget-instalments-num', choice.num_instalments );
         textSelector('.aplazame-widget-choice-button-value', choice.num_instalments );
@@ -32,7 +35,9 @@ export default function (widget) {
         };
 
         document.head.appendChild(styles_link);
-      };
+      },
+      title_zero_interest = widget.simulator.preferences.title_zero_interest || '¡Consíguelo sin intereses!',
+      title_default = widget.simulator.preferences.title_default || 'Págalo a plazos';
 
 
   if( !widget.simulator.preferences.custom_styles || widget.type !== 'text' ) {
@@ -42,6 +47,10 @@ export default function (widget) {
       window.addEventListener('load', _onReady);
       window.addEventListener('DOMContentLoaded', _onReady);
     }
+  }
+
+  function _titleByTaxes(choice){
+    return choice.annual_equivalent === 0 ? title_zero_interest : title_default
   }
 
   function _onClick () {
@@ -55,12 +64,18 @@ export default function (widget) {
   function _increaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index + 1];
+
+    _.toggleClass(widget_wrapper_el, '_first-choice', 0 >= index + 1 );
+    _.toggleClass(widget_wrapper_el, '_last-choice', widget.simulator.choices.length-1 <= index + 1 );
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
   function _decreaseNumInstalments () {
     var index = widget.simulator.choices.indexOf(widget.simulator.choice),
         choice = widget.simulator.choices[index - 1];
+
+    _.toggleClass(widget_wrapper_el, '_first-choice', 0 >= index - 1 );
+    _.toggleClass(widget_wrapper_el, '_last-choice', widget.simulator.choices.length-1 <= index - 1 );
     if( choice ) selectNumInstalmentsChoice(choice);
   }
 
@@ -83,12 +98,17 @@ export default function (widget) {
       _unbind();
       var type = widget.simulator.type;
       widget_el.innerHTML = _renderWidget(widget.simulator);
+      widget_wrapper_el = widget.el.querySelector('.aplazame-widget');
 
       if( type === 'select' ) {
         return widget_el.querySelector('select').addEventListener('change', _selectChange);
       }
 
       if( type === 'big-button' ) {
+        var index = widget.simulator.choices.indexOf(widget.simulator.choice);
+        _.toggleClass(widget_wrapper_el, '_last-choice',  widget.simulator.choices.length-1 <= index );
+        _.toggleClass(widget_wrapper_el, '_first-choice',  0 >= index );
+
         widget_el.querySelector('.aplazame-widget-choice-button-decrease').addEventListener('click', _decreaseNumInstalments);
         widget_el.querySelector('.aplazame-widget-choice-button-increase').addEventListener('click', _increaseNumInstalments);
         return;

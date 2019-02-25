@@ -62,7 +62,7 @@ workflows:
             do_deploy:
             - rsync/folder:
                 src: public
-                user: ubuntu
+                user: $DEPLOY_USER_DEV
                 host: demo.aplazame.org
                 dest: ~/www/demo-demo
 

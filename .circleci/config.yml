@@ -9,9 +9,11 @@ jobs:
     build:
         docker:
         - image: aplazame/alpine:0.1.6-node
+
         working_directory: ~/repo
 
         steps:
+
         - checkout
 
         - run:
@@ -52,7 +54,9 @@ workflows:
         - rsync/deploy:
             requires:
                 - build
+
             do_deploy:
+
             - rsync/folder:
                 src: public
                 user: $DEPLOY_USER_DEV
@@ -70,7 +74,9 @@ workflows:
         - rsync/deploy:
             requires:
                 - build
+
             do_deploy:
+
             - rsync/folder:
                 src: dist
                 user: $DEPLOY_USER_DEV
@@ -93,7 +99,9 @@ workflows:
         - rsync/deploy:
             requires:
                 - build
+
             do_deploy:
+
             - rsync/folder:
                 src: dist
                 user: $DEPLOY_USER_PROD
@@ -118,6 +126,7 @@ workflows:
                 - build
 
             do_deploy:
+
             - s3/folder:
                 bucket_name: cdn-dev.aplazame.com
                 src: public/dist/widgets
@@ -143,6 +152,7 @@ workflows:
                 - build
 
             do_deploy:
+
             - s3/folder:
                 bucket_name: cdn.aplazame.com
                 src: public/dist/widgets
@@ -160,8 +170,3 @@ workflows:
                     only: /^v.*/
                 branches:
                     ignore: /.*/
-
-      
-
-
-

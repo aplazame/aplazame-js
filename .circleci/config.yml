@@ -2,8 +2,8 @@
 version: 2.1
 
 orbs:
-    rsync: aplazame/rsync@0.0.5
-    s3: aplazame/s3@0.0.5
+    rsync: aplazame/rsync@0.0.6
+    s3: aplazame/s3@0.0.6
 
 executors:
     build_box:

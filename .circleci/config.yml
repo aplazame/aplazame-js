@@ -2,8 +2,8 @@
 version: 2.1
 
 orbs:
-    rsync: aplazame/rsync@0.0.2
-    s3: aplazame/s3@0.0.2
+    rsync: aplazame/rsync@0.0.3
+    s3: aplazame/s3@0.0.3
 
 executors:
     build_box:
@@ -59,9 +59,9 @@ workflows:
         - rsync/deploy:
             requires:
                 - build
-            then:
-            - rsync:
-                folder: public
+            do_deploy:
+            - rsync/folder:
+                src: public
                 user: ubuntu
                 host: demo.aplazame.org
                 dest: ~/www/demo-demo
@@ -77,15 +77,15 @@ workflows:
         - rsync/deploy:
             requires:
                 - build
-            then:
-            - rsync:
-                folder: dist
+            do_deploy:
+            - rsync/folder:
+                src: dist
                 user: $DEPLOY_USER_DEV
                 host: deploy-dev.aplazame.org
                 dest: ~/www/frontend/aplazame-js
 
-            - rsync:
-                folder: public
+            - rsync/folder:
+                src: public
                 user: $DEPLOY_USER_DEV
                 host: deploy-dev.aplazame.org
                 dest: ~/www/frontend/demo-site
@@ -100,7 +100,7 @@ workflows:
         - rsync/deploy:
             requires:
                 - build
-            then:
+            do_deploy:
             - rsync:
                 folder: dist
                 user: $DEPLOY_USER_PROD

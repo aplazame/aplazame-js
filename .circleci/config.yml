@@ -1,21 +1,15 @@
 
 version: 2.1
 
+orbs:
+    rsync: aplazame/rsync@0.0.4
+    s3: aplazame/s3@0.0.4
+
 executors:
     build_box:
         docker:
         - image: aplazame/alpine:0.1.6-node
         working_directory: ~/repo
-
-    deploy_rsync_box:
-        docker:
-        - image: aplazame/alpine:0.1.6-rsync
-        working_directory: /tmp/workspace
-    
-    deploy_s3_box:
-        docker:
-        - image: aplazame/alpine:0.1.6-aws
-        working_directory: /tmp/workspace
 
 commands:
     replace_cred:
@@ -24,77 +18,6 @@ commands:
             name: 'Add credentials for cloning properly via HTTPS instead of SSH'
             command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
                     sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
-
-    rsync:
-        description: "A simple encapsulation of doing a rsync"
-        parameters:
-            folder:
-                type: string
-            user:
-                type: string
-                default: ubuntu
-            host:
-                type: string
-            dest:
-                type: string
-            overwrite:
-                type: boolean
-                default: true
-        steps:
-        - run:
-            name: Gathering the public SSH
-            command: ssh-keyscan << parameters.host >> >> ~/.ssh/known_hosts
-
-        - run:
-            name: RSync Deploy
-            command: rsync -rva<<# parameters.overwrite >> --delete<</ parameters.overwrite >> << parameters.folder >>/ << parameters.user >>@<< parameters.host >>:<< parameters.dest >>
-
-    s3_folder:
-        description: "Parametrized folder deploy to S3"
-        parameters:
-            bucket_name:
-                type: string
-            src:
-                type: string
-            dest:
-                type: string
-            overwrite:
-                type: boolean
-                default: true
-        steps:
-            - run:
-                name: "Deploying folder to s3: << parameters.src >> > s3:<< parameters.bucket_name >>/<< parameters.dest >>"
-                command: |
-                    aws s3 sync --acl private \
-                        --cache-control "private, max-age:3600" \
-                        <<# parameters.overwrite >>--delete <</ parameters.overwrite >>\
-                        "<< parameters.src >>" "s3://<< parameters.bucket_name >>/<< parameters.dest >>";
-
-    s3_file:
-        description: "Parametrized single file deploy to S3"
-        parameters:
-            bucket_name:
-                type: string
-            src:
-                type: string
-            dest:
-                type: string
-                default: ""
-            content_type:
-                type: string
-            cache_control:
-                type: string
-                default: private, max-age:3600
-        steps:
-            - run:
-                name: "Deploying file to s3: << parameters.src >> > s3:<< parameters.bucket_name >>/<< parameters.dest >>"
-                command: |
-                    aws s3api put-object --acl private \
-                        --bucket "<< parameters.bucket_name >>" \
-                        --cache-control "<< parameters.cache_control >>" \
-                        --content-type "<< parameters.content_type >>" \
-                        --key "<< parameters.dest >>" \
-                        --body "<< parameters.src >>";
 
 jobs:
     build:
@@ -126,35 +49,6 @@ jobs:
                 - public
                 - dist
 
-    rsync_deploy:
-        executor: deploy_rsync_box
-        parameters:
-            then:
-                description: commands executed after rsync setup
-                type: steps
-                default: []
-        steps:
-        - attach_workspace:
-            at: /tmp/workspace
-
-        - add_ssh_keys
-
-        - steps: << parameters.then >>
-
-    s3_deploy:
-        executor: deploy_s3_box
-        parameters:
-            do_deploy:
-                description: commands to be executed after for S3 deploy
-                type: steps
-                default: []
-        steps:
-        - attach_workspace:
-            at: /tmp/workspace
-
-        - steps: << parameters.do_deploy >>
-
-
 workflows:
     version: 2
 
@@ -162,12 +56,13 @@ workflows:
         jobs:
         - build
 
-        - rsync_deploy:
+        - rsync/deploy:
             requires:
                 - build
-            then:
-            - rsync:
-                folder: public
+            do_deploy:
+            - rsync/folder:
+                src: public
+                user: ubuntu
                 host: demo.aplazame.org
                 dest: ~/www/demo-demo
 
@@ -177,20 +72,20 @@ workflows:
                 branches:
                     only:
                     - demo
-                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+                    - circle-orbs
         
-        - rsync_deploy:
+        - rsync/deploy:
             requires:
                 - build
-            then:
-            - rsync:
-                folder: dist
+            do_deploy:
+            - rsync/folder:
+                src: dist
                 user: $DEPLOY_USER_DEV
                 host: deploy-dev.aplazame.org
                 dest: ~/www/frontend/aplazame-js
 
-            - rsync:
-                folder: public
+            - rsync/folder:
+                src: public
                 user: $DEPLOY_USER_DEV
                 host: deploy-dev.aplazame.org
                 dest: ~/www/frontend/demo-site
@@ -202,18 +97,18 @@ workflows:
                     only:
                     - master
 
-        - rsync_deploy:
+        - rsync/deploy:
             requires:
                 - build
-            then:
-            - rsync:
-                folder: dist
+            do_deploy:
+            - rsync/folder:
+                src: dist
                 user: $DEPLOY_USER_PROD
                 host: deploy-prod.aplazame.org
                 dest: ~/www/frontend/aplazame-js
 
-            - rsync:
-                folder: public
+            - rsync/folder:
+                src: public
                 user: $DEPLOY_USER_PROD
                 host: deploy-prod.aplazame.org
                 dest: ~/www/frontend/demo-site
@@ -225,17 +120,17 @@ workflows:
                     only:
                     - release
 
-        - s3_deploy:
+        - s3/deploy:
             requires:
                 - build
 
             do_deploy:
-            - s3_folder:
+            - s3/folder:
                 bucket_name: cdn-dev.aplazame.com
                 src: public/dist/widgets
                 dest: widgets
             
-            - s3_file:
+            - s3/file:
                 bucket_name: cdn-dev.aplazame.com
                 src: dist/aplazame.min.js
                 dest: aplazame.js
@@ -248,19 +143,19 @@ workflows:
                 branches:
                     only:
                     - master
-                    - jgermade/ch8484/sacar-archivos-estáticos-del-widget-y-aplazame
+                    - circle-orbs
 
-        - s3_deploy:
+        - s3/deploy:
             requires:
                 - build
 
             do_deploy:
-            - s3_folder:
+            - s3/folder:
                 bucket_name: cdn.aplazame.com
                 src: public/dist/widgets
                 dest: widgets
             
-            - s3_file:
+            - s3/file:
                 bucket_name: cdn.aplazame.com
                 src: dist/aplazame.min.js
                 dest: aplazame.js

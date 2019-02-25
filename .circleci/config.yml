@@ -102,13 +102,13 @@ workflows:
                 - build
             do_deploy:
             - rsync/folder:
-                folder: dist
+                src: dist
                 user: $DEPLOY_USER_PROD
                 host: deploy-prod.aplazame.org
                 dest: ~/www/frontend/aplazame-js
 
             - rsync/folder:
-                folder: public
+                src: public
                 user: $DEPLOY_USER_PROD
                 host: deploy-prod.aplazame.org
                 dest: ~/www/frontend/demo-site

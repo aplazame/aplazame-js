@@ -27,7 +27,7 @@ export default function (aplazame) {
         };
 
     widget_el.appendChild( iframe );
-    iframe.src = widget.simulator.static_url + 'widgets/simulator/simulator.html?' + _.now() + '&simulator=' + widget.id;
+    iframe.src = widget.simulator.widgets_base + 'simulator/simulator.html?' + _.now() + '&simulator=' + widget.id;
 
     _.onMessage('simulator', _onMessage);
 

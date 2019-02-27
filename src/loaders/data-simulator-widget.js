@@ -61,7 +61,7 @@ export default function (aplazame) {
 
     var simulator_data = widget.simulator_data || {
       version: widget_version,
-      static_url: api.static_url,
+      widgets_base: api.widgets_base,
       custom_styles: data.widget.styles,
       data: data,
       currency: widget.options.currency,
@@ -138,7 +138,7 @@ export default function (aplazame) {
         choices: choices,
         highlighted_num_instalments: highlighted_num_instalments,
         data: data,
-        static_url: api.static_url,
+        widgets_base: api.widgets_base,
         _options: widget.options,
         currency: widget.options.currency,
         country: widget.options.country,

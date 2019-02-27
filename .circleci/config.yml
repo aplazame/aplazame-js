@@ -2,8 +2,8 @@
 version: 2.1
 
 orbs:
-    rsync: aplazame/rsync@0.0.7
-    s3: aplazame/s3@0.0.7
+    rsync: aplazame/rsync@0.0.13
+    s3: aplazame/s3@0.0.13
 
 jobs:
     build:
@@ -136,7 +136,6 @@ workflows:
                 bucket_name: cdn-dev.aplazame.com
                 src: dist/aplazame.min.js
                 dest: aplazame.js
-                content_type: application/javascript
                 cache_control: no-cache, no-store
             
             filters:
@@ -162,7 +161,6 @@ workflows:
                 bucket_name: cdn.aplazame.com
                 src: dist/aplazame.min.js
                 dest: aplazame.js
-                content_type: application/javascript
                 cache_control: no-cache, no-store
             
             filters:

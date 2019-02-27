@@ -77,8 +77,8 @@ function _compileRollup (filepath, done) {
       // name: 'aplazame',
       strict: false,
     }).then(function (result) {
-      // console.log(result.code);
-      done(null, result.code);
+      // console.log('result.output', result.output[0].code);
+      done(null, result.output[0].code);
     }, function (reason) {
       done(reason);
     });

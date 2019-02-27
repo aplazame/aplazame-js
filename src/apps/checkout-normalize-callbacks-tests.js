@@ -12,17 +12,6 @@ var callbacks = {},
 
 describe('checkout callbacks normalizer', function () {
 
-  it('throw exception when merchant is not provided', function() {
-    var checkout = {};
-
-    assert.throws(
-      function () {
-        checkoutNormalizeCallbacks(checkout, callbacks, location);
-      },
-      /missing merchant parameters/
-    );
-  });
-
   it('minimum fields are provided', function() {
     var checkout = {
       merchant: {
@@ -36,7 +25,7 @@ describe('checkout callbacks normalizer', function () {
     on.success();
     assert.equal(location.href, '/success_url');
 
-    on.cancel();
+    on.error();
     assert.equal(location.href, '/cancel_url');
 
     on.dismiss();

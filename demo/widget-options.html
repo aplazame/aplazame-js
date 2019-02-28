@@ -202,12 +202,12 @@
       </div>
     </footer>
 
-    <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://aplazame.com/static/aplazame.js{/}"
+    <script type="text/javascript" src="$if{ git.branch !== 'release' }dist/aplazame.js?build=${build}{:}https://cdn.aplazame.com/aplazame.js{/}"
             data-aplazame="${ public_key }"
             data-sandbox="true"
             data-callback="apzReady"
             $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com/"{/}
-            $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-static-url="/dist/"{:}$if{ git.branch === 'master' }data-static-url="https://dev.aplazame.com/static/"{/}{/}
+            $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-widgets-base="/dist/widgets/"{:}$if{ git.branch === 'master' }data-widgets-base="https://cdn-dev.aplazame.com/widgets/"{/}{/}
             $if{ git.branch === 'demo' }data-checkout-url="/_checkout/checkout.html"{:}$if{ git.branch !== 'release' }data-checkout-url="https://checkout-dev.aplazame.com/"{/}{/}>
     </script>
 
@@ -219,7 +219,7 @@
     </script>
 
     <!-- alt version using url params:
-      <script type="text/javascript" src="$if{dotcom}https://aplazame.com/static/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
+      <script type="text/javascript" src="$if{dotcom}https://cdn.aplazame.com/aplazame.js?sandbox=true{:}dist/aplazame.js?build=${build}&sandbox=true{/}&publicKey=12093289b594f50d3971e4719eedd5c314ceb6ba$if{ git.branch !== 'release' }&host=${ encodeURI('https://api-dev.aplazame.com') }{/}&callback=apzReady"></script>
     -->
 
     <script type="text/javascript" src="/scripts/demo-article.js?build=${build}"></script>

@@ -29,7 +29,7 @@ export default function (widget) {
         window.removeEventListener('DOMContentLoaded', _onReady);
 
         styles_link.rel = 'stylesheet';
-        styles_link.href = widget.simulator.static_url + 'widgets/simulator/widget-v3.css';
+        styles_link.href = widget.simulator.widgets_base + 'simulator/widget-v3.css';
         styles_link.onload = function () {
           widget_el.style.display = remove_style;
         };

@@ -1,6 +1,14 @@
 
 import log from '../tools/log';
 
+function _getAttrParams (dest, el, _map) {
+  Object.keys(_map).forEach(function (_key) {
+    if( el.hasAttribute(_map[_key]) ) {
+      dest[_key] = el.getAttribute(_map[_key])
+    }
+  })
+}
+
 export default function (_, script) {
   log.debug('(aplazame.js) script' + ( script.hasAttribute('data-aplazame') ? '[data-aplazame]' : '' ), script );
 
@@ -26,31 +34,19 @@ export default function (_, script) {
     }
   }
 
-  if( script.hasAttribute('data-api-host') ) {
-    params.host = script.getAttribute('data-api-host');
-  }
-
-  if( script.hasAttribute('data-sandbox') ) {
-    params.sandbox = script.getAttribute('data-sandbox');
-  }
-
-  if( script.hasAttribute('data-static-url') ) {
-    params.static_url = script.getAttribute('data-static-url');
-  }
-
-  if( script.hasAttribute('data-checkout-url') ) {
-    params.checkout_url = script.getAttribute('data-checkout-url');
-  }
-
-  if( script.hasAttribute('data-callback') ) {
-    params.callback = script.getAttribute('data-callback');
-  }
+  _getAttrParams(params, script, {
+    host: 'data-api-host',
+    sandbox: 'data-sandbox',
+    widgets_base: 'data-widgets-base',
+    checkout_url: 'data-checkout-url',
+    callback: 'data-callback',
+  })
 
   if( params.sandbox ) {
-    params.sandbox = params.sandbox === 'true' || params.sandbox === '1';
+    params.sandbox = params.sandbox === 'true' || params.sandbox === '1'
   }
 
-  log('data-aplazame: params', params );
+  log('data-aplazame: params', params)
 
   return params;
 }

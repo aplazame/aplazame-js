@@ -137,6 +137,10 @@ workflows:
                 src: dist/aplazame.min.js
                 dest: aplazame.js
                 cache_control: no-cache, no-store
+
+            - s3/public:
+                bucket_name: demo-dev.aplazame.com
+                index: index.html
             
             filters:
                 tags:
@@ -162,6 +166,10 @@ workflows:
                 src: dist/aplazame.min.js
                 dest: aplazame.js
                 cache_control: no-cache, no-store
+
+            - s3/public:
+                bucket_name: demo.aplazame.com
+                index: index.html
             
             filters:
                 tags:

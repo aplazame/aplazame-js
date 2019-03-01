@@ -123,8 +123,8 @@ function whenAplazameReady () {
       _merchant.public_api_key = document.body.getAttribute('data-public-key')
       _merchant.sandbox = true
 
-      if( _merchant.confirmation_url && /^https?:\/api-demo\./.test(_merchant.confirmation_url) ) {
-        _merchant.confirmation_url = _merchant.confirmation_url.replace(/^https?:\/api-demo\./, 'https://api-demo-dev.')
+      if( _merchant.confirmation_url && /^https?:\/\/api-demo\./.test(_merchant.confirmation_url) ) {
+        _merchant.confirmation_url = _merchant.confirmation_url.replace(/^https?:\/\/api-demo\./, 'https://api-demo-dev.')
       }
 
       // data.merchant.onError = function () {

@@ -91,36 +91,41 @@ function whenAplazameReady () {
   }
 
   var matchOrderId = ( location.hash || '' ).match(/^#\/order\/([^&]*)/),
-      orderId = matchOrderId && matchOrderId[1];
+      orderId = matchOrderId && matchOrderId[1]
 
-  if( orderId === 'random' ) {
-    orderId = randOrderId();
-  }
+  if( orderId === 'random' ) orderId = randOrderId()
 
   window.loadCheckout = function () {
 
     checkoutData.then(function (response) {
-      var data = response.data;
+      var data = response.data,
+          _merchant = data.merchant || {}
+
+      data.merchant = _merchant
 
       if( typeof data === 'string' ) {
         try {
-          data = JSON.parse(data);
+          data = JSON.parse(data)
         } catch(err) {
-          console.error('received json is not valid');
+          console.error('received json is not valid')
         }
       }
 
-      console.log('aplazame.info()', aplazame.info() );
+      console.log('aplazame.info()', aplazame.info() )
 
       if( !orderId ) {
-        orderId = randOrderId();
-        location.hash = '/order/' + orderId;
+        orderId = randOrderId()
+        location.hash = '/order/' + orderId
       }
 
-      data.order.id = orderId;
+      data.order.id = orderId
 
-      data.merchant.public_api_key = document.body.getAttribute('data-public-key');
-      data.merchant.sandbox = true;
+      _merchant.public_api_key = document.body.getAttribute('data-public-key')
+      _merchant.sandbox = true
+
+      if( _merchant.confirmation_url && /^https?:\/api-demo\//.test(_merchant.confirmation_url) ) {
+        _merchant.confirmation_url = _merchant.confirmation_url.replace(/^https?:\/api-demo\./, 'https://api-demo-dev.')
+      }
 
       // data.merchant.onError = function () {
       //   console.log('whoops!!');
@@ -133,21 +138,22 @@ function whenAplazameReady () {
       // data.merchant.onDismiss = function () {
       //   console.log('try again!!');
       // };
-      var checkout_url = aplazame.info().api.checkout_url;
+
+      var checkout_url = aplazame.info().api.checkout_url
       
-      if( window.location.search ) aplazame.info().api.checkout_url = checkout_url + (/\?/.test(checkout_url) ? '&' : '?' ) + window.location.search.substr(1);
+      if( window.location.search ) aplazame.info().api.checkout_url = checkout_url + (/\?/.test(checkout_url) ? '&' : '?' ) + window.location.search.substr(1)
 
       aplazame.checkout(data, {
         onStatusChange: function (status) {
-          console.log('onStatusChange', status);
+          console.log('onStatusChange', status)
         },
         onClose: function (result_status) {
-          console.log('onClose', result_status);
+          console.log('onClose', result_status)
         },
-      });
-    });
+      })
+    })
 
-  };
+  }
 
   // setTimeout(function () {
   //
@@ -161,6 +167,6 @@ function whenAplazameReady () {
 
 }
 
-window.apzReady = whenAplazameReady;
+window.apzReady = whenAplazameReady
 
 // aplazame._.ready();

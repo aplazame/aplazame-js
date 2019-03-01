@@ -303,7 +303,7 @@ function checkout (checkout_data, callbacks) {
               params: _.extend(message.params || {}, {
                 order_id: message.data.checkout_token,
                 checkout_token: message.data.checkout_token
-              })
+              }),
             }).then(function (response) {
               response.config.start = started;
               postMessage('confirmation', {

@@ -1,5 +1,6 @@
 {
   "merchant": {
+    "confirmation_url": "https://api-demo.aplazame.com/confirm",
     "checkout_url": "/mx/",
     "cancel_url": "/mx/demo-cancel.html",
     "ko_url": "/mx/demo-cancel.html",

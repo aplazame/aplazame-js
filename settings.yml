@@ -20,6 +20,6 @@ demo:
   
   demo:
     url_aplazame_js: /dist/aplazame.js
-    url_api: https://api-demo.aplazame.org/
+    url_api: https://api-dev.aplazame.org/
     url_checkout: https://checkout-demo.aplazame.org/
     url_widgets: /dist/widgets/

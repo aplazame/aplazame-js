@@ -192,11 +192,11 @@
       </div>
     </footer>
 
-    <script type="text/javascript" src="${ SETTINGS.demo && SETTINGS.demo.url_aplazame_js || SETTINGS.url_aplazame_js }"
-            data-aplazame="public_key: ${ public_key }" data-sandbox="true" $if{ SETTINGS.demo }
-            data-api-host="${ SETTINGS.demo.url_api }"
-            data-checkout-url="${ SETTINGS.demo.url_checkout }"
-            data-widgets-base="${ SETTINGS.demo.url_widgets }"
+    <script type="text/javascript" src="${ DEMO_SETTINGS && DEMO_SETTINGS.url_aplazame_js || SETTINGS.url_aplazame_js }"
+            data-aplazame="public_key: ${ public_key }" data-sandbox="true" $if{ DEMO_SETTINGS }
+            data-api-host="${ DEMO_SETTINGS.url_api }"
+            data-checkout-url="${ DEMO_SETTINGS.url_checkout }"
+            data-widgets-base="${ DEMO_SETTINGS.url_widgets }"
            {/} data-callback="apzReady" defer async >
     </script>
 

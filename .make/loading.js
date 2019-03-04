@@ -21,7 +21,6 @@ module.exports = function (nitro) {
         nitro.file.write('public/loading.html', loadingHTML.replace(/<\/head>/, `<style rel="stylesheet">\n${ f.src }\n</style>`) );
       });
 
-
   });
 
 

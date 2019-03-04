@@ -11,6 +11,7 @@ var _branch = process.env.CI_BRANCH ||
       ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim()
 
 var _build_for = process.env.APP_BUILD
+var _demo_settings = process.env.DEMO_SETTINGS
 
 if( !_build_for ) {
   console.log('\nmissing APP_BUILD, using default: development\n')
@@ -25,4 +26,7 @@ module.exports = {
   mode: _build_for,
   is_prod: _build_for === 'production',
   settings: _settings[_build_for] || _settings.development,
+  demo_settings: _settings.demo[_demo_settings] || (
+    _build_for === 'production' ? null : _settings.demo.dev
+  ),
 }

@@ -98,6 +98,7 @@ module.exports = function (nitro) {
           dev: dev, pkg: pkg,
           ENV: ENV,
           SETTINGS: ENV.settings,
+          DEMO_SETTINGS: ENV.demo_settings,
           // dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
           // version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
           build_timestamp: Date.now(),

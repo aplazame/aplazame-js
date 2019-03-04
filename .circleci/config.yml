@@ -53,13 +53,27 @@ jobs:
         <<: *make_build
         environment:
             APP_BUILD: development
+            # DEMO_SETTINGS: dev # *default
 
+    build_demo:
+        <<: *make_build
+        environment:
+            APP_BUILD: development
+            DEMO_SETTINGS: demo
 
 workflows:
     version: 2
 
     build_and_deploy:
         jobs:
+        - build_demo:
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - demo
+
         - build_dev:
             filters:
                 tags:
@@ -67,6 +81,7 @@ workflows:
                 branches:
                     ignore:
                     - release
+                    - demo
 
         - build_prod:
             filters:
@@ -75,10 +90,11 @@ workflows:
                 branches:
                     only:
                     - release
+                    - demo
 
         - rsync/deploy:
             requires:
-                - build_dev
+                - build_demo
 
             do_deploy:
 
@@ -122,31 +138,6 @@ workflows:
                     - master
                     - deploy-env
 
-        - rsync/deploy:
-            requires:
-                - build_prod
-
-            do_deploy:
-
-            - rsync/folder:
-                src: dist
-                user: $DEPLOY_USER_PROD
-                host: deploy-prod.aplazame.org
-                dest: ~/www/frontend/aplazame-js
-
-            - rsync/folder:
-                src: public
-                user: $DEPLOY_USER_PROD
-                host: deploy-prod.aplazame.org
-                dest: ~/www/frontend/demo-site
-
-            filters:
-                tags:
-                    ignore: /.*/
-                branches:
-                    only:
-                    - release
-
         - s3/deploy:
             requires:
                 - build_dev
@@ -175,6 +166,31 @@ workflows:
                     only:
                     - master
                     - deploy-env
+
+        - rsync/deploy:
+            requires:
+                - build_prod
+
+            do_deploy:
+
+            - rsync/folder:
+                src: dist
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/aplazame-js
+
+            - rsync/folder:
+                src: public
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/demo-site
+
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - release
 
         - s3/deploy:
             requires:

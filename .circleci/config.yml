@@ -82,6 +82,7 @@ workflows:
                     ignore:
                     - release
                     - demo
+                    - deploy-env
 
         - build_prod:
             filters:
@@ -90,7 +91,7 @@ workflows:
                 branches:
                     only:
                     - release
-                    - demo
+                    - deploy-env
 
         - rsync/deploy:
             requires:
@@ -110,7 +111,6 @@ workflows:
                 branches:
                     only:
                     - demo
-                    - deploy-env
         
         - rsync/deploy:
             requires:
@@ -136,7 +136,6 @@ workflows:
                 branches:
                     only:
                     - master
-                    - deploy-env
 
         - s3/deploy:
             requires:
@@ -165,7 +164,6 @@ workflows:
                 branches:
                     only:
                     - master
-                    - deploy-env
 
         - rsync/deploy:
             requires:
@@ -219,3 +217,4 @@ workflows:
                 branches:
                     only:
                     - release
+                    - deploy-env

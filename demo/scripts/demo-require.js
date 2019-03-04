@@ -10,7 +10,7 @@ requirejs.config({
     //the paths config could be for a directory.
     /* eslint-disable */
     paths: {
-      aplazame: '$if{ dev }../dist/aplazame{:}https://$if{release}{:}cdn-dev.{/}aplazame.com/aplazame{/}'
+      aplazame: '${ SETTINGS.url_aplazame_js }'
       // aplazame: '$if{ dev }/dist/aplazame.js{:}https://cdn.aplazame.com/aplazame.js{/}#sandbox=true&public_key=12093289b594f50d3971e4719eedd5c314ceb6ba'
     }
     /* eslint-enable */

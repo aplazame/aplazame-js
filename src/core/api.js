@@ -1,9 +1,12 @@
 
+import ENV from '_env'
+
+console.warn('ENV', ENV)
 
 export default {
-  host: 'https://api.aplazame.com/',
-  widgets_base: 'https://cdn.aplazame.com/widgets/',
-  checkout_url: 'https://checkout.aplazame.com/',
+  host: ENV.url_api,
+  widgets_base: ENV.url_widgets,
+  checkout_url: ENV.url_checkout,
   version: 1,
   sandbox: false
 };

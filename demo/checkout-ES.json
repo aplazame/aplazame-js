@@ -1,8 +1,8 @@
 {
   "merchant": {
-    "cancel_url": "/demo-cancel.html",
-    "ko_url": "/demo-cancel.html",
-    "success_url": "/demo-success.html",
+    "cancel_url": "/demo/result-cancel.html",
+    "ko_url": "/demo/result-cancel.html",
+    "success_url": "/demo/result-success.html",
     "close_on_success": false
   },
   "customer": {

@@ -1,9 +1,12 @@
 'use strict';
 
+const virtual = require('rollup-plugin-virtual')
+
 var path = require('path'),
     // browserify = require('./_browserify'),
+    // webpack = require('webpack'),
     rollup = require('./_rollup'),
-    webpack = require('webpack');
+    ENV = require('./_env')
 
 module.exports = function (nitro) {
 
@@ -15,7 +18,13 @@ module.exports = function (nitro) {
     nitro.dir('src')
       .load('aplazame.js', { sourceMap: dev ? 'inline' : false })
       .each(function (f) {
-        f.src = '' + rollup( path.join('src', f.path) );
+        f.src = '' + rollup( path.join('src', f.path), {
+          plugins: [
+            virtual({
+              '_env': 'export default ' + JSON.stringify(ENV),
+            }),
+          ],
+        });
         // console.log('filename', path.join('src', f.path), 'dist/' + f.filename );
         // var compiler = webpack({
         //   mode: dev ? 'development' : 'production',

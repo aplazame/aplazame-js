@@ -15,7 +15,7 @@
 
     $include{ head }
   </head>
-  <body data-branch="${git.branch}" data-country="${ country }" data-public-key="${ public_key }">
+  <body data-branch="${ ENV.branch }" data-country="${ country }" data-public-key="${ public_key }">
     <!-- <iframe id="demo-iframe" src="https://www.chanel.com/es_ES/"></iframe> -->
     <header class="header">
       <div class="container-md">
@@ -75,7 +75,7 @@
 
               <div class="text-right">
                 <div data-aplazame-simulator data-view="product"
-                      data-amount="${article.price}"
+                      data-amount="${ article.price }"
                       data-price="form.details [itemprop='price']"
                       data-qty="form.details input[name='qty']"
                       data-country="${ country }"
@@ -192,14 +192,12 @@
       </div>
     </footer>
 
-    <script type="text/javascript" src="$if{ git.branch !== 'release' }$if{ git.branch !== 'master' }dist/aplazame.js?build=${build}{:}https://cdn-dev.aplazame.com/aplazame.js{/}{:}https://cdn.aplazame.com/aplazame.js{/}"
-            data-aplazame="public_key: ${ public_key }"
-            data-sandbox="true"
-            data-callback="apzReady"
-            $if{ git.branch !== 'release' }data-api-host="https://api-dev.aplazame.com/"{/}
-            $if{ dev || ( git.branch !== 'master' && git.branch !== 'release' ) }data-widgets-base="/dist/widgets/"{:}$if{ git.branch === 'master' }data-widgets-base="https://cdn-dev.aplazame.com/widgets/"{/}{/}
-            $if{ git.branch === 'demo' }data-checkout-url="https://checkout-demo.aplazame.org/"{:}$if{ git.branch !== 'release' }data-checkout-url="https://checkout-dev.aplazame.com/"{/}{/}
-            defer async >
+    <script type="text/javascript" src="${ SETTINGS.demo && SETTINGS.demo.url_aplazame_js || SETTINGS.url_aplazame_js }"
+            data-aplazame="public_key: ${ public_key }" data-sandbox="true" $if{ SETTINGS.demo }
+            data-api-host="${ SETTINGS.demo.url_api }"
+            data-checkout-url="${ SETTINGS.demo.url_checkout }"
+            data-widgets-base="${ SETTINGS.demo.url_widgets }"
+           {/} data-callback="apzReady" defer async >
     </script>
 
     <script type="text/javascript" src="/scripts/demo-article.js?build=${build}"></script>

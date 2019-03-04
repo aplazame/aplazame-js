@@ -5,7 +5,7 @@ var nitro = require('nitro'),
     resolve = require('rollup-plugin-node-resolve'),
     commonjs = require('rollup-plugin-commonjs'),
     loadHTML = require('rollup-plugin-html'),
-    ejs = require('ejs'),
+    // ejs = require('ejs'),
     compileEjs = require('@kilt/ejs');
 
 function ejsRollup () {
@@ -46,7 +46,35 @@ function ejsRollup () {
 }
 
 
-function _compileRollup (filepath, done) {
+function _compileRollup (filepath, options, done) {
+  if( options instanceof Function ) {
+    done = options
+    options = {}
+  } else {
+    options = options || {}
+  }
+
+  var _plugins = [
+    resolve({
+      module: true, // Default: true
+      browser: true,  // Default: false
+    }),
+    commonjs({
+      include: 'node_modules/**',
+    }),
+    loadHTML({
+      include: '**/*.{html,svg}',
+      htmlMinifierOptions: {
+        minifyJS: true,
+      },
+    }),
+    ejsRollup(),
+  ]
+
+  if( options.plugins ) {
+    _plugins.push.apply(_plugins, options.plugins)
+    console.log('_plugins', _plugins)
+  }
 
   rollup.rollup({
     input: path.join(process.cwd(), filepath),
@@ -55,22 +83,7 @@ function _compileRollup (filepath, done) {
     //   'http-rest',
     // ],
     context: 'window',
-    plugins: [
-      resolve({
-        module: true, // Default: true
-        browser: true,  // Default: false
-      }),
-      commonjs({
-        include: 'node_modules/**',
-      }),
-      loadHTML({
-        include: '**/*.{html,svg}',
-        htmlMinifierOptions: {
-          minifyJS: true,
-        },
-      }),
-      ejsRollup(),
-    ],
+    plugins: _plugins,
   }).then(function (bundle) {
     bundle.generate({
       format: 'iife',

@@ -2,12 +2,7 @@
 
 var rollup = require('./_rollup'),
     path = require('path'),
-    branch = process.env.DRONE_BRANCH ||
-             process.env.CIRCLE_BRANCH ||
-             process.env.CI_BRANCH ||
-             process.env.GIT_BRANCH ||
-             require('git-rev-sync').branch() ||
-             ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim();
+    ENV = require('./_env')
 
 module.exports = function (nitro) {
 
@@ -61,8 +56,7 @@ module.exports = function (nitro) {
     nitro.file.copy('demo/scripts/demo-article-require.js', 'public/scripts/demo-article-require.js');
 
     nitro.file.write('public/scripts/demo-require.js', nitro.template(nitro.file.read('demo/scripts/demo-require.js'))({
-      dev: dev,
-      release: branch === 'release'
+      ENV: ENV,
     }) );
 
     // nitro.file.copy('demo/scripts/demo-require.js', 'public/scripts/demo-require.js');
@@ -102,13 +96,11 @@ module.exports = function (nitro) {
         demo_data = file.readYAML('./demo/demo-data.yml'),
         index_data = nitro.tools.scope({
           dev: dev, pkg: pkg,
-          is_prod: branch === 'release',
-          git: {
-            branch: branch,
-          },
+          ENV: ENV,
+          SETTINGS: ENV.settings,
           // dotcom: process.env.DRONE_BRANCH === 'release' || process.env.GIT_BRANCH === 'release' || require('git-rev-sync').branch() === 'release',
-          version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
-          build: Date.now(),
+          // version: pkg.version + ( dev ? ( '-build' + new Date().getTime() ) : '' ),
+          build_timestamp: Date.now(),
           checkout: checkout,
           baseHref: '/',
           shippingAmount: function () {
@@ -157,23 +149,23 @@ module.exports = function (nitro) {
 
     (function (scope) {
 
-      file.write('public/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_ES }) ) );
-      file.write('public/clients/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_ES }) ) );
-      file.write('public/clientes/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_ES }) ) );
-      file.write('public/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
-      file.write('public/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+      file.write('public/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_ES }) ) )
+      file.write('public/clients/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_ES }) ) )
+      file.write('public/clientes/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_ES }) ) )
+      file.write('public/demo/result-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) )
+      file.write('public/demo/result-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) )
 
-      file.write('public/widget-options.html', template( file.read('demo/widget-options.html') )( scope.new({ public_key: PUBLIC_KEY_DEMO_ES }) ) );
+      file.write('public/widget-options.html', template( file.read('demo/widget-options.html') )( scope.new({ public_key: PUBLIC_KEY_DEMO_ES }) ) )
 
     })(index_data.new({ country: 'ES', currency: 'EUR' }));
 
     (function (scope) {
 
-      file.write('public/mx/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_MX }) ) );
-      file.write('public/mx/clients/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_MX }) ) );
-      file.write('public/mx/clientes/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_MX }) ) );
-      file.write('public/mx/demo-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) );
-      file.write('public/mx/demo-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) );
+      file.write('public/mx/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_MX }) ) )
+      file.write('public/mx/clients/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_MX }) ) )
+      file.write('public/mx/clientes/index.html', renderIndex( scope.new({ public_key: PUBLIC_KEY_DEMO_CLIENTS_MX }) ) )
+      file.write('public/demo/mx/result-success.html', renderIndex( scope.new({ result: { closed: true, success: true } }) ) )
+      file.write('public/demo/mx/result-cancel.html', renderIndex( scope.new({ result: { closed: true, success: false } }) ) )
 
     })(index_data.new({ checkout: checkout_mx, country: 'MX', currency: 'MXN' }));
 

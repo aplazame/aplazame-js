@@ -60,7 +60,7 @@ workflows:
 
     build_and_deploy:
         jobs:
-        - build_dev
+        - build_dev:
             filters:
                 tags:
                     ignore: /.*/
@@ -68,7 +68,7 @@ workflows:
                     ignore:
                     - release
 
-        - build_prod
+        - build_prod:
             filters:
                 tags:
                     ignore: /.*/

@@ -1,6 +1,7 @@
 
 const YAML = require('js-yaml')
 const fs   = require('fs')
+const path   = require('path')
 
 var _branch = process.env.CI_BRANCH ||
       process.env.CIRCLE_BRANCH ||
@@ -10,7 +11,9 @@ var _branch = process.env.CI_BRANCH ||
       ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim()
 
 var _build_for = process.env.APP_BUILD || 'development'
-var _settings = YAML.safeLoad( fs.readFileSync('./settings.yml', 'utf8') )
+
+var __settings_yaml = fs.readFileSync( path.join(__dirname, '../settings.yml'), 'utf8')
+var _settings = YAML.safeLoad( __settings_yaml )
 
 module.exports = {
   branch: _branch,

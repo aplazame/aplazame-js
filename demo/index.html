@@ -194,9 +194,9 @@
 
     <script type="text/javascript" src="${ DEMO_SETTINGS && DEMO_SETTINGS.url_aplazame_js || SETTINGS.url_aplazame_js }"
             data-aplazame="public_key: ${ public_key }" data-sandbox="true" $if{ DEMO_SETTINGS }
-            data-api-host="${ DEMO_SETTINGS.url_api }"
-            data-checkout-url="${ DEMO_SETTINGS.url_checkout }"
             data-widgets-base="${ DEMO_SETTINGS.url_widgets }"
+            $if{ DEMO_SETTINGS.url_api }data-api-host="${ DEMO_SETTINGS.url_api }"{/}
+            $if{ DEMO_SETTINGS.url_checkout }data-checkout-url="${ DEMO_SETTINGS.url_checkout }"{/}
            {/} data-callback="apzReady" defer async >
     </script>
 

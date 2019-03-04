@@ -14,12 +14,9 @@ development:
 demo:
   dev:
     url_aplazame_js: /dist/aplazame.js
-    url_api: https://api-dev.aplazame.com/
-    url_checkout: https://checkout-dev.aplazame.com/
     url_widgets: /dist/widgets/
   
   demo:
     url_aplazame_js: /dist/aplazame.js
-    url_api: https://api-dev.aplazame.org/
-    url_checkout: https://checkout-demo.aplazame.org/
     url_widgets: /dist/widgets/
+    url_checkout: https://checkout-demo.aplazame.org/

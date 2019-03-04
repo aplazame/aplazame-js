@@ -38,6 +38,9 @@ build: install test
 	node make build
 	cp -r dist public
 
+prod: export APP_BUILD=production
+prod: build
+
 dev: install
 	node make dev
 
@@ -83,9 +86,9 @@ release: install test npm.version git.updateRelease build dist-folder github.rel
 echo:
 	@echo "make options: test build dev live"
 
-deploy:
-	chmod +x s3_deploy.sh
-	./s3_deploy.sh
+#deploy:
+#	chmod +x s3_deploy.sh
+#	./s3_deploy.sh
 
 # DEFAULT TASKS
 

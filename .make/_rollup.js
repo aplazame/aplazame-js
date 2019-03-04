@@ -73,7 +73,7 @@ function _compileRollup (filepath, options, done) {
 
   if( options.plugins ) {
     _plugins.push.apply(_plugins, options.plugins)
-    console.log('_plugins', _plugins)
+    // console.log('_plugins', _plugins)
   }
 
   rollup.rollup({

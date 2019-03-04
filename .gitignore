@@ -4,7 +4,6 @@
 /.bower_components
 /bower_components
 /npm-debug.log
-/settings.yml
 /demo/demo.css
 /aplazame.js
 /aplazame.min.js

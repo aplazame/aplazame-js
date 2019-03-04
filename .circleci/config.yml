@@ -28,10 +28,6 @@ build: &make_build
         - node10-alpine-
 
     - run:
-        name: debug
-        command: ls -la
-
-    - run:
         name: Build application
         command: make build | sed 's/[[:alnum:]]*:x-oauth-basic//g'
         # command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'

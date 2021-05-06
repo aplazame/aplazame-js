@@ -5,14 +5,18 @@ whoami = $(shell whoami)
 
 git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 
+ifndef NPM_VERSION
+  export NPM_VERSION=patch
+endif
+
 # TASKS
 
 git.hooks:
 	@./bin/git-hooks
 
 npm-install:
-	@echo "running npm install"
-	@npm install > /dev/null 2>&1
+	echo "running npm install"
+	npm install --quiet 
 
 install: git.hooks npm-install
 
@@ -26,12 +30,14 @@ test: lint unit
 
 # test: tests
 
+
 test-tools:
 	@$(npmdir)/watch "date +\"%Y-%m-%d %T\" && $(npmdir)/mocha -R spec tests" src/tools tests
 
 build: install test
 	@echo "running make build"
 	node make build
+	cp -r dist public
 
 dev: install
 	node make dev
@@ -46,7 +52,7 @@ master.increaseVersion:
 
 npm.version:
 	git pull --tags
-	npm version patch
+	npm version ${NPM_VERSION}
 	git push origin $(git_branch)
 	git push --tags
 

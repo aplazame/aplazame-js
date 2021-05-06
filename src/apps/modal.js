@@ -32,19 +32,19 @@ export default function modal (content) {
   }, _.isMobile() ? 0 : 600 );
 
   modal.iframe = _.getIFrame({
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        background: 'transparent'
-      });
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: 'transparent'
+    })
 
   modal.iframe.className = 'aplazame-modal';
   // modal.iframe.style.display = 'none';
   modal.iframe.content = content;
 
   document.body.appendChild(modal.iframe);
-  modal.iframe.src = api.static_url + 'widgets/modal/modal.html?v=' + encodeURI(aplazameVersion);
+  modal.iframe.src = api.widgets_base + 'modal/modal.html?v=' + encodeURI(aplazameVersion);
 }
 
 _.onMessage('modal', function (e, message) {

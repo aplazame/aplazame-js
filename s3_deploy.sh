@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ -z "$CI_BRANCH" ]; then
+if [ -z "$CIRCLE_BRANCH" ]; then
   export CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 fi
 
-echo "branch $CI_BRANCH"
+echo "branch $CIRCLE_BRANCH"
 
 function push2s3 () {
   public_dest='aplazame-js/public'
@@ -21,11 +21,11 @@ function push2s3 () {
       --body public/index.html;
 }
 
-if [ "$CI_BRANCH" == "master" ]; then
+if [ "$CIRCLE_BRANCH" == "master" ]; then
 
   push2s3 aplazame-frontend-dev
 
-elif [ "$CI_BRANCH" == "release" ]; then
+elif [ "$CIRCLE_BRANCH" == "release" ]; then
 
   push2s3 aplazame-frontend
 

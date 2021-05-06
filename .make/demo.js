@@ -1,7 +1,13 @@
 /* global process */
 
 var rollup = require('./_rollup'),
-    path = require('path');
+    path = require('path'),
+    branch = process.env.DRONE_BRANCH ||
+             process.env.CIRCLE_BRANCH ||
+             process.env.CI_BRANCH ||
+             process.env.GIT_BRANCH ||
+             require('git-rev-sync').branch() ||
+             ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim();
 
 module.exports = function (nitro) {
 
@@ -38,8 +44,7 @@ module.exports = function (nitro) {
 
   nitro.task('demo-js', function (target) {
 
-    var dev = target === 'dev',
-        branch = process.env.DRONE_BRANCH || process.env.GIT_BRANCH || ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim();
+    var dev = target === 'dev';
 
     nitro.dir('demo/scripts').load('demo-simulator.js', { sourceMap: target === 'dev' && 'inline' })
       .each(function (f) {
@@ -91,10 +96,6 @@ module.exports = function (nitro) {
 
     var pkg = require('../package'),
         dev = target === 'dev',
-        branch = process.env.DRONE_BRANCH ||
-                 process.env.GIT_BRANCH ||
-                 ('' + require('child_process').execSync('git symbolic-ref --short -q HEAD 2>/dev/null')).trim() ||
-                 require('git-rev-sync').branch(),
         renderIndex = template( file.read('demo/index.html') ),
         checkout = file.readJSON('./demo/checkout-ES.json'),
         checkout_mx = file.readJSON('./demo/checkout-MX.json'),

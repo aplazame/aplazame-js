@@ -1,0 +1,178 @@
+
+version: 2.1
+
+orbs:
+    rsync: aplazame/rsync@0.0.13
+    s3: aplazame/s3@0.0.13
+
+jobs:
+    build:
+        docker:
+        - image: aplazame/alpine:0.1.6-node
+
+        working_directory: ~/repo
+
+        steps:
+
+        - checkout
+
+        - run:
+            name: 'Add credentials for cloning properly via HTTPS instead of SSH'
+            command: sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package-lock.json &&
+                    sed -i "s/git+ssh:\/\/git@github.com\/aplazame\//https:\/\/$GITHUB_TOKEN:x-oauth-basic@github.com\/aplazame\//" package.json
+
+        # Download and cache dependencies
+        - restore_cache:
+            keys:
+            - node10-alpine-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - node10-alpine-
+
+        - run:
+            name: Build application
+            command: make build | sed 's/[[:alnum:]]*:x-oauth-basic//g'
+            # command: make build | sed --unbuffered 's/[[:alnum:]]*:x-oauth-basic//g'
+
+        - save_cache:
+            paths:
+                - node_modules
+            key: node10-alpine-{{ checksum "package.json" }}
+        
+        - persist_to_workspace:
+            root: ./
+            paths:
+                - public
+                - dist
+
+workflows:
+    version: 2
+
+    build_and_deploy:
+        jobs:
+        - build
+
+        - rsync/deploy:
+            requires:
+                - build
+
+            do_deploy:
+
+            - rsync/folder:
+                src: public
+                user: $DEPLOY_USER_DEV
+                host: demo.aplazame.org
+                dest: ~/www/demo-demo
+
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - demo
+                    - circle-orbs
+        
+        - rsync/deploy:
+            requires:
+                - build
+
+            do_deploy:
+
+            - rsync/folder:
+                src: dist
+                user: $DEPLOY_USER_DEV
+                host: deploy-dev.aplazame.org
+                dest: ~/www/frontend/aplazame-js
+
+            - rsync/folder:
+                src: public
+                user: $DEPLOY_USER_DEV
+                host: deploy-dev.aplazame.org
+                dest: ~/www/frontend/demo-site
+
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - master
+
+        - rsync/deploy:
+            requires:
+                - build
+
+            do_deploy:
+
+            - rsync/folder:
+                src: dist
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/aplazame-js
+
+            - rsync/folder:
+                src: public
+                user: $DEPLOY_USER_PROD
+                host: deploy-prod.aplazame.org
+                dest: ~/www/frontend/demo-site
+
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - release
+
+        - s3/deploy:
+            requires:
+                - build
+
+            do_deploy:
+
+            - s3/folder:
+                bucket_name: cdn-dev.aplazame.com
+                src: public/dist/widgets
+                dest: widgets
+            
+            - s3/file:
+                bucket_name: cdn-dev.aplazame.com
+                src: dist/aplazame.min.js
+                dest: aplazame.js
+                cache_control: no-cache, no-store
+
+            - s3/public:
+                bucket_name: demo-dev.aplazame.com
+                index: index.html
+            
+            filters:
+                tags:
+                    ignore: /.*/
+                branches:
+                    only:
+                    - master
+                    - circle-orbs
+
+        - s3/deploy:
+            requires:
+                - build
+
+            do_deploy:
+
+            - s3/folder:
+                bucket_name: cdn.aplazame.com
+                src: public/dist/widgets
+                dest: widgets
+            
+            - s3/file:
+                bucket_name: cdn.aplazame.com
+                src: dist/aplazame.min.js
+                dest: aplazame.js
+                cache_control: no-cache, no-store
+
+            - s3/public:
+                bucket_name: demo.aplazame.com
+                index: index.html
+            
+            filters:
+                tags:
+                    only: /^v.*/
+                branches:
+                    ignore: /.*/

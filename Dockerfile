@@ -1,4 +1,4 @@
-FROM aplazame/nodejs-karma:0.5.0
+FROM aplazame/nodejs-karma:0.7.4
 
 ARG GITHUB_TOKEN
 

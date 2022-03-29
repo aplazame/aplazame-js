@@ -17,3 +17,22 @@ updates:
     - dependabot
   reviewers:
     - "aplazame/squad_checkout_frontend/reviewers"
+
+- package-ecosystem: docker
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: "monday"
+    time: "09:00"
+    timezone: Europe/Madrid
+  open-pull-requests-limit: 10
+  commit-message:
+    prefix: "[Dep][docker] "
+  #ignore:
+    #- dependency-name: "python"
+      # For python, ignore all updates for version 3.10
+      #versions: [ "3.10"]
+  labels:
+    - dependabot
+  reviewers:
+    - "aplazame/squad_checkout_frontend/reviewers"

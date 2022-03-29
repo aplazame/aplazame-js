@@ -8,7 +8,7 @@ updates:
     timezone: Europe/Madrid
   open-pull-requests-limit: 10
   commit-message:
-    prefix: "[Dep][pip] "
+    prefix: "[Dep][npm] "
   #ignore:
     #- dependency-name: "django"
       # For django, ignore all updates for version 3.2.x and 4.x

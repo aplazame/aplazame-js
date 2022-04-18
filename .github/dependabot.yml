@@ -16,7 +16,8 @@ updates:
   labels:
     - dependabot
   reviewers:
-    - "aplazame/squad_checkout-frontend/reviewers"
+    - "aplazame/squad_checkout-frontend-reviewers"
+    - "aplazame/squad_dashboards-frontend-reviewers"
 
 - package-ecosystem: docker
   directory: "/"
@@ -35,4 +36,5 @@ updates:
   labels:
     - dependabot
   reviewers:
-    - "aplazame/squad_checkout-frontend/reviewers"
+    - "aplazame/squad_checkout-frontend-reviewers"
+    - "aplazame/squad_dashboards-frontend-reviewers"
